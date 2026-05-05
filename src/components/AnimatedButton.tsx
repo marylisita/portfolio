@@ -102,6 +102,19 @@ export default function AnimatedButton({
   );
 
   if (href) {
+    const isExternal = href.startsWith("http") || href.startsWith("mailto:");
+    if (isExternal) {
+      return (
+        <a 
+          href={href} 
+          target={href.startsWith("http") ? "_blank" : undefined}
+          rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
+          style={{ textDecoration: "none", display: "inline-block" }}
+        >
+          {content}
+        </a>
+      );
+    }
     return <Link href={href} style={{ textDecoration: "none", display: "inline-block" }}>{content}</Link>;
   }
 

@@ -32,7 +32,7 @@ function SpinningBadge() {
 
 export default function GiantFooter() {
   return (
-    <footer style={{ padding: "140px 2rem 40px", background: "#1A1A1A", borderTop: "none", position: "relative", overflow: "hidden" }}>
+    <footer className="giant-footer" style={{ background: "#1A1A1A", borderTop: "none", position: "relative", overflow: "hidden" }}>
       <div style={{ maxWidth: "1200px", margin: "0 auto", position: "relative" }}>
         
         {/* Main Center Content */}

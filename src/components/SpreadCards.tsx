@@ -15,11 +15,11 @@ export default function SpreadCards() {
     <section style={{ position: "relative", zIndex: 20, paddingTop: "2rem", paddingBottom: "8rem" }}>
       <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
         
-        <div style={{ position: "relative", width: "320px", height: "380px" }}>
+        <div className="spread-wrapper" style={{ position: "relative", width: "320px", height: "380px" }}>
           
           {/* LEFT CARD */}
           <motion.div 
-            className="hero-card"
+            className="hero-card spread-card"
             style={{ 
               x: leftX, 
               rotate: leftRotate, 
@@ -40,7 +40,7 @@ export default function SpreadCards() {
 
           {/* RIGHT CARD */}
           <motion.div 
-            className="hero-card"
+            className="hero-card spread-card"
             style={{ 
               x: rightX, 
               rotate: rightRotate, 
@@ -61,7 +61,7 @@ export default function SpreadCards() {
 
           {/* CENTER CARD */}
           <motion.div 
-            className="hero-card"
+            className="hero-card spread-card"
             style={{ 
               zIndex: 3, 
               position: "absolute", 
