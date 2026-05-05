@@ -109,7 +109,7 @@ export default function Home() {
         </div>
 
         <section id="about" className="about wrap" style={{ paddingTop: "80px", paddingBottom: "40px" }}>
-          <div className="about__grid" style={{ alignItems: "center", gridTemplateColumns: "1fr 1fr", gap: "60px" }}>
+          <div className="about__grid" style={{ alignItems: "center" }}>
             
             {/* Left: Organic Portrait Container */}
             <div style={{ position: "relative", width: "100%", aspectRatio: "1/1", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -144,7 +144,7 @@ export default function Home() {
                      </text>
                    </svg>
                 </div>
-                <div style={{ position: "absolute", fontSize: "1.8rem" }}>✉️</div>
+                <a href="mailto:lisita.medeiros@gmail.com" className="hover-trigger" style={{ position: "absolute", fontSize: "1.8rem", textDecoration: "none", zIndex: 11 }}>✉️</a>
               </div>
             </div>
 
@@ -159,7 +159,7 @@ export default function Home() {
               </p>
 
               {/* Progress Bars */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
+              <div className="skills__grid">
                 {[
                   { name: "UX/UI Design", p: 95, color: "#E0F2FE" },
                   { name: "Web Design", p: 97, color: "#DCFCE7" },
