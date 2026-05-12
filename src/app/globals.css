@@ -38,7 +38,7 @@ body {
 a { color:inherit; text-decoration:none; }
 button { border:none; background:none; }
 img { max-width:100%; display:block; }
-.wrap { max-width:1160px; margin:0 auto; padding:0 32px; }
+.wrap { width:100%; max-width:1160px; margin:0 auto; padding:0 32px; }
 
 /* ==========================================
    UTILITIES
@@ -436,12 +436,18 @@ img { max-width:100%; display:block; }
    RESPONSIVE
    ========================================== */
 @media (max-width:900px) {
+    .wrap { padding: 0 24px; }
     .sticky-card__inner { grid-template-columns:1fr; gap:32px; }
     .sticky-card__img { order:-1; }
     .about__grid { grid-template-columns:1fr; gap:32px; }
     .skills__grid { grid-template-columns:1fr; gap:16px; }
     .process__grid { grid-template-columns:1fr; gap:48px; }
-    .nav__links { display:none; }
+    .nav { width: 100%; padding: 0 16px; }
+    .nav__inner { width: 100%; overflow-x: auto; -ms-overflow-style: none; scrollbar-width: none; justify-content: flex-start; gap: 1rem; padding: 0.5rem; }
+    .nav__inner::-webkit-scrollbar { display: none; }
+    .nav__links { display: flex; gap: 0.2rem; flex-shrink: 0; }
+    .nav__logo { flex-shrink: 0; margin-left: 0.5rem; }
+    .nav__cta { flex-shrink: 0; }
     .hero-card { width:100%; padding:2rem 1.5rem; }
     .hero-card__icon { width:36px; height:36px; font-size:1.2rem; }
     .hero-card__desc { display:block; } /* Keep desc visible if they stack */
@@ -451,7 +457,7 @@ img { max-width:100%; display:block; }
     .sticky-card__inner { padding:24px; }
     .contact__box { padding:3rem 1.5rem; }
     .sticker { display:none; }
-    .nav__inner { padding:.4rem .4rem .4rem 1rem; gap:.6rem; }
+    /* Removed old nav__inner mobile padding as it's defined above */
     .footer__inner { flex-direction:column; gap:.5rem; text-align:center; }
     .capabilities__tags { gap:.6rem; }
     .cap-tag { font-size:.78rem; padding:.5rem 1rem; }

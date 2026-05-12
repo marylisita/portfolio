@@ -149,7 +149,7 @@ export default function Home() {
             </div>
 
             {/* Right: Text and Progress Bars */}
-            <div style={{ paddingRight: "5%" }}>
+            <div>
               <h2 className="section-title" style={{ fontFamily: "var(--font-head)", marginBottom: "1.5rem", fontSize: "3.5rem", color: "#111" }}>Minibio</h2>
               <p className="about__text" style={{ fontFamily: "var(--font-body)", fontSize: "0.95rem", lineHeight: 1.6, color: "var(--gray-600)" }}>
                 Minha trajetória no design é guiada pela pesquisa e pela experimentação tecnológica. Fui pesquisadora no NANO (Núcleo de Arte e Novos Organismos) e atualmente integro o LAID (Laboratório Aberto de Inovação e Design) da UFRJ.
