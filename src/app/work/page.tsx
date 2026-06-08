@@ -198,7 +198,7 @@ export default function Work() {
             </div>
             <div style={{ padding: "40px", backgroundColor: "#dcfce7", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "var(--r-lg)", border: "1px solid #111" }}>
               <div style={{ position: "relative", width: "100%", border: "1px solid #111", backgroundColor: "#fff", boxShadow: "0 15px 35px rgba(0,0,0,0.15)" }}>
-                <LiquidImage src="/img/ebat/mockup outer.png" alt="EBAT Project" fill={false} />
+                <LiquidImage src="/img/ebat/mockup inner.png" alt="EBAT Project" fill={false} />
               </div>
             </div>
           </div>

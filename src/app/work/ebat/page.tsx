@@ -129,26 +129,17 @@ export default function EbatProject() {
           </div>
 
           <div style={{ 
-            display: "grid", 
-            gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))", 
-            gap: "20px",
+            display: "flex", 
+            justifyContent: "center",
             alignItems: "center"
           }}>
             <motion.div 
               initial={{ y: 50, opacity: 0 }}
               whileInView={{ y: 0, opacity: 1 }}
               viewport={{ once: true }}
-              style={{ borderRadius: "12px", overflow: "hidden", border: "1px solid var(--border)" }}
+              style={{ borderRadius: "12px", overflow: "hidden", border: "1px solid var(--border)", maxWidth: "600px" }}
             >
-               <img src="/img/ebat/mockup outer.png" alt="Flyer Outer Mockup" style={{ width: "100%", display: "block" }} />
-            </motion.div>
-            <motion.div 
-              initial={{ y: 50, opacity: 0 }}
-              whileInView={{ y: 0, opacity: 1 }}
-              viewport={{ once: true, margin: "-100px" }}
-              style={{ borderRadius: "12px", overflow: "hidden", border: "1px solid var(--border)" }}
-            >
-               <img src="/img/ebat/mockup inner.png" alt="Flyer Inner Mockup" style={{ width: "100%", display: "block" }} />
+               <img src="/img/ebat/mockup inner.png" alt="Flyer Mockup" style={{ width: "100%", display: "block" }} />
             </motion.div>
           </div>
 
