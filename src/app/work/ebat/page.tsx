@@ -236,27 +236,20 @@ export default function EbatProject() {
                }}
             >
               <div style={{ display: "flex", alignItems: "center", padding: "14px", borderBottom: "1px solid #efefef" }}>
-                 <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)", padding: "2px", marginRight: "10px" }}>
-                    <div style={{ width: "100%", height: "100%", backgroundColor: "#fff", borderRadius: "50%", display: "flex", justifyContent: "center", alignItems: "center" }}>
-                       <span style={{ fontSize: "10px", fontWeight: "bold" }}>EB</span>
-                    </div>
-                 </div>
-                 <span style={{ fontFamily: "var(--font-body)", fontWeight: 600, fontSize: "0.9rem", color: "#262626" }}>ebat_escola</span>
+                 <img src="/img/ebat/logo.png" alt="EBAT Logo" style={{ width: "32px", height: "32px", borderRadius: "50%", marginRight: "10px", border: "1px solid #efefef", objectFit: "cover" }} />
+                 <span style={{ fontFamily: "var(--font-body)", fontWeight: 600, fontSize: "0.9rem", color: "#262626" }}>ebat.escola</span>
                  <span style={{ marginLeft: "auto", fontWeight: "bold", letterSpacing: "2px", color: "#262626" }}>...</span>
               </div>
               <div style={{ borderBottom: "1px solid #efefef" }}>
                  <FlipBook images={carousel1} aspectRatio="125%" />
               </div>
               <div style={{ padding: "14px" }}>
-                 <div style={{ display: "flex", gap: "16px", marginBottom: "12px" }}>
+                 <div style={{ display: "flex", gap: "16px" }}>
                     <svg aria-label="Curtir" fill="#262626" height="24" role="img" viewBox="0 0 24 24" width="24"><path d="M16.792 3.904A4.989 4.989 0 0 1 21.5 9.122c0 3.072-2.652 4.959-5.197 7.222-2.512 2.243-3.865 3.469-4.303 3.752-.477-.287-2.043-1.59-4.345-3.797-2.5-2.39-5.15-4.275-5.15-7.177A4.99 4.99 0 0 1 7.208 3.904a4.58 4.58 0 0 1 4.792 3.197 4.58 4.58 0 0 1 4.792-3.197ZM12 21.644c-.261 0-1.464-1.077-4.004-3.51-2.903-2.775-5.996-5.045-5.996-9.012A6.99 6.99 0 0 1 9.043 2.15a6.57 6.57 0 0 1 2.957 1.455 6.57 6.57 0 0 1 2.957-1.455 6.99 6.99 0 0 1 7.043 6.962c0 3.967-3.093 6.237-5.996 9.012-2.54 2.433-3.743 3.51-4.004 3.51Z"></path></svg>
                     <svg aria-label="Comentar" fill="#262626" height="24" role="img" viewBox="0 0 24 24" width="24"><path d="M20.656 17.008a9.993 9.993 0 1 0-3.59 3.615L22 22Z" fill="none" stroke="currentColor" strokeLinejoin="round" strokeWidth="2"></path></svg>
                     <div style={{ marginLeft: "auto" }}>
                        <svg aria-label="Salvar" fill="#262626" height="24" role="img" viewBox="0 0 24 24" width="24"><polygon fill="none" points="20 21 12 13.44 4 21 4 3 20 3 20 21" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></polygon></svg>
                     </div>
-                 </div>
-                 <div style={{ fontFamily: "var(--font-body)", fontSize: "0.9rem", color: "#262626" }}>
-                    <strong>ebat_escola</strong> Confira um pouco mais sobre nosso Módulo de Computação Criativa! ✨
                  </div>
               </div>
             </motion.div>
@@ -275,23 +268,20 @@ export default function EbatProject() {
                }}
             >
               <div style={{ display: "flex", alignItems: "center", padding: "14px", borderBottom: "1px solid #efefef" }}>
-                 <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)", padding: "2px", marginRight: "10px" }}>
-                    <div style={{ width: "100%", height: "100%", backgroundColor: "#fff", borderRadius: "50%", display: "flex", justifyContent: "center", alignItems: "center" }}>
-                       <span style={{ fontSize: "10px", fontWeight: "bold" }}>EB</span>
-                    </div>
-                 </div>
-                 <span style={{ fontFamily: "var(--font-body)", fontWeight: 600, fontSize: "0.9rem", color: "#262626" }}>ebat_escola</span>
+                 <img src="/img/ebat/logo.png" alt="EBAT Logo" style={{ width: "32px", height: "32px", borderRadius: "50%", marginRight: "10px", border: "1px solid #efefef", objectFit: "cover" }} />
+                 <span style={{ fontFamily: "var(--font-body)", fontWeight: 600, fontSize: "0.9rem", color: "#262626" }}>ebat.escola</span>
+                 <span style={{ marginLeft: "auto", fontWeight: "bold", letterSpacing: "2px", color: "#262626" }}>...</span>
               </div>
               <div style={{ borderBottom: "1px solid #efefef" }}>
                  <FlipBook images={carousel2} aspectRatio="125%" />
               </div>
               <div style={{ padding: "14px" }}>
-                 <div style={{ display: "flex", gap: "16px", marginBottom: "12px" }}>
+                 <div style={{ display: "flex", gap: "16px" }}>
                     <svg aria-label="Curtir" fill="#262626" height="24" role="img" viewBox="0 0 24 24" width="24"><path d="M16.792 3.904A4.989 4.989 0 0 1 21.5 9.122c0 3.072-2.652 4.959-5.197 7.222-2.512 2.243-3.865 3.469-4.303 3.752-.477-.287-2.043-1.59-4.345-3.797-2.5-2.39-5.15-4.275-5.15-7.177A4.99 4.99 0 0 1 7.208 3.904a4.58 4.58 0 0 1 4.792 3.197 4.58 4.58 0 0 1 4.792-3.197ZM12 21.644c-.261 0-1.464-1.077-4.004-3.51-2.903-2.775-5.996-5.045-5.996-9.012A6.99 6.99 0 0 1 9.043 2.15a6.57 6.57 0 0 1 2.957 1.455 6.57 6.57 0 0 1 2.957-1.455 6.99 6.99 0 0 1 7.043 6.962c0 3.967-3.093 6.237-5.996 9.012-2.54 2.433-3.743 3.51-4.004 3.51Z"></path></svg>
                     <svg aria-label="Comentar" fill="#262626" height="24" role="img" viewBox="0 0 24 24" width="24"><path d="M20.656 17.008a9.993 9.993 0 1 0-3.59 3.615L22 22Z" fill="none" stroke="currentColor" strokeLinejoin="round" strokeWidth="2"></path></svg>
-                 </div>
-                 <div style={{ fontFamily: "var(--font-body)", fontSize: "0.9rem", color: "#262626" }}>
-                    <strong>ebat_escola</strong> Explorando mais detalhes da nossa metodologia de aprendizagem. 💡
+                    <div style={{ marginLeft: "auto" }}>
+                       <svg aria-label="Salvar" fill="#262626" height="24" role="img" viewBox="0 0 24 24" width="24"><polygon fill="none" points="20 21 12 13.44 4 21 4 3 20 3 20 21" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></polygon></svg>
+                    </div>
                  </div>
               </div>
             </motion.div>
