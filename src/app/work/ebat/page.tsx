@@ -32,7 +32,7 @@ export default function EbatProject() {
         </div>
       </nav>
 
-      <main style={{ minHeight: "100vh", backgroundColor: "var(--surface)", paddingTop: "140px" }}>
+      <main style={{ minHeight: "100vh", paddingTop: "140px", position: "relative" }}>
         
         {/* Project Header */}
         <section style={{ 
@@ -41,7 +41,9 @@ export default function EbatProject() {
           padding: "40px 2rem 80px",
           display: "flex",
           flexDirection: "column",
-          gap: "40px"
+          gap: "40px",
+          position: "relative",
+          zIndex: 10
         }}>
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -120,7 +122,9 @@ export default function EbatProject() {
           padding: "0 2rem 100px",
           display: "flex",
           flexDirection: "column",
-          gap: "60px"
+          gap: "60px",
+          position: "relative",
+          zIndex: 10
         }}>
           
           <div style={{ textAlign: "center" }}>
@@ -128,45 +132,73 @@ export default function EbatProject() {
              <p style={{ color: "var(--gray-600)", fontFamily: "var(--font-body)", fontSize: "1.1rem" }}>Material impresso e audiovisual desenvolvido para o estande.</p>
           </div>
 
-          <div style={{ 
-            display: "flex", 
-            justifyContent: "center",
-            alignItems: "center"
-          }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "40px" }}>
+            {/* Mockups Side by Side */}
+            <div style={{ 
+              display: "grid", 
+              gridTemplateColumns: "1fr 1fr", 
+              gap: "20px",
+              alignItems: "center"
+            }}>
+              <motion.div 
+                initial={{ y: 50, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                viewport={{ once: true }}
+                style={{ borderRadius: "12px", overflow: "hidden", border: "1px solid var(--border)", backgroundColor: "rgba(255,255,255,0.5)", backdropFilter: "blur(10px)" }}
+              >
+                 <img src="/img/ebat/mockup inner.png" alt="Flyer Inner Mockup" style={{ width: "100%", display: "block" }} />
+              </motion.div>
+              <motion.div 
+                initial={{ y: 50, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                viewport={{ once: true, transition: { delay: 0.2 } }}
+                style={{ borderRadius: "12px", overflow: "hidden", border: "1px solid var(--border)", backgroundColor: "rgba(255,255,255,0.5)", backdropFilter: "blur(10px)" }}
+              >
+                 <img src="/img/ebat/mockup outer.png" alt="Flyer Outer Mockup" style={{ width: "100%", display: "block" }} />
+              </motion.div>
+            </div>
+
+            {/* Original Arts Side by Side */}
+            <div style={{ 
+              display: "grid", 
+              gridTemplateColumns: "1fr 1fr", 
+              gap: "20px",
+              alignItems: "center"
+            }}>
+              <motion.div 
+                initial={{ y: 50, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                viewport={{ once: true }}
+                style={{ borderRadius: "12px", overflow: "hidden", border: "1px solid var(--border)", backgroundColor: "rgba(255,255,255,0.5)", backdropFilter: "blur(10px)" }}
+              >
+                 <img src="/img/ebat/Inner Page.png" alt="Inner Page" style={{ width: "100%", display: "block" }} />
+              </motion.div>
+              <motion.div 
+                initial={{ y: 50, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                viewport={{ once: true, transition: { delay: 0.2 } }}
+                style={{ borderRadius: "12px", overflow: "hidden", border: "1px solid var(--border)", backgroundColor: "rgba(255,255,255,0.5)", backdropFilter: "blur(10px)" }}
+              >
+                 <img src="/img/ebat/Outer Page.png" alt="Outer Page" style={{ width: "100%", display: "block" }} />
+              </motion.div>
+            </div>
+
+            {/* Video Grande */}
             <motion.div 
               initial={{ y: 50, opacity: 0 }}
               whileInView={{ y: 0, opacity: 1 }}
               viewport={{ once: true }}
-              style={{ borderRadius: "12px", overflow: "hidden", border: "1px solid var(--border)", maxWidth: "600px" }}
+              style={{ width: "100%", backgroundColor: "#000", borderRadius: "16px", overflow: "hidden", boxShadow: "0 25px 50px -12px rgba(0,0,0,0.25)", border: "2px solid #111" }}
             >
-               <img src="/img/ebat/mockup inner.png" alt="Flyer Mockup" style={{ width: "100%", display: "block" }} />
+              <video 
+                src="/img/ebat/video-ebat.mp4" 
+                controls
+                autoPlay
+                muted
+                loop
+                style={{ width: "100%", display: "block" }}
+              />
             </motion.div>
-          </div>
-
-          {/* Original Arts and Video */}
-          <div style={{ 
-            display: "grid", 
-            gridTemplateColumns: "1fr 1fr", 
-            gap: "40px",
-            marginTop: "20px"
-          }}>
-            <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-              <img src="/img/ebat/Outer Page.png" alt="Arte Original Outer" style={{ width: "100%", borderRadius: "8px", border: "1px solid var(--border)" }} />
-              <img src="/img/ebat/Inner Page.png" alt="Arte Original Inner" style={{ width: "100%", borderRadius: "8px", border: "1px solid var(--border)" }} />
-              <img src="/img/ebat/4.png" alt="Arte Secundária" style={{ width: "100%", borderRadius: "8px", border: "1px solid var(--border)" }} />
-            </div>
-            <div style={{ display: "flex", alignItems: "flex-start", position: "sticky", top: "100px" }}>
-              <div style={{ width: "100%", backgroundColor: "#000", borderRadius: "16px", overflow: "hidden", boxShadow: "0 25px 50px -12px rgba(0,0,0,0.25)", border: "2px solid #111" }}>
-                <video 
-                  src="/img/ebat/video-ebat.mp4" 
-                  controls
-                  autoPlay
-                  muted
-                  loop
-                  style={{ width: "100%", display: "block" }}
-                />
-              </div>
-            </div>
           </div>
         </section>
 
