@@ -101,6 +101,27 @@ export default function Home() {
                 </div>
               </div>
             </div>
+            <div className="sticky-card">
+              <div className="sticky-card__inner" style={{ backgroundColor: "#F0Fdf4", border: "var(--border)", color: "var(--fg)" }}>
+                <div>
+                  <span className="sticky-card__num" style={{ color: "var(--gray-400)" }}>04</span>
+                  <h3 className="sticky-card__title" style={{ color: "var(--fg)", fontFamily: "var(--font-head)" }}>EBAT:<br />Arte & Tecnologia</h3>
+                  <div className="sticky-card__tags" style={{ color: "var(--gray-600)" }}>
+                    <span>Design Gráfico</span>
+                    <span>Social Media</span>
+                  </div>
+                  <p className="sticky-card__desc" style={{ color: "var(--gray-600)", fontFamily: "var(--font-body)" }}>
+                    Campanha audiovisual para o São Paulo Innovation Week (SPIW) e identidade visual para redes sociais.
+                  </p>
+                  <AnimatedButton href="/work/ebat" variant="outline">Ver Projeto</AnimatedButton>
+                </div>
+                <div style={{ padding: "40px", backgroundColor: "#dcfce7", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "var(--r-lg)", border: "1px solid #111" }}>
+                  <div style={{ position: "relative", width: "100%", border: "1px solid #111", backgroundColor: "#fff", boxShadow: "0 15px 35px rgba(0,0,0,0.15)" }}>
+                    <LiquidImage src="/img/ebat/flyer-1.png" alt="EBAT Project" fill={false} />
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
