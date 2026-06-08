@@ -151,7 +151,8 @@ export default function EbatProject() {
               <motion.div 
                 initial={{ y: 50, opacity: 0 }}
                 whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true, transition: { delay: 0.2 } }}
+                transition={{ delay: 0.2 }}
+                viewport={{ once: true }}
                 style={{ borderRadius: "12px", overflow: "hidden", border: "1px solid var(--border)", backgroundColor: "rgba(255,255,255,0.5)", backdropFilter: "blur(10px)" }}
               >
                  <img src="/img/ebat/mockup outer.png" alt="Flyer Outer Mockup" style={{ width: "100%", display: "block" }} />
@@ -176,7 +177,8 @@ export default function EbatProject() {
               <motion.div 
                 initial={{ y: 50, opacity: 0 }}
                 whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true, transition: { delay: 0.2 } }}
+                transition={{ delay: 0.2 }}
+                viewport={{ once: true }}
                 style={{ borderRadius: "12px", overflow: "hidden", border: "1px solid var(--border)", backgroundColor: "rgba(255,255,255,0.5)", backdropFilter: "blur(10px)" }}
               >
                  <img src="/img/ebat/Outer Page.png" alt="Outer Page" style={{ width: "100%", display: "block" }} />
