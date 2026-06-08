@@ -82,7 +82,7 @@ export default function EbatProject() {
               maxWidth: "800px",
               lineHeight: 1.6
             }}>
-              No <TextHighlight variant="ios" delay={0.8}>São Paulo Innovation Week (SPIW)</TextHighlight>, a EBAT apresentou sua visão sobre a relação entre arte e tecnologia. O foco do evento foi mostrar na prática como o <TextHighlight variant="marker" color="#C7E9B0" delay={1.1}>design e o pensamento criativo</TextHighlight> se integram ao ecossistema de inovação, consolidando a escola como um espaço ativo para essas discussões na cidade.
+              A EBAT (Escola Brasileira de Arte e Tecnologia) é uma escola laboratório 100% gratuita de arte, inovação e tecnologia voltada para quem deseja se posicionar na nova economia criativa. Atuei diretamente como designer da escola, ajudando a traduzir o <TextHighlight variant="marker" color="#C7E9B0" delay={0.8}>pensamento criativo</TextHighlight> para a identidade visual de campanhas, módulos de ensino e redes sociais.
             </p>
           </motion.div>
 
@@ -129,7 +129,7 @@ export default function EbatProject() {
           
           <div style={{ textAlign: "center" }}>
              <h2 style={{ fontFamily: "var(--font-head)", fontSize: "2.5rem", margin: "0 0 1rem" }}>Campanha SPIW</h2>
-             <p style={{ color: "var(--gray-600)", fontFamily: "var(--font-body)", fontSize: "1.1rem" }}>Material impresso e audiovisual desenvolvido para o estande.</p>
+             <p style={{ color: "var(--gray-600)", fontFamily: "var(--font-body)", fontSize: "1.1rem", maxWidth: "800px", margin: "0 auto" }}>No São Paulo Innovation Week (SPIW), a EBAT apresentou sua visão sobre a relação entre arte e tecnologia. O foco do evento foi mostrar na prática como o design e o pensamento criativo se integram ao ecossistema de inovação, consolidando a escola como um espaço ativo para essas discussões na cidade.</p>
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: "40px" }}>
@@ -214,10 +214,7 @@ export default function EbatProject() {
           gap: "80px"
         }}>
           <div style={{ textAlign: "center" }}>
-            <h2 style={{ fontFamily: "var(--font-head)", fontSize: "2.5rem", margin: "0 0 1rem" }}>Redes Sociais</h2>
-            <p style={{ color: "var(--gray-600)", fontFamily: "var(--font-body)", fontSize: "1.1rem", maxWidth: "600px", margin: "0 auto" }}>
-              Design de sistema visual para os carrosséis e postagens únicas, focando no Módulo 2 de Computação Criativa e anúncios institucionais.
-            </p>
+            <h2 style={{ fontFamily: "var(--font-head)", fontSize: "2.5rem", margin: "0 0 2rem" }}>Redes Sociais</h2>
           </div>
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "40px", width: "100%" }}>
