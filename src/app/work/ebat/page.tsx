@@ -146,7 +146,7 @@ export default function EbatProject() {
                 viewport={{ once: true }}
                 style={{ borderRadius: "12px", overflow: "hidden", border: "1px solid var(--border)", backgroundColor: "rgba(255,255,255,0.5)", backdropFilter: "blur(10px)" }}
               >
-                 <img src="/img/ebat/mockup inner.png" alt="Flyer Inner Mockup" style={{ width: "100%", display: "block" }} />
+                 <img src="/img/ebat/mockup outer.png" alt="Flyer Outer Mockup" style={{ width: "100%", display: "block" }} />
               </motion.div>
               <motion.div 
                 initial={{ y: 50, opacity: 0 }}
@@ -155,7 +155,7 @@ export default function EbatProject() {
                 viewport={{ once: true }}
                 style={{ borderRadius: "12px", overflow: "hidden", border: "1px solid var(--border)", backgroundColor: "rgba(255,255,255,0.5)", backdropFilter: "blur(10px)" }}
               >
-                 <img src="/img/ebat/mockup outer.png" alt="Flyer Outer Mockup" style={{ width: "100%", display: "block" }} />
+                 <img src="/img/ebat/mockup inner.png" alt="Flyer Inner Mockup" style={{ width: "100%", display: "block" }} />
               </motion.div>
             </div>
 
@@ -172,7 +172,7 @@ export default function EbatProject() {
                 viewport={{ once: true }}
                 style={{ borderRadius: "12px", overflow: "hidden", border: "1px solid var(--border)", backgroundColor: "rgba(255,255,255,0.5)", backdropFilter: "blur(10px)" }}
               >
-                 <img src="/img/ebat/Inner Page.png" alt="Inner Page" style={{ width: "100%", display: "block" }} />
+                 <img src="/img/ebat/Outer Page.png" alt="Outer Page" style={{ width: "100%", display: "block" }} />
               </motion.div>
               <motion.div 
                 initial={{ y: 50, opacity: 0 }}
@@ -181,7 +181,7 @@ export default function EbatProject() {
                 viewport={{ once: true }}
                 style={{ borderRadius: "12px", overflow: "hidden", border: "1px solid var(--border)", backgroundColor: "rgba(255,255,255,0.5)", backdropFilter: "blur(10px)" }}
               >
-                 <img src="/img/ebat/Outer Page.png" alt="Outer Page" style={{ width: "100%", display: "block" }} />
+                 <img src="/img/ebat/Inner Page.png" alt="Inner Page" style={{ width: "100%", display: "block" }} />
               </motion.div>
             </div>
 
@@ -220,7 +220,7 @@ export default function EbatProject() {
             </p>
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "80px", maxWidth: "600px", margin: "0 auto", width: "100%" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "40px", width: "100%" }}>
             
             {/* Carousel 1 */}
             <motion.div
