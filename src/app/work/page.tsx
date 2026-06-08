@@ -171,6 +171,38 @@ export default function Work() {
             </div>
           </div>
 
+          {/* Project Card: EBAT */}
+          <div style={{
+            backgroundColor: "#F0Fdf4",
+            borderRadius: "var(--r-xl)",
+            border: "var(--border)",
+            padding: "40px",
+            display: "grid",
+            gridTemplateColumns: "1fr 1.5fr",
+            gap: "60px",
+            alignItems: "center",
+            boxShadow: "0 20px 40px rgba(0,0,0,0.02)",
+            color: "var(--fg)"
+          }}>
+            <div>
+              <h2 style={{ fontFamily: "var(--font-head)", fontSize: "3rem", color: "var(--fg)", margin: "0 0 0.5rem", lineHeight: 1.1 }}>
+                EBAT:<br/>Arte & Tecnologia
+              </h2>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.8rem", textTransform: "uppercase", letterSpacing: "1px", color: "var(--gray-600)", marginBottom: "2rem" }}>
+                Design Gráfico, Social Media
+              </div>
+              <p style={{ color: "var(--gray-600)", fontFamily: "var(--font-body)", lineHeight: 1.6, marginBottom: "2rem" }}>
+                Campanha audiovisual para o São Paulo Innovation Week (SPIW) e identidade visual para redes sociais.
+              </p>
+              <AnimatedButton href="/work/ebat" variant="outline">Ver Projeto</AnimatedButton>
+            </div>
+            <div style={{ padding: "40px", backgroundColor: "#dcfce7", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "var(--r-lg)", border: "1px solid #111" }}>
+              <div style={{ position: "relative", width: "100%", border: "1px solid #111", backgroundColor: "#fff", boxShadow: "0 15px 35px rgba(0,0,0,0.15)" }}>
+                <LiquidImage src="/img/ebat/mockup outer.png" alt="EBAT Project" fill={false} />
+              </div>
+            </div>
+          </div>
+
         </section>
       </main>
 
