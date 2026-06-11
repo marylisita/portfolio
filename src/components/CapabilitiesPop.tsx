@@ -1,8 +1,8 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 
 export default function CapabilitiesPop() {
-  const sectionRef = useRef<HTMLDivElement>(null);
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -22,6 +22,124 @@ export default function CapabilitiesPop() {
     return () => observer.disconnect();
   }, []);
 
+  const tagsData = [
+    { 
+      text: "Design Gráfico", 
+      color: "#FF2A85", 
+      hoverBg: "#ffd3e8",
+      icon: (
+        <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
+          <rect x="7" y="1" width="2" height="2" />
+          <rect x="7" y="3" width="2" height="2" />
+          <rect x="5" y="5" width="6" height="2" />
+          <rect x="1" y="7" width="14" height="2" />
+          <rect x="5" y="9" width="6" height="2" />
+          <rect x="7" y="11" width="2" height="2" />
+          <rect x="7" y="13" width="2" height="2" />
+        </svg>
+      )
+    },
+    { 
+      text: "Web & UI Design", 
+      color: "#3A86FF", 
+      hoverBg: "#d0e0fc",
+      icon: (
+        <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
+          <rect x="0" y="0" width="16" height="2" />
+          <rect x="0" y="2" width="2" height="10" />
+          <rect x="14" y="2" width="2" height="10" />
+          <rect x="3" y="3" width="2" height="2" />
+          <rect x="6" y="3" width="2" height="2" />
+          <rect x="3" y="7" width="10" height="2" />
+          <rect x="3" y="10" width="6" height="2" />
+          <rect x="0" y="12" width="16" height="2" />
+          <rect x="6" y="14" width="4" height="2" />
+        </svg>
+      )
+    },
+    { 
+      text: "Direção de Arte", 
+      color: "#FFAA00", 
+      hoverBg: "#ffe5a3",
+      icon: (
+        <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
+          <rect x="2" y="2" width="12" height="2" />
+          <rect x="1" y="4" width="14" height="8" />
+          <rect x="3" y="6" width="3" height="3" fill="#FF2A85" />
+          <rect x="10" y="6" width="3" height="3" fill="#00E5FF" />
+          <rect x="2" y="12" width="12" height="2" />
+        </svg>
+      )
+    },
+    { 
+      text: "Identidade Visual", 
+      color: "#8B5CF6", 
+      hoverBg: "#e8d8fc",
+      icon: (
+        <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
+          <rect x="7" y="0" width="2" height="2" />
+          <rect x="5" y="2" width="6" height="2" />
+          <rect x="3" y="4" width="10" height="2" />
+          <rect x="1" y="6" width="14" height="2" />
+          <rect x="3" y="8" width="10" height="2" />
+          <rect x="5" y="10" width="6" height="2" />
+          <rect x="7" y="12" width="2" height="2" />
+          <rect x="7" y="14" width="2" height="2" />
+        </svg>
+      )
+    },
+    { 
+      text: "Tecnologia Criativa", 
+      color: "#10B981", 
+      hoverBg: "#d4ffc8",
+      icon: (
+        <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
+          <rect x="8" y="0" width="4" height="2" />
+          <rect x="7" y="2" width="4" height="2" />
+          <rect x="6" y="4" width="4" height="2" />
+          <rect x="4" y="6" width="8" height="2" />
+          <rect x="5" y="8" width="5" height="2" />
+          <rect x="4" y="10" width="5" height="2" />
+          <rect x="3" y="12" width="5" height="2" />
+          <rect x="2" y="14" width="4" height="2" />
+        </svg>
+      )
+    },
+    { 
+      text: "IA Generativa", 
+      color: "#EC4899", 
+      hoverBg: "#ffd3f5",
+      icon: (
+        <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
+          <rect x="12" y="1" width="2" height="2" />
+          <rect x="11" y="3" width="2" height="2" />
+          <rect x="9" y="5" width="2" height="2" />
+          <rect x="7" y="7" width="2" height="2" />
+          <rect x="5" y="9" width="2" height="2" />
+          <rect x="3" y="11" width="2" height="2" />
+          <rect x="1" y="13" width="2" height="2" />
+          <rect x="14" y="5" width="1" height="1" />
+          <rect x="9" y="0" width="1" height="2" />
+          <rect x="8" y="1" width="3" height="1" />
+        </svg>
+      )
+    },
+    { 
+      text: "Prototipagem", 
+      color: "#14B8A6", 
+      hoverBg: "#cbfaf4",
+      icon: (
+        <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
+          <rect x="1" y="1" width="14" height="14" />
+          <rect x="3" y="3" width="10" height="2" fill="#fff" />
+          <rect x="3" y="6" width="4" height="4" fill="#a0a0a0" />
+          <rect x="9" y="6" width="4" height="4" fill="#a0a0a0" />
+          <rect x="5" y="12" width="6" height="2" fill="#fff" />
+        </svg>
+      )
+    }
+  ];
+
   return (
     <section className="capabilities" style={{ border: "none" }}>
       <div className="wrap">
@@ -30,37 +148,22 @@ export default function CapabilitiesPop() {
           Equilibrando estética experimental e usabilidade refinada para criar marcas e experiências digitais memoráveis.
         </p>
 
-        <div className="capabilities__tags" ref={sectionRef} style={{ padding: "30px 0 40px", maxWidth: "650px", margin: "0 auto", display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "16px" }}>
-          {[
-            { text: "Design Gráfico", color: "#FF5E5E", icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2L14 10L22 12L14 14L12 22L10 14L2 12L10 10Z"/></svg> },
-            { text: "Web & UI Design", color: "#3B82F6", icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2L15 9l7-1-4 6 2 7-6-4-6 4 2-7-4-6 7 1z"/></svg> },
-            { text: "Direção de Arte", color: "#F5A623", icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 3l9 16H3L12 3z"/><path d="M7 12h10"/></svg> },
-            { text: "Identidade Visual", color: "#8B5CF6", icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="12 2 15 9 22 9 17 14 18 21 12 17 6 21 7 14 2 9 9 9" /></svg> },
-            { text: "Tecnologia Criativa", color: "#10B981", icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20.8 4.6a5.5 5.5 0 00-7.7 0l-1.1 1-1.1-1a5.5 5.5 0 00-7.8 7.8l1 1 7.9 7.9 7.9-7.9 1-1a5.5 5.5 0 000-7.8z" /></svg> },
-            { text: "IA Generativa", color: "#EC4899", icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" transform="rotate(45 12 12)"/></svg> },
-            { text: "Prototipagem", color: "#14B8A6", icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg> }
-          ].map((tag, idx) => {
+        <div className="capabilities__tags" style={{ padding: "40px 0 40px", maxWidth: "720px", margin: "0 auto", display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "18px" }}>
+          {tagsData.map((tag, idx) => {
+            const isHovered = hoveredIdx === idx;
             return (
               <div 
                 key={idx} 
                 className="cap-tag" 
                 data-delay={idx}
                 style={{ 
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  margin: "0",
-                  fontFamily: "var(--font-body)",
-                  fontSize: "0.95rem",
-                  padding: "10px 24px",
-                  background: "#fff",
-                  color: "#111",
-                  border: "1px solid #111",
-                  borderRadius: "100px",
-                  boxShadow: "none"
+                  backgroundColor: isHovered ? tag.hoverBg : "#fff",
                 }}
+                onMouseEnter={() => setHoveredIdx(idx)}
+                onMouseLeave={() => setHoveredIdx(null)}
               >
-                <span style={{ display: "flex", color: tag.color }}>{tag.icon}</span> <span>{tag.text}</span>
+                <span className="cap-tag-icon" style={{ color: tag.color }}>{tag.icon}</span>
+                <span>{tag.text}</span>
               </div>
             );
           })}
