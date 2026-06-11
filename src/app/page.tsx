@@ -8,13 +8,11 @@ import GiantFooter from "@/components/GiantFooter";
 import Cursor from "@/components/Cursor";
 import SpreadCards from "@/components/SpreadCards";
 import CapabilitiesPop from "@/components/CapabilitiesPop";
-import Curtains from "@/components/Curtains";
 import Tamagotchi from "@/components/Tamagotchi";
 
 export default function Home() {
   return (
     <>
-      <Curtains />
       
       <nav className="nav">
         <div className="nav__inner">

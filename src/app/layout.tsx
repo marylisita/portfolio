@@ -4,6 +4,7 @@ import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
 import FloatingBackToTop from "@/components/FloatingBackToTop";
 import Cursor from "@/components/Cursor";
+import { PageTransitionProvider } from "@/components/Curtains";
 
 const poppins = Poppins({
   weight: ["400", "500", "600"],
@@ -40,11 +41,14 @@ export default function RootLayout({
       </head>
       <body className="antialiased">
         <SmoothScroll>
-          <Cursor />
-          {children}
-          <FloatingBackToTop />
+          <PageTransitionProvider>
+            <Cursor />
+            {children}
+            <FloatingBackToTop />
+          </PageTransitionProvider>
         </SmoothScroll>
       </body>
     </html>
   );
 }
+

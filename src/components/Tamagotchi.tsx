@@ -10,6 +10,15 @@ interface Particle {
   emoji: string;
 }
 
+type CatAction = "sitting" | "standing" | "walking" | "playing" | "grooming" | "sleeping" | "begging";
+
+interface CatState {
+  x: number;
+  targetX: number;
+  action: CatAction;
+  isFlipped: boolean;
+}
+
 export default function Tamagotchi() {
   const [status, setStatus] = useState<"sleeping" | "idle" | "eating" | "stats" | "walkingOut" | "walkingIn">("idle");
   const [particles, setParticles] = useState<Particle[]>([]);
@@ -20,6 +29,36 @@ export default function Tamagotchi() {
   const [starActive, setStarActive] = useState(false);
   const [isSpinning, setIsSpinning] = useState(false);
   const [blinking, setBlinking] = useState(false);
+
+  // Animation Frame Tick (updates every 200ms for retro pixel animations)
+  const [tick, setTick] = useState(0);
+
+  // Cats AI States
+  const [blackCat, setBlackCat] = useState<CatState>({
+    x: 18,
+    targetX: 18,
+    action: "sitting",
+    isFlipped: false
+  });
+
+  const [tabbyCat, setTabbyCat] = useState<CatState>({
+    x: 76,
+    targetX: 76,
+    action: "standing",
+    isFlipped: false
+  });
+
+  // Cat Speech Bubble Texts
+  const [blackCatMeow, setBlackCatMeow] = useState<string | null>(null);
+  const [tabbyCatMeow, setTabbyCatMeow] = useState<string | null>(null);
+
+  // Frame tick loop
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTick((t) => (t + 1) % 8);
+    }, 200);
+    return () => clearInterval(timer);
+  }, []);
 
   // Blinking eyes simulation
   useEffect(() => {
@@ -40,9 +79,177 @@ export default function Tamagotchi() {
     }
   }, [status]);
 
+  // Cats Random AI Behavior Loop (decides next action when idle/normal)
+  useEffect(() => {
+    if (status === "sleeping" || status === "eating" || status.startsWith("walking")) return;
+
+    const interval = setInterval(() => {
+      // 1. Black Cat AI
+      setBlackCat((prev) => {
+        if (prev.action === "walking") return prev; // Do not interrupt walks
+        const rand = Math.random();
+        if (rand < 0.3) {
+          // Walk to a new random coordinate in its zone (left half)
+          const newTarget = 12 + Math.random() * 32;
+          return {
+            ...prev,
+            action: "walking",
+            targetX: newTarget,
+            isFlipped: newTarget < prev.x
+          };
+        } else if (rand < 0.55) {
+          // Groom itself (lick paw)
+          return { ...prev, action: "grooming" };
+        } else if (rand < 0.7) {
+          // Play (jump/pounce)
+          return { ...prev, action: "playing" };
+        } else if (rand < 0.8) {
+          // Meow randomly
+          setBlackCatMeow(Math.random() > 0.5 ? "Miau!" : "❤️");
+          setTimeout(() => setBlackCatMeow(null), 1500);
+          return { ...prev, action: "sitting" };
+        } else {
+          return { ...prev, action: "sitting" };
+        }
+      });
+
+      // 2. Tabby Cat AI
+      setTabbyCat((prev) => {
+        if (prev.action === "walking") return prev;
+        const rand = Math.random();
+        if (rand < 0.3) {
+          // Walk to a new random coordinate in its zone (right half)
+          const newTarget = 48 + Math.random() * 35;
+          return {
+            ...prev,
+            action: "walking",
+            targetX: newTarget,
+            isFlipped: newTarget < prev.x
+          };
+        } else if (rand < 0.55) {
+          // Groom itself
+          return { ...prev, action: "grooming" };
+        } else if (rand < 0.7) {
+          // Play (roll on back waving paws)
+          return { ...prev, action: "playing" };
+        } else if (rand < 0.8) {
+          // Meow randomly
+          setTabbyCatMeow(Math.random() > 0.5 ? "Meow" : "😸");
+          setTimeout(() => setTabbyCatMeow(null), 1500);
+          return { ...prev, action: "standing" };
+        } else {
+          return { ...prev, action: "standing" };
+        }
+      });
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [status]);
+
+  // Walk physics loop (~30fps)
+  useEffect(() => {
+    const walkTimer = setInterval(() => {
+      // Move Black Cat
+      setBlackCat((prev) => {
+        if (prev.action !== "walking") return prev;
+        const dx = prev.targetX - prev.x;
+        if (Math.abs(dx) < 1.0) {
+          let nextAction: CatAction = "sitting";
+          if (status === "sleeping") nextAction = "sleeping";
+          else if (status === "eating") nextAction = "begging";
+          return { ...prev, x: prev.targetX, action: nextAction };
+        }
+        return {
+          ...prev,
+          x: prev.x + Math.sign(dx) * 0.8
+        };
+      });
+
+      // Move Tabby Cat
+      setTabbyCat((prev) => {
+        if (prev.action !== "walking") return prev;
+        const dx = prev.targetX - prev.x;
+        if (Math.abs(dx) < 1.0) {
+          let nextAction: CatAction = "standing";
+          if (status === "sleeping") nextAction = "sleeping";
+          else if (status === "eating") nextAction = "begging";
+          return { ...prev, x: prev.targetX, action: nextAction };
+        }
+        return {
+          ...prev,
+          x: prev.x + Math.sign(dx) * 0.8
+        };
+      });
+    }, 33);
+
+    return () => clearInterval(walkTimer);
+  }, [status]);
+
+  // Sync cats' targets with cabinet states (Eating, Sleeping, Outdoors)
+  useEffect(() => {
+    if (status === "eating") {
+      // Begging mode: walk to the dining table
+      setBlackCat((prev) => ({
+        ...prev,
+        action: "walking",
+        targetX: 32, // left side of desk
+        isFlipped: false // looking towards table
+      }));
+      setTabbyCat((prev) => ({
+        ...prev,
+        action: "walking",
+        targetX: 63, // right side of desk
+        isFlipped: true // looking towards table
+      }));
+      setBlackCatMeow("🧁?");
+      setTabbyCatMeow("Meow! 😋");
+      setTimeout(() => {
+        setBlackCatMeow(null);
+        setTabbyCatMeow(null);
+      }, 1800);
+    } 
+    
+    else if (status === "sleeping") {
+      // Sleeping mode: curl up together at the foot of the bed
+      setBlackCat((prev) => ({
+        ...prev,
+        action: "walking",
+        targetX: 22,
+        isFlipped: false
+      }));
+      setTabbyCat((prev) => ({
+        ...prev,
+        action: "walking",
+        targetX: 30,
+        isFlipped: true
+      }));
+    } 
+    
+    else if (status === "walkingOut") {
+      // Outdoors mode: walk towards the doorway and wave
+      setBlackCat((prev) => ({
+        ...prev,
+        action: "walking",
+        targetX: 74,
+        isFlipped: false
+      }));
+      setTabbyCat((prev) => ({
+        ...prev,
+        action: "walking",
+        targetX: 84,
+        isFlipped: false
+      }));
+      setBlackCatMeow("👋");
+      setTabbyCatMeow("Miau! 🌸");
+      setTimeout(() => {
+        setBlackCatMeow(null);
+        setTabbyCatMeow(null);
+      }, 2000);
+    }
+  }, [status]);
+
   const spawnParticle = (emoji: string) => {
     const id = Date.now() + Math.random();
-    // Bounds restricted to fits the LCD overlay screen
     const x = 20 + Math.random() * 60;
     const y = 30 + Math.random() * 30;
     setParticles((prev) => [...prev, { id, x, y, emoji }]);
@@ -56,6 +263,9 @@ export default function Tamagotchi() {
     if (status === "sleeping") {
       setStatus("idle");
       spawnParticle("💤");
+      // Wake up the cats and send them back to room exploration
+      setBlackCat((prev) => ({ ...prev, action: "sitting", targetX: prev.x }));
+      setTabbyCat((prev) => ({ ...prev, action: "standing", targetX: prev.x }));
     } else {
       setStatus("sleeping");
       spawnParticle("🌙");
@@ -89,6 +299,9 @@ export default function Tamagotchi() {
       spawnParticle("❤️");
       setStatus("idle");
       setCupcakeActive(false);
+      // Reset cats to normal exploratory actions
+      setBlackCat((prev) => ({ ...prev, action: "sitting", targetX: prev.x }));
+      setTabbyCat((prev) => ({ ...prev, action: "standing", targetX: prev.x }));
     }, 1800);
   };
 
@@ -105,6 +318,9 @@ export default function Tamagotchi() {
     setTimeout(() => {
       setStatus("idle");
       spawnParticle("👋");
+      // Reset cats
+      setBlackCat((prev) => ({ ...prev, action: "sitting", targetX: prev.x }));
+      setTabbyCat((prev) => ({ ...prev, action: "standing", targetX: prev.x }));
     }, 3600);
   };
 
@@ -121,6 +337,8 @@ export default function Tamagotchi() {
     if (status === "sleeping") {
       setStatus("idle");
       spawnParticle("💤");
+      setBlackCat((prev) => ({ ...prev, action: "sitting", targetX: prev.x }));
+      setTabbyCat((prev) => ({ ...prev, action: "standing", targetX: prev.x }));
       return;
     }
     if (status.startsWith("walking") || status === "stats") return;
@@ -131,7 +349,32 @@ export default function Tamagotchi() {
     setTimeout(() => setStarActive(false), 500);
   };
 
-  // Determine Chix movement animations
+  // Click on Black Cat
+  const handleBlackCatClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Avoid triggering pet action
+    setBlackCat((prev) => ({
+      ...prev,
+      action: "playing",
+      isFlipped: !prev.isFlipped
+    }));
+    setBlackCatMeow(Math.random() > 0.5 ? "Miau! ❤️" : "Purr...");
+    spawnParticle("❤️");
+    setTimeout(() => setBlackCatMeow(null), 1500);
+  };
+
+  // Click on Tabby Cat
+  const handleTabbyCatClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setTabbyCat((prev) => ({
+      ...prev,
+      action: "playing",
+      isFlipped: !prev.isFlipped
+    }));
+    setTabbyCatMeow(Math.random() > 0.5 ? "Meow! 😸" : "Ronronar");
+    spawnParticle("✨");
+    setTimeout(() => setTabbyCatMeow(null), 1500);
+  };
+
   const getChixAnimation = () => {
     switch (status) {
       case "eating":
@@ -155,7 +398,7 @@ export default function Tamagotchi() {
         aspectRatio: "1024 / 819"
       }}
     >
-      {/* 1. MOCKUP HOUSING IMAGE */}
+      {/* 1. MOCKUP HOUSING IMAGE (Transparent png) */}
       <img 
         src="/img/pixel_chix_bg.png" 
         alt="Pixel Chix Cabinet" 
@@ -171,7 +414,7 @@ export default function Tamagotchi() {
           top: "42.12%",
           width: "35.25%",
           height: "22.83%",
-          backgroundColor: "#8be4eb", // soft retro LCD cyan/blue
+          backgroundColor: "#8be4eb", // Soft retro LCD cyan
         }}
         onClick={handlePet}
       >
@@ -187,7 +430,7 @@ export default function Tamagotchi() {
           {particles.map((p) => (
             <motion.span
               key={p.id}
-              className="absolute text-xs z-30 pointer-events-none"
+              className="absolute text-xs z-35 pointer-events-none"
               initial={{ opacity: 1, scale: 0.5, x: p.x, y: p.y }}
               animate={{ opacity: 0, scale: 1.4, y: p.y - 30, x: p.x + (Math.random() - 0.5) * 10 }}
               exit={{ opacity: 0 }}
@@ -205,7 +448,7 @@ export default function Tamagotchi() {
           <span>🔋 99%</span>
         </div>
 
-        {/* room graphics */}
+        {/* Room Graphics */}
         {status === "stats" ? (
           /* TCC STATS VIEW */
           <div className="w-full h-full flex flex-col justify-center px-2 pt-2 text-[6.5px] leading-[1.25] text-slate-700 font-mono z-10">
@@ -232,7 +475,7 @@ export default function Tamagotchi() {
           /* ROOM ANIMATION VIEW */
           <div className="relative w-full h-full flex items-end justify-center">
             
-            {/* Room Background SVG (exact copy of mockup background) */}
+            {/* Room Background SVG */}
             <svg viewBox="0 0 180 95" className="absolute inset-0 w-full h-full z-0 pointer-events-none">
               {/* Floor line */}
               <rect x="0" y="80" width="180" height="15" fill="#58ccd4" />
@@ -295,38 +538,150 @@ export default function Tamagotchi() {
             )}
 
             {/* ============================================================== */}
-            {/* GATINHA 1: PRETINHA MAGRINHA (Left side)                       */}
+            {/* GATINHA 1: PRETINHA MAGRINHA (AI Behaviors & Custom SVG Frames)*/}
             {/* ============================================================== */}
-            <div className="absolute left-[18%] bottom-[2px] w-[12%] h-[20%] z-10">
-              <svg viewBox="0 0 10 10" width="100%" height="100%" style={{ imageRendering: "pixelated" }}>
-                {/* Body */}
-                <rect x="2" y="4" width="5" height="5" fill="#202025" />
-                {/* Head */}
-                <rect x="4" y="1" width="4" height="4" fill="#202025" />
-                {/* Ears */}
-                <rect x="4" y="0" width="1" height="1" fill="#202025" />
-                <rect x="7" y="0" width="1" height="1" fill="#202025" />
-                {/* Green Eyes */}
-                {status === "sleeping" ? (
-                  <path d="M 5 2 H 6 V 3 H 5 Z M 7 2 H 8 V 3 H 7 Z" fill="#111" />
-                ) : (
+            <motion.div
+              onClick={handleBlackCatClick}
+              className="absolute bottom-[2px] w-[12%] h-[20%] z-15 cursor-pointer"
+              style={{
+                left: `${blackCat.x}%`,
+                transformOrigin: "bottom center",
+              }}
+              animate={
+                blackCat.action === "sleeping"
+                  ? { y: [0, 0.4, 0], scaleY: [1, 1.05, 1], transition: { repeat: Infinity, duration: 2.2, ease: "easeInOut" } }
+                  : blackCat.action === "walking"
+                  ? { y: [0, -1.5, 0], transition: { repeat: Infinity, duration: 0.2, ease: "linear" } }
+                  : blackCat.action === "playing"
+                  ? { y: [0, -6, 0, -4, 0], scaleY: [1, 0.6, 1.2, 0.7, 1], transition: { duration: 0.8 } }
+                  : blackCat.action === "begging"
+                  ? { y: [0, -2.5, 0], transition: { repeat: Infinity, duration: 0.4, ease: "easeOut" } }
+                  : { y: 0 }
+              }
+            >
+              {/* Custom Meow Speech Bubble */}
+              {blackCatMeow && (
+                <div className="absolute bottom-[110%] left-1/2 -translate-x-1/2 bg-white text-slate-800 text-[5px] font-bold px-1 py-0.5 rounded border border-slate-900 shadow-sm pointer-events-none select-none z-30 font-mono whitespace-nowrap animate-bounce">
+                  {blackCatMeow}
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-x-[2px] border-x-transparent border-t-[2px] border-t-white" />
+                  <div className="absolute top-[calc(100%+0.5px)] left-1/2 -translate-x-1/2 w-0 h-0 border-x-[2.5px] border-x-transparent border-t-[2.5px] border-t-slate-900 -z-10" />
+                </div>
+              )}
+
+              <svg 
+                viewBox="0 0 10 10" 
+                width="100%" 
+                height="100%" 
+                style={{ 
+                  imageRendering: "pixelated",
+                  transform: `scaleX(${blackCat.isFlipped ? -1 : 1})`
+                }}
+              >
+                {blackCat.action === "sleeping" ? (
+                  /* SLEEPING FRAME: Curled up */
                   <>
-                    <rect x="5" y="2" width="1" height="1" fill="#4ade80" />
-                    <rect x="7" y="2" width="1" height="1" fill="#4ade80" />
+                    <rect x="2" y="5" width="6" height="4" fill="#202025" rx="1.5" />
+                    <rect x="4" y="4" width="4" height="4" fill="#202025" />
+                    <rect x="5" y="3" width="1" height="1" fill="#202025" />
+                    <rect x="7" y="3" width="1" height="1" fill="#202025" />
+                    <rect x="5" y="5" width="1" height="1" fill="#111" />
+                    <rect x="7" y="5" width="1" height="1" fill="#111" />
+                    <rect x="1" y="7" width="2" height="1" fill="#202025" />
+                  </>
+                ) : blackCat.action === "grooming" ? (
+                  /* GROOMING FRAME: Licking paw */
+                  <>
+                    <rect x="2" y="4" width="5" height="5" fill="#202025" />
+                    <rect x="3" y="2" width="4" height="4" fill="#202025" />
+                    <rect x="3" y="1" width="1" height="1" fill="#202025" />
+                    <rect x="6" y="1" width="1" height="1" fill="#202025" />
+                    <rect x="4" y="3" width="1" height="1" fill="#111" />
+                    <rect x="6" y="3" width="1" height="1" fill="#111" />
+                    {tick % 2 === 0 ? (
+                      <>
+                        <rect x="1" y="3" width="2" height="2" fill="#202025" />
+                        <rect x="3" y="3.5" width="1" height="1" fill="#ff9ad5" /> {/* Tongue */}
+                      </>
+                    ) : (
+                      <rect x="1.5" y="5" width="1.5" height="1.5" fill="#202025" />
+                    )}
+                    <rect x="0" y="4" width="2" height="1" fill="#202025" />
+                    <rect x="3" y="9" width="1" height="1" fill="#202025" />
+                    <rect x="6" y="9" width="1" height="1" fill="#202025" />
+                  </>
+                ) : blackCat.action === "begging" ? (
+                  /* BEGGING FRAME: Stand on hind legs looking up */
+                  <>
+                    <rect x="3" y="3" width="4" height="6" fill="#202025" />
+                    <rect x="4" y="0" width="4" height="4" fill="#202025" />
+                    <rect x="4" y="-1" width="1" height="1" fill="#202025" />
+                    <rect x="7" y="-1" width="1" height="1" fill="#202025" />
+                    <rect x="5" y="1.5" width="1" height="1" fill="#4ade80" />
+                    <rect x="7" y="1.5" width="1" height="1" fill="#4ade80" />
+                    {tick % 2 === 0 ? (
+                      <>
+                        <rect x="1" y="2.5" width="2" height="1" fill="#202025" />
+                        <rect x="1.5" y="1.5" width="1" height="1" fill="#202025" />
+                      </>
+                    ) : (
+                      <rect x="1.5" y="3" width="2" height="1" fill="#202025" />
+                    )}
+                    <rect x="3" y="9" width="1.2" height="1" fill="#202025" />
+                    <rect x="6" y="9" width="1.2" height="1" fill="#202025" />
+                    <rect x="7" y="4" width="1" height="3" fill="#202025" />
+                  </>
+                ) : blackCat.action === "walking" ? (
+                  /* WALKING FRAME: Alternating legs */
+                  <>
+                    <rect x="2" y="4" width="5" height="5" fill="#202025" />
+                    <rect x="4" y={tick % 2 === 0 ? 1 : 2} width="4" height="4" fill="#202025" />
+                    <rect x="4" y={tick % 2 === 0 ? 0 : 1} width="1" height="1" fill="#202025" />
+                    <rect x="7" y={tick % 2 === 0 ? 0 : 1} width="1" height="1" fill="#202025" />
+                    <rect x="5" y={tick % 2 === 0 ? 2 : 3} width="1" height="1" fill="#4ade80" />
+                    <rect x="7" y={tick % 2 === 0 ? 2 : 3} width="1" height="1" fill="#4ade80" />
+                    {tick % 2 === 0 ? (
+                      <>
+                        <rect x="3" y="8.5" width="1" height="1.2" fill="#202025" />
+                        <rect x="6" y="9.2" width="1" height="1" fill="#202025" />
+                      </>
+                    ) : (
+                      <>
+                        <rect x="3" y="9.2" width="1" height="1.2" fill="#202025" />
+                        <rect x="6" y="8.5" width="1" height="1" fill="#202025" />
+                      </>
+                    )}
+                    <rect x="0" y={tick % 2 === 0 ? 4 : 5} width="2" height="1" fill="#202025" />
+                  </>
+                ) : (
+                  /* DEFAULT SITTING / IDLE */
+                  <>
+                    <rect x="2" y="4" width="5" height="5" fill="#202025" />
+                    <rect x="4" y="1" width="4" height="4" fill="#202025" />
+                    <rect x="4" y="0" width="1" height="1" fill="#202025" />
+                    <rect x="7" y="0" width="1" height="1" fill="#202025" />
+                    {blinking ? (
+                      <>
+                        <rect x="5" y="2.5" width="1" height="0.5" fill="#111" />
+                        <rect x="7" y="2.5" width="1" height="0.5" fill="#111" />
+                      </>
+                    ) : (
+                      <>
+                        <rect x="5" y="2" width="1" height="1" fill="#4ade80" />
+                        <rect x="7" y="2" width="1" height="1" fill="#4ade80" />
+                      </>
+                    )}
+                    <motion.rect 
+                      x="0" y="4" width="2" height="1" 
+                      fill="#202025" 
+                      animate={{ rotate: [0, 15, -15, 0], originY: 0.5 }}
+                      transition={{ repeat: Infinity, duration: 1.2 }}
+                    />
+                    <rect x="3" y="9" width="1" height="1" fill="#202025" />
+                    <rect x="6" y="9" width="1" height="1" fill="#202025" />
                   </>
                 )}
-                {/* Tail */}
-                <motion.rect 
-                  x="0" y="4" width="2" height="1" 
-                  fill="#202025" 
-                  animate={status === "sleeping" ? {} : { rotate: [0, 15, -15, 0], originY: 0.5 }}
-                  transition={{ repeat: Infinity, duration: 1.2 }}
-                />
-                {/* Feet */}
-                <rect x="3" y="9" width="1" height="1" fill="#202025" />
-                <rect x="6" y="9" width="1" height="1" fill="#202025" />
               </svg>
-            </div>
+            </motion.div>
 
             {/* ============================================================== */}
             {/* BIRD STAND AND YELLOW BIRD                                     */}
@@ -338,7 +693,7 @@ export default function Tamagotchi() {
               </svg>
             </div>
             <motion.div
-              className="absolute left-[64%] bottom-[30%] w-[10%] h-[15%] z-15"
+              className="absolute left-[64%] bottom-[30%] w-[10%] h-[15%] z-10"
               animate={
                 status === "sleeping" 
                   ? { y: [0, 0.4, 0] } 
@@ -362,51 +717,192 @@ export default function Tamagotchi() {
             </motion.div>
 
             {/* ============================================================== */}
-            {/* GATINHA 2: TIGRADA GORDINHA (Right side)                       */}
+            {/* GATINHA 2: TIGRADA GORDINHA (AI Behaviors & Custom SVG Frames) */}
             {/* ============================================================== */}
-            <div className="absolute left-[76%] bottom-[2px] w-[14%] h-[22%] z-10">
-              <svg viewBox="0 0 12 10" width="100%" height="100%" style={{ imageRendering: "pixelated" }}>
-                {/* Chubby body: Grey base */}
-                <rect x="2" y="3" width="7" height="5" fill="#8f8f96" />
-                {/* White belly & chest */}
-                <rect x="3" y="5" width="4" height="3" fill="#ffffff" />
-                {/* Stripes */}
-                <rect x="2" y="4" width="2" height="1" fill="#604835" />
-                <rect x="6" y="3" width="2" height="1" fill="#604835" />
-                <rect x="7" y="5" width="2" height="1" fill="#604835" />
-                {/* Head */}
-                <rect x="1" y="0" width="5" height="4" fill="#8f8f96" />
-                {/* Ears */}
-                <rect x="1" y="0" width="1" height="1" fill="#604835" />
-                <rect x="4" y="0" width="1" height="1" fill="#604835" />
-                {/* Eyes (Yellow) */}
-                {status === "sleeping" ? (
-                  <path d="M 2 2 H 3 V 3 H 2 Z M 4 2 H 5 V 3 H 4 Z" fill="#111" />
-                ) : (
+            <motion.div
+              onClick={handleTabbyCatClick}
+              className="absolute bottom-[2px] w-[14%] h-[22%] z-15 cursor-pointer"
+              style={{
+                left: `${tabbyCat.x}%`,
+                transformOrigin: "bottom center",
+              }}
+              animate={
+                tabbyCat.action === "sleeping"
+                  ? { y: [0, 0.4, 0], scaleY: [1, 1.05, 1], transition: { repeat: Infinity, duration: 2.0, ease: "easeInOut" } }
+                  : tabbyCat.action === "walking"
+                  ? { y: [0, -1.5, 0], transition: { repeat: Infinity, duration: 0.2, ease: "linear" } }
+                  : tabbyCat.action === "playing"
+                  ? { y: [0, -3, 0], rotate: [0, 360], transition: { duration: 0.65 } }
+                  : tabbyCat.action === "begging"
+                  ? { y: [0, -2.5, 0], transition: { repeat: Infinity, duration: 0.4, ease: "easeOut", delay: 0.1 } }
+                  : { y: 0 }
+              }
+            >
+              {/* Custom Meow Speech Bubble */}
+              {tabbyCatMeow && (
+                <div className="absolute bottom-[110%] left-1/2 -translate-x-1/2 bg-white text-slate-800 text-[5px] font-bold px-1 py-0.5 rounded border border-slate-900 shadow-sm pointer-events-none select-none z-30 font-mono whitespace-nowrap animate-bounce">
+                  {tabbyCatMeow}
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-x-[2px] border-x-transparent border-t-[2px] border-t-white" />
+                  <div className="absolute top-[calc(100%+0.5px)] left-1/2 -translate-x-1/2 w-0 h-0 border-x-[2.5px] border-x-transparent border-t-[2.5px] border-t-slate-900 -z-10" />
+                </div>
+              )}
+
+              <svg 
+                viewBox="0 0 12 10" 
+                width="100%" 
+                height="100%" 
+                style={{ 
+                  imageRendering: "pixelated",
+                  transform: tabbyCat.action === "playing" ? "none" : `scaleX(${tabbyCat.isFlipped ? -1 : 1})`
+                }}
+              >
+                {tabbyCat.action === "sleeping" ? (
+                  /* SLEEPING FRAME: Curled up chubby body */
                   <>
-                    <rect x="2" y="2" width="1" height="1" fill="#fbbf24" />
-                    <rect x="4" y="2" width="1" height="1" fill="#fbbf24" />
+                    <rect x="2" y="4.5" width="8" height="4.5" fill="#8f8f96" rx="2" />
+                    <rect x="4" y="6" width="4" height="2.5" fill="#ffffff" />
+                    <rect x="2.5" y="5.5" width="1.5" height="1" fill="#604835" />
+                    <rect x="8.5" y="5.5" width="1" height="1" fill="#604835" />
+                    <rect x="2" y="3.5" width="5" height="4" fill="#8f8f96" />
+                    <rect x="2" y="2.5" width="1" height="1" fill="#604835" />
+                    <rect x="5" y="2.5" width="1" height="1" fill="#604835" />
+                    <rect x="3" y="4.5" width="1" height="0.8" fill="#111" />
+                    <rect x="5" y="4.5" width="1" height="0.8" fill="#111" />
+                  </>
+                ) : tabbyCat.action === "grooming" ? (
+                  /* GROOMING FRAME: Sitting licking paw */
+                  <>
+                    <rect x="3" y="3" width="7" height="6" fill="#8f8f96" />
+                    <rect x="4" y="5.5" width="4.5" height="3.5" fill="#ffffff" />
+                    <rect x="8" y="4.5" width="1.5" height="1" fill="#604835" />
+                    <rect x="2" y="1" width="5" height="4.2" fill="#8f8f96" />
+                    <rect x="2" y="0" width="1" height="1" fill="#604835" />
+                    <rect x="5" y="0" width="1" height="1" fill="#604835" />
+                    <rect x="3" y="2.2" width="1" height="1" fill="#111" />
+                    <rect x="5" y="2.2" width="1" height="1" fill="#111" />
+                    {tick % 2 === 0 ? (
+                      <>
+                        <rect x="1" y="2.5" width="1.5" height="1.5" fill="#8f8f96" />
+                        <rect x="2" y="2.2" width="1" height="0.8" fill="#ff9ad5" /> {/* Tongue */}
+                      </>
+                    ) : (
+                      <rect x="1.5" y="4.5" width="1.5" height="1.5" fill="#8f8f96" />
+                    )}
+                    <rect x="10" y="5" width="1" height="3" fill="#604835" />
+                  </>
+                ) : tabbyCat.action === "playing" ? (
+                  /* PLAYING FRAME: Rolling on back waving paws */
+                  <>
+                    <rect x="2" y="4" width="7.5" height="5" fill="#8f8f96" />
+                    <rect x="3.5" y="4" width="4.5" height="3" fill="#ffffff" />
+                    <rect x="2.5" y="5" width="1.5" height="1" fill="#604835" />
+                    <rect x="7" y="6" width="1.5" height="1" fill="#604835" />
+                    <rect x="2" y="1" width="5" height="4.2" fill="#8f8f96" />
+                    <rect x="2" y="0" width="1" height="1" fill="#604835" />
+                    <rect x="5" y="0" width="1" height="1" fill="#604835" />
+                    <rect x="3" y="2.2" width="1" height="1.8" fill="#fbbf24" />
+                    <rect x="5" y="2.2" width="1" height="1.8" fill="#fbbf24" />
+                    {tick % 2 === 0 ? (
+                      <>
+                        <rect x="4.5" y="7" width="1.2" height="2" fill="#ffffff" />
+                        <rect x="7.5" y="7" width="1.2" height="2" fill="#ffffff" />
+                      </>
+                    ) : (
+                      <>
+                        <rect x="3.5" y="7.5" width="1.2" height="1.5" fill="#ffffff" />
+                        <rect x="6.5" y="7.5" width="1.2" height="1.5" fill="#ffffff" />
+                      </>
+                    )}
+                    <rect x="9.5" y={tick % 2 === 0 ? 3 : 5} width="1.2" height="2" fill="#604835" />
+                  </>
+                ) : tabbyCat.action === "begging" ? (
+                  /* BEGGING FRAME: sitting looking up */
+                  <>
+                    <rect x="3" y="2.5" width="7" height="6.5" fill="#8f8f96" />
+                    <rect x="4.5" y="4.5" width="4" height="4.5" fill="#ffffff" />
+                    <rect x="2.5" y="-0.5" width="5.2" height="4" fill="#8f8f96" />
+                    <rect x="2.5" y="-1.5" width="1" height="1.2" fill="#604835" />
+                    <rect x="5.5" y="-1.5" width="1" height="1.2" fill="#604835" />
+                    <rect x="3.5" y="0.5" width="1.2" height="1.2" fill="#fbbf24" />
+                    <rect x="5.5" y="0.5" width="1.2" height="1.2" fill="#fbbf24" />
+                    {tick % 2 === 0 ? (
+                      <>
+                        <rect x="1" y="2" width="2" height="1.2" fill="#8f8f96" />
+                        <rect x="1.5" y="1" width="1" height="1.2" fill="#8f8f96" />
+                      </>
+                    ) : (
+                      <rect x="1.5" y="2.5" width="2.2" height="1.2" fill="#8f8f96" />
+                    )}
+                    <rect x="3.5" y="9" width="1.5" height="1" fill="#8f8f96" />
+                    <rect x="7" y="9" width="1.5" height="1" fill="#8f8f96" />
+                    <rect x="10" y="4.5" width="1" height="3" fill="#604835" />
+                  </>
+                ) : tabbyCat.action === "walking" ? (
+                  /* WALKING FRAME: Alternating legs */
+                  <>
+                    <rect x="2" y="3" width="7.5" height="5.2" fill="#8f8f96" />
+                    <rect x="3" y="5" width="4.5" height="3" fill="#ffffff" />
+                    <rect x="2" y="4" width="1.5" height="1" fill="#604835" />
+                    <rect x="6" y="3" width="1.5" height="1" fill="#604835" />
+                    <rect x="1" y={tick % 2 === 0 ? 0 : 1} width="5.2" height="4" fill="#8f8f96" />
+                    <rect x="1" y={tick % 2 === 0 ? -1 : 0} width="1" height="1.2" fill="#604835" />
+                    <rect x="4" y={tick % 2 === 0 ? -1 : 0} width="1" height="1.2" fill="#604835" />
+                    <rect x="2" y={tick % 2 === 0 ? 1.5 : 2.5} width="1.2" height="1.2" fill="#fbbf24" />
+                    <rect x="4" y={tick % 2 === 0 ? 1.5 : 2.5} width="1.2" height="1.2" fill="#fbbf24" />
+                    {tick % 2 === 0 ? (
+                      <>
+                        <rect x="3" y="8.2" width="1.5" height="1.8" fill="#8f8f96" />
+                        <rect x="7" y="8" width="1.5" height="1" fill="#8f8f96" />
+                      </>
+                    ) : (
+                      <>
+                        <rect x="3" y="8" width="1.5" height="1" fill="#8f8f96" />
+                        <rect x="7" y="8.2" width="1.5" height="1.8" fill="#8f8f96" />
+                      </>
+                    )}
+                    <rect x="9.5" y={tick % 2 === 0 ? 4 : 5} width="1" height="3" fill="#604835" />
+                  </>
+                ) : (
+                  /* DEFAULT STANDING / IDLE */
+                  <>
+                    <rect x="2" y="3" width="7" height="5" fill="#8f8f96" />
+                    <rect x="3" y="5" width="4" height="3" fill="#ffffff" />
+                    <rect x="2" y="4" width="2" height="1" fill="#604835" />
+                    <rect x="6" y="3" width="2" height="1" fill="#604835" />
+                    <rect x="7" y="5" width="2" height="1" fill="#604835" />
+                    <rect x="1" y="0" width="5" height="4" fill="#8f8f96" />
+                    <rect x="1" y="0" width="1" height="1" fill="#604835" />
+                    <rect x="4" y="0" width="1" height="1" fill="#604835" />
+                    {blinking ? (
+                      <>
+                        <rect x="2" y="2.5" width="1" height="0.5" fill="#111" />
+                        <rect x="4" y="2.5" width="1" height="0.5" fill="#111" />
+                      </>
+                    ) : (
+                      <>
+                        <rect x="2" y="2" width="1" height="1" fill="#fbbf24" />
+                        <rect x="4" y="2" width="1" height="1" fill="#fbbf24" />
+                      </>
+                    )}
+                    <rect x="3" y="8" width="1.5" height="2" fill="#8f8f96" />
+                    <rect x="7" y="8" width="1.5" height="2" fill="#8f8f96" />
+                    <motion.path 
+                      d="M 9 4 H 10 V 7 H 9 Z" 
+                      fill="#604835"
+                      animate={{ rotate: [0, -12, 12, 0], originX: 0 }}
+                      transition={{ repeat: Infinity, duration: 1.4 }}
+                    />
                   </>
                 )}
-                {/* Legs */}
-                <rect x="3" y="8" width="1.5" height="2" fill="#8f8f96" />
-                <rect x="7" y="8" width="1.5" height="2" fill="#8f8f96" />
-                {/* Tail */}
-                <motion.path 
-                  d="M 9 4 H 10 V 7 H 9 Z" 
-                  fill="#604835"
-                  animate={status === "sleeping" ? {} : { rotate: [0, -12, 12, 0], originX: 0 }}
-                  transition={{ repeat: Infinity, duration: 1.4 }}
-                />
               </svg>
-            </div>
+            </motion.div>
 
             {/* ============================================================== */}
             {/* CORE INTERACTION VIEW: SLEEPING VS TYPING                      */}
             {/* ============================================================== */}
             {status === "sleeping" ? (
               /* BED AND SLEEPING GIRL */
-              <div className="absolute left-[36%] bottom-[2px] w-[28%] h-[24%] z-15">
+              <div className="absolute left-[36%] bottom-[2px] w-[28%] h-[24%] z-5">
                 <svg viewBox="0 0 28 20" width="100%" height="100%" style={{ imageRendering: "pixelated" }}>
                   {/* Bed Base */}
                   <rect x="1" y="6" width="26" height="14" fill="#aab0f7" stroke="#1a1a27" strokeWidth="1" />
@@ -515,7 +1011,7 @@ export default function Tamagotchi() {
                 </motion.div>
 
                 {/* Desk/Table */}
-                <div className="absolute left-[44%] bottom-[2px] w-[22%] h-[24%] z-15">
+                <div className="absolute left-[44%] bottom-[2px] w-[22%] h-[24%] z-5">
                   <svg viewBox="0 0 24 20" width="100%" height="100%" style={{ imageRendering: "pixelated" }}>
                     {/* Tabletop */}
                     <rect x="1" y="5" width="22" height="3" fill="#a06040" stroke="#1a1a27" strokeWidth="1.2" />
@@ -534,9 +1030,9 @@ export default function Tamagotchi() {
         )}
       </div>
 
-      {/* 3. INVISIBLE BUTTON HITBOXES (Placed exactly over the 4 physical buttons in the mockup image) */}
+      {/* 3. INVISIBLE BUTTON HITBOXES */}
       
-      {/* Button 1: Bed/Sleep (teal circular base, Leftmost) */}
+      {/* Button 1: Bed/Sleep */}
       <button 
         onClick={handleSleepToggle}
         className="absolute cursor-pointer rounded-full bg-transparent border-0 opacity-0 active:scale-95 transition-transform"
@@ -550,7 +1046,7 @@ export default function Tamagotchi() {
         title="Dormir / Wakeup"
       />
 
-      {/* Button 2: Food bowl (teal circular base, Center-left) */}
+      {/* Button 2: Food bowl */}
       <button 
         onClick={handleFeed}
         className="absolute cursor-pointer rounded-full bg-transparent border-0 opacity-0 active:scale-95 transition-transform"
@@ -564,7 +1060,7 @@ export default function Tamagotchi() {
         title="Alimentar / Feed"
       />
 
-      {/* Button 3: Clothes hanger (teal circular base, Center-right) */}
+      {/* Button 3: Clothes hanger */}
       <button 
         onClick={handleCloset}
         className="absolute cursor-pointer rounded-full bg-transparent border-0 opacity-0 active:scale-95 transition-transform"
@@ -578,7 +1074,7 @@ export default function Tamagotchi() {
         title="Closet / Change Outfit"
       />
 
-      {/* Button 4: Outdoors/Door (red circular base, Rightmost) */}
+      {/* Button 4: Outdoors/Door */}
       <button 
         onClick={handleOutdoors}
         className="absolute cursor-pointer rounded-full bg-transparent border-0 opacity-0 active:scale-95 transition-transform"
