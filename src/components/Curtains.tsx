@@ -4,72 +4,102 @@ import { useEffect, useState } from "react";
 
 export default function Curtains() {
   const [isVisible, setIsVisible] = useState(true);
+  const cols = 16;
+  const rows = 12;
 
-  // We unmount or hide it completely after the animation finishes
   useEffect(() => {
+    // Total transition duration (sweep ends at ~1.5s)
     const timer = setTimeout(() => {
       setIsVisible(false);
-    }, 3500); 
+    }, 1800); 
     return () => clearTimeout(timer);
   }, []);
 
   if (!isVisible) return null;
 
-  return (
-    <motion.div
-      initial={{ opacity: 1 }}
-      animate={{ opacity: 0 }}
-      transition={{ duration: 1.8, ease: "easeInOut", delay: 1.2 }}
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100vw",
-        height: "100vh",
-        zIndex: 9999,
-        pointerEvents: "none",
-        background: "rgba(252, 248, 255, 0.8)",
-        backdropFilter: "blur(20px)", // Reduced blur slightly for performance
-        WebkitBackdropFilter: "blur(20px)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        overflow: "hidden"
-      }}
-    >
-      {/* Organic Smoke / Cloud Texture */}
-      <motion.div
-        initial={{ scale: 1, opacity: 0.2 }}
-        animate={{ scale: 1.2, opacity: 0 }}
-        transition={{ duration: 2, delay: 0.8, ease: "easeInOut" }}
-        style={{
-          position: "absolute", 
-          inset: -200, 
-          pointerEvents: "none",
-          // Replaced SVG turbulence with a safe radial gradient to avoid GPU crashes
-          backgroundImage: "radial-gradient(circle at 50% 50%, rgba(200, 200, 255, 0.2), transparent 70%)",
-          backgroundSize: "cover", 
-          mixBlendMode: "multiply"
-        }} 
-      />
+  // Generate grid cells
+  const cells = [];
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      cells.push({ r, c });
+    }
+  }
 
-      {/* Typography */}
-      <motion.div
-        initial={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
-        animate={{ opacity: 0, filter: "blur(12px)", scale: 1.05 }}
-        transition={{ duration: 1.2, delay: 0.5, ease: "easeOut" }}
+  // Animation variants for individual pixel cells
+  const cellVariants = {
+    initial: {
+      scale: 1.02, // slightly larger to prevent hairline gaps
+      opacity: 1,
+    },
+    animate: (custom: { r: number; c: number }) => ({
+      scale: 0,
+      opacity: 0,
+      transition: {
+        duration: 0.4,
+        ease: [0.36, 0.07, 0.19, 0.97] as const, // smooth custom ease
+        delay: (custom.r + custom.c) * 0.035 + 0.45 // starts sweeping after text fades
+      }
+    })
+  };
+
+  return (
+    <>
+      {/* Centered Logo Text */}
+      <div 
         style={{
-          position: "relative",
-          zIndex: 10000,
-          color: "var(--fg)",
-          fontFamily: "var(--font-head)",
-          fontWeight: 400,
-          fontSize: "3rem",
-          letterSpacing: "-0.5px"
+          position: "fixed",
+          inset: 0,
+          zIndex: 100000,
+          pointerEvents: "none",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center"
         }}
       >
-        MARY L.
-      </motion.div>
-    </motion.div>
+        <motion.div
+          initial={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
+          animate={{ opacity: 0, filter: "blur(12px)", scale: 1.05 }}
+          transition={{ duration: 0.7, delay: 0.35, ease: "easeOut" }}
+          style={{
+            color: "#ffffff",
+            fontFamily: "var(--font-head)",
+            fontWeight: 400,
+            fontSize: "3.5rem",
+            letterSpacing: "0.08em"
+          }}
+        >
+          MARY L.
+        </motion.div>
+      </div>
+
+      {/* Grid of Pixels Overlay */}
+      <div
+        style={{
+          position: "fixed",
+          inset: 0,
+          zIndex: 99999,
+          pointerEvents: "none",
+          display: "grid",
+          gridTemplateColumns: `repeat(${cols}, 1fr)`,
+          gridTemplateRows: `repeat(${rows}, 1fr)`,
+          overflow: "hidden"
+        }}
+      >
+        {cells.map((cell, idx) => (
+          <motion.div
+            key={idx}
+            custom={cell}
+            variants={cellVariants}
+            initial="initial"
+            animate="animate"
+            style={{
+              backgroundColor: "#1a1a27", // dark Y2K charcoal base color
+              border: "0.5px solid #1a1a27", // solid color borders to avoid render seams
+              transformOrigin: "center center"
+            }}
+          />
+        ))}
+      </div>
+    </>
   );
 }
