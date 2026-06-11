@@ -71,30 +71,36 @@ export default function Cursor() {
         ctx.shadowColor = p.color;
 
         if (p.type === "star") {
-          // Draw a 4-pointed micro-star
-          ctx.translate(p.x, p.y);
-          ctx.rotate(p.rotation);
-          ctx.beginPath();
-          const spikes = 4;
-          const outerRadius = p.size;
-          const innerRadius = p.size / 3.5;
-          let rot = Math.PI / 2 * 3;
-          let step = Math.PI / spikes;
-
-          ctx.moveTo(0, -outerRadius);
-          for (let s = 0; s < spikes; s++) {
-            let sx = Math.cos(rot) * outerRadius;
-            let sy = Math.sin(rot) * outerRadius;
-            ctx.lineTo(sx, sy);
-            rot += step;
-
-            sx = Math.cos(rot) * innerRadius;
-            sy = Math.sin(rot) * innerRadius;
-            ctx.lineTo(sx, sy);
-            rot += step;
+          // Draw a pixel-art sparkle star (cross / diamond shape)
+          const d = Math.max(1, Math.round(p.size / 4));
+          
+          if (p.size < 6) {
+            // Smaller 5-pixel cross
+            ctx.fillRect(p.x - d / 2, p.y - d / 2 - d, d, d);
+            ctx.fillRect(p.x - d / 2 - d, p.y - d / 2, d, d);
+            ctx.fillRect(p.x - d / 2, p.y - d / 2, d, d);
+            ctx.fillRect(p.x - d / 2 + d, p.y - d / 2, d, d);
+            ctx.fillRect(p.x - d / 2, p.y - d / 2 + d, d, d);
+          } else {
+            // Larger 13-pixel diamond star
+            ctx.fillRect(p.x - d / 2, p.y - d / 2 - 2 * d, d, d);
+            
+            ctx.fillRect(p.x - d / 2 - d, p.y - d / 2 - d, d, d);
+            ctx.fillRect(p.x - d / 2, p.y - d / 2 - d, d, d);
+            ctx.fillRect(p.x - d / 2 + d, p.y - d / 2 - d, d, d);
+            
+            ctx.fillRect(p.x - d / 2 - 2 * d, p.y - d / 2, d, d);
+            ctx.fillRect(p.x - d / 2 - d, p.y - d / 2, d, d);
+            ctx.fillRect(p.x - d / 2, p.y - d / 2, d, d);
+            ctx.fillRect(p.x - d / 2 + d, p.y - d / 2, d, d);
+            ctx.fillRect(p.x - d / 2 + 2 * d, p.y - d / 2, d, d);
+            
+            ctx.fillRect(p.x - d / 2 - d, p.y - d / 2 + d, d, d);
+            ctx.fillRect(p.x - d / 2, p.y - d / 2 + d, d, d);
+            ctx.fillRect(p.x - d / 2 + d, p.y - d / 2 + d, d, d);
+            
+            ctx.fillRect(p.x - d / 2, p.y - d / 2 + 2 * d, d, d);
           }
-          ctx.closePath();
-          ctx.fill();
         } else {
           // Draw a pixel (retro square particle)
           ctx.fillRect(p.x - p.size / 2, p.y - p.size / 2, p.size, p.size);
@@ -136,12 +142,12 @@ export default function Cursor() {
       // Spawn particles along the mouse trail to make it super smooth ("suave")
       if (dist > 4) {
         const colors = [
-          "#ffd3e8", // light cotton candy pink
-          "#ff8ebb", // soft strawberry pink
-          "#ff2a85", // neon glow pink
-          "#ff62b0", // bubblegum pink
-          "#ffffff", // pure glitter white
-          "#ffd2ec"  // pastel rose
+          "#ffffff", // pure white glitter
+          "#e3f2fd", // soft ice white-blue
+          "#b3e5fc", // soft baby blue
+          "#00e5ff", // electric cyan
+          "#3a86ff", // vibrant royal blue
+          "#e6f7ff"  // crystal clear sparkle
         ];
 
         // Determine particle density. Spawn one every 6 pixels of movement.
@@ -213,7 +219,7 @@ export default function Cursor() {
         const y = mouseCoords.current.y;
 
         const colors = [
-          "#ffd3e8", "#ff8ebb", "#ff2a85", "#ff62b0", "#ffffff", "#ffd2ec"
+          "#ffffff", "#e3f2fd", "#b3e5fc", "#00e5ff", "#3a86ff", "#e6f7ff"
         ];
         
         // 50% chance to spawn an ambient sparkle when idle
