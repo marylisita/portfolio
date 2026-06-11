@@ -3,6 +3,7 @@ import { Instrument_Serif, Space_Mono, Poppins } from "next/font/google";
 import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
 import FloatingBackToTop from "@/components/FloatingBackToTop";
+import Cursor from "@/components/Cursor";
 
 const poppins = Poppins({
   weight: ["400", "500", "600"],
@@ -39,6 +40,7 @@ export default function RootLayout({
       </head>
       <body className="antialiased">
         <SmoothScroll>
+          <Cursor />
           {children}
           <FloatingBackToTop />
         </SmoothScroll>
