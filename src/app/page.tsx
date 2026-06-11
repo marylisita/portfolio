@@ -42,16 +42,16 @@ export default function Home() {
                   <span className="sticky-card__num" style={{ color: "var(--gray-400)" }}>01</span>
                   <h3 className="sticky-card__title" style={{ color: "var(--fg)", fontFamily: "var(--font-head)" }}>Isadora Ruppert<br />Press Kit</h3>
                   <div className="sticky-card__tags" style={{ color: "var(--gray-600)" }}>
-                    <span>Art Direction</span>
+                    <span>Direção de Arte</span>
                     <span>Editorial</span>
                   </div>
                   <p className="sticky-card__desc" style={{ color: "var(--gray-600)" }}>
-                    A high-end, brutalist digital press kit for actress Isadora Ruppert. Featuring torn paper aesthetics and vintage Hollywood colors.
+                    Um press kit digital brutalista e sofisticado para a atriz Isadora Ruppert, com estética de papel rasgado e cores do Hollywood vintage.
                   </p>
                   <AnimatedButton href="/work/isadora" variant="outline">Ver Projeto</AnimatedButton>
                 </div>
                 <div style={{ padding: "40px", backgroundColor: "#D8C3A5", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "var(--r-lg)", border: "1px solid #111" }}>
-                  <div style={{ position: "relative", width: "100%", border: "1px solid #111", backgroundColor: "#fff", boxShadow: "0 15px 35px rgba(0,0,0,0.15)" }}>
+                  <div style={{ position: "relative", width: "100%", border: "1px solid #e2def2", backgroundColor: "#fff", boxShadow: "0 15px 35px rgba(0,0,0,0.12)" }}>
                     <LiquidImage src="/img/ISADORA CAPA-THUMBNAIL.webp" alt="Isadora Ruppert" fill={false} />
                   </div>
                 </div>
@@ -73,7 +73,7 @@ export default function Home() {
                   <AnimatedButton href="/work/magazine" variant="outline">Ver Projeto</AnimatedButton>
                 </div>
                 <div style={{ padding: "40px", backgroundColor: "#EAEAEA", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "var(--r-lg)", border: "1px solid #111" }}>
-                  <div style={{ position: "relative", width: "100%", border: "1px solid #111", backgroundColor: "#fff", boxShadow: "0 15px 35px rgba(0,0,0,0.15)" }}>
+                  <div style={{ position: "relative", width: "100%", border: "1px solid #e2def2", backgroundColor: "#fff", boxShadow: "0 15px 35px rgba(0,0,0,0.12)" }}>
                     <LiquidImage src="/img/helvetica/9.jpg" alt="Helvetica Project" fill={false} />
                   </div>
                 </div>
@@ -86,8 +86,8 @@ export default function Home() {
                   <span className="sticky-card__num" style={{ color: "var(--gray-400)" }}>03</span>
                   <h3 className="sticky-card__title" style={{ color: "var(--fg)", fontFamily: "var(--font-head)" }}>GenLab:<br />Research Hub</h3>
                   <div className="sticky-card__tags" style={{ color: "var(--gray-600)" }}>
-                    <span>Creative Tech</span>
-                    <span>Generative Art</span>
+                    <span>Tecnologia Criativa</span>
+                    <span>Arte Generativa</span>
                   </div>
                   <p className="sticky-card__desc" style={{ color: "var(--gray-600)", fontFamily: "var(--font-body)" }}>
                     Um laboratório experimental focado em código e arte generativa, explorando a intersecção entre a filosofia humana e a lógica de máquina.
@@ -95,7 +95,7 @@ export default function Home() {
                   <AnimatedButton href="/work/genlab" variant="outline">Ver Projeto</AnimatedButton>
                 </div>
                 <div style={{ padding: "40px", backgroundColor: "#FFDDEE", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "var(--r-lg)", border: "1px solid #111" }}>
-                  <div style={{ position: "relative", width: "100%", border: "1px solid #111", backgroundColor: "#fff", boxShadow: "0 15px 35px rgba(0,0,0,0.15)" }}>
+                  <div style={{ position: "relative", width: "100%", border: "1px solid #e2def2", backgroundColor: "#fff", boxShadow: "0 15px 35px rgba(0,0,0,0.12)" }}>
                     <LiquidImage src="/img/genlab.png" alt="GenLab Project" fill={false} />
                   </div>
                 </div>
@@ -116,7 +116,7 @@ export default function Home() {
                   <AnimatedButton href="/work/ebat" variant="outline">Ver Projeto</AnimatedButton>
                 </div>
                 <div style={{ padding: "40px", backgroundColor: "#dcfce7", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "var(--r-lg)", border: "1px solid #111" }}>
-                  <div style={{ position: "relative", width: "100%", border: "1px solid #111", backgroundColor: "#fff", boxShadow: "0 15px 35px rgba(0,0,0,0.15)" }}>
+                  <div style={{ position: "relative", width: "100%", border: "1px solid #e2def2", backgroundColor: "#fff", boxShadow: "0 15px 35px rgba(0,0,0,0.12)" }}>
                     <LiquidImage src="/img/ebat/flyer-1.png" alt="EBAT Project" fill={false} />
                   </div>
                 </div>
@@ -169,32 +169,39 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Right: Text and Progress Bars */}
+            {/* Right: Text and Skills */}
             <div>
               <h2 className="section-title" style={{ fontFamily: "var(--font-head)", marginBottom: "1.5rem", fontSize: "3.5rem", color: "#111" }}>Minibio</h2>
-              <p className="about__text" style={{ fontFamily: "var(--font-body)", fontSize: "0.95rem", lineHeight: 1.6, color: "var(--gray-600)" }}>
-                Minha trajetória no design é guiada pela pesquisa e pela experimentação tecnológica. Fui pesquisadora no NANO (Núcleo de Arte e Novos Organismos) e atualmente integro o LAID (Laboratório Aberto de Inovação e Design) da UFRJ.
-              </p>
-              <p className="about__text" style={{ fontFamily: "var(--font-body)", fontSize: "0.95rem", lineHeight: 1.6, color: "var(--gray-600)", marginTop: "1rem", marginBottom: "2rem" }}>
-                Utilizo essa base acadêmica e artística para estruturar projetos de Design Gráfico, Web Design e Programação Criativa. No meu trabalho diário, construo interfaces e identidades visuais onde o rigor técnico se encontra com estéticas contemporâneas.
+              <p className="about__text" style={{ fontFamily: "var(--font-body)", fontSize: "0.95rem", lineHeight: 1.6, color: "var(--gray-600)", marginBottom: "1.5rem" }}>
+                Designer multidisciplinar com base em pesquisa acadêmica. Construo interfaces e identidades visuais onde rigor técnico encontra estética contemporânea — do conceito ao código.
               </p>
 
-              {/* Progress Bars */}
-              <div className="skills__grid">
+              {/* Credential Badges */}
+              <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginBottom: "2rem" }}>
                 {[
-                  { name: "UX/UI Design", p: 95, color: "#E0F2FE" },
-                  { name: "Web Design", p: 97, color: "#DCFCE7" },
-                  { name: "Figma", p: 85, color: "#FCE7F3" },
-                  { name: "Wordpress", p: 80, color: "#E0E7FF" },
-                  { name: "Creative Cloud", p: 90, color: "#ECFCCB" }
-                ].map(skill => (
-                  <div key={skill.name}>
-                    <div style={{ display: "flex", justifyContent: "space-between", fontFamily: "var(--font-body)", fontSize: "0.8rem", color: "#111", marginBottom: "8px", fontWeight: 500 }}>
-                      <span>{skill.name}</span>
-                      <span>{skill.p}%</span>
-                    </div>
-                    <div style={{ height: "6px", width: "100%", background: "#fff", borderRadius: "10px", border: "1px solid #111", overflow: "hidden" }}>
-                      <div style={{ height: "100%", width: `${skill.p}%`, background: skill.color, borderRight: "1px solid #111" }} />
+                  { label: "NANO — UFRJ", sub: "Pesquisadora", color: "#E0F2FE" },
+                  { label: "LAID — UFRJ", sub: "Integrante", color: "#DCFCE7" },
+                ].map(c => (
+                  <div key={c.label} style={{ display: "flex", flexDirection: "column", gap: "2px", background: c.color, border: "1px solid #111", borderRadius: "8px", padding: "8px 14px" }}>
+                    <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.65rem", textTransform: "uppercase", letterSpacing: "1px", color: "#555" }}>{c.sub}</span>
+                    <span style={{ fontFamily: "var(--font-body)", fontSize: "0.9rem", fontWeight: 600, color: "#111" }}>{c.label}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Tools Grid */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
+                {[
+                  { category: "Design Visual", tools: ["Figma", "Illustrator", "Photoshop", "After Effects"] },
+                  { category: "Web & Código", tools: ["Next.js / React", "TypeScript", "Wordpress", "Framer"] },
+                  { category: "Tecnologia Criativa", tools: ["TouchDesigner", "IA Generativa"], full: true },
+                ].map(group => (
+                  <div key={group.category} style={group.full ? { gridColumn: "1 / -1" } : {}}>
+                    <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.65rem", textTransform: "uppercase", letterSpacing: "1px", color: "var(--gray-400)", marginBottom: "8px" }}>{group.category}</div>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                      {group.tools.map(t => (
+                        <span key={t} style={{ fontFamily: "var(--font-body)", fontSize: "0.85rem", color: "#111", background: "#fff", border: "1px solid #ddd", borderRadius: "6px", padding: "4px 10px" }}>{t}</span>
+                      ))}
                     </div>
                   </div>
                 ))}

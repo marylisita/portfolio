@@ -21,6 +21,7 @@
     --gray-600: #5a586a;
     --border: 1px solid #1a1a27;
     --border-dark: 1px solid #1a1a27;
+    --border-soft: 1px solid #e2def2;
     --r-sm: 14px; --r-md: 20px; --r-lg: 28px; --r-xl: 40px; --r-pill: 100px;
 }
 

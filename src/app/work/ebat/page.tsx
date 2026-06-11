@@ -6,6 +6,30 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import FlipBook from "@/components/FlipBook";
 
+const ebatStyles = `
+  .ebat-main { padding-top: 140px; }
+  .ebat-header { padding: 40px 2rem 80px; }
+  .ebat-spiw { padding: 0 2rem 100px; gap: 60px; }
+  .ebat-social { padding: 0 2rem 120px; gap: 80px; }
+  .ebat-two-col { grid-template-columns: 1fr 1fr; }
+  .ebat-social-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
+  .ebat-posts-grid { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+  /* Escala tipográfica fluida — mesma abordagem da home */
+  .ebat-desc { font-size: clamp(1.1rem, 2.2vw, 1.4rem); }
+  .ebat-h2 { font-size: clamp(1.8rem, 4vw, 2.5rem); letter-spacing: -0.5px; }
+  .ebat-meta-value { font-size: clamp(1rem, 1.5vw, 1.1rem); }
+
+  @media (max-width: 768px) {
+    .ebat-main { padding-top: 90px; }
+    .ebat-header { padding: 24px 1.25rem 48px; gap: 28px; }
+    .ebat-spiw { padding: 0 1.25rem 60px; gap: 36px; }
+    .ebat-social { padding: 0 1.25rem 80px; gap: 48px; }
+    .ebat-two-col { grid-template-columns: 1fr !important; }
+    .ebat-social-grid { grid-template-columns: 1fr !important; gap: 24px; }
+    .ebat-posts-grid { grid-template-columns: 1fr; }
+  }
+`;
+
 export default function EbatProject() {
   const carousel1 = Array.from({ length: 7 }).map((_, i) => `ebat/carrossel/${i + 1}.jpg`);
   const carousel2 = Array.from({ length: 4 }).map((_, i) => `ebat/carrossel 2/${i + 1}.jpg`);
@@ -18,6 +42,7 @@ export default function EbatProject() {
 
   return (
     <>
+      <style>{ebatStyles}</style>
       <PixelMotifs />
       
       {/* Shared Nav */}
@@ -32,13 +57,12 @@ export default function EbatProject() {
         </div>
       </nav>
 
-      <main style={{ minHeight: "100vh", paddingTop: "140px", position: "relative" }}>
+      <main className="ebat-main" style={{ minHeight: "100vh", position: "relative" }}>
         
         {/* Project Header */}
-        <section style={{ 
-          maxWidth: "1000px", 
-          margin: "0 auto", 
-          padding: "40px 2rem 80px",
+        <section className="ebat-header" style={{
+          maxWidth: "1000px",
+          margin: "0 auto",
           display: "flex",
           flexDirection: "column",
           gap: "40px",
@@ -75,9 +99,8 @@ export default function EbatProject() {
             }}>
               EBAT - Escola de Arte e Tecnologia
             </h1>
-            <p style={{
+            <p className="ebat-desc" style={{
               fontFamily: "var(--font-body)",
-              fontSize: "1.4rem",
               color: "var(--gray-600)",
               maxWidth: "800px",
               lineHeight: 1.6
@@ -102,41 +125,38 @@ export default function EbatProject() {
           >
             <div>
               <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "1px", color: "var(--gray-400)", marginBottom: "8px" }}>Cliente</div>
-              <div style={{ fontFamily: "var(--font-body)", fontSize: "1.1rem", fontWeight: 500, color: "var(--fg)" }}>EBAT</div>
+              <div className="ebat-meta-value" style={{ fontFamily: "var(--font-body)", fontWeight: 500, color: "var(--fg)" }}>EBAT</div>
             </div>
             <div>
               <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "1px", color: "var(--gray-400)", marginBottom: "8px" }}>Atuação</div>
-              <div style={{ fontFamily: "var(--font-body)", fontSize: "1.1rem", fontWeight: 500, color: "var(--fg)" }}>Design Gráfico, Social Media, Audiovisual</div>
+              <div className="ebat-meta-value" style={{ fontFamily: "var(--font-body)", fontWeight: 500, color: "var(--fg)" }}>Design Gráfico, Social Media, Audiovisual</div>
             </div>
             <div>
               <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "1px", color: "var(--gray-400)", marginBottom: "8px" }}>Ano</div>
-              <div style={{ fontFamily: "var(--font-body)", fontSize: "1.1rem", fontWeight: 500, color: "var(--fg)" }}>2026</div>
+              <div className="ebat-meta-value" style={{ fontFamily: "var(--font-body)", fontWeight: 500, color: "var(--fg)" }}>2026</div>
             </div>
           </motion.div>
         </section>
 
         {/* SPIW Section - Mockups */}
-        <section style={{ 
-          maxWidth: "1400px", 
-          margin: "0 auto", 
-          padding: "0 2rem 100px",
+        <section className="ebat-spiw" style={{
+          maxWidth: "1400px",
+          margin: "0 auto",
           display: "flex",
           flexDirection: "column",
-          gap: "60px",
           position: "relative",
           zIndex: 10
         }}>
           
           <div style={{ textAlign: "center" }}>
-             <h2 style={{ fontFamily: "var(--font-head)", fontSize: "2.5rem", margin: "0 0 1rem" }}>Campanha SPIW</h2>
+             <h2 className="ebat-h2" style={{ fontFamily: "var(--font-head)", margin: "0 0 1rem" }}>Campanha SPIW</h2>
              <p style={{ color: "var(--gray-600)", fontFamily: "var(--font-body)", fontSize: "1.1rem", maxWidth: "800px", margin: "0 auto" }}>No São Paulo Innovation Week (SPIW), a EBAT apresentou sua visão sobre a relação entre arte e tecnologia. O foco do evento foi mostrar na prática como o design e o pensamento criativo se integram ao ecossistema de inovação, consolidando a escola como um espaço ativo para essas discussões na cidade.</p>
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: "40px" }}>
             {/* Mockups Side by Side */}
-            <div style={{ 
-              display: "grid", 
-              gridTemplateColumns: "1fr 1fr", 
+            <div className="ebat-two-col" style={{
+              display: "grid",
               gap: "20px",
               alignItems: "center"
             }}>
@@ -160,9 +180,8 @@ export default function EbatProject() {
             </div>
 
             {/* Original Arts Side by Side */}
-            <div style={{ 
-              display: "grid", 
-              gridTemplateColumns: "1fr 1fr", 
+            <div className="ebat-two-col" style={{
+              display: "grid",
               gap: "20px",
               alignItems: "center"
             }}>
@@ -205,19 +224,17 @@ export default function EbatProject() {
         </section>
 
         {/* Social Media Section */}
-        <section style={{ 
-          maxWidth: "1200px", 
-          margin: "0 auto", 
-          padding: "0 2rem 120px",
+        <section className="ebat-social" style={{
+          maxWidth: "1200px",
+          margin: "0 auto",
           display: "flex",
-          flexDirection: "column",
-          gap: "80px"
+          flexDirection: "column"
         }}>
           <div style={{ textAlign: "center" }}>
-            <h2 style={{ fontFamily: "var(--font-head)", fontSize: "2.5rem", margin: "0 0 2rem" }}>Redes Sociais</h2>
+            <h2 className="ebat-h2" style={{ fontFamily: "var(--font-head)", margin: "0 0 2rem" }}>Redes Sociais</h2>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "40px", width: "100%" }}>
+          <div className="ebat-social-grid" style={{ display: "grid", width: "100%" }}>
             
             {/* Carousel 1 */}
             <motion.div
@@ -286,11 +303,10 @@ export default function EbatProject() {
           </div>
 
           {/* Grid of Single Posts */}
-          <div style={{ 
-            display: "grid", 
-            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", 
-            gap: "20px", 
-            marginTop: "60px" 
+          <div className="ebat-posts-grid" style={{
+            display: "grid",
+            gap: "20px",
+            marginTop: "60px"
           }}>
             {singlePosts.map((imgSrc, index) => (
                <motion.div
