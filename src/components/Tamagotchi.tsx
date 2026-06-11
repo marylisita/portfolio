@@ -394,7 +394,7 @@ export default function Tamagotchi() {
     <div 
       className="relative select-none w-full"
       style={{ 
-        maxWidth: "420px",
+        maxWidth: "480px",
         aspectRatio: "1024 / 819"
       }}
     >
@@ -441,12 +441,7 @@ export default function Tamagotchi() {
           ))}
         </AnimatePresence>
 
-        {/* LCD Header HUD */}
-        <div className="absolute top-0 inset-x-0 h-3 border-b border-slate-900/10 flex justify-between items-center px-1 text-[5px] font-bold text-slate-600/80 font-mono z-20">
-          <span>🌸 PIXEL_CHIX</span>
-          <span>HUD: HOUSE</span>
-          <span>🔋 99%</span>
-        </div>
+
 
         {/* Room Graphics */}
         {status === "stats" ? (
