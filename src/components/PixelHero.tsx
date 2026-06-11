@@ -46,6 +46,11 @@ export default function PixelHero(props: PixelHeroProps) {
         let lastMouseTime = 0;
         let isMouseActive = false;
 
+        // Scroll animation physics tracking variables
+        let currentScrollY = typeof window !== "undefined" ? window.scrollY : 0;
+        let lastScrollY = currentScrollY;
+        let scrollVelocity = 0;
+
         function fade(t: number) { return t * t * t * (t * (t * 6 - 15) + 10); }
         function lerp2(a: number, b: number, t: number) { return a + t * (b - a); }
         function grad(hash: number, x: number, y: number) {
@@ -117,6 +122,9 @@ export default function PixelHero(props: PixelHeroProps) {
                             targetOffsetX: 0,
                             targetOffsetY: 0,
                             colorBlend: 0,
+                            driftX: (Math.random() - 0.5) * 5, // random left/right drift factor
+                            driftY: Math.random() * 6 + 3,     // upward drift speed factor
+                            sensitivity: Math.random() * 0.6 + 0.4 // scale decay sensitivity factor
                         });
                     }
                 }
@@ -143,6 +151,12 @@ export default function PixelHero(props: PixelHeroProps) {
 
             ctx.fillStyle = `rgb(${BG_BASE[0]},${BG_BASE[1]},${BG_BASE[2]})`;
             ctx.fillRect(0, 0, W, H);
+
+            // Calculate scroll velocity (difference since last frame)
+            const actualVel = currentScrollY - lastScrollY;
+            // Lerp the scroll velocity for a smooth organic fade/inertia
+            scrollVelocity = lerpVal(scrollVelocity, actualVel, 0.1);
+            lastScrollY = currentScrollY;
 
             const glowX = W * 0.5 + (noise2d(noiseOffX, 0) * 2 - 1) * W * 0.15;
             const glowY = H * 0.5 + (noise2d(noiseOffY, 0) * 2 - 1) * H * 0.15;
@@ -194,6 +208,18 @@ export default function PixelHero(props: PixelHeroProps) {
                     } else {
                         cell.targetOffsetY = CELL;
                     }
+                }
+
+                // Incorporate scroll displacement and scale decay (dissolution physics)
+                const absVel = Math.abs(scrollVelocity);
+                if (absVel > 0.01) {
+                    // Shrink cells proportional to scroll velocity
+                    const scrollScaleFactor = Math.max(0, 1 - absVel * 0.015 * cell.sensitivity);
+                    cell.targetScale *= scrollScaleFactor;
+
+                    // Offset cells (float upwards and disperse horizontally)
+                    cell.targetOffsetX += scrollVelocity * cell.driftX * 0.8;
+                    cell.targetOffsetY -= absVel * cell.driftY * 0.8;
                 }
 
                 cell.scale = lerpVal(cell.scale, cell.targetScale, 0.15);
@@ -258,9 +284,14 @@ export default function PixelHero(props: PixelHeroProps) {
             ro.observe(canvas.parentElement);
         }
 
+        function onScroll() {
+            currentScrollY = window.scrollY;
+        }
+
         window.addEventListener("mousemove", onMouseMove);
         window.addEventListener("mouseleave", onMouseLeave);
         window.addEventListener("touchmove", onTouchMove, { passive: true });
+        window.addEventListener("scroll", onScroll, { passive: true });
 
         return () => {
             cancelAnimationFrame(animId);
@@ -268,6 +299,7 @@ export default function PixelHero(props: PixelHeroProps) {
             window.removeEventListener("mousemove", onMouseMove);
             window.removeEventListener("mouseleave", onMouseLeave);
             window.removeEventListener("touchmove", onTouchMove);
+            window.removeEventListener("scroll", onScroll);
         };
     }, [pixelSize, baseBlue, lilac, bgBase, bgGlow, hoverRadius]);
 
