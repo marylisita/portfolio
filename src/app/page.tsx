@@ -133,41 +133,9 @@ export default function Home() {
         <section id="about" className="about wrap" style={{ paddingTop: "80px", paddingBottom: "40px" }}>
           <div className="about__grid" style={{ alignItems: "center" }}>
             
-            {/* Left: Organic Portrait Container */}
-            <div style={{ position: "relative", width: "100%", aspectRatio: "1/1", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <div style={{ 
-                width: "90%", 
-                height: "90%", 
-                backgroundColor: "#F4D77A", 
-                borderRadius: "30% 70% 70% 30% / 30% 30% 70% 70%", /* Organic blob shape */
-                overflow: "visible", /* Allow chain ring to peek out */
-                border: "2px solid #111",
-                position: "relative",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                boxShadow: "-10px 10px 0px rgba(0,0,0,0.05)"
-              }}>
-                <Tamagotchi />
-              </div>
-              
-              {/* Tape Graphic */}
-              <div style={{ position: "absolute", top: "2%", left: "50%", transform: "translateX(-50%) rotate(-3deg)", width: "140px", height: "30px", backgroundColor: "#E5F0F9", border: "1px solid #111", zIndex: 10, backgroundImage: "radial-gradient(#111 2px, transparent 2px)", backgroundSize: "15px 15px", boxShadow: "2px 2px 0px rgba(0,0,0,0.1)" }}></div>
-              
-              {/* Sticker */}
-              <div style={{ position: "absolute", bottom: "5%", left: "5%", width: "110px", height: "110px", backgroundColor: "#fff", borderRadius: "50%", border: "1px solid #111", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 10, boxShadow: "4px 4px 0px rgba(0,0,0,0.1)" }}>
-                <div style={{ width: "100px", height: "100px", position: "relative", animation: "spin 12s linear infinite" }}>
-                   <svg viewBox="0 0 100 100" width="100" height="100">
-                     <path id="circlePath" d="M 50, 50 m -40, 0 a 40,40 0 1,1 80,0 a 40,40 0 1,1 -80,0" fill="none" />
-                     <text style={{ fontSize: "8px", fontFamily: "var(--font-mono)", fill: "#111", letterSpacing: "1.2px", textTransform: "uppercase" }}>
-                       <textPath href="#circlePath">
-                         • Disponível para Freelance • Disponível para Freelance •
-                       </textPath>
-                     </text>
-                   </svg>
-                </div>
-                <a href="mailto:lisita.medeiros@gmail.com" className="hover-trigger" style={{ position: "absolute", fontSize: "1.8rem", textDecoration: "none", zIndex: 11 }}>✉️</a>
-              </div>
+            {/* Left: Interactive Pixel Chix Device */}
+            <div style={{ position: "relative", width: "100%", display: "flex", alignItems: "center", justifyContent: "center", padding: "20px 0" }}>
+              <Tamagotchi />
             </div>
 
             {/* Right: Text and Skills */}
