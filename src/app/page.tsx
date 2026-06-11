@@ -9,6 +9,7 @@ import Cursor from "@/components/Cursor";
 import SpreadCards from "@/components/SpreadCards";
 import CapabilitiesPop from "@/components/CapabilitiesPop";
 import Curtains from "@/components/Curtains";
+import Tamagotchi from "@/components/Tamagotchi";
 
 export default function Home() {
   return (
@@ -139,7 +140,7 @@ export default function Home() {
                 height: "90%", 
                 backgroundColor: "#F4D77A", 
                 borderRadius: "30% 70% 70% 30% / 30% 30% 70% 70%", /* Organic blob shape */
-                overflow: "hidden",
+                overflow: "visible", /* Allow chain ring to peek out */
                 border: "2px solid #111",
                 position: "relative",
                 display: "flex",
@@ -147,7 +148,7 @@ export default function Home() {
                 justifyContent: "center",
                 boxShadow: "-10px 10px 0px rgba(0,0,0,0.05)"
               }}>
-                <img src="/profile.jpeg" alt="Maria Lisita" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                <Tamagotchi />
               </div>
               
               {/* Tape Graphic */}
