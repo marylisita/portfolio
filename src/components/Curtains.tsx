@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, useMemo, useRef } from "react";
+import React, { createContext, useContext, useState, useEffect, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
 
 interface TransitionContextProps {
@@ -20,46 +20,14 @@ export default function Curtains() {
 
 type Status = "idle" | "entrance" | "exit";
 
-// Suavidade: cada bloco faz fade lento (FADE), escalonado num intervalo (STAGGER).
-const FADE = 0.5; // duração do fade de cada bloco (s)
-const STAGGER = 0.4; // espalhamento aleatório do início de cada bloco (s)
-const TOTAL = FADE + STAGGER; // tempo até cobrir/revelar por completo (s)
-const MAX_CELLS = 130; // teto de blocos (blur por célula é custoso — mantém leve)
+// Duração do fade do desfoque (s), cada sentido.
+const FADE = 0.55;
 
-// Grão sutil (noise) via SVG, sem cor — só textura.
-const GRAIN =
-  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")";
-
-function PixelGrid({ status }: { status: Status }) {
-  const [grid, setGrid] = useState({ cols: 12, rows: 8 });
+function BlurVeil({ status }: { status: Status }) {
   const [covered, setCovered] = useState(false);
 
-  // Grade com células ~quadradas, respeitando o teto de blocos.
-  useEffect(() => {
-    const calc = () => {
-      const cell = Math.max(90, Math.min(150, window.innerWidth / 11));
-      let cols = Math.ceil(window.innerWidth / cell);
-      let rows = Math.ceil(window.innerHeight / cell);
-      while (cols * rows > MAX_CELLS && cols > 4) {
-        cols -= 1;
-        rows = Math.ceil((cols * window.innerHeight) / window.innerWidth);
-      }
-      setGrid({ cols, rows });
-    };
-    calc();
-    window.addEventListener("resize", calc);
-    return () => window.removeEventListener("resize", calc);
-  }, []);
-
-  // Delays aleatórios, regenerados a cada fase para nunca repetir o padrão.
-  const cells = useMemo(() => {
-    const total = grid.cols * grid.rows;
-    return Array.from({ length: total }, () => Math.random() * STAGGER);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [grid, status]);
-
   // Força o estado oposto na montagem e só no frame seguinte aplica o alvo,
-  // garantindo que a transição CSS realmente rode escalonada.
+  // para a transição CSS rodar de fato (cobre no exit, revela na entrada).
   useEffect(() => {
     let raf1 = 0;
     let raf2 = 0;
@@ -90,30 +58,14 @@ function PixelGrid({ status }: { status: Status }) {
         inset: 0,
         zIndex: 99999,
         pointerEvents: "none",
-        display: "grid",
-        gridTemplateColumns: `repeat(${grid.cols}, 1fr)`,
-        gridTemplateRows: `repeat(${grid.rows}, 1fr)`,
+        backdropFilter: "blur(16px)",
+        WebkitBackdropFilter: "blur(16px)",
+        backgroundColor: "rgba(252, 248, 255, 0.06)",
+        opacity: covered ? 1 : 0,
+        transition: `opacity ${FADE}s cubic-bezier(0.4, 0, 0.2, 1)`,
+        willChange: "opacity",
       }}
-    >
-      {cells.map((delay, i) => (
-        <div
-          key={i}
-          style={{
-            // Bloco transparente que apenas desfoca o conteúdo atrás (sem cor).
-            backdropFilter: "blur(14px)",
-            WebkitBackdropFilter: "blur(14px)",
-            // Véu quase imperceptível só para dar corpo ao desfoque.
-            backgroundColor: "rgba(252, 248, 255, 0.04)",
-            // Grão sutil por cima do desfoque.
-            backgroundImage: GRAIN,
-            backgroundSize: "150px 150px",
-            opacity: covered ? 1 : 0,
-            transition: `opacity ${FADE}s cubic-bezier(0.4, 0, 0.2, 1) ${delay}s`,
-            willChange: "opacity",
-          }}
-        />
-      ))}
-    </div>
+    />
   );
 }
 
@@ -131,7 +83,7 @@ export function PageTransitionProvider({ children }: { children: React.ReactNode
       return;
     }
     setStatus("entrance");
-    const timer = setTimeout(() => setStatus("idle"), TOTAL * 1000 + 200);
+    const timer = setTimeout(() => setStatus("idle"), FADE * 1000 + 200);
     return () => clearTimeout(timer);
   }, [pathname]);
 
@@ -170,13 +122,13 @@ export function PageTransitionProvider({ children }: { children: React.ReactNode
     return () => document.removeEventListener("click", handleGlobalClick);
   }, [status]);
 
-  // Quando a cobertura termina, troca a rota (tela já está coberta).
+  // Quando o desfoque cobre, troca a rota.
   useEffect(() => {
     if (status === "exit" && pendingHref) {
       const timer = setTimeout(() => {
         router.push(pendingHref);
         setPendingHref(null);
-      }, TOTAL * 1000);
+      }, FADE * 1000);
       return () => clearTimeout(timer);
     }
   }, [status, pendingHref, router]);
@@ -187,8 +139,8 @@ export function PageTransitionProvider({ children }: { children: React.ReactNode
         {children}
       </div>
 
-      {/* Transição: blocos de desfoque + grão, transparentes, sem cor */}
-      <PixelGrid status={status} />
+      {/* Transição: desfoque suave de tela cheia */}
+      <BlurVeil status={status} />
     </TransitionContext.Provider>
   );
 }
