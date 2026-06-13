@@ -2,7 +2,6 @@
 
 import React, { createContext, useContext, useState, useEffect, useMemo, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
 
 interface TransitionContextProps {
   transitionTo: (href: string) => void;
@@ -21,19 +20,24 @@ export default function Curtains() {
 
 type Status = "idle" | "entrance" | "exit";
 
-// Tempo máximo de stagger dos blocos (s) — define quanto dura cobrir/revelar.
-const MAX_DELAY = 0.4;
-// Teto de blocos para não pesar em telas grandes.
-const MAX_CELLS = 240;
+// Suavidade: cada bloco faz fade lento (FADE), escalonado num intervalo (STAGGER).
+const FADE = 0.5; // duração do fade de cada bloco (s)
+const STAGGER = 0.4; // espalhamento aleatório do início de cada bloco (s)
+const TOTAL = FADE + STAGGER; // tempo até cobrir/revelar por completo (s)
+const MAX_CELLS = 130; // teto de blocos (blur por célula é custoso — mantém leve)
+
+// Grão sutil (noise) via SVG, sem cor — só textura.
+const GRAIN =
+  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")";
 
 function PixelGrid({ status }: { status: Status }) {
-  const [grid, setGrid] = useState({ cols: 14, rows: 9 });
+  const [grid, setGrid] = useState({ cols: 12, rows: 8 });
   const [covered, setCovered] = useState(false);
 
-  // Calcula a grade com células ~quadradas, respeitando o teto de blocos.
+  // Grade com células ~quadradas, respeitando o teto de blocos.
   useEffect(() => {
     const calc = () => {
-      const cell = Math.max(64, Math.min(120, window.innerWidth / 14));
+      const cell = Math.max(90, Math.min(150, window.innerWidth / 11));
       let cols = Math.ceil(window.innerWidth / cell);
       let rows = Math.ceil(window.innerHeight / cell);
       while (cols * rows > MAX_CELLS && cols > 4) {
@@ -47,33 +51,27 @@ function PixelGrid({ status }: { status: Status }) {
     return () => window.removeEventListener("resize", calc);
   }, []);
 
-  // Padrão de delays/cores, regenerado a cada fase para nunca repetir.
+  // Delays aleatórios, regenerados a cada fase para nunca repetir o padrão.
   const cells = useMemo(() => {
     const total = grid.cols * grid.rows;
-    return Array.from({ length: total }, () => {
-      const r = Math.random();
-      return {
-        delay: Math.random() * MAX_DELAY,
-        color: r < 0.06 ? "var(--green)" : r < 0.14 ? "var(--lilac-deep)" : "var(--fg)",
-      };
-    });
+    return Array.from({ length: total }, () => Math.random() * STAGGER);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [grid, status]);
 
-  // O truque: ao entrar numa fase, força o estado oposto e só então (no frame
-  // seguinte) aplica o alvo — assim a transição CSS realmente roda escalonada.
+  // Força o estado oposto na montagem e só no frame seguinte aplica o alvo,
+  // garantindo que a transição CSS realmente rode escalonada.
   useEffect(() => {
     let raf1 = 0;
     let raf2 = 0;
     if (status === "exit") {
-      setCovered(false); // começa descoberto…
+      setCovered(false);
       raf1 = requestAnimationFrame(() => {
-        raf2 = requestAnimationFrame(() => setCovered(true)); // …e cobre (escalonado)
+        raf2 = requestAnimationFrame(() => setCovered(true));
       });
     } else if (status === "entrance") {
-      setCovered(true); // começa coberto (herdado do exit)…
+      setCovered(true);
       raf1 = requestAnimationFrame(() => {
-        raf2 = requestAnimationFrame(() => setCovered(false)); // …e revela (escalonado)
+        raf2 = requestAnimationFrame(() => setCovered(false));
       });
     }
     return () => {
@@ -97,14 +95,20 @@ function PixelGrid({ status }: { status: Status }) {
         gridTemplateRows: `repeat(${grid.rows}, 1fr)`,
       }}
     >
-      {cells.map((c, i) => (
+      {cells.map((delay, i) => (
         <div
           key={i}
           style={{
-            background: c.color,
+            // Bloco transparente que apenas desfoca o conteúdo atrás (sem cor).
+            backdropFilter: "blur(14px)",
+            WebkitBackdropFilter: "blur(14px)",
+            // Véu quase imperceptível só para dar corpo ao desfoque.
+            backgroundColor: "rgba(252, 248, 255, 0.04)",
+            // Grão sutil por cima do desfoque.
+            backgroundImage: GRAIN,
+            backgroundSize: "150px 150px",
             opacity: covered ? 1 : 0,
-            // 1ms = sem fade; só o delay escalona a aparição → feel de pixel.
-            transition: `opacity 1ms linear ${c.delay}s`,
+            transition: `opacity ${FADE}s cubic-bezier(0.4, 0, 0.2, 1) ${delay}s`,
             willChange: "opacity",
           }}
         />
@@ -120,14 +124,14 @@ export function PageTransitionProvider({ children }: { children: React.ReactNode
   const [pendingHref, setPendingHref] = useState<string | null>(null);
   const isFirstLoad = useRef(true);
 
-  // Ao trocar de rota, roda a entrada (revelar) — exceto no primeiro carregamento.
+  // Ao trocar de rota, roda a entrada (revelar) — exceto no primeiro load.
   useEffect(() => {
     if (isFirstLoad.current) {
       isFirstLoad.current = false;
       return;
     }
     setStatus("entrance");
-    const timer = setTimeout(() => setStatus("idle"), MAX_DELAY * 1000 + 250);
+    const timer = setTimeout(() => setStatus("idle"), TOTAL * 1000 + 200);
     return () => clearTimeout(timer);
   }, [pathname]);
 
@@ -172,7 +176,7 @@ export function PageTransitionProvider({ children }: { children: React.ReactNode
       const timer = setTimeout(() => {
         router.push(pendingHref);
         setPendingHref(null);
-      }, MAX_DELAY * 1000 + 120);
+      }, TOTAL * 1000);
       return () => clearTimeout(timer);
     }
   }, [status, pendingHref, router]);
@@ -183,42 +187,8 @@ export function PageTransitionProvider({ children }: { children: React.ReactNode
         {children}
       </div>
 
-      {/* Grade de pixels (transição em blocos, estilo Bodak) */}
+      {/* Transição: blocos de desfoque + grão, transparentes, sem cor */}
       <PixelGrid status={status} />
-
-      {/* Logo central durante a transição */}
-      <div
-        style={{
-          position: "fixed",
-          inset: 0,
-          zIndex: 100000,
-          pointerEvents: "none",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <AnimatePresence>
-          {status !== "idle" && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.96 }}
-              animate={{ opacity: status === "exit" ? 1 : 0, scale: status === "exit" ? 1 : 1.04 }}
-              exit={{ opacity: 0, scale: 1.04 }}
-              transition={{ duration: 0.35, ease: "easeOut", delay: status === "exit" ? 0.2 : 0 }}
-              style={{
-                color: "#ffffff",
-                fontFamily: "var(--font-head)",
-                fontWeight: 400,
-                fontSize: "3.5rem",
-                letterSpacing: "0.08em",
-                textShadow: "0 4px 20px rgba(0, 0, 0, 0.4)",
-              }}
-            >
-              MARY L.
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
     </TransitionContext.Provider>
   );
 }
