@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useMemo, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -19,31 +19,125 @@ export default function Curtains() {
   return null;
 }
 
+type Status = "idle" | "entrance" | "exit";
+
+// Tempo máximo de stagger dos blocos (s) — define quanto dura cobrir/revelar.
+const MAX_DELAY = 0.4;
+// Teto de blocos para não pesar em telas grandes.
+const MAX_CELLS = 240;
+
+function PixelGrid({ status }: { status: Status }) {
+  const [grid, setGrid] = useState({ cols: 14, rows: 9 });
+  const [covered, setCovered] = useState(false);
+
+  // Calcula a grade com células ~quadradas, respeitando o teto de blocos.
+  useEffect(() => {
+    const calc = () => {
+      const cell = Math.max(64, Math.min(120, window.innerWidth / 14));
+      let cols = Math.ceil(window.innerWidth / cell);
+      let rows = Math.ceil(window.innerHeight / cell);
+      while (cols * rows > MAX_CELLS && cols > 4) {
+        cols -= 1;
+        rows = Math.ceil((cols * window.innerHeight) / window.innerWidth);
+      }
+      setGrid({ cols, rows });
+    };
+    calc();
+    window.addEventListener("resize", calc);
+    return () => window.removeEventListener("resize", calc);
+  }, []);
+
+  // Padrão de delays/cores, regenerado a cada fase para nunca repetir.
+  const cells = useMemo(() => {
+    const total = grid.cols * grid.rows;
+    return Array.from({ length: total }, () => {
+      const r = Math.random();
+      return {
+        delay: Math.random() * MAX_DELAY,
+        color: r < 0.06 ? "var(--green)" : r < 0.14 ? "var(--lilac-deep)" : "var(--fg)",
+      };
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [grid, status]);
+
+  // O truque: ao entrar numa fase, força o estado oposto e só então (no frame
+  // seguinte) aplica o alvo — assim a transição CSS realmente roda escalonada.
+  useEffect(() => {
+    let raf1 = 0;
+    let raf2 = 0;
+    if (status === "exit") {
+      setCovered(false); // começa descoberto…
+      raf1 = requestAnimationFrame(() => {
+        raf2 = requestAnimationFrame(() => setCovered(true)); // …e cobre (escalonado)
+      });
+    } else if (status === "entrance") {
+      setCovered(true); // começa coberto (herdado do exit)…
+      raf1 = requestAnimationFrame(() => {
+        raf2 = requestAnimationFrame(() => setCovered(false)); // …e revela (escalonado)
+      });
+    }
+    return () => {
+      cancelAnimationFrame(raf1);
+      cancelAnimationFrame(raf2);
+    };
+  }, [status]);
+
+  if (status === "idle") return null;
+
+  return (
+    <div
+      aria-hidden
+      style={{
+        position: "fixed",
+        inset: 0,
+        zIndex: 99999,
+        pointerEvents: "none",
+        display: "grid",
+        gridTemplateColumns: `repeat(${grid.cols}, 1fr)`,
+        gridTemplateRows: `repeat(${grid.rows}, 1fr)`,
+      }}
+    >
+      {cells.map((c, i) => (
+        <div
+          key={i}
+          style={{
+            background: c.color,
+            opacity: covered ? 1 : 0,
+            // 1ms = sem fade; só o delay escalona a aparição → feel de pixel.
+            transition: `opacity 1ms linear ${c.delay}s`,
+            willChange: "opacity",
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
 export function PageTransitionProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const [status, setStatus] = useState<"idle" | "entrance" | "exit">("entrance");
+  const [status, setStatus] = useState<Status>("idle");
   const [pendingHref, setPendingHref] = useState<string | null>(null);
+  const isFirstLoad = useRef(true);
 
-  // When the pathname changes, start the entrance (reveal) animation
+  // Ao trocar de rota, roda a entrada (revelar) — exceto no primeiro carregamento.
   useEffect(() => {
+    if (isFirstLoad.current) {
+      isFirstLoad.current = false;
+      return;
+    }
     setStatus("entrance");
-    
-    // Switch to idle after the entrance transition finishes (500ms duration + buffer)
-    const timer = setTimeout(() => {
-      setStatus("idle");
-    }, 700);
-
+    const timer = setTimeout(() => setStatus("idle"), MAX_DELAY * 1000 + 250);
     return () => clearTimeout(timer);
   }, [pathname]);
 
   const transitionTo = (href: string) => {
-    if (status === "exit") return; // Prevent duplicate transition triggers
+    if (status === "exit") return; // evita disparos duplicados
     setPendingHref(href);
     setStatus("exit");
   };
 
-  // Intercept all internal page clicks globally
+  // Intercepta cliques internos globalmente.
   useEffect(() => {
     const handleGlobalClick = (e: MouseEvent) => {
       const anchor = (e.target as HTMLElement).closest("a");
@@ -52,7 +146,7 @@ export function PageTransitionProvider({ children }: { children: React.ReactNode
       const href = anchor.getAttribute("href");
       if (!href) return;
 
-      // Filter out non-routing links: external, anchors/hashes, files, new tabs
+      // Ignora links não-roteáveis: externos, âncoras, arquivos, nova aba.
       if (
         href.startsWith("/") &&
         !href.startsWith("/#") &&
@@ -72,64 +166,28 @@ export function PageTransitionProvider({ children }: { children: React.ReactNode
     return () => document.removeEventListener("click", handleGlobalClick);
   }, [status]);
 
-  // When the exit (pixelation/fade-out) finishes, execute the Next.js router change
+  // Quando a cobertura termina, troca a rota (tela já está coberta).
   useEffect(() => {
     if (status === "exit" && pendingHref) {
       const timer = setTimeout(() => {
         router.push(pendingHref);
         setPendingHref(null);
-      }, 550); // Matches the 500ms transition duration + brief buffer
-      
+      }, MAX_DELAY * 1000 + 120);
       return () => clearTimeout(timer);
     }
   }, [status, pendingHref, router]);
 
   return (
     <TransitionContext.Provider value={{ transitionTo }}>
-      {/* 1. SVG Filter Definition for the Pixelation Effect */}
-      <svg style={{ position: "absolute", width: 0, height: 0, pointerEvents: "none", visibility: "hidden" }}>
-        <defs>
-          <filter id="pixelate-filter" x="0%" y="0%" width="100%" height="100%">
-            {/* Creates a 12x12 pixel grid block */}
-            <feFlood x="0" y="0" height="12" width="12" result="flood" />
-            <feComposite width="12" height="12" in="flood" result="composite" />
-            <feTile in="composite" result="tiled" />
-            <feComposite in="SourceGraphic" in2="tiled" operator="in" />
-            {/* Smooths out color borders slightly to create a cohesive retro pixel block */}
-            <feMorphology operator="dilate" radius="3" />
-          </filter>
-        </defs>
-      </svg>
-
-      {/* 2. Page Content Wrapper with independent SVG Pixelation and CSS Blur/Opacity */}
-      <div 
-        className={status !== "idle" ? "pixelated-filter-apply" : ""}
-        style={{
-          width: "100%",
-          minHeight: "100vh",
-          backgroundColor: "var(--surface)",
-        }}
-      >
-        <motion.div
-          animate={
-            status === "exit"
-              ? { opacity: 0, filter: "blur(6px)" }
-              : status === "entrance"
-              ? { opacity: 1, filter: "blur(0px)" }
-              : { opacity: 1, filter: "blur(0px)" }
-          }
-          transition={{ duration: 0.5, ease: "easeInOut" }}
-          style={{
-            width: "100%",
-            minHeight: "100vh",
-          }}
-        >
-          {children}
-        </motion.div>
+      <div style={{ width: "100%", minHeight: "100vh", backgroundColor: "var(--surface)" }}>
+        {children}
       </div>
 
-      {/* 3. Central Logo Overlay during route transitions */}
-      <div 
+      {/* Grade de pixels (transição em blocos, estilo Bodak) */}
+      <PixelGrid status={status} />
+
+      {/* Logo central durante a transição */}
+      <div
         style={{
           position: "fixed",
           inset: 0,
@@ -143,10 +201,10 @@ export function PageTransitionProvider({ children }: { children: React.ReactNode
         <AnimatePresence>
           {status !== "idle" && (
             <motion.div
-              initial={status === "exit" ? { opacity: 0, filter: "blur(8px)", scale: 0.95 } : { opacity: 1, filter: "blur(0px)", scale: 1 }}
-              animate={status === "exit" ? { opacity: 1, filter: "blur(0px)", scale: 1 } : { opacity: 0, filter: "blur(8px)", scale: 1.05 }}
-              exit={{ opacity: 0, filter: "blur(8px)", scale: 1.05 }}
-              transition={{ duration: 0.45, ease: "easeOut" }}
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: status === "exit" ? 1 : 0, scale: status === "exit" ? 1 : 1.04 }}
+              exit={{ opacity: 0, scale: 1.04 }}
+              transition={{ duration: 0.35, ease: "easeOut", delay: status === "exit" ? 0.2 : 0 }}
               style={{
                 color: "#ffffff",
                 fontFamily: "var(--font-head)",
@@ -161,13 +219,6 @@ export function PageTransitionProvider({ children }: { children: React.ReactNode
           )}
         </AnimatePresence>
       </div>
-
-      {/* CSS styling for the filter class */}
-      <style jsx global>{`
-        .pixelated-filter-apply {
-          filter: url(#pixelate-filter);
-        }
-      `}</style>
     </TransitionContext.Provider>
   );
 }
