@@ -9,7 +9,6 @@ import Cursor from "@/components/Cursor";
 import SpreadCards from "@/components/SpreadCards";
 import CapabilitiesPop from "@/components/CapabilitiesPop";
 import Tamagotchi from "@/components/Tamagotchi";
-import WebGLSlider from "@/components/WebGLSlider";
 
 export default function Home() {
   return (
@@ -30,15 +29,6 @@ export default function Home() {
         <PixelMotifs />
         <Hero />
         <SpreadCards />
-
-        <WebGLSlider
-          slides={[
-            { src: "/img/ISADORA CAPA-THUMBNAIL.webp", title: "Isadora Ruppert", tag: "Direção de Arte · Editorial", href: "/work/isadora" },
-            { src: "/img/helvetica/9.jpg", title: "Helvetica: Discórdia", tag: "Grunge · Editorial", href: "/work/magazine" },
-            { src: "/img/genlab.png", title: "GenLab", tag: "Tecnologia Criativa · Arte Generativa", href: "/work/genlab" },
-            { src: "/img/ebat/Outer Page.png", title: "EBAT", tag: "Design Gráfico · Social Media", href: "/work/ebat" },
-          ]}
-        />
 
         <section id="work" className="work">
           <div className="work__headline wrap">

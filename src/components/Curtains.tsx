@@ -20,54 +20,9 @@ export default function Curtains() {
 
 type Status = "idle" | "entrance" | "exit";
 
-// Duração do fade do desfoque (s), cada sentido.
-const FADE = 0.55;
-
-function BlurVeil({ status }: { status: Status }) {
-  const [covered, setCovered] = useState(false);
-
-  // Força o estado oposto na montagem e só no frame seguinte aplica o alvo,
-  // para a transição CSS rodar de fato (cobre no exit, revela na entrada).
-  useEffect(() => {
-    let raf1 = 0;
-    let raf2 = 0;
-    if (status === "exit") {
-      setCovered(false);
-      raf1 = requestAnimationFrame(() => {
-        raf2 = requestAnimationFrame(() => setCovered(true));
-      });
-    } else if (status === "entrance") {
-      setCovered(true);
-      raf1 = requestAnimationFrame(() => {
-        raf2 = requestAnimationFrame(() => setCovered(false));
-      });
-    }
-    return () => {
-      cancelAnimationFrame(raf1);
-      cancelAnimationFrame(raf2);
-    };
-  }, [status]);
-
-  if (status === "idle") return null;
-
-  return (
-    <div
-      aria-hidden
-      style={{
-        position: "fixed",
-        inset: 0,
-        zIndex: 99999,
-        pointerEvents: "none",
-        backdropFilter: "blur(16px)",
-        WebkitBackdropFilter: "blur(16px)",
-        backgroundColor: "rgba(252, 248, 255, 0.06)",
-        opacity: covered ? 1 : 0,
-        transition: `opacity ${FADE}s cubic-bezier(0.4, 0, 0.2, 1)`,
-        willChange: "opacity",
-      }}
-    />
-  );
-}
+// Durações (ms). Saída um pouco mais curta que a entrada para um fluxo contínuo.
+const EXIT = 420;
+const ENTER = 560;
 
 export function PageTransitionProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -76,14 +31,14 @@ export function PageTransitionProvider({ children }: { children: React.ReactNode
   const [pendingHref, setPendingHref] = useState<string | null>(null);
   const isFirstLoad = useRef(true);
 
-  // Ao trocar de rota, roda a entrada (revelar) — exceto no primeiro load.
+  // Ao trocar de rota, roda a entrada (revela o conteúdo novo) — exceto no 1º load.
   useEffect(() => {
     if (isFirstLoad.current) {
       isFirstLoad.current = false;
       return;
     }
     setStatus("entrance");
-    const timer = setTimeout(() => setStatus("idle"), FADE * 1000 + 200);
+    const timer = setTimeout(() => setStatus("idle"), ENTER);
     return () => clearTimeout(timer);
   }, [pathname]);
 
@@ -122,25 +77,37 @@ export function PageTransitionProvider({ children }: { children: React.ReactNode
     return () => document.removeEventListener("click", handleGlobalClick);
   }, [status]);
 
-  // Quando o desfoque cobre, troca a rota.
+  // Quando a saída termina, troca a rota (o conteúdo já está invisível).
   useEffect(() => {
     if (status === "exit" && pendingHref) {
       const timer = setTimeout(() => {
+        window.scrollTo(0, 0);
         router.push(pendingHref);
         setPendingHref(null);
-      }, FADE * 1000);
+      }, EXIT);
       return () => clearTimeout(timer);
     }
   }, [status, pendingHref, router]);
 
+  // O wrapper persiste entre navegações, então o cross-dissolve é contínuo:
+  // idle (1,1) → exit (0, 0.985) → [troca de rota] → entrance volta a (1,1).
+  const isExit = status === "exit";
+  const wrapperStyle: React.CSSProperties = {
+    width: "100%",
+    minHeight: "100vh",
+    backgroundColor: "var(--surface)",
+    opacity: isExit ? 0 : 1,
+    transform: isExit ? "scale(0.985)" : "scale(1)",
+    transition: isExit
+      ? `opacity ${EXIT}ms cubic-bezier(0.4, 0, 1, 1), transform ${EXIT}ms cubic-bezier(0.4, 0, 1, 1)`
+      : `opacity ${ENTER}ms cubic-bezier(0, 0, 0.2, 1), transform ${ENTER}ms cubic-bezier(0, 0, 0.2, 1)`,
+    willChange: "opacity, transform",
+    transformOrigin: "center top",
+  };
+
   return (
     <TransitionContext.Provider value={{ transitionTo }}>
-      <div style={{ width: "100%", minHeight: "100vh", backgroundColor: "var(--surface)" }}>
-        {children}
-      </div>
-
-      {/* Transição: desfoque suave de tela cheia */}
-      <BlurVeil status={status} />
+      <div style={wrapperStyle}>{children}</div>
     </TransitionContext.Provider>
   );
 }
