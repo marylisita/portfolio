@@ -4,6 +4,8 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import SpriteAnimation from "./SpriteAnimation";
 
+// ─── SPRITE FRAME DEFINITIONS ───────────────────────────────────────────────
+
 const getGarotaFrames = (outfitIndex: number, type: "idle" | "walking" | "sono" | "comendo" | "standing") => {
   if (type === "comendo") {
     return [
@@ -21,6 +23,7 @@ const getGarotaFrames = (outfitIndex: number, type: "idle" | "walking" | "sono" 
   }
   return Array.from({ length: 6 }, (_, i) => `/img/sprites/outfit_${outfitIndex}/garota-${type}/frame_${i + 1}.png`);
 };
+
 const GATO_PRETO_SONO = Array.from({ length: 12 }, (_, i) => `/img/sprites/gato-preto-sono/frame_${i + 1}.png`);
 const GATO_PRETO_COMENDO = Array.from({ length: 8 }, (_, i) => `/img/sprites/gato-preto-comendo/frame_${i + 1}.png`);
 const GATO_PRETO_BRINCANDO = Array.from({ length: 24 }, (_, i) => `/img/sprites/gato-preto-brincando/frame_${i + 1}.png`);
@@ -36,17 +39,33 @@ const GATO_MALHADO_WALKING = Array.from({ length: 4 }, (_, i) => `/img/sprites/g
 const GATO_MALHADO_GROOMING = Array.from({ length: 4 }, (_, i) => `/img/sprites/gato-malhado-idle/frame_${i + 9}.png`);
 const GATO_MALHADO_STANDING = Array.from({ length: 4 }, (_, i) => `/img/sprites/gato-malhado-idle/frame_${i + 13}.png`);
 
-
-// Boundary limits for characters inside the LCD screen (in % of the screen div)
-// The screen div is the blue area. Characters should not go past these limits.
-const CAT_MIN_X = 0;     // left edge of the blue screen
-const CAT_MAX_X = 78;    // right edge minus sprite width (~20%)
+// ─── BOUNDARY CONSTANTS ─────────────────────────────────────────────────────
+// All positions are in % of the LCD screen div (not the full casinha image)
 const BLACK_CAT_MIN_X = 0;
-const BLACK_CAT_MAX_X = 36;
+const BLACK_CAT_MAX_X = 35;
 const TABBY_CAT_MIN_X = 40;
 const TABBY_CAT_MAX_X = 78;
 
 const clampX = (x: number, min: number, max: number) => Math.max(min, Math.min(max, x));
+
+// ─── BUTTON POSITIONS (% of casinha image, from pixel analysis) ─────────────
+// These map to the 4 circular icons drawn into casinha.png
+const BUTTONS = [
+  { id: "sleep",   cx: 35.5, cy: 76.8, r: 4.5, label: "Dormir" },
+  { id: "eat",     cx: 46.3, cy: 77.0, r: 4.5, label: "Comer" },
+  { id: "closet",  cx: 57.3, cy: 76.8, r: 4.5, label: "Roupa" },
+  { id: "outdoor", cx: 68.4, cy: 76.9, r: 4.5, label: "Sair" },
+];
+
+// LCD screen area (% of casinha image)
+const SCREEN = {
+  left: 31.8,
+  top: 15.0,
+  width: 45.6,
+  height: 51.8,
+};
+
+// ─── TYPES ──────────────────────────────────────────────────────────────────
 
 interface Particle {
   id: number;
@@ -64,12 +83,14 @@ interface CatState {
   isFlipped: boolean;
 }
 
+// ─── COMPONENT ──────────────────────────────────────────────────────────────
+
 export default function Tamagotchi() {
   const [status, setStatus] = useState<"sleeping" | "idle" | "eating" | "stats" | "walkingOut" | "walkingIn">("idle");
   const [particles, setParticles] = useState<Particle[]>([]);
   const [hunger, setHunger] = useState(20);
   const [happiness, setHappiness] = useState(60);
-  const [outfitIndex, setOutfitIndex] = useState(0); // 0: Casual (purple), 1: Bunny (pink), 2: Cyber Star (green with glasses)
+  const [outfitIndex, setOutfitIndex] = useState(0);
   const garotaIdle = getGarotaFrames(outfitIndex, "idle");
   const garotaWalking = getGarotaFrames(outfitIndex, "walking");
   const garotaSono = getGarotaFrames(outfitIndex, "sono");
@@ -77,12 +98,9 @@ export default function Tamagotchi() {
   const [cupcakeActive, setCupcakeActive] = useState(false);
   const [starActive, setStarActive] = useState(false);
   const [isSpinning, setIsSpinning] = useState(false);
-  const [blinking, setBlinking] = useState(false);
+  const [hoveredButton, setHoveredButton] = useState<string | null>(null);
 
-  // Animation Frame Tick (updates every 200ms for retro pixel animations)
-  const [tick, setTick] = useState(0);
-
-  // Cats AI States (adjusted targets and boundary coordinates for larger sizes)
+  // Cats AI States
   const [blackCat, setBlackCat] = useState<CatState>({
     x: 14,
     targetX: 14,
@@ -91,32 +109,15 @@ export default function Tamagotchi() {
   });
 
   const [tabbyCat, setTabbyCat] = useState<CatState>({
-    x: 72,
-    targetX: 72,
+    x: 60,
+    targetX: 60,
     action: "standing",
     isFlipped: false
   });
 
-  // Cat Speech Bubble Texts
+  // Cat Speech Bubbles
   const [blackCatMeow, setBlackCatMeow] = useState<string | null>(null);
   const [tabbyCatMeow, setTabbyCatMeow] = useState<string | null>(null);
-
-  // Frame tick loop
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTick((t) => (t + 1) % 8);
-    }, 200);
-    return () => clearInterval(timer);
-  }, []);
-
-  // Blinking eyes simulation
-  useEffect(() => {
-    const blinkInterval = setInterval(() => {
-      setBlinking(true);
-      setTimeout(() => setBlinking(false), 150);
-    }, 2800);
-    return () => clearInterval(blinkInterval);
-  }, []);
 
   // Auto-sleep if idle for 20 seconds
   useEffect(() => {
@@ -128,23 +129,17 @@ export default function Tamagotchi() {
     }
   }, [status]);
 
-  // Cats Random AI Behavior Loop (decides next action when idle/normal)
+  // Cats Random AI Behavior Loop
   useEffect(() => {
     if (status === "sleeping" || status === "eating" || status.startsWith("walking")) return;
 
     const interval = setInterval(() => {
-      // 1. Black Cat AI (left half area, clamped)
       setBlackCat((prev) => {
-        if (prev.action === "walking") return prev; // Do not interrupt walks
+        if (prev.action === "walking") return prev;
         const rand = Math.random();
         if (rand < 0.3) {
           const newTarget = clampX(BLACK_CAT_MIN_X + 5 + Math.random() * (BLACK_CAT_MAX_X - BLACK_CAT_MIN_X - 5), BLACK_CAT_MIN_X, BLACK_CAT_MAX_X);
-          return {
-            ...prev,
-            action: "walking",
-            targetX: newTarget,
-            isFlipped: newTarget < prev.x
-          };
+          return { ...prev, action: "walking", targetX: newTarget, isFlipped: newTarget < prev.x };
         } else if (rand < 0.55) {
           return { ...prev, action: "grooming" };
         } else if (rand < 0.7) {
@@ -158,18 +153,12 @@ export default function Tamagotchi() {
         }
       });
 
-      // 2. Tabby Cat AI (right half area, clamped)
       setTabbyCat((prev) => {
         if (prev.action === "walking") return prev;
         const rand = Math.random();
         if (rand < 0.3) {
           const newTarget = clampX(TABBY_CAT_MIN_X + 5 + Math.random() * (TABBY_CAT_MAX_X - TABBY_CAT_MIN_X - 5), TABBY_CAT_MIN_X, TABBY_CAT_MAX_X);
-          return {
-            ...prev,
-            action: "walking",
-            targetX: newTarget,
-            isFlipped: newTarget < prev.x
-          };
+          return { ...prev, action: "walking", targetX: newTarget, isFlipped: newTarget < prev.x };
         } else if (rand < 0.55) {
           return { ...prev, action: "grooming" };
         } else if (rand < 0.7) {
@@ -187,118 +176,67 @@ export default function Tamagotchi() {
     return () => clearInterval(interval);
   }, [status]);
 
-  // Walk physics loop (~30fps)
+  // Walk physics loop
   useEffect(() => {
     const walkTimer = setInterval(() => {
-      // Move Black Cat
       setBlackCat((prev) => {
         if (prev.action !== "walking") return prev;
-        const clampedTarget = clampX(prev.targetX, BLACK_CAT_MIN_X, BLACK_CAT_MAX_X);
-        const dx = clampedTarget - prev.x;
+        const target = clampX(prev.targetX, BLACK_CAT_MIN_X, BLACK_CAT_MAX_X);
+        const dx = target - prev.x;
         if (Math.abs(dx) < 1.0) {
           let nextAction: CatAction = "sitting";
           if (status === "sleeping") nextAction = "sleeping";
           else if (status === "eating") nextAction = "begging";
-          return { ...prev, x: clampedTarget, action: nextAction };
+          return { ...prev, x: target, action: nextAction };
         }
-        return {
-          ...prev,
-          x: clampX(prev.x + Math.sign(dx) * 0.8, BLACK_CAT_MIN_X, BLACK_CAT_MAX_X)
-        };
+        return { ...prev, x: clampX(prev.x + Math.sign(dx) * 0.8, BLACK_CAT_MIN_X, BLACK_CAT_MAX_X) };
       });
 
-      // Move Tabby Cat
       setTabbyCat((prev) => {
         if (prev.action !== "walking") return prev;
-        const clampedTarget = clampX(prev.targetX, TABBY_CAT_MIN_X, TABBY_CAT_MAX_X);
-        const dx = clampedTarget - prev.x;
+        const target = clampX(prev.targetX, TABBY_CAT_MIN_X, TABBY_CAT_MAX_X);
+        const dx = target - prev.x;
         if (Math.abs(dx) < 1.0) {
           let nextAction: CatAction = "standing";
           if (status === "sleeping") nextAction = "sleeping";
           else if (status === "eating") nextAction = "begging";
-          return { ...prev, x: clampedTarget, action: nextAction };
+          return { ...prev, x: target, action: nextAction };
         }
-        return {
-          ...prev,
-          x: clampX(prev.x + Math.sign(dx) * 0.8, TABBY_CAT_MIN_X, TABBY_CAT_MAX_X)
-        };
+        return { ...prev, x: clampX(prev.x + Math.sign(dx) * 0.8, TABBY_CAT_MIN_X, TABBY_CAT_MAX_X) };
       });
     }, 33);
 
     return () => clearInterval(walkTimer);
   }, [status]);
 
-  // Sync cats' targets with cabinet states (Eating, Sleeping, Outdoors)
+  // Sync cats with status changes
   useEffect(() => {
     if (status === "eating") {
-      // Begging mode: walk near the dining table (black cat at 25%, tabby cat at 68%)
-      setBlackCat((prev) => ({
-        ...prev,
-        action: "walking",
-        targetX: clampX(25, BLACK_CAT_MIN_X, BLACK_CAT_MAX_X),
-        isFlipped: false
-      }));
-      setTabbyCat((prev) => ({
-        ...prev,
-        action: "walking",
-        targetX: clampX(68, TABBY_CAT_MIN_X, TABBY_CAT_MAX_X),
-        isFlipped: true
-      }));
+      setBlackCat((prev) => ({ ...prev, action: "walking", targetX: clampX(25, BLACK_CAT_MIN_X, BLACK_CAT_MAX_X), isFlipped: false }));
+      setTabbyCat((prev) => ({ ...prev, action: "walking", targetX: clampX(65, TABBY_CAT_MIN_X, TABBY_CAT_MAX_X), isFlipped: true }));
       setBlackCatMeow("🧁?");
       setTabbyCatMeow("Meow! 😋");
-      setTimeout(() => {
-        setBlackCatMeow(null);
-        setTabbyCatMeow(null);
-      }, 1800);
-    } 
-    
-    else if (status === "sleeping") {
-      // Sleeping mode: curl up together at the foot of the bed
-      setBlackCat((prev) => ({
-        ...prev,
-        action: "walking",
-        targetX: clampX(18, BLACK_CAT_MIN_X, BLACK_CAT_MAX_X),
-        isFlipped: false
-      }));
-      setTabbyCat((prev) => ({
-        ...prev,
-        action: "walking",
-        targetX: clampX(42, TABBY_CAT_MIN_X, TABBY_CAT_MAX_X),
-        isFlipped: true
-      }));
-    } 
-    
-    else if (status === "walkingOut") {
-      // Outdoors mode: walk towards the doorway and wave
-      setBlackCat((prev) => ({
-        ...prev,
-        action: "walking",
-        targetX: clampX(34, BLACK_CAT_MIN_X, BLACK_CAT_MAX_X),
-        isFlipped: false
-      }));
-      setTabbyCat((prev) => ({
-        ...prev,
-        action: "walking",
-        targetX: clampX(75, TABBY_CAT_MIN_X, TABBY_CAT_MAX_X),
-        isFlipped: false
-      }));
+      setTimeout(() => { setBlackCatMeow(null); setTabbyCatMeow(null); }, 1800);
+    } else if (status === "sleeping") {
+      setBlackCat((prev) => ({ ...prev, action: "walking", targetX: clampX(18, BLACK_CAT_MIN_X, BLACK_CAT_MAX_X), isFlipped: false }));
+      setTabbyCat((prev) => ({ ...prev, action: "walking", targetX: clampX(42, TABBY_CAT_MIN_X, TABBY_CAT_MAX_X), isFlipped: true }));
+    } else if (status === "walkingOut") {
+      setBlackCat((prev) => ({ ...prev, action: "walking", targetX: clampX(34, BLACK_CAT_MIN_X, BLACK_CAT_MAX_X), isFlipped: false }));
+      setTabbyCat((prev) => ({ ...prev, action: "walking", targetX: clampX(75, TABBY_CAT_MIN_X, TABBY_CAT_MAX_X), isFlipped: false }));
       setBlackCatMeow("👋");
       setTabbyCatMeow("Miau! 🌸");
-      setTimeout(() => {
-        setBlackCatMeow(null);
-        setTabbyCatMeow(null);
-      }, 2000);
+      setTimeout(() => { setBlackCatMeow(null); setTabbyCatMeow(null); }, 2000);
     }
   }, [status]);
+
+  // ─── ACTION HANDLERS ───────────────────────────────────────────────────────
 
   const spawnParticle = (emoji: string) => {
     const id = Date.now() + Math.random();
     const x = 20 + Math.random() * 60;
     const y = 30 + Math.random() * 30;
     setParticles((prev) => [...prev, { id, x, y, emoji }]);
-    setTimeout(() => {
-      setParticles((prev) => prev.filter((p) => p.id !== id));
-    }, 1000);
+    setTimeout(() => { setParticles((prev) => prev.filter((p) => p.id !== id)); }, 1000);
   };
 
   const handleSleepToggle = () => {
@@ -306,7 +244,6 @@ export default function Tamagotchi() {
     if (status === "sleeping") {
       setStatus("idle");
       spawnParticle("💤");
-      // Wake up the cats and send them back to room exploration
       setBlackCat((prev) => ({ ...prev, action: "sitting", targetX: prev.x }));
       setTabbyCat((prev) => ({ ...prev, action: "standing", targetX: prev.x }));
     } else {
@@ -319,15 +256,8 @@ export default function Tamagotchi() {
     if (status.startsWith("walking") || status === "stats" || status === "sleeping") return;
     setIsSpinning(true);
     spawnParticle("✨");
-    
-    setTimeout(() => {
-      setOutfitIndex((prev) => (prev + 1) % 3);
-    }, 250);
-
-    setTimeout(() => {
-      setIsSpinning(false);
-      spawnParticle("👗");
-    }, 500);
+    setTimeout(() => { setOutfitIndex((prev) => (prev + 1) % 3); }, 250);
+    setTimeout(() => { setIsSpinning(false); spawnParticle("👗"); }, 500);
   };
 
   const handleFeed = () => {
@@ -336,13 +266,11 @@ export default function Tamagotchi() {
     setCupcakeActive(true);
     setHunger((prev) => Math.max(0, prev - 20));
     setHappiness((prev) => Math.min(100, prev + 5));
-    
     setTimeout(() => {
       spawnParticle("🧁");
       spawnParticle("❤️");
       setStatus("idle");
       setCupcakeActive(false);
-      // Reset cats
       setBlackCat((prev) => ({ ...prev, action: "sitting", targetX: prev.x }));
       setTabbyCat((prev) => ({ ...prev, action: "standing", targetX: prev.x }));
     }, 1800);
@@ -352,28 +280,13 @@ export default function Tamagotchi() {
     if (status.startsWith("walking") || status === "stats" || status === "sleeping") return;
     setStatus("walkingOut");
     setHappiness((prev) => Math.min(100, prev + 15));
-
-    setTimeout(() => {
-      setStatus("walkingIn");
-      spawnParticle("🌸");
-    }, 2200);
-
+    setTimeout(() => { setStatus("walkingIn"); spawnParticle("🌸"); }, 2200);
     setTimeout(() => {
       setStatus("idle");
       spawnParticle("👋");
-      // Reset cats
       setBlackCat((prev) => ({ ...prev, action: "sitting", targetX: prev.x }));
       setTabbyCat((prev) => ({ ...prev, action: "standing", targetX: prev.x }));
     }, 3600);
-  };
-
-  const handleToggleStats = () => {
-    if (status.startsWith("walking")) return;
-    if (status === "stats") {
-      setStatus("idle");
-    } else {
-      setStatus("stats");
-    }
   };
 
   const handlePet = () => {
@@ -385,20 +298,24 @@ export default function Tamagotchi() {
       return;
     }
     if (status.startsWith("walking") || status === "stats") return;
-    
     spawnParticle("❤️");
     setHappiness((prev) => Math.min(100, prev + 10));
     setStarActive(true);
     setTimeout(() => setStarActive(false), 500);
   };
 
+  const handleButtonClick = (btnId: string) => {
+    switch (btnId) {
+      case "sleep": handleSleepToggle(); break;
+      case "eat": handleFeed(); break;
+      case "closet": handleCloset(); break;
+      case "outdoor": handleOutdoors(); break;
+    }
+  };
+
   const handleBlackCatClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setBlackCat((prev) => ({
-      ...prev,
-      action: "playing",
-      isFlipped: !prev.isFlipped
-    }));
+    setBlackCat((prev) => ({ ...prev, action: "playing", isFlipped: !prev.isFlipped }));
     setBlackCatMeow(Math.random() > 0.5 ? "Miau! ❤️" : "Purr...");
     spawnParticle("❤️");
     setTimeout(() => setBlackCatMeow(null), 1500);
@@ -406,11 +323,7 @@ export default function Tamagotchi() {
 
   const handleTabbyCatClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setTabbyCat((prev) => ({
-      ...prev,
-      action: "playing",
-      isFlipped: !prev.isFlipped
-    }));
+    setTabbyCat((prev) => ({ ...prev, action: "playing", isFlipped: !prev.isFlipped }));
     setTabbyCatMeow(Math.random() > 0.5 ? "Meow! 😸" : "Ronronar");
     spawnParticle("✨");
     setTimeout(() => setTabbyCatMeow(null), 1500);
@@ -425,40 +338,71 @@ export default function Tamagotchi() {
       case "walkingIn":
         return { x: [-80, 0], opacity: [0, 1, 1] };
       default:
-        return starActive 
-          ? { y: [0, -10, 0], rotate: [0, -8, 8, 0] } 
+        return starActive
+          ? { y: [0, -10, 0], rotate: [0, -8, 8, 0] }
           : { y: [0, -1, 0] };
     }
   };
 
+  // ─── RENDER ────────────────────────────────────────────────────────────────
+
+  const renderCatSprite = (cat: CatState, type: "black" | "tabby") => {
+    const isBlack = type === "black";
+    if (cat.action === "sleeping") {
+      return <SpriteAnimation frames={isBlack ? GATO_PRETO_SONO : GATO_MALHADO_SONO} interval={450} mode="pingpong" alt={`Gato ${type} dormindo`} style={{ objectPosition: "center bottom", transform: `scaleX(${cat.isFlipped ? -1 : 1})` }} />;
+    } else if (cat.action === "walking") {
+      return <SpriteAnimation frames={isBlack ? GATO_PRETO_ANDANDO : GATO_MALHADO_WALKING} interval={300} mode="loop" alt={`Gato ${type} andando`} style={{ objectPosition: "center bottom", transform: `scaleX(${cat.isFlipped ? -1 : 1})` }} />;
+    } else if (cat.action === "playing") {
+      return <SpriteAnimation frames={isBlack ? GATO_PRETO_BRINCANDO : GATO_MALHADO_BRINCANDO} interval={300} mode="loop" alt={`Gato ${type} brincando`} style={{ objectPosition: "center bottom", transform: `scaleX(${cat.isFlipped ? -1 : 1})` }} />;
+    } else if (cat.action === "begging") {
+      return <SpriteAnimation frames={isBlack ? GATO_PRETO_COMENDO : GATO_MALHADO_COMENDO} interval={350} mode="loop" alt={`Gato ${type} comendo`} style={{ objectPosition: "center bottom", transform: `scaleX(${cat.isFlipped ? -1 : 1})` }} />;
+    } else if (!isBlack && cat.action === "grooming") {
+      return <SpriteAnimation frames={GATO_MALHADO_GROOMING} interval={300} mode="loop" alt="Gato malhado se limpando" style={{ objectPosition: "center bottom", transform: `scaleX(${cat.isFlipped ? -1 : 1})` }} />;
+    } else if (!isBlack && cat.action === "standing") {
+      return <SpriteAnimation frames={GATO_MALHADO_STANDING} interval={300} mode="loop" alt="Gato malhado em pe" style={{ objectPosition: "center bottom", transform: `scaleX(${cat.isFlipped ? -1 : 1})` }} />;
+    } else {
+      return <SpriteAnimation frames={isBlack ? GATO_PRETO_IDLE : GATO_MALHADO_IDLE} interval={300} mode="loop" alt={`Gato ${type}`} style={{ objectPosition: "center bottom", transform: `scaleX(${cat.isFlipped ? -1 : 1})` }} />;
+    }
+  };
+
+  const renderMeowBubble = (text: string | null) => {
+    if (!text) return null;
+    return (
+      <div className="absolute bottom-[110%] left-1/2 -translate-x-1/2 bg-white text-slate-800 text-[5px] font-bold px-1 py-0.5 rounded border border-slate-900 shadow-sm pointer-events-none select-none z-30 font-mono whitespace-nowrap animate-bounce">
+        {text}
+        <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-x-[2px] border-x-transparent border-t-[2px] border-t-white" />
+      </div>
+    );
+  };
+
   return (
-    <div 
+    <div
       className="relative select-none w-full"
-      style={{ 
-        maxWidth: "700px", // Increased overall cabinet size for desktop view
-        aspectRatio: "1024 / 819"
+      style={{
+        maxWidth: "700px",
+        aspectRatio: "2304 / 1842",
       }}
     >
-      {/* 1. MOCKUP HOUSING IMAGE */}
-      <img 
-        src="/casinha.png?v=3" 
-        alt="Pixel Chix Cabinet" 
-        className="w-full h-full object-contain pointer-events-none z-10"
+      {/* 1. CASINHA IMAGE (base layer) */}
+      <img
+        src="/casinha.png?v=4"
+        alt="Pixel Chix Cabinet"
+        className="w-full h-full object-contain pointer-events-none"
         style={{ imageRendering: "pixelated" }}
       />
 
-      {/* 2. DYNAMIC LCD SCREEN OVERLAY */}
-      <div 
-        className="absolute overflow-hidden text-slate-800 z-20 cursor-pointer rounded-[2px]"
+      {/* 2. LCD SCREEN OVERLAY (characters live here) */}
+      <div
+        className="absolute overflow-hidden z-20 cursor-pointer"
         style={{
-          left: "24%",
-          top: "14%",
-          width: "56%",
-          height: "54%",
+          left: `${SCREEN.left}%`,
+          top: `${SCREEN.top}%`,
+          width: `${SCREEN.width}%`,
+          height: `${SCREEN.height}%`,
         }}
         onClick={handlePet}
       >
-        {/* Dynamic Particles */}
+        {/* Particles */}
         <AnimatePresence>
           {particles.map((p) => (
             <motion.span
@@ -474,9 +418,7 @@ export default function Tamagotchi() {
           ))}
         </AnimatePresence>
 
-        {/* Room Graphics */}
         {status === "stats" ? (
-          /* TCC STATS VIEW */
           <div className="w-full h-full flex flex-col justify-center px-6 pt-6 text-[10px] leading-[1.3] text-slate-700 font-mono z-10 bg-[#8be4eb]/90 rounded border-2 border-slate-700 m-2 shadow-inner">
             <div className="font-bold border-b-2 border-slate-900 pb-1 mb-2 flex justify-between uppercase text-xs">
               <span>CHIX STATS</span>
@@ -493,17 +435,12 @@ export default function Tamagotchi() {
               <span>GATINHAS:</span>
               <span>2 IN_ROOM</span>
             </div>
-            <div className="flex justify-between mt-3 pt-1 border-t border-slate-900/10 text-slate-500 uppercase text-[8px]">
-              <span>TCC STATUS: CONNECTED</span>
-            </div>
           </div>
         ) : (
-          /* ROOM ANIMATION VIEW */
           <div className="relative w-full h-full flex items-end justify-center">
-
-            {/* Cupcake eating food animation */}
+            {/* Cupcake animation */}
             {cupcakeActive && (
-              <motion.div 
+              <motion.div
                 className="absolute left-[58%] bottom-[15%] text-[12px] z-20"
                 animate={{ x: [0, -5, -8], y: [0, -4, 0], scale: [1, 1.1, 0.8], opacity: [1, 1, 0] }}
                 transition={{ duration: 1.5, ease: "easeInOut" }}
@@ -512,30 +449,19 @@ export default function Tamagotchi() {
               </motion.div>
             )}
 
-            {/* zZZ Sleep text indicator */}
+            {/* Sleep ZZZ */}
             {status === "sleeping" && (
               <div className="absolute right-12 top-2 text-[7px] font-bold text-slate-400 flex flex-col items-center z-25">
-                <motion.span
-                  animate={{ y: [0, -6], x: [0, 3], opacity: [0, 1, 0] }}
-                  transition={{ repeat: Infinity, duration: 1.8, delay: 0 }}
-                >z</motion.span>
-                <motion.span
-                  animate={{ y: [0, -8], x: [0, -3], opacity: [0, 1, 0] }}
-                  transition={{ repeat: Infinity, duration: 1.8, delay: 0.5 }}
-                >Z</motion.span>
+                <motion.span animate={{ y: [0, -6], x: [0, 3], opacity: [0, 1, 0] }} transition={{ repeat: Infinity, duration: 1.8 }}>z</motion.span>
+                <motion.span animate={{ y: [0, -8], x: [0, -3], opacity: [0, 1, 0] }} transition={{ repeat: Infinity, duration: 1.8, delay: 0.5 }}>Z</motion.span>
               </div>
             )}
 
-            {/* ============================================================== */}
-            {/* GATINHA 1: PRETINHA MAGRINHA (Increased Size 16% x 28% & Detailed SVG) */}
-            {/* ============================================================== */}
+            {/* BLACK CAT */}
             <motion.div
               onClick={handleBlackCatClick}
-              className="absolute bottom-[2px] w-[20%] h-[35%] z-15 cursor-pointer"
-              style={{
-                left: `${blackCat.x}%`,
-                transformOrigin: "bottom center",
-              }}
+              className="absolute bottom-[2%] w-[18%] h-[32%] z-15 cursor-pointer"
+              style={{ left: `${blackCat.x}%`, transformOrigin: "bottom center" }}
               animate={
                 blackCat.action === "sleeping"
                   ? { y: [0, 0.4, 0], scaleY: [1, 1.05, 1], transition: { repeat: Infinity, duration: 2.2, ease: "easeInOut" } }
@@ -548,68 +474,15 @@ export default function Tamagotchi() {
                   : { y: 0 }
               }
             >
-              {/* Custom Meow Speech Bubble */}
-              {blackCatMeow && (
-                <div className="absolute bottom-[110%] left-1/2 -translate-x-1/2 bg-white text-slate-800 text-[5px] font-bold px-1 py-0.5 rounded border border-slate-900 shadow-sm pointer-events-none select-none z-30 font-mono whitespace-nowrap animate-bounce">
-                  {blackCatMeow}
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-x-[2px] border-x-transparent border-t-[2px] border-t-white" />
-                  <div className="absolute top-[calc(100%+0.5px)] left-1/2 -translate-x-1/2 w-0 h-0 border-x-[2.5px] border-x-transparent border-t-[2.5px] border-t-slate-900 -z-10" />
-                </div>
-              )}
-
-            {blackCat.action === "sleeping" ? (
-              <SpriteAnimation
-                frames={GATO_PRETO_SONO}
-                interval={450}
-                mode="pingpong"
-                alt="Gato preto dormindo"
-                style={{ objectPosition: "center bottom", transform: `scaleX(${blackCat.isFlipped ? -1 : 1})` }}
-              />
-            ) : blackCat.action === "walking" ? (
-              <SpriteAnimation
-                frames={GATO_PRETO_ANDANDO}
-                interval={300}
-                mode="loop"
-                alt="Gato preto andando"
-                style={{ objectPosition: "center bottom", transform: `scaleX(${blackCat.isFlipped ? -1 : 1})` }}
-              />
-            ) : blackCat.action === "playing" ? (
-              <SpriteAnimation
-                frames={GATO_PRETO_BRINCANDO}
-                interval={300}
-                mode="loop"
-                alt="Gato preto brincando"
-                style={{ objectPosition: "center bottom", transform: `scaleX(${blackCat.isFlipped ? -1 : 1})` }}
-              />
-            ) : blackCat.action === "begging" ? (
-              <SpriteAnimation
-                frames={GATO_PRETO_COMENDO}
-                interval={350}
-                mode="loop"
-                alt="Gato preto comendo"
-                style={{ objectPosition: "center bottom", transform: `scaleX(${blackCat.isFlipped ? -1 : 1})` }}
-              />
-            ) : (
-              <SpriteAnimation
-                frames={GATO_PRETO_IDLE}
-                interval={300}
-                mode="loop"
-                alt="Gato preto"
-                style={{ objectPosition: "center bottom", transform: `scaleX(${blackCat.isFlipped ? -1 : 1})` }}
-              />
-            )}
+              {renderMeowBubble(blackCatMeow)}
+              {renderCatSprite(blackCat, "black")}
             </motion.div>
 
-            {/* ============================================================== */}
-            {/* GATINHA 2: TIGRADA GORDINHA (Increased Size 18% x 30% & Detailed SVG) */}
-            {/* ============================================================== */}
+            {/* TABBY CAT */}
             <motion.div
               onClick={handleTabbyCatClick}
-              className="absolute bottom-[2px] w-[22%] h-[37%] z-15 cursor-pointer"
-              style={{
-                left: `${tabbyCat.x}%`,
-                transformOrigin: "bottom center",
-              }}
+              className="absolute bottom-[2%] w-[20%] h-[34%] z-15 cursor-pointer"
+              style={{ left: `${tabbyCat.x}%`, transformOrigin: "bottom center" }}
               animate={
                 tabbyCat.action === "sleeping"
                   ? { y: [0, 0.4, 0], scaleY: [1, 1.05, 1], transition: { repeat: Infinity, duration: 2.0, ease: "easeInOut" } }
@@ -622,187 +495,87 @@ export default function Tamagotchi() {
                   : { y: 0 }
               }
             >
-              {/* Custom Meow Speech Bubble */}
-              {tabbyCatMeow && (
-                <div className="absolute bottom-[110%] left-1/2 -translate-x-1/2 bg-white text-slate-800 text-[5px] font-bold px-1 py-0.5 rounded border border-slate-900 shadow-sm pointer-events-none select-none z-30 font-mono whitespace-nowrap animate-bounce">
-                  {tabbyCatMeow}
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-x-[2px] border-x-transparent border-t-[2px] border-t-white" />
-                  <div className="absolute top-[calc(100%+0.5px)] left-1/2 -translate-x-1/2 w-0 h-0 border-x-[2.5px] border-x-transparent border-t-[2.5px] border-t-slate-900 -z-10" />
-                </div>
-              )}
-
-              {tabbyCat.action === "sleeping" ? (
-                <SpriteAnimation
-                  frames={GATO_MALHADO_SONO}
-                  interval={450}
-                  mode="pingpong"
-                  alt="Gato malhado dormindo"
-                  style={{ objectPosition: "center bottom", transform: `scaleX(${tabbyCat.isFlipped ? -1 : 1})` }}
-                />
-              ) : tabbyCat.action === "walking" ? (
-                <SpriteAnimation
-                  frames={GATO_MALHADO_WALKING}
-                  interval={300}
-                  mode="loop"
-                  alt="Gato malhado andando"
-                  style={{ objectPosition: "center bottom", transform: `scaleX(${tabbyCat.isFlipped ? -1 : 1})` }}
-                />
-              ) : tabbyCat.action === "playing" ? (
-                <SpriteAnimation
-                  frames={GATO_MALHADO_BRINCANDO}
-                  interval={300}
-                  mode="loop"
-                  alt="Gato malhado brincando"
-                  style={{ objectPosition: "center bottom", transform: `scaleX(${tabbyCat.isFlipped ? -1 : 1})` }}
-                />
-              ) : tabbyCat.action === "begging" ? (
-                <SpriteAnimation
-                  frames={GATO_MALHADO_COMENDO}
-                  interval={350}
-                  mode="loop"
-                  alt="Gato malhado comendo"
-                  style={{ objectPosition: "center bottom", transform: `scaleX(${tabbyCat.isFlipped ? -1 : 1})` }}
-                />
-              ) : tabbyCat.action === "grooming" ? (
-                <SpriteAnimation
-                  frames={GATO_MALHADO_GROOMING}
-                  interval={300}
-                  mode="loop"
-                  alt="Gato malhado se limpando"
-                  style={{ objectPosition: "center bottom", transform: `scaleX(${tabbyCat.isFlipped ? -1 : 1})` }}
-                />
-              ) : tabbyCat.action === "standing" ? (
-                <SpriteAnimation
-                  frames={GATO_MALHADO_STANDING}
-                  interval={300}
-                  mode="loop"
-                  alt="Gato malhado em pe"
-                  style={{ objectPosition: "center bottom", transform: `scaleX(${tabbyCat.isFlipped ? -1 : 1})` }}
-                />
-              ) : (
-                <SpriteAnimation
-                  frames={GATO_MALHADO_IDLE}
-                  interval={300}
-                  mode="loop"
-                  alt="Gato malhado"
-                  style={{ objectPosition: "center bottom", transform: `scaleX(${tabbyCat.isFlipped ? -1 : 1})` }}
-                />
-              )}
+              {renderMeowBubble(tabbyCatMeow)}
+              {renderCatSprite(tabbyCat, "tabby")}
             </motion.div>
 
-            {/* ============================================================== */}
-            {/* CORE INTERACTION VIEW: SLEEPING VS TYPING                      */}
-            {/* ============================================================== */}
+            {/* GIRL CHARACTER */}
             {status === "sleeping" ? (
-              /* GAROTA DORMINDO NA MESA — sprite Gemini (teste) */
               <div
                 className="absolute z-[8]"
                 style={{
                   left: "50%",
-                  bottom: "2px",
+                  bottom: "2%",
                   transform: "translateX(-50%)",
-                  height: "54%",
+                  height: "50%",
                   aspectRatio: "1 / 1",
                 }}
               >
-                <SpriteAnimation frames={garotaSono} interval={360} mode="loopLast3" alt="Garota dormindo na mesa" />
+                <SpriteAnimation frames={garotaSono} interval={360} mode="loopLast3" alt="Garota dormindo" />
               </div>
             ) : (
-              /* TYPING GIRL, CHAIR, AND TABLE */
-              <>
-            {/* The Chix Girl (Increased Size 25% x 55% & Detailed SVG) */}
-            <motion.div
-              className="absolute left-[35%] bottom-[5%] w-[25%] h-[55%] z-10"
-              animate={getChixAnimation()}
-              transition={
-                status.startsWith("walking")
-                  ? { duration: 1.8, ease: "easeInOut" }
-                  : { repeat: Infinity, duration: 2.0, ease: "easeInOut" }
-              }
-              style={{
-                transformOrigin: "bottom center",
-              }}
-            >
               <motion.div
-                style={{ width: "100%", height: "100%" }}
-                animate={isSpinning ? { rotateY: [0, 360, 720] } : {}}
-                transition={{ duration: 0.5, ease: "easeInOut" }}
+                className="absolute bottom-[3%] w-[22%] h-[52%] z-10"
+                style={{ left: "38%", transformOrigin: "bottom center" }}
+                animate={getChixAnimation()}
+                transition={
+                  status.startsWith("walking")
+                    ? { duration: 1.8, ease: "easeInOut" }
+                    : { repeat: Infinity, duration: 2.0, ease: "easeInOut" }
+                }
               >
-                <SpriteAnimation
-                  frames={
-                    status === "eating"
-                      ? garotaComendo
-                      : status.startsWith("walking")
-                      ? garotaWalking
-                      : garotaIdle
-                  }
-                  interval={300}
-                  mode="loop"
-                  alt={
-                    status === "eating"
-                      ? "Garota comendo"
-                      : status.startsWith("walking")
-                      ? "Garota andando"
-                      : "Garota digitando"
-                  }
-                />
+                <motion.div
+                  style={{ width: "100%", height: "100%" }}
+                  animate={isSpinning ? { rotateY: [0, 360, 720] } : {}}
+                  transition={{ duration: 0.5, ease: "easeInOut" }}
+                >
+                  <SpriteAnimation
+                    frames={
+                      status === "eating"
+                        ? garotaComendo
+                        : status.startsWith("walking")
+                        ? garotaWalking
+                        : garotaIdle
+                    }
+                    interval={300}
+                    mode="loop"
+                    alt={
+                      status === "eating"
+                        ? "Garota comendo"
+                        : status.startsWith("walking")
+                        ? "Garota andando"
+                        : "Garota digitando"
+                    }
+                  />
+                </motion.div>
               </motion.div>
-            </motion.div>
-              </>
             )}
-
           </div>
         )}
       </div>
 
-      {/* 3. VISIBLE RETRO BUTTONS */}
-      <div 
-        className="absolute w-full flex justify-around px-8 z-30"
-        style={{
-          bottom: "4%",
-          height: "11%"
-        }}
-      >
-        {/* Button 1: Bed/Sleep */}
-        <button 
-          onClick={handleSleepToggle}
-          className="flex flex-col items-center justify-center bg-pink-100 hover:bg-pink-200 border-2 border-pink-400 active:scale-95 text-slate-800 rounded-lg font-mono text-[9px] font-bold w-[20%] py-1 shadow-md transition-all duration-150"
-          title="Dormir / Wakeup"
-        >
-          <span className="text-base leading-none mb-0.5">💤</span>
-          <span>DORMIR</span>
-        </button>
-
-        {/* Button 2: Food bowl */}
-        <button 
-          onClick={handleFeed}
-          className="flex flex-col items-center justify-center bg-yellow-100 hover:bg-yellow-200 border-2 border-yellow-400 active:scale-95 text-slate-800 rounded-lg font-mono text-[9px] font-bold w-[20%] py-1 shadow-md transition-all duration-150"
-          title="Alimentar / Feed"
-        >
-          <span className="text-base leading-none mb-0.5">🧁</span>
-          <span>COMER</span>
-        </button>
-
-        {/* Button 3: Clothes hanger */}
-        <button 
-          onClick={handleCloset}
-          className="flex flex-col items-center justify-center bg-purple-100 hover:bg-purple-200 border-2 border-purple-400 active:scale-95 text-slate-800 rounded-lg font-mono text-[9px] font-bold w-[20%] py-1 shadow-md transition-all duration-150"
-          title="Closet / Change Outfit"
-        >
-          <span className="text-base leading-none mb-0.5">👗</span>
-          <span>ROUPA</span>
-        </button>
-
-        {/* Button 4: Outdoors/Door */}
-        <button 
-          onClick={handleOutdoors}
-          className="flex flex-col items-center justify-center bg-green-100 hover:bg-green-200 border-2 border-green-400 active:scale-95 text-slate-800 rounded-lg font-mono text-[9px] font-bold w-[20%] py-1 shadow-md transition-all duration-150"
-          title="Outdoors / Walk"
-        >
-          <span className="text-base leading-none mb-0.5">🏃‍♀️</span>
-          <span>SAIR</span>
-        </button>
-      </div>
+      {/* 3. INVISIBLE BUTTON HITBOXES (overlaid on casinha button icons) */}
+      {BUTTONS.map((btn) => (
+        <button
+          key={btn.id}
+          onClick={() => handleButtonClick(btn.id)}
+          onMouseEnter={() => setHoveredButton(btn.id)}
+          onMouseLeave={() => setHoveredButton(null)}
+          className="absolute z-30 rounded-full cursor-pointer transition-all duration-150"
+          style={{
+            left: `${btn.cx - btn.r}%`,
+            top: `${btn.cy - btn.r}%`,
+            width: `${btn.r * 2}%`,
+            height: `${btn.r * 2}%`,
+            background: hoveredButton === btn.id ? "rgba(255,255,255,0.25)" : "transparent",
+            border: "none",
+            outline: "none",
+            transform: hoveredButton === btn.id ? "scale(1.08)" : "scale(1)",
+          }}
+          title={btn.label}
+          aria-label={btn.label}
+        />
+      ))}
     </div>
   );
 }
