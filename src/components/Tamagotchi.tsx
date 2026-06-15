@@ -981,10 +981,10 @@ export default function Tamagotchi() {
                 className="absolute z-[8]"
                 style={{
                   left: "50%",
-                  bottom: "0",
+                  bottom: "2px",
                   transform: "translateX(-50%)",
-                  height: "86%",
-                  aspectRatio: "288 / 460",
+                  height: "54%",
+                  aspectRatio: "204 / 251",
                 }}
               >
                 <SpriteAnimation frames={GAROTA_SONO} interval={260} mode="pingpong" alt="Garota dormindo na mesa" />
