@@ -24,16 +24,16 @@ const getGarotaFrames = (outfitIndex: number, type: "idle" | "walking" | "sono" 
   return Array.from({ length: 6 }, (_, i) => `/img/sprites/outfit_${outfitIndex}/garota-${type}/frame_${i + 1}.png`);
 };
 
-const GATO_PRETO_SONO = Array.from({ length: 12 }, (_, i) => `/img/sprites/gato-preto-sono/frame_${i + 1}.png`);
+const GATO_PRETO_SONO = Array.from({ length: 8 }, (_, i) => `/img/sprites/gato-preto-sono/frame_${i + 1}.png`);
 const GATO_PRETO_COMENDO = Array.from({ length: 8 }, (_, i) => `/img/sprites/gato-preto-comendo/frame_${i + 1}.png`);
-const GATO_PRETO_BRINCANDO = Array.from({ length: 24 }, (_, i) => `/img/sprites/gato-preto-brincando/frame_${i + 1}.png`);
-const GATO_PRETO_IDLE = Array.from({ length: 4 }, (_, i) => `/img/sprites/gato-preto-idle/frame_${i + 1}.png`);
-const GATO_PRETO_ANDANDO = Array.from({ length: 4 }, (_, i) => `/img/sprites/gato-preto-idle/frame_${i + 5}.png`);
+const GATO_PRETO_BRINCANDO = Array.from({ length: 19 }, (_, i) => `/img/sprites/gato-preto-brincando/frame_${i + 1}.png`);
+const GATO_PRETO_IDLE = Array.from({ length: 8 }, (_, i) => `/img/sprites/gato-preto-idle/frame_${i + 1}.png`);
+const GATO_PRETO_ANDANDO = Array.from({ length: 8 }, (_, i) => `/img/sprites/gato-preto-idle/frame_${i + 1}.png`);
 
-const GATO_MALHADO_SONO = Array.from({ length: 12 }, (_, i) => `/img/sprites/gato-malhado-sono/frame_${i + 1}.png`);
+const GATO_MALHADO_SONO = Array.from({ length: 8 }, (_, i) => `/img/sprites/gato-malhado-sono/frame_${i + 1}.png`);
 const GATO_MALHADO_ANDANDO = Array.from({ length: 8 }, (_, i) => `/img/sprites/gato-malhado-andando/frame_${i + 1}.png`);
 const GATO_MALHADO_COMENDO = Array.from({ length: 9 }, (_, i) => `/img/sprites/gato-malhado-comendo/frame_${i + 1}.png`);
-const GATO_MALHADO_BRINCANDO = Array.from({ length: 20 }, (_, i) => `/img/sprites/gato-malhado-brincando/frame_${i + 1}.png`);
+const GATO_MALHADO_BRINCANDO = Array.from({ length: 2 }, (_, i) => `/img/sprites/gato-malhado-brincando/frame_${i + 1}.png`);
 const GATO_MALHADO_IDLE = Array.from({ length: 4 }, (_, i) => `/img/sprites/gato-malhado-idle/frame_${i + 1}.png`);
 const GATO_MALHADO_WALKING = Array.from({ length: 4 }, (_, i) => `/img/sprites/gato-malhado-idle/frame_${i + 5}.png`);
 const GATO_MALHADO_GROOMING = Array.from({ length: 4 }, (_, i) => `/img/sprites/gato-malhado-idle/frame_${i + 9}.png`);
@@ -51,10 +51,10 @@ const clampX = (x: number, min: number, max: number) => Math.max(min, Math.min(m
 // ─── BUTTON POSITIONS (% of casinha image, from pixel analysis) ─────────────
 // These map to the 4 circular icons drawn into casinha.png
 const BUTTONS = [
-  { id: "sleep",   cx: 35.5, cy: 76.8, r: 4.5, label: "Dormir" },
-  { id: "eat",     cx: 46.3, cy: 77.0, r: 4.5, label: "Comer" },
-  { id: "closet",  cx: 57.3, cy: 76.8, r: 4.5, label: "Roupa" },
-  { id: "outdoor", cx: 68.4, cy: 76.9, r: 4.5, label: "Sair" },
+  { id: "sleep",   cx: 35.5, cy: 77.5, r: 5.5, label: "Dormir" },
+  { id: "eat",     cx: 46.3, cy: 77.5, r: 5.5, label: "Comer" },
+  { id: "closet",  cx: 57.3, cy: 77.5, r: 5.5, label: "Roupa" },
+  { id: "outdoor", cx: 68.4, cy: 77.5, r: 5.5, label: "Sair" },
 ];
 
 // LCD screen area (% of casinha image)
@@ -460,8 +460,8 @@ export default function Tamagotchi() {
             {/* BLACK CAT */}
             <motion.div
               onClick={handleBlackCatClick}
-              className="absolute bottom-[2%] w-[18%] h-[32%] z-15 cursor-pointer"
-              style={{ left: `${blackCat.x}%`, transformOrigin: "bottom center" }}
+              className="absolute bottom-[4%] z-15 cursor-pointer"
+              style={{ left: `${blackCat.x}%`, width: "12%", height: "22%", transformOrigin: "bottom center" }}
               animate={
                 blackCat.action === "sleeping"
                   ? { y: [0, 0.4, 0], scaleY: [1, 1.05, 1], transition: { repeat: Infinity, duration: 2.2, ease: "easeInOut" } }
@@ -481,8 +481,8 @@ export default function Tamagotchi() {
             {/* TABBY CAT */}
             <motion.div
               onClick={handleTabbyCatClick}
-              className="absolute bottom-[2%] w-[20%] h-[34%] z-15 cursor-pointer"
-              style={{ left: `${tabbyCat.x}%`, transformOrigin: "bottom center" }}
+              className="absolute bottom-[4%] z-15 cursor-pointer"
+              style={{ left: `${tabbyCat.x}%`, width: "12%", height: "22%", transformOrigin: "bottom center" }}
               animate={
                 tabbyCat.action === "sleeping"
                   ? { y: [0, 0.4, 0], scaleY: [1, 1.05, 1], transition: { repeat: Infinity, duration: 2.0, ease: "easeInOut" } }
@@ -505,18 +505,18 @@ export default function Tamagotchi() {
                 className="absolute z-[8]"
                 style={{
                   left: "50%",
-                  bottom: "2%",
+                  bottom: "4%",
                   transform: "translateX(-50%)",
-                  height: "50%",
-                  aspectRatio: "1 / 1",
+                  height: "38%",
+                  aspectRatio: "1 / 1.4",
                 }}
               >
                 <SpriteAnimation frames={garotaSono} interval={360} mode="loopLast3" alt="Garota dormindo" />
               </div>
             ) : (
               <motion.div
-                className="absolute bottom-[3%] w-[22%] h-[52%] z-10"
-                style={{ left: "38%", transformOrigin: "bottom center" }}
+                className="absolute bottom-[4%] z-10"
+                style={{ left: "40%", width: "14%", height: "40%", transformOrigin: "bottom center" }}
                 animate={getChixAnimation()}
                 transition={
                   status.startsWith("walking")
