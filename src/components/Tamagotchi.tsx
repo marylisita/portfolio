@@ -37,6 +37,17 @@ const GATO_MALHADO_GROOMING = Array.from({ length: 4 }, (_, i) => `/img/sprites/
 const GATO_MALHADO_STANDING = Array.from({ length: 4 }, (_, i) => `/img/sprites/gato-malhado-idle/frame_${i + 13}.png`);
 
 
+// Boundary limits for characters inside the LCD screen (in % of the screen div)
+// The screen div is the blue area. Characters should not go past these limits.
+const CAT_MIN_X = 0;     // left edge of the blue screen
+const CAT_MAX_X = 78;    // right edge minus sprite width (~20%)
+const BLACK_CAT_MIN_X = 0;
+const BLACK_CAT_MAX_X = 36;
+const TABBY_CAT_MIN_X = 40;
+const TABBY_CAT_MAX_X = 78;
+
+const clampX = (x: number, min: number, max: number) => Math.max(min, Math.min(max, x));
+
 interface Particle {
   id: number;
   x: number;
@@ -122,12 +133,12 @@ export default function Tamagotchi() {
     if (status === "sleeping" || status === "eating" || status.startsWith("walking")) return;
 
     const interval = setInterval(() => {
-      // 1. Black Cat AI (left half area: 10% to 36%)
+      // 1. Black Cat AI (left half area, clamped)
       setBlackCat((prev) => {
         if (prev.action === "walking") return prev; // Do not interrupt walks
         const rand = Math.random();
         if (rand < 0.3) {
-          const newTarget = 10 + Math.random() * 26;
+          const newTarget = clampX(BLACK_CAT_MIN_X + 5 + Math.random() * (BLACK_CAT_MAX_X - BLACK_CAT_MIN_X - 5), BLACK_CAT_MIN_X, BLACK_CAT_MAX_X);
           return {
             ...prev,
             action: "walking",
@@ -147,12 +158,12 @@ export default function Tamagotchi() {
         }
       });
 
-      // 2. Tabby Cat AI (right half area: 54% to 80%)
+      // 2. Tabby Cat AI (right half area, clamped)
       setTabbyCat((prev) => {
         if (prev.action === "walking") return prev;
         const rand = Math.random();
         if (rand < 0.3) {
-          const newTarget = 54 + Math.random() * 26;
+          const newTarget = clampX(TABBY_CAT_MIN_X + 5 + Math.random() * (TABBY_CAT_MAX_X - TABBY_CAT_MIN_X - 5), TABBY_CAT_MIN_X, TABBY_CAT_MAX_X);
           return {
             ...prev,
             action: "walking",
@@ -182,32 +193,34 @@ export default function Tamagotchi() {
       // Move Black Cat
       setBlackCat((prev) => {
         if (prev.action !== "walking") return prev;
-        const dx = prev.targetX - prev.x;
+        const clampedTarget = clampX(prev.targetX, BLACK_CAT_MIN_X, BLACK_CAT_MAX_X);
+        const dx = clampedTarget - prev.x;
         if (Math.abs(dx) < 1.0) {
           let nextAction: CatAction = "sitting";
           if (status === "sleeping") nextAction = "sleeping";
           else if (status === "eating") nextAction = "begging";
-          return { ...prev, x: prev.targetX, action: nextAction };
+          return { ...prev, x: clampedTarget, action: nextAction };
         }
         return {
           ...prev,
-          x: prev.x + Math.sign(dx) * 0.8
+          x: clampX(prev.x + Math.sign(dx) * 0.8, BLACK_CAT_MIN_X, BLACK_CAT_MAX_X)
         };
       });
 
       // Move Tabby Cat
       setTabbyCat((prev) => {
         if (prev.action !== "walking") return prev;
-        const dx = prev.targetX - prev.x;
+        const clampedTarget = clampX(prev.targetX, TABBY_CAT_MIN_X, TABBY_CAT_MAX_X);
+        const dx = clampedTarget - prev.x;
         if (Math.abs(dx) < 1.0) {
           let nextAction: CatAction = "standing";
           if (status === "sleeping") nextAction = "sleeping";
           else if (status === "eating") nextAction = "begging";
-          return { ...prev, x: prev.targetX, action: nextAction };
+          return { ...prev, x: clampedTarget, action: nextAction };
         }
         return {
           ...prev,
-          x: prev.x + Math.sign(dx) * 0.8
+          x: clampX(prev.x + Math.sign(dx) * 0.8, TABBY_CAT_MIN_X, TABBY_CAT_MAX_X)
         };
       });
     }, 33);
@@ -222,13 +235,13 @@ export default function Tamagotchi() {
       setBlackCat((prev) => ({
         ...prev,
         action: "walking",
-        targetX: 25,
+        targetX: clampX(25, BLACK_CAT_MIN_X, BLACK_CAT_MAX_X),
         isFlipped: false
       }));
       setTabbyCat((prev) => ({
         ...prev,
         action: "walking",
-        targetX: 68,
+        targetX: clampX(68, TABBY_CAT_MIN_X, TABBY_CAT_MAX_X),
         isFlipped: true
       }));
       setBlackCatMeow("🧁?");
@@ -244,13 +257,13 @@ export default function Tamagotchi() {
       setBlackCat((prev) => ({
         ...prev,
         action: "walking",
-        targetX: 18,
+        targetX: clampX(18, BLACK_CAT_MIN_X, BLACK_CAT_MAX_X),
         isFlipped: false
       }));
       setTabbyCat((prev) => ({
         ...prev,
         action: "walking",
-        targetX: 26,
+        targetX: clampX(42, TABBY_CAT_MIN_X, TABBY_CAT_MAX_X),
         isFlipped: true
       }));
     } 
@@ -260,13 +273,13 @@ export default function Tamagotchi() {
       setBlackCat((prev) => ({
         ...prev,
         action: "walking",
-        targetX: 70,
+        targetX: clampX(34, BLACK_CAT_MIN_X, BLACK_CAT_MAX_X),
         isFlipped: false
       }));
       setTabbyCat((prev) => ({
         ...prev,
         action: "walking",
-        targetX: 80,
+        targetX: clampX(75, TABBY_CAT_MIN_X, TABBY_CAT_MAX_X),
         isFlipped: false
       }));
       setBlackCatMeow("👋");
