@@ -4,16 +4,32 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import SpriteAnimation from "./SpriteAnimation";
 
-const GAROTA_SONO = Array.from({ length: 9 }, (_, i) => `/img/sprites/garota-sono/frame_${i + 1}.png`);
-const GAROTA_IDLE = Array.from({ length: 4 }, (_, i) => `/img/sprites/garota-idle/frame_${i + 1}.png`);
+const GAROTA_SONO = Array.from({ length: 6 }, (_, i) => `/img/sprites/garota-sono/frame_${i + 1}.png`);
+const GAROTA_IDLE = Array.from({ length: 6 }, (_, i) => `/img/sprites/garota-idle/frame_${i + 1}.png`);
+const GAROTA_WALKING = Array.from({ length: 6 }, (_, i) => `/img/sprites/garota-walking/frame_${i + 1}.png`);
+const GAROTA_STANDING = Array.from({ length: 6 }, (_, i) => `/img/sprites/garota-standing/frame_${i + 1}.png`);
+const GAROTA_COMENDO = [
+  "/img/sprites/garota-comendo/frame_1.png",
+  "/img/sprites/garota-comendo/frame_2.png",
+  "/img/sprites/garota-comendo/frame_3.png",
+  "/img/sprites/garota-comendo/frame_4.png",
+  "/img/sprites/garota-comendo/frame_5.png",
+  "/img/sprites/garota-comendo/frame_4.png",
+  "/img/sprites/garota-comendo/frame_5.png",
+  "/img/sprites/garota-comendo/frame_4.png",
+  "/img/sprites/garota-comendo/frame_5.png",
+  "/img/sprites/garota-comendo/frame_6.png",
+];
 const GATO_PRETO_SONO = Array.from({ length: 8 }, (_, i) => `/img/sprites/gato-preto-sono/frame_${i + 1}.png`);
 const GATO_PRETO_COMENDO = Array.from({ length: 8 }, (_, i) => `/img/sprites/gato-preto-comendo/frame_${i + 1}.png`);
 const GATO_PRETO_BRINCANDO = Array.from({ length: 8 }, (_, i) => `/img/sprites/gato-preto-brincando/frame_${i + 1}.png`);
+const GATO_PRETO_IDLE = Array.from({ length: 8 }, (_, i) => `/img/sprites/gato-preto-idle/frame_${i + 1}.png`);
 
 const GATO_MALHADO_SONO = Array.from({ length: 8 }, (_, i) => `/img/sprites/gato-malhado-sono/frame_${i + 1}.png`);
 const GATO_MALHADO_ANDANDO = Array.from({ length: 8 }, (_, i) => `/img/sprites/gato-malhado-andando/frame_${i + 1}.png`);
 const GATO_MALHADO_COMENDO = Array.from({ length: 8 }, (_, i) => `/img/sprites/gato-malhado-comendo/frame_${i + 1}.png`);
 const GATO_MALHADO_BRINCANDO = Array.from({ length: 24 }, (_, i) => `/img/sprites/gato-malhado-brincando/frame_${i + 1}.png`);
+const GATO_MALHADO_IDLE = Array.from({ length: 16 }, (_, i) => `/img/sprites/gato-malhado-idle/frame_${i + 1}.png`);
 
 interface Particle {
   id: number;
@@ -537,7 +553,7 @@ export default function Tamagotchi() {
             {/* ============================================================== */}
             <motion.div
               onClick={handleBlackCatClick}
-              className="absolute bottom-[2px] w-[16%] h-[28%] z-15 cursor-pointer"
+              className="absolute bottom-[2px] w-[20%] h-[35%] z-15 cursor-pointer"
               style={{
                 left: `${blackCat.x}%`,
                 transformOrigin: "bottom center",
@@ -566,7 +582,7 @@ export default function Tamagotchi() {
               {blackCat.action === "sleeping" ? (
                 <SpriteAnimation
                   frames={GATO_PRETO_SONO}
-                  interval={320}
+                  interval={450}
                   mode="pingpong"
                   alt="Gato preto dormindo"
                   style={{ objectPosition: "center bottom", transform: `scaleX(${blackCat.isFlipped ? -1 : 1})` }}
@@ -574,7 +590,7 @@ export default function Tamagotchi() {
               ) : blackCat.action === "playing" ? (
                 <SpriteAnimation
                   frames={GATO_PRETO_BRINCANDO}
-                  interval={200}
+                  interval={300}
                   mode="loop"
                   alt="Gato preto brincando"
                   style={{ objectPosition: "center bottom", transform: `scaleX(${blackCat.isFlipped ? -1 : 1})` }}
@@ -582,116 +598,19 @@ export default function Tamagotchi() {
               ) : blackCat.action === "begging" ? (
                 <SpriteAnimation
                   frames={GATO_PRETO_COMENDO}
-                  interval={240}
+                  interval={350}
                   mode="loop"
                   alt="Gato preto comendo"
                   style={{ objectPosition: "center bottom", transform: `scaleX(${blackCat.isFlipped ? -1 : 1})` }}
                 />
               ) : (
-              <svg
-                viewBox="0 0 10 10"
-                width="100%"
-                height="100%"
-                style={{
-                  imageRendering: "pixelated",
-                  transform: `scaleX(${blackCat.isFlipped ? -1 : 1})`
-                }}
-              >
-                {/* Outlined and detailed SVG for black cat */}
-                {blackCat.action === "grooming" ? (
-                  /* GROOMING FRAME: Licking paw */
-                  <>
-                    {/* Outlines */}
-                    <rect x="1" y="3" width="7" height="7" fill="#121215" />
-                    <rect x="2" y="1" width="6" height="5" fill="#121215" />
-                    {/* Inner Body */}
-                    <rect x="2" y="4" width="5" height="5" fill="#282830" />
-                    <rect x="3" y="2" width="4" height="4" fill="#282830" />
-                    {/* Ears inner pink */}
-                    <rect x="4" y="2" width="1" height="1" fill="#ff9ad5" />
-                    <rect x="6" y="2" width="1" height="1" fill="#ff9ad5" />
-                    {/* Eyes closed */}
-                    <rect x="4" y="3.5" width="1" height="0.5" fill="#111" />
-                    <rect x="6" y="3.5" width="1" height="0.5" fill="#111" />
-                    {/* Licking paw movement */}
-                    {tick % 2 === 0 ? (
-                      <>
-                        <rect x="1.2" y="2.5" width="2" height="2" fill="#282830" />
-                        <rect x="3" y="3" width="1.2" height="0.8" fill="#ff9ad5" /> {/* Tongue */}
-                      </>
-                    ) : (
-                      <rect x="1" y="4.5" width="2" height="2" fill="#282830" />
-                    )}
-                    {/* Tail */}
-                    <rect x="0" y="4" width="1" height="2" fill="#121215" />
-                    <rect x="3" y="9" width="1" height="1" fill="#282830" />
-                    <rect x="6" y="9" width="1" height="1" fill="#282830" />
-                  </>
-                ) : blackCat.action === "walking" ? (
-                  /* WALKING FRAME: Alternating legs */
-                  <>
-                    {/* Outlines */}
-                    <rect x="1" y="3" width="7" height="7" fill="#121215" />
-                    <rect x="3" y={tick % 2 === 0 ? 0 : 1} width="6" height="5" fill="#121215" />
-                    {/* Inner Body */}
-                    <rect x="2" y="4" width="5" height="5" fill="#282830" />
-                    <rect x="4" y={tick % 2 === 0 ? 1 : 2} width="4" height="4" fill="#282830" />
-                    {/* Ears inner pink */}
-                    <rect x="5" y={tick % 2 === 0 ? 1 : 2} width="1" height="1" fill="#ff9ad5" />
-                    <rect x="7" y={tick % 2 === 0 ? 1 : 2} width="1" height="1" fill="#ff9ad5" />
-                    {/* Green Eyes */}
-                    <rect x="5" y={tick % 2 === 0 ? 2 : 3} width="1" height="1" fill="#4ade80" />
-                    <rect x="7" y={tick % 2 === 0 ? 2 : 3} width="1" height="1" fill="#4ade80" />
-                    {/* Legs */}
-                    {tick % 2 === 0 ? (
-                      <>
-                        <rect x="3" y="8.5" width="1" height="1.2" fill="#282830" />
-                        <rect x="6" y="9.2" width="1" height="1" fill="#282830" />
-                      </>
-                    ) : (
-                      <>
-                        <rect x="3" y="9.2" width="1" height="1.2" fill="#282830" />
-                        <rect x="6" y="8.5" width="1" height="1" fill="#282830" />
-                      </>
-                    )}
-                    <rect x="0" y={tick % 2 === 0 ? 4 : 5} width="2" height="1" fill="#121215" />
-                  </>
-                ) : (
-                  /* DEFAULT SITTING / IDLE */
-                  <>
-                    {/* Outlines */}
-                    <rect x="1" y="3" width="7" height="7" fill="#121215" />
-                    <rect x="3" y="0" width="6" height="5" fill="#121215" />
-                    {/* Inner Body */}
-                    <rect x="2" y="4" width="5" height="5" fill="#282830" />
-                    <rect x="4" y="1" width="4" height="4" fill="#282830" />
-                    {/* Ears inner pink */}
-                    <rect x="5" y="1" width="1" height="1" fill="#ff9ad5" />
-                    <rect x="7" y="1" width="1" height="1" fill="#ff9ad5" />
-                    {/* Eyes */}
-                    {blinking ? (
-                      <>
-                        <rect x="5" y="2.5" width="1" height="0.5" fill="#111" />
-                        <rect x="7" y="2.5" width="1" height="0.5" fill="#111" />
-                      </>
-                    ) : (
-                      <>
-                        <rect x="5" y="2" width="1" height="1" fill="#4ade80" />
-                        <rect x="7" y="2" width="1" height="1" fill="#4ade80" />
-                      </>
-                    )}
-                    {/* Tail */}
-                    <motion.rect 
-                      x="0" y="4" width="2" height="1" 
-                      fill="#121215" 
-                      animate={{ rotate: [0, 15, -15, 0], originY: 0.5 }}
-                      transition={{ repeat: Infinity, duration: 1.2 }}
-                    />
-                    <rect x="3" y="9" width="1" height="1" fill="#282830" />
-                    <rect x="6" y="9" width="1" height="1" fill="#282830" />
-                  </>
-                )}
-              </svg>
+                <SpriteAnimation
+                  frames={GATO_PRETO_IDLE}
+                  interval={300}
+                  mode="loop"
+                  alt="Gato preto"
+                  style={{ objectPosition: "center bottom", transform: `scaleX(${blackCat.isFlipped ? -1 : 1})` }}
+                />
               )}
             </motion.div>
 
@@ -733,7 +652,7 @@ export default function Tamagotchi() {
             {/* ============================================================== */}
             <motion.div
               onClick={handleTabbyCatClick}
-              className="absolute bottom-[2px] w-[18%] h-[30%] z-15 cursor-pointer"
+              className="absolute bottom-[2px] w-[22%] h-[37%] z-15 cursor-pointer"
               style={{
                 left: `${tabbyCat.x}%`,
                 transformOrigin: "bottom center",
@@ -762,7 +681,7 @@ export default function Tamagotchi() {
               {tabbyCat.action === "sleeping" ? (
                 <SpriteAnimation
                   frames={GATO_MALHADO_SONO}
-                  interval={320}
+                  interval={450}
                   mode="pingpong"
                   alt="Gato malhado dormindo"
                   style={{ objectPosition: "center bottom", transform: `scaleX(${tabbyCat.isFlipped ? -1 : 1})` }}
@@ -770,7 +689,7 @@ export default function Tamagotchi() {
               ) : tabbyCat.action === "walking" ? (
                 <SpriteAnimation
                   frames={GATO_MALHADO_ANDANDO}
-                  interval={200}
+                  interval={300}
                   mode="loop"
                   alt="Gato malhado andando"
                   style={{ objectPosition: "center bottom", transform: `scaleX(${tabbyCat.isFlipped ? -1 : 1})` }}
@@ -778,7 +697,7 @@ export default function Tamagotchi() {
               ) : tabbyCat.action === "playing" ? (
                 <SpriteAnimation
                   frames={GATO_MALHADO_BRINCANDO}
-                  interval={200}
+                  interval={300}
                   mode="loop"
                   alt="Gato malhado brincando"
                   style={{ objectPosition: "center bottom", transform: `scaleX(${tabbyCat.isFlipped ? -1 : 1})` }}
@@ -786,92 +705,19 @@ export default function Tamagotchi() {
               ) : tabbyCat.action === "begging" ? (
                 <SpriteAnimation
                   frames={GATO_MALHADO_COMENDO}
-                  interval={240}
+                  interval={350}
                   mode="loop"
                   alt="Gato malhado comendo"
                   style={{ objectPosition: "center bottom", transform: `scaleX(${tabbyCat.isFlipped ? -1 : 1})` }}
                 />
               ) : (
-              <svg
-                viewBox="0 0 12 10"
-                width="100%"
-                height="100%"
-                style={{
-                  imageRendering: "pixelated",
-                  transform: `scaleX(${tabbyCat.isFlipped ? -1 : 1})`
-                }}
-              >
-                {/* Outlined and detailed SVG for tabby cat */}
-                {tabbyCat.action === "grooming" ? (
-                  /* GROOMING FRAME: Licking paw */
-                  <>
-                    {/* Outline */}
-                    <rect x="2" y="2" width="9" height="8" fill="#3a2a1d" />
-                    <rect x="1" y="0" width="7" height="6" fill="#3a2a1d" />
-                    {/* Inner Body */}
-                    <rect x="3" y="3" width="7" height="6" fill="#9f9fa8" />
-                    <rect x="4" y="5.5" width="4.5" height="3.5" fill="#ffffff" />
-                    <rect x="8" y="4.5" width="1.5" height="1" fill="#6e4f37" />
-                    {/* Head */}
-                    <rect x="2" y="1" width="5" height="4.2" fill="#9f9fa8" />
-                    {/* Ears inner pink */}
-                    <rect x="2.2" y="1" width="1" height="1" fill="#ff9ad5" />
-                    <rect x="4.8" y="1" width="1" height="1" fill="#ff9ad5" />
-                    {/* Eyes closed */}
-                    <rect x="3" y="2.5" width="1" height="0.5" fill="#111" />
-                    <rect x="5" y="2.5" width="1" height="0.5" fill="#111" />
-                    {/* Tongue & Paw licking */}
-                    {tick % 2 === 0 ? (
-                      <>
-                        <rect x="1" y="2.5" width="1.8" height="1.8" fill="#9f9fa8" />
-                        <rect x="2.2" y="2.2" width="1" height="0.8" fill="#ff9ad5" />
-                      </>
-                    ) : (
-                      <rect x="1.5" y="4.5" width="1.8" height="1.8" fill="#9f9fa8" />
-                    )}
-                    <rect x="10" y="5" width="1" height="3" fill="#3a2a1d" />
-                  </>
-                ) : (
-                  /* DEFAULT STANDING / IDLE */
-                  <>
-                    {/* Outline */}
-                    <rect x="1" y="2" width="9" height="8" fill="#3a2a1d" />
-                    <rect x="0" y="-1" width="7" height="6" fill="#3a2a1d" />
-                    {/* Inner Body */}
-                    <rect x="2" y="3" width="7" height="5" fill="#9f9fa8" />
-                    <rect x="3" y="5" width="4" height="3" fill="#ffffff" />
-                    {/* Stripes */}
-                    <rect x="2" y="4" width="2" height="1" fill="#6e4f37" />
-                    <rect x="6" y="3" width="2" height="1" fill="#6e4f37" />
-                    <rect x="7" y="5" width="2" height="1" fill="#6e4f37" />
-                    {/* Head */}
-                    <rect x="1" y="0" width="5" height="4" fill="#9f9fa8" />
-                    {/* Ears inner pink */}
-                    <rect x="1.5" y="0" width="1" height="1" fill="#ff9ad5" />
-                    <rect x="4.2" y="0" width="1" height="1" fill="#ff9ad5" />
-                    {/* Eyes */}
-                    {blinking ? (
-                      <>
-                        <rect x="2" y="2.5" width="1" height="0.5" fill="#111" />
-                        <rect x="4" y="2.5" width="1" height="0.5" fill="#111" />
-                      </>
-                    ) : (
-                      <>
-                        <rect x="2" y="2" width="1" height="1" fill="#fbbf24" />
-                        <rect x="4" y="2" width="1" height="1" fill="#fbbf24" />
-                      </>
-                    )}
-                    <rect x="3" y="8" width="1.5" height="2" fill="#9f9fa8" />
-                    <rect x="7" y="8" width="1.5" height="2" fill="#9f9fa8" />
-                    <motion.path 
-                      d="M 9 4 H 10 V 7 H 9 Z" 
-                      fill="#3a2a1d"
-                      animate={{ rotate: [0, -12, 12, 0], originX: 0 }}
-                      transition={{ repeat: Infinity, duration: 1.4 }}
-                    />
-                  </>
-                )}
-              </svg>
+                <SpriteAnimation
+                  frames={GATO_MALHADO_IDLE}
+                  interval={300}
+                  mode="loop"
+                  alt="Gato malhado"
+                  style={{ objectPosition: "center bottom", transform: `scaleX(${tabbyCat.isFlipped ? -1 : 1})` }}
+                />
               )}
             </motion.div>
 
@@ -890,7 +736,7 @@ export default function Tamagotchi() {
                   aspectRatio: "1 / 1",
                 }}
               >
-                <SpriteAnimation frames={GAROTA_SONO} interval={260} mode="pingpong" alt="Garota dormindo na mesa" />
+                <SpriteAnimation frames={GAROTA_SONO} interval={360} mode="loopLast3" alt="Garota dormindo na mesa" />
               </div>
             ) : (
               /* TYPING GIRL, CHAIR, AND TABLE */
@@ -922,7 +768,24 @@ export default function Tamagotchi() {
                     animate={isSpinning ? { rotateY: [0, 360, 720] } : {}}
                     transition={{ duration: 0.5, ease: "easeInOut" }}
                   >
-                    <SpriteAnimation frames={GAROTA_IDLE} interval={200} mode="loop" alt="Garota digitando" />
+                    <SpriteAnimation
+                      frames={
+                        status === "eating"
+                          ? GAROTA_COMENDO
+                          : status.startsWith("walking")
+                          ? GAROTA_WALKING
+                          : GAROTA_IDLE
+                      }
+                      interval={300}
+                      mode="loop"
+                      alt={
+                        status === "eating"
+                          ? "Garota comendo"
+                          : status.startsWith("walking")
+                          ? "Garota andando"
+                          : "Garota digitando"
+                      }
+                    />
                   </motion.div>
                 </motion.div>
 
@@ -949,14 +812,15 @@ export default function Tamagotchi() {
       {/* 3. INVISIBLE BUTTON HITBOXES */}
       
       {/* Button 1: Bed/Sleep */}
+      {/* Button 1: Bed/Sleep */}
       <button 
         onClick={handleSleepToggle}
         className="absolute cursor-pointer rounded-full bg-transparent border-0 opacity-0 active:scale-95 transition-transform"
         style={{
-          left: "33.16%",
-          top: "71.18%",
-          width: "5.08%",
-          height: "6.35%",
+          left: "31.7%",
+          top: "69.3%",
+          width: "8.0%",
+          height: "10.0%",
           zIndex: 30
         }}
         title="Dormir / Wakeup"
@@ -967,10 +831,10 @@ export default function Tamagotchi() {
         onClick={handleFeed}
         className="absolute cursor-pointer rounded-full bg-transparent border-0 opacity-0 active:scale-95 transition-transform"
         style={{
-          left: "43.36%",
-          top: "71.18%",
-          width: "5.08%",
-          height: "6.35%",
+          left: "41.9%",
+          top: "69.3%",
+          width: "8.0%",
+          height: "10.0%",
           zIndex: 30
         }}
         title="Alimentar / Feed"
@@ -981,10 +845,10 @@ export default function Tamagotchi() {
         onClick={handleCloset}
         className="absolute cursor-pointer rounded-full bg-transparent border-0 opacity-0 active:scale-95 transition-transform"
         style={{
-          left: "54.89%",
-          top: "71.18%",
-          width: "5.08%",
-          height: "6.35%",
+          left: "53.4%",
+          top: "69.3%",
+          width: "8.0%",
+          height: "10.0%",
           zIndex: 30
         }}
         title="Closet / Change Outfit"
@@ -995,10 +859,10 @@ export default function Tamagotchi() {
         onClick={handleOutdoors}
         className="absolute cursor-pointer rounded-full bg-transparent border-0 opacity-0 active:scale-95 transition-transform"
         style={{
-          left: "65.96%",
-          top: "71.18%",
-          width: "5.08%",
-          height: "6.35%",
+          left: "64.5%",
+          top: "69.3%",
+          width: "8.0%",
+          height: "10.0%",
           zIndex: 30
         }}
         title="Outdoors / Walk"

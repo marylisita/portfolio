@@ -6,8 +6,8 @@ interface SpriteAnimationProps {
   frames: string[];
   /** Intervalo entre frames em ms */
   interval?: number;
-  /** "loop" reinicia do 0; "pingpong" vai e volta (sem salto no fim) */
-  mode?: "loop" | "pingpong";
+  /** "loop" reinicia do 0; "pingpong" vai e volta (sem salto no fim); "loopLast3" repete as 3 últimas frames */
+  mode?: "loop" | "pingpong" | "loopLast3";
   className?: string;
   style?: React.CSSProperties;
   alt?: string;
@@ -36,6 +36,12 @@ export default function SpriteAnimation({
       const period = 2 * (n - 1); // ex: 8 frames -> 14 (0..7..1)
       const pos = t % period;
       idx = pos < n ? pos : period - pos;
+    } else if (mode === "loopLast3") {
+      if (t < n) {
+        idx = t;
+      } else {
+        idx = (n - 3) + ((t - (n - 3)) % 3);
+      }
     } else {
       idx = t % n;
     }
