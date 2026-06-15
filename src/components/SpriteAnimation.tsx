@@ -24,10 +24,11 @@ export default function SpriteAnimation({
   const [t, setT] = useState(0);
 
   useEffect(() => {
+    setT(0); // reinicia no frame 0 sempre que a animação muda (evita começar no meio)
     if (frames.length <= 1) return;
     const id = setInterval(() => setT((v) => v + 1), interval);
     return () => clearInterval(id);
-  }, [frames.length, interval]);
+  }, [frames.length, interval, mode]);
 
   const n = frames.length;
   let idx = 0;

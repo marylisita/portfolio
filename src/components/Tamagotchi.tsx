@@ -137,14 +137,14 @@ export default function Tamagotchi() {
       setBlackCat((prev) => {
         if (prev.action === "walking") return prev;
         const rand = Math.random();
-        if (rand < 0.3) {
+        if (rand < 0.12) {
           const newTarget = clampX(BLACK_CAT_MIN_X + 5 + Math.random() * (BLACK_CAT_MAX_X - BLACK_CAT_MIN_X - 5), BLACK_CAT_MIN_X, BLACK_CAT_MAX_X);
           return { ...prev, action: "walking", targetX: newTarget, isFlipped: newTarget < prev.x };
-        } else if (rand < 0.55) {
+        } else if (rand < 0.22) {
           return { ...prev, action: "grooming" };
-        } else if (rand < 0.7) {
+        } else if (rand < 0.28) {
           return { ...prev, action: "playing" };
-        } else if (rand < 0.8) {
+        } else if (rand < 0.36) {
           setBlackCatMeow(Math.random() > 0.5 ? "Miau! ❤️" : "Purr...");
           setTimeout(() => setBlackCatMeow(null), 1500);
           return { ...prev, action: "sitting" };
@@ -156,14 +156,14 @@ export default function Tamagotchi() {
       setTabbyCat((prev) => {
         if (prev.action === "walking") return prev;
         const rand = Math.random();
-        if (rand < 0.3) {
+        if (rand < 0.12) {
           const newTarget = clampX(TABBY_CAT_MIN_X + 5 + Math.random() * (TABBY_CAT_MAX_X - TABBY_CAT_MIN_X - 5), TABBY_CAT_MIN_X, TABBY_CAT_MAX_X);
           return { ...prev, action: "walking", targetX: newTarget, isFlipped: newTarget < prev.x };
-        } else if (rand < 0.55) {
+        } else if (rand < 0.22) {
           return { ...prev, action: "grooming" };
-        } else if (rand < 0.7) {
+        } else if (rand < 0.28) {
           return { ...prev, action: "playing" };
-        } else if (rand < 0.8) {
+        } else if (rand < 0.36) {
           setTabbyCatMeow(Math.random() > 0.5 ? "Meow! 😸" : "Ronronar");
           setTimeout(() => setTabbyCatMeow(null), 1500);
           return { ...prev, action: "standing" };
@@ -171,7 +171,7 @@ export default function Tamagotchi() {
           return { ...prev, action: "standing" };
         }
       });
-    }, 4000);
+    }, 6500);
 
     return () => clearInterval(interval);
   }, [status]);
@@ -273,7 +273,7 @@ export default function Tamagotchi() {
       setCupcakeActive(false);
       setBlackCat((prev) => ({ ...prev, action: "sitting", targetX: prev.x }));
       setTabbyCat((prev) => ({ ...prev, action: "standing", targetX: prev.x }));
-    }, 1800);
+    }, 3000); // 10 quadros de garota-comendo x 300ms = anima inteira antes de voltar pro idle
   };
 
   const handleOutdoors = () => {
@@ -332,15 +332,15 @@ export default function Tamagotchi() {
   const getChixAnimation = () => {
     switch (status) {
       case "eating":
-        return { x: [0, -10, -10, 0], y: [0, -2, 0] };
+        return { x: [0, -10, -10, 0], y: [0, -2, -2, 0] };
       case "walkingOut":
-        return { x: [0, 80], opacity: [1, 1, 0] };
+        return { x: [0, 40, 80], opacity: [1, 1, 0] };
       case "walkingIn":
-        return { x: [-80, 0], opacity: [0, 1, 1] };
+        return { x: [-80, -40, 0], opacity: [0, 1, 1] };
       default:
         return starActive
-          ? { y: [0, -10, 0], rotate: [0, -8, 8, 0] }
-          : { y: [0, -1, 0] };
+          ? { y: [0, -10, 0], rotate: [0, -8, 8, 0] } // reacao ao carinho (so quando clica)
+          : { y: 0 }; // idle parada (sem balanco constante)
     }
   };
 
@@ -349,19 +349,19 @@ export default function Tamagotchi() {
   const renderCatSprite = (cat: CatState, type: "black" | "tabby") => {
     const isBlack = type === "black";
     if (cat.action === "sleeping") {
-      return <SpriteAnimation frames={isBlack ? GATO_PRETO_SONO : GATO_MALHADO_SONO} interval={450} mode="pingpong" alt={`Gato ${type} dormindo`} style={{ objectPosition: "center bottom", transform: `scaleX(${cat.isFlipped ? -1 : 1})` }} />;
+      return <SpriteAnimation key={`${type}-sleeping`} frames={isBlack ? GATO_PRETO_SONO : GATO_MALHADO_SONO} interval={450} mode="pingpong" alt={`Gato ${type} dormindo`} style={{ objectPosition: "center bottom", transform: `scaleX(${cat.isFlipped ? -1 : 1})` }} />;
     } else if (cat.action === "walking") {
-      return <SpriteAnimation frames={isBlack ? GATO_PRETO_ANDANDO : GATO_MALHADO_WALKING} interval={300} mode="loop" alt={`Gato ${type} andando`} style={{ objectPosition: "center bottom", transform: `scaleX(${cat.isFlipped ? -1 : 1})` }} />;
+      return <SpriteAnimation key={`${type}-walking`} frames={isBlack ? GATO_PRETO_ANDANDO : GATO_MALHADO_WALKING} interval={300} mode="loop" alt={`Gato ${type} andando`} style={{ objectPosition: "center bottom", transform: `scaleX(${cat.isFlipped ? -1 : 1})` }} />;
     } else if (cat.action === "playing") {
-      return <SpriteAnimation frames={isBlack ? GATO_PRETO_BRINCANDO : GATO_MALHADO_BRINCANDO} interval={300} mode="loop" alt={`Gato ${type} brincando`} style={{ objectPosition: "center bottom", transform: `scaleX(${cat.isFlipped ? -1 : 1})` }} />;
+      return <SpriteAnimation key={`${type}-playing`} frames={isBlack ? GATO_PRETO_BRINCANDO : GATO_MALHADO_BRINCANDO} interval={300} mode="loop" alt={`Gato ${type} brincando`} style={{ objectPosition: "center bottom", transform: `scaleX(${cat.isFlipped ? -1 : 1})` }} />;
     } else if (cat.action === "begging") {
-      return <SpriteAnimation frames={isBlack ? GATO_PRETO_COMENDO : GATO_MALHADO_COMENDO} interval={350} mode="loop" alt={`Gato ${type} comendo`} style={{ objectPosition: "center bottom", transform: `scaleX(${cat.isFlipped ? -1 : 1})` }} />;
+      return <SpriteAnimation key={`${type}-begging`} frames={isBlack ? GATO_PRETO_COMENDO : GATO_MALHADO_COMENDO} interval={350} mode="loop" alt={`Gato ${type} comendo`} style={{ objectPosition: "center bottom", transform: `scaleX(${cat.isFlipped ? -1 : 1})` }} />;
     } else if (!isBlack && cat.action === "grooming") {
-      return <SpriteAnimation frames={GATO_MALHADO_GROOMING} interval={300} mode="loop" alt="Gato malhado se limpando" style={{ objectPosition: "center bottom", transform: `scaleX(${cat.isFlipped ? -1 : 1})` }} />;
+      return <SpriteAnimation key={`${type}-grooming`} frames={GATO_MALHADO_GROOMING} interval={300} mode="loop" alt="Gato malhado se limpando" style={{ objectPosition: "center bottom", transform: `scaleX(${cat.isFlipped ? -1 : 1})` }} />;
     } else if (!isBlack && cat.action === "standing") {
-      return <SpriteAnimation frames={GATO_MALHADO_STANDING} interval={300} mode="loop" alt="Gato malhado em pe" style={{ objectPosition: "center bottom", transform: `scaleX(${cat.isFlipped ? -1 : 1})` }} />;
+      return <SpriteAnimation key={`${type}-standing`} frames={GATO_MALHADO_STANDING} interval={300} mode="loop" alt="Gato malhado em pe" style={{ objectPosition: "center bottom", transform: `scaleX(${cat.isFlipped ? -1 : 1})` }} />;
     } else {
-      return <SpriteAnimation frames={isBlack ? GATO_PRETO_IDLE : GATO_MALHADO_IDLE} interval={300} mode="loop" alt={`Gato ${type}`} style={{ objectPosition: "center bottom", transform: `scaleX(${cat.isFlipped ? -1 : 1})` }} />;
+      return <SpriteAnimation key={`${type}-idle`} frames={isBlack ? GATO_PRETO_IDLE : GATO_MALHADO_IDLE} interval={300} mode="loop" alt={`Gato ${type}`} style={{ objectPosition: "center bottom", transform: `scaleX(${cat.isFlipped ? -1 : 1})` }} />;
     }
   };
 
@@ -443,7 +443,7 @@ export default function Tamagotchi() {
               <motion.div
                 className="absolute left-[58%] bottom-[15%] text-[12px] z-20"
                 animate={{ x: [0, -5, -8], y: [0, -4, 0], scale: [1, 1.1, 0.8], opacity: [1, 1, 0] }}
-                transition={{ duration: 1.5, ease: "easeInOut" }}
+                transition={{ duration: 2.8, ease: "easeInOut" }}
               >
                 🧁
               </motion.div>
@@ -511,7 +511,7 @@ export default function Tamagotchi() {
                   aspectRatio: "1 / 1.4",
                 }}
               >
-                <SpriteAnimation frames={garotaSono} interval={360} mode="loopLast3" alt="Garota dormindo" />
+                <SpriteAnimation frames={garotaSono} interval={360} mode="loopLast3" style={{ objectPosition: "center bottom" }} alt="Garota dormindo" />
               </div>
             ) : (
               <motion.div
@@ -521,6 +521,8 @@ export default function Tamagotchi() {
                 transition={
                   status.startsWith("walking")
                     ? { duration: 1.8, ease: "easeInOut" }
+                    : status === "eating"
+                    ? { duration: 3.0, ease: "easeInOut" } // toca uma vez, acompanha o tempo de comer
                     : { repeat: Infinity, duration: 2.0, ease: "easeInOut" }
                 }
               >
@@ -530,6 +532,7 @@ export default function Tamagotchi() {
                   transition={{ duration: 0.5, ease: "easeInOut" }}
                 >
                   <SpriteAnimation
+                    key={status === "eating" ? "eat" : status.startsWith("walking") ? "walk" : "idle"}
                     frames={
                       status === "eating"
                         ? garotaComendo
@@ -539,6 +542,7 @@ export default function Tamagotchi() {
                     }
                     interval={300}
                     mode="loop"
+                    style={{ objectPosition: "center bottom" }} // ancora os pes na base (evita flutuar com quadros de canvas diferente)
                     alt={
                       status === "eating"
                         ? "Garota comendo"
