@@ -4,7 +4,8 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import SpriteAnimation from "./SpriteAnimation";
 
-const GAROTA_SONO = Array.from({ length: 8 }, (_, i) => `/img/sprites/garota-sono/frame_${i + 1}.png`);
+const GAROTA_SONO = Array.from({ length: 9 }, (_, i) => `/img/sprites/garota-sono/frame_${i + 1}.png`);
+const GAROTA_IDLE = Array.from({ length: 4 }, (_, i) => `/img/sprites/garota-idle/frame_${i + 1}.png`);
 const GATO_PRETO_SONO = Array.from({ length: 8 }, (_, i) => `/img/sprites/gato-preto-sono/frame_${i + 1}.png`);
 const GATO_MALHADO_SONO = Array.from({ length: 8 }, (_, i) => `/img/sprites/gato-malhado-sono/frame_${i + 1}.png`);
 
@@ -966,7 +967,7 @@ export default function Tamagotchi() {
                   bottom: "2px",
                   transform: "translateX(-50%)",
                   height: "54%",
-                  aspectRatio: "204 / 251",
+                  aspectRatio: "1 / 1",
                 }}
               >
                 <SpriteAnimation frames={GAROTA_SONO} interval={260} mode="pingpong" alt="Garota dormindo na mesa" />
@@ -996,99 +997,13 @@ export default function Tamagotchi() {
                     transformOrigin: "bottom center",
                   }}
                 >
-                  <motion.svg 
-                    viewBox="0 0 16 20" 
-                    width="100%" 
-                    height="100%" 
-                    style={{ imageRendering: "pixelated" }}
+                  <motion.div
+                    style={{ width: "100%", height: "100%" }}
                     animate={isSpinning ? { rotateY: [0, 360, 720] } : {}}
                     transition={{ duration: 0.5, ease: "easeInOut" }}
                   >
-                    {/* Hair Back Outline */}
-                    <rect x="2" y="3" width="12" height="14" fill="#2a1b12" />
-                    {/* Hair Back Inner */}
-                    <rect x="3" y="4" width="10" height="12" fill="#543c2c" />
-                    
-                    {/* Face Outline & Skin */}
-                    <rect x="4" y="2" width="8" height="9" fill="#2a1b12" />
-                    <rect x="5" y="3" width="6" height="7" fill="#ffe2c4" />
-                    
-                    {/* Bangs/Hair Front */}
-                    <rect x="4" y="2" width="8" height="2" fill="#6f4e37" />
-                    <rect x="3" y="4" width="2" height="5" fill="#6f4e37" />
-                    <rect x="11" y="4" width="2" height="5" fill="#6f4e37" />
-                    {/* Hair Highlights */}
-                    <rect x="6" y="2" width="4" height="1" fill="#9d755c" />
-                    
-                    {/* Eyes */}
-                    {blinking ? (
-                      <path d="M 5 6 H 7 V 7 H 5 Z M 9 6 H 11 V 7 H 9 Z" fill="#2a1b12" />
-                    ) : (
-                      <>
-                        <rect x="5" y="5" width="2" height="2" fill="#2a1b12" />
-                        <rect x="9" y="5" width="2" height="2" fill="#2a1b12" />
-                        <rect x="5" y="5" width="1" height="1" fill="#ffffff" />
-                        <rect x="9" y="5" width="1" height="1" fill="#ffffff" />
-                      </>
-                    )}
-                    
-                    {/* Pink blush cheeks */}
-                    <rect x="4" y="7" width="1.2" height="1" fill="#ff8ca3" />
-                    <rect x="10.8" y="7" width="1.2" height="1" fill="#ff8ca3" />
-                    
-                    {/* Mouth */}
-                    <rect x="7" y="8" width="2" height="1" fill="#2a1b12" />
-                    
-                    {/* Outfits selection */}
-                    {outfitIndex === 0 && (
-                      <>
-                        {/* Purple Casual Shirt */}
-                        <rect x="4" y="10" width="8" height="10" fill="#885cf6" />
-                        {/* White Collar details */}
-                        <rect x="6" y="10" width="4" height="1" fill="#ffffff" />
-                        {/* Belt details */}
-                        <rect x="4" y="15" width="8" height="1" fill="#1a1a27" />
-                        <rect x="7" y="15" width="2" height="1" fill="#fbbf24" />
-                      </>
-                    )}
-                    {outfitIndex === 1 && (
-                      <>
-                        {/* Pink Bunny Shirt */}
-                        <rect x="4" y="10" width="8" height="10" fill="#ff7da7" />
-                        <rect x="6" y="10" width="4" height="1.5" fill="#ffffff" />
-                        {/* Bunny ears outlines & inner */}
-                        <rect x="2" y="-1" width="4" height="4" fill="#2a1b12" />
-                        <rect x="10" y="-1" width="4" height="4" fill="#2a1b12" />
-                        <rect x="3" y="0" width="2" height="3" fill="#ffffff" />
-                        <rect x="11" y="0" width="2" height="3" fill="#ffffff" />
-                        <rect x="4" y="1" width="1" height="2" fill="#ff9ad5" />
-                        <rect x="12" y="1" width="1" height="2" fill="#ff9ad5" />
-                      </>
-                    )}
-                    {outfitIndex === 2 && (
-                      <>
-                        {/* Green Cyber Star Shirt */}
-                        <rect x="4" y="10" width="8" height="10" fill="#39ff14" />
-                        {/* Black details */}
-                        <rect x="6" y="11" width="4" height="4" fill="#1a1a27" />
-                        {/* Cyber glasses */}
-                        <rect x="3" y="4" width="10" height="3" fill="#2a1b12" />
-                        <rect x="4" y="5" width="8" height="1" fill="#00e5ff" />
-                      </>
-                    )}
-                    
-                    {/* Arms (Typing action) */}
-                    {status === "idle" ? (
-                      <motion.path 
-                        d="M 2 11 H 4 V 13 H 2 Z M 12 11 H 14 V 13 H 12 Z" 
-                        fill="#ffe2c4"
-                        animate={{ y: [0, -1, 0] }}
-                        transition={{ repeat: Infinity, duration: 0.35, ease: "easeInOut" }}
-                      />
-                    ) : (
-                      <path d="M 3 11 H 5 V 13 H 3 Z M 11 11 H 13 V 13 H 11 Z" fill="#ffe2c4" />
-                    )}
-                  </motion.svg>
+                    <SpriteAnimation frames={GAROTA_IDLE} interval={200} mode="loop" alt="Garota digitando" />
+                  </motion.div>
                 </motion.div>
 
                 {/* Desk/Table (Increased Size 30% x 32%) */}
