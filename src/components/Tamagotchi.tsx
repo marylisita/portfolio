@@ -2,6 +2,9 @@
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import SpriteAnimation from "./SpriteAnimation";
+
+const GAROTA_SONO = Array.from({ length: 8 }, (_, i) => `/img/sprites/garota-sono/frame_${i + 1}.png`);
 
 interface Particle {
   id: number;
@@ -973,26 +976,18 @@ export default function Tamagotchi() {
             {/* CORE INTERACTION VIEW: SLEEPING VS TYPING                      */}
             {/* ============================================================== */}
             {status === "sleeping" ? (
-              /* BED AND SLEEPING GIRL (Increased Size 38% x 32%) */
-              <div className="absolute left-[32%] bottom-[2px] w-[38%] h-[32%] z-5">
-                <svg viewBox="0 0 28 20" width="100%" height="100%" style={{ imageRendering: "pixelated" }}>
-                  {/* Bed Base */}
-                  <rect x="1" y="6" width="26" height="14" fill="#aab0f7" stroke="#1a1a27" strokeWidth="1" />
-                  {/* Bed Posts */}
-                  <rect x="0" y="2" width="2" height="18" fill="#a06040" stroke="#1a1a27" strokeWidth="0.8" />
-                  <rect x="26" y="2" width="2" height="18" fill="#a06040" stroke="#1a1a27" strokeWidth="0.8" />
-                  {/* Pillow */}
-                  <rect x="3" y="8" width="6" height="4" fill="#fff" stroke="#1a1a27" strokeWidth="0.8" />
-                  
-                  {/* Detailed Sleeping Girl Head */}
-                  <rect x="4" y="9" width="5" height="5" fill="#2a1b12" /> {/* Hair outline */}
-                  <rect x="5" y="10" width="3" height="3" fill="#ffe2c4" /> {/* Skin */}
-                  <rect x="4" y="9" width="4" height="2" fill="#6f4e37" />  {/* Bangs */}
-                  <rect x="5" y="11" width="2" height="1" fill="#1a1a27" />  {/* Eyes closed */}
-                  
-                  {/* Blanket */}
-                  <rect x="8" y="8" width="18" height="12" fill="#ff9ad5" stroke="#1a1a27" strokeWidth="0.8" />
-                </svg>
+              /* GAROTA DORMINDO NA MESA — sprite Gemini (teste) */
+              <div
+                className="absolute z-[8]"
+                style={{
+                  left: "50%",
+                  bottom: "0",
+                  transform: "translateX(-50%)",
+                  height: "86%",
+                  aspectRatio: "288 / 460",
+                }}
+              >
+                <SpriteAnimation frames={GAROTA_SONO} interval={260} mode="pingpong" alt="Garota dormindo na mesa" />
               </div>
             ) : (
               /* TYPING GIRL, CHAIR, AND TABLE */

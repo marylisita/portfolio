@@ -1,0 +1,61 @@
+"use client";
+
+import React, { useEffect, useState } from "react";
+
+interface SpriteAnimationProps {
+  frames: string[];
+  /** Intervalo entre frames em ms */
+  interval?: number;
+  /** "loop" reinicia do 0; "pingpong" vai e volta (sem salto no fim) */
+  mode?: "loop" | "pingpong";
+  className?: string;
+  style?: React.CSSProperties;
+  alt?: string;
+}
+
+export default function SpriteAnimation({
+  frames,
+  interval = 240,
+  mode = "pingpong",
+  className,
+  style,
+  alt = "",
+}: SpriteAnimationProps) {
+  const [t, setT] = useState(0);
+
+  useEffect(() => {
+    if (frames.length <= 1) return;
+    const id = setInterval(() => setT((v) => v + 1), interval);
+    return () => clearInterval(id);
+  }, [frames.length, interval]);
+
+  const n = frames.length;
+  let idx = 0;
+  if (n > 1) {
+    if (mode === "pingpong") {
+      const period = 2 * (n - 1); // ex: 8 frames -> 14 (0..7..1)
+      const pos = t % period;
+      idx = pos < n ? pos : period - pos;
+    } else {
+      idx = t % n;
+    }
+  }
+
+  return (
+    <img
+      src={frames[idx]}
+      alt={alt}
+      draggable={false}
+      style={{
+        width: "100%",
+        height: "100%",
+        objectFit: "contain",
+        imageRendering: "pixelated",
+        pointerEvents: "none",
+        userSelect: "none",
+        ...style,
+      }}
+      className={className}
+    />
+  );
+}
