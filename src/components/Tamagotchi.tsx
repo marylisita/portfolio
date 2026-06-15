@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import SpriteAnimation from "./SpriteAnimation";
 
 const GAROTA_SONO = Array.from({ length: 8 }, (_, i) => `/img/sprites/garota-sono/frame_${i + 1}.png`);
+const GATO_PRETO_SONO = Array.from({ length: 8 }, (_, i) => `/img/sprites/gato-preto-sono/frame_${i + 1}.png`);
+const GATO_MALHADO_SONO = Array.from({ length: 8 }, (_, i) => `/img/sprites/gato-malhado-sono/frame_${i + 1}.png`);
 
 interface Particle {
   id: number;
@@ -554,35 +556,26 @@ export default function Tamagotchi() {
                 </div>
               )}
 
-              <svg 
-                viewBox="0 0 10 10" 
-                width="100%" 
-                height="100%" 
-                style={{ 
+              {blackCat.action === "sleeping" ? (
+                <SpriteAnimation
+                  frames={GATO_PRETO_SONO}
+                  interval={320}
+                  mode="pingpong"
+                  alt="Gato preto dormindo"
+                  style={{ objectPosition: "center bottom", transform: `scaleX(${blackCat.isFlipped ? -1 : 1})` }}
+                />
+              ) : (
+              <svg
+                viewBox="0 0 10 10"
+                width="100%"
+                height="100%"
+                style={{
                   imageRendering: "pixelated",
                   transform: `scaleX(${blackCat.isFlipped ? -1 : 1})`
                 }}
               >
                 {/* Outlined and detailed SVG for black cat */}
-                {blackCat.action === "sleeping" ? (
-                  /* SLEEPING FRAME: Curled up */
-                  <>
-                    {/* Outline */}
-                    <rect x="1" y="4" width="8" height="6" fill="#121215" rx="2" />
-                    <rect x="3" y="3" width="6" height="5" fill="#121215" />
-                    {/* Inner Body */}
-                    <rect x="2" y="5" width="6" height="4" fill="#282830" rx="1.5" />
-                    <rect x="4" y="4" width="4" height="4" fill="#282830" />
-                    {/* Ear inner pink */}
-                    <rect x="5" y="4" width="1" height="1" fill="#ff9ad5" />
-                    <rect x="7" y="4" width="1" height="1" fill="#ff9ad5" />
-                    {/* Closed eyes */}
-                    <rect x="5" y="6" width="1" height="0.5" fill="#111" />
-                    <rect x="7" y="6" width="1" height="0.5" fill="#111" />
-                    {/* Tail light tip */}
-                    <rect x="1" y="7" width="1.5" height="1" fill="#4e4e5a" />
-                  </>
-                ) : blackCat.action === "grooming" ? (
+                {blackCat.action === "grooming" ? (
                   /* GROOMING FRAME: Licking paw */
                   <>
                     {/* Outlines */}
@@ -704,6 +697,7 @@ export default function Tamagotchi() {
                   </>
                 )}
               </svg>
+              )}
             </motion.div>
 
             {/* ============================================================== */}
@@ -770,39 +764,26 @@ export default function Tamagotchi() {
                 </div>
               )}
 
-              <svg 
-                viewBox="0 0 12 10" 
-                width="100%" 
-                height="100%" 
-                style={{ 
+              {tabbyCat.action === "sleeping" ? (
+                <SpriteAnimation
+                  frames={GATO_MALHADO_SONO}
+                  interval={320}
+                  mode="pingpong"
+                  alt="Gato malhado dormindo"
+                  style={{ objectPosition: "center bottom", transform: `scaleX(${tabbyCat.isFlipped ? -1 : 1})` }}
+                />
+              ) : (
+              <svg
+                viewBox="0 0 12 10"
+                width="100%"
+                height="100%"
+                style={{
                   imageRendering: "pixelated",
                   transform: tabbyCat.action === "playing" ? "none" : `scaleX(${tabbyCat.isFlipped ? -1 : 1})`
                 }}
               >
                 {/* Outlined and detailed SVG for tabby cat */}
-                {tabbyCat.action === "sleeping" ? (
-                  /* SLEEPING FRAME: Curled up */
-                  <>
-                    {/* Outline */}
-                    <rect x="1" y="3.5" width="10" height="6" fill="#3a2a1d" rx="2" />
-                    <rect x="1.5" y="2.5" width="7" height="5.5" fill="#3a2a1d" />
-                    {/* Inner Body */}
-                    <rect x="2" y="4.5" width="8" height="4.5" fill="#9f9fa8" rx="2" />
-                    {/* White belly */}
-                    <rect x="4" y="6" width="4" height="2.5" fill="#ffffff" />
-                    {/* Stripes */}
-                    <rect x="2.5" y="5.5" width="1.5" height="1" fill="#6e4f37" />
-                    <rect x="8.5" y="5.5" width="1.0" height="1" fill="#6e4f37" />
-                    {/* Head */}
-                    <rect x="2.2" y="3.5" width="4.8" height="3.8" fill="#9f9fa8" />
-                    {/* Ears inner pink */}
-                    <rect x="2.5" y="3.5" width="1" height="1" fill="#ff9ad5" />
-                    <rect x="5.5" y="3.5" width="1" height="1" fill="#ff9ad5" />
-                    {/* Closed eyes */}
-                    <rect x="3" y="4.8" width="1" height="0.5" fill="#111" />
-                    <rect x="5" y="4.8" width="1" height="0.5" fill="#111" />
-                  </>
-                ) : tabbyCat.action === "grooming" ? (
+                {tabbyCat.action === "grooming" ? (
                   /* GROOMING FRAME: Licking paw */
                   <>
                     {/* Outline */}
@@ -970,6 +951,7 @@ export default function Tamagotchi() {
                   </>
                 )}
               </svg>
+              )}
             </motion.div>
 
             {/* ============================================================== */}
