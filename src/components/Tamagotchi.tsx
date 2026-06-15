@@ -4,32 +4,38 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import SpriteAnimation from "./SpriteAnimation";
 
-const GAROTA_SONO = Array.from({ length: 6 }, (_, i) => `/img/sprites/garota-sono/frame_${i + 1}.png`);
-const GAROTA_IDLE = Array.from({ length: 6 }, (_, i) => `/img/sprites/garota-idle/frame_${i + 1}.png`);
-const GAROTA_WALKING = Array.from({ length: 6 }, (_, i) => `/img/sprites/garota-walking/frame_${i + 1}.png`);
-const GAROTA_STANDING = Array.from({ length: 6 }, (_, i) => `/img/sprites/garota-standing/frame_${i + 1}.png`);
-const GAROTA_COMENDO = [
-  "/img/sprites/garota-comendo/frame_1.png",
-  "/img/sprites/garota-comendo/frame_2.png",
-  "/img/sprites/garota-comendo/frame_3.png",
-  "/img/sprites/garota-comendo/frame_4.png",
-  "/img/sprites/garota-comendo/frame_5.png",
-  "/img/sprites/garota-comendo/frame_4.png",
-  "/img/sprites/garota-comendo/frame_5.png",
-  "/img/sprites/garota-comendo/frame_4.png",
-  "/img/sprites/garota-comendo/frame_5.png",
-  "/img/sprites/garota-comendo/frame_6.png",
-];
-const GATO_PRETO_SONO = Array.from({ length: 8 }, (_, i) => `/img/sprites/gato-preto-sono/frame_${i + 1}.png`);
+const getGarotaFrames = (outfitIndex: number, type: "idle" | "walking" | "sono" | "comendo" | "standing") => {
+  if (type === "comendo") {
+    return [
+      `/img/sprites/outfit_${outfitIndex}/garota-comendo/frame_1.png`,
+      `/img/sprites/outfit_${outfitIndex}/garota-comendo/frame_2.png`,
+      `/img/sprites/outfit_${outfitIndex}/garota-comendo/frame_3.png`,
+      `/img/sprites/outfit_${outfitIndex}/garota-comendo/frame_4.png`,
+      `/img/sprites/outfit_${outfitIndex}/garota-comendo/frame_5.png`,
+      `/img/sprites/outfit_${outfitIndex}/garota-comendo/frame_4.png`,
+      `/img/sprites/outfit_${outfitIndex}/garota-comendo/frame_5.png`,
+      `/img/sprites/outfit_${outfitIndex}/garota-comendo/frame_4.png`,
+      `/img/sprites/outfit_${outfitIndex}/garota-comendo/frame_5.png`,
+      `/img/sprites/outfit_${outfitIndex}/garota-comendo/frame_6.png`,
+    ];
+  }
+  return Array.from({ length: 6 }, (_, i) => `/img/sprites/outfit_${outfitIndex}/garota-${type}/frame_${i + 1}.png`);
+};
+const GATO_PRETO_SONO = Array.from({ length: 12 }, (_, i) => `/img/sprites/gato-preto-sono/frame_${i + 1}.png`);
 const GATO_PRETO_COMENDO = Array.from({ length: 8 }, (_, i) => `/img/sprites/gato-preto-comendo/frame_${i + 1}.png`);
-const GATO_PRETO_BRINCANDO = Array.from({ length: 8 }, (_, i) => `/img/sprites/gato-preto-brincando/frame_${i + 1}.png`);
-const GATO_PRETO_IDLE = Array.from({ length: 8 }, (_, i) => `/img/sprites/gato-preto-idle/frame_${i + 1}.png`);
+const GATO_PRETO_BRINCANDO = Array.from({ length: 24 }, (_, i) => `/img/sprites/gato-preto-brincando/frame_${i + 1}.png`);
+const GATO_PRETO_IDLE = Array.from({ length: 4 }, (_, i) => `/img/sprites/gato-preto-idle/frame_${i + 1}.png`);
+const GATO_PRETO_ANDANDO = Array.from({ length: 4 }, (_, i) => `/img/sprites/gato-preto-idle/frame_${i + 5}.png`);
 
-const GATO_MALHADO_SONO = Array.from({ length: 8 }, (_, i) => `/img/sprites/gato-malhado-sono/frame_${i + 1}.png`);
+const GATO_MALHADO_SONO = Array.from({ length: 12 }, (_, i) => `/img/sprites/gato-malhado-sono/frame_${i + 1}.png`);
 const GATO_MALHADO_ANDANDO = Array.from({ length: 8 }, (_, i) => `/img/sprites/gato-malhado-andando/frame_${i + 1}.png`);
-const GATO_MALHADO_COMENDO = Array.from({ length: 8 }, (_, i) => `/img/sprites/gato-malhado-comendo/frame_${i + 1}.png`);
-const GATO_MALHADO_BRINCANDO = Array.from({ length: 24 }, (_, i) => `/img/sprites/gato-malhado-brincando/frame_${i + 1}.png`);
-const GATO_MALHADO_IDLE = Array.from({ length: 16 }, (_, i) => `/img/sprites/gato-malhado-idle/frame_${i + 1}.png`);
+const GATO_MALHADO_COMENDO = Array.from({ length: 9 }, (_, i) => `/img/sprites/gato-malhado-comendo/frame_${i + 1}.png`);
+const GATO_MALHADO_BRINCANDO = Array.from({ length: 20 }, (_, i) => `/img/sprites/gato-malhado-brincando/frame_${i + 1}.png`);
+const GATO_MALHADO_IDLE = Array.from({ length: 4 }, (_, i) => `/img/sprites/gato-malhado-idle/frame_${i + 1}.png`);
+const GATO_MALHADO_WALKING = Array.from({ length: 4 }, (_, i) => `/img/sprites/gato-malhado-idle/frame_${i + 5}.png`);
+const GATO_MALHADO_GROOMING = Array.from({ length: 4 }, (_, i) => `/img/sprites/gato-malhado-idle/frame_${i + 9}.png`);
+const GATO_MALHADO_STANDING = Array.from({ length: 4 }, (_, i) => `/img/sprites/gato-malhado-idle/frame_${i + 13}.png`);
+
 
 interface Particle {
   id: number;
@@ -53,6 +59,10 @@ export default function Tamagotchi() {
   const [hunger, setHunger] = useState(20);
   const [happiness, setHappiness] = useState(60);
   const [outfitIndex, setOutfitIndex] = useState(0); // 0: Casual (purple), 1: Bunny (pink), 2: Cyber Star (green with glasses)
+  const garotaIdle = getGarotaFrames(outfitIndex, "idle");
+  const garotaWalking = getGarotaFrames(outfitIndex, "walking");
+  const garotaSono = getGarotaFrames(outfitIndex, "sono");
+  const garotaComendo = getGarotaFrames(outfitIndex, "comendo");
   const [cupcakeActive, setCupcakeActive] = useState(false);
   const [starActive, setStarActive] = useState(false);
   const [isSpinning, setIsSpinning] = useState(false);
@@ -418,7 +428,7 @@ export default function Tamagotchi() {
     >
       {/* 1. MOCKUP HOUSING IMAGE */}
       <img 
-        src="/img/pixel_chix_bg.png" 
+        src="/casinha.png?v=3" 
         alt="Pixel Chix Cabinet" 
         className="w-full h-full object-contain pointer-events-none z-10"
         style={{ imageRendering: "pixelated" }}
@@ -428,21 +438,13 @@ export default function Tamagotchi() {
       <div 
         className="absolute overflow-hidden text-slate-800 z-20 cursor-pointer rounded-[2px]"
         style={{
-          left: "34.38%",
-          top: "42.12%",
-          width: "35.25%",
-          height: "22.83%",
-          backgroundColor: "#8be4eb",
+          left: "24%",
+          top: "14%",
+          width: "56%",
+          height: "54%",
         }}
         onClick={handlePet}
       >
-        {/* LCD Overlay Grid Texture */}
-        <div className="absolute inset-0 pointer-events-none z-30" style={{
-          backgroundImage: "radial-gradient(rgba(26,22,38,0.12) 1.2px, transparent 1.2px)",
-          backgroundSize: "4px 4px",
-          opacity: 0.85
-        }} />
-
         {/* Dynamic Particles */}
         <AnimatePresence>
           {particles.map((p) => (
@@ -462,66 +464,29 @@ export default function Tamagotchi() {
         {/* Room Graphics */}
         {status === "stats" ? (
           /* TCC STATS VIEW */
-          <div className="w-full h-full flex flex-col justify-center px-2 pt-2 text-[6.5px] leading-[1.25] text-slate-700 font-mono z-10">
-            <div className="font-bold border-b border-slate-900/10 pb-0.5 mb-1 flex justify-between uppercase">
+          <div className="w-full h-full flex flex-col justify-center px-6 pt-6 text-[10px] leading-[1.3] text-slate-700 font-mono z-10 bg-[#8be4eb]/90 rounded border-2 border-slate-700 m-2 shadow-inner">
+            <div className="font-bold border-b-2 border-slate-900 pb-1 mb-2 flex justify-between uppercase text-xs">
               <span>CHIX STATS</span>
-              <span className="text-pink-500">HAPPY</span>
+              <span className="text-pink-600">HAPPY</span>
             </div>
-            <div className="flex justify-between">
+            <div className="flex justify-between mb-1">
               <span>COMIDA:</span>
               <span>{hunger < 40 ? "FRIDGE OK" : "NEED 🧁"}</span>
             </div>
-            <div className="w-full bg-slate-300 h-0.5 rounded overflow-hidden mb-1 border border-slate-900/10">
+            <div className="w-full bg-slate-300 h-2 rounded overflow-hidden mb-3 border-2 border-slate-700">
               <div className="bg-[#b6f23e] h-full" style={{ width: `${100 - hunger}%` }}></div>
             </div>
             <div className="flex justify-between">
               <span>GATINHAS:</span>
               <span>2 IN_ROOM</span>
             </div>
-            <div className="flex justify-between mt-1 pt-0.5 border-t border-slate-900/5 text-slate-500 uppercase text-[4.5px]">
-              <span>TCC STATUS: DATA GLITCHED</span>
+            <div className="flex justify-between mt-3 pt-1 border-t border-slate-900/10 text-slate-500 uppercase text-[8px]">
+              <span>TCC STATUS: CONNECTED</span>
             </div>
           </div>
         ) : (
           /* ROOM ANIMATION VIEW */
           <div className="relative w-full h-full flex items-end justify-center">
-            
-            {/* Room Background SVG */}
-            <svg viewBox="0 0 180 95" className="absolute inset-0 w-full h-full z-0 pointer-events-none">
-              {/* Floor line */}
-              <rect x="0" y="80" width="180" height="15" fill="#58ccd4" />
-              <line x1="0" y1="80" x2="180" y2="80" stroke="#1a1a27" strokeWidth="1.2" />
-
-              {/* Drawer (left) */}
-              <rect x="4" y="45" width="22" height="35" fill="#ca8464" stroke="#1a1a27" strokeWidth="1.2" />
-              <line x1="4" y1="56" x2="26" y2="56" stroke="#1a1a27" strokeWidth="1.2" />
-              <line x1="4" y1="67" x2="26" y2="67" stroke="#1a1a27" strokeWidth="1.2" />
-              {/* Drawer knobs */}
-              <rect x="13" y="50" width="3" height="2" fill="#1a1a27" />
-              <rect x="13" y="60" width="3" height="2" fill="#1a1a27" />
-              <rect x="13" y="71" width="3" height="2" fill="#1a1a27" />
-
-              {/* Shelf (left top) */}
-              <line x1="30" y1="38" x2="60" y2="38" stroke="#1a1a27" strokeWidth="1.5" />
-              <rect x="38" y="28" width="10" height="10" fill="#f8b0d0" stroke="#1a1a27" strokeWidth="1.2" />
-
-              {/* Arched Window with Moon (center top) */}
-              <path d="M 76 38 A 14 14 0 0 1 104 38 Z" fill="#182354" stroke="#1a1a27" strokeWidth="1.2" />
-              <rect x="76" y="37" width="28" height="5" fill="#182354" />
-              <path d="M 76 38 H 104" stroke="#1a1a27" strokeWidth="1.2" />
-              {/* Moon */}
-              <path d="M 86 18 A 6 6 0 1 0 94 26 A 4 4 0 1 1 86 18" fill="#ffe57d" />
-              
-              {/* TV (right wall) */}
-              <rect x="120" y="22" width="24" height="20" fill="#a48beb" stroke="#1a1a27" strokeWidth="1.2" />
-              <rect x="123" y="25" width="18" height="14" fill="#c3b8f0" />
-              <rect x="125" y="27" width="14" height="10" fill="#8870c2" />
-              
-              {/* Door (right) */}
-              <rect x="152" y="20" width="24" height="60" fill="#a48beb" stroke="#1a1a27" strokeWidth="1.2" />
-              <line x1="156" y1="20" x2="156" y2="80" stroke="#1a1a27" strokeWidth="1" />
-              <circle cx="159" cy="50" r="2" fill="#1a1a27" />
-            </svg>
 
             {/* Cupcake eating food animation */}
             {cupcakeActive && (
@@ -579,72 +544,47 @@ export default function Tamagotchi() {
                 </div>
               )}
 
-              {blackCat.action === "sleeping" ? (
-                <SpriteAnimation
-                  frames={GATO_PRETO_SONO}
-                  interval={450}
-                  mode="pingpong"
-                  alt="Gato preto dormindo"
-                  style={{ objectPosition: "center bottom", transform: `scaleX(${blackCat.isFlipped ? -1 : 1})` }}
-                />
-              ) : blackCat.action === "playing" ? (
-                <SpriteAnimation
-                  frames={GATO_PRETO_BRINCANDO}
-                  interval={300}
-                  mode="loop"
-                  alt="Gato preto brincando"
-                  style={{ objectPosition: "center bottom", transform: `scaleX(${blackCat.isFlipped ? -1 : 1})` }}
-                />
-              ) : blackCat.action === "begging" ? (
-                <SpriteAnimation
-                  frames={GATO_PRETO_COMENDO}
-                  interval={350}
-                  mode="loop"
-                  alt="Gato preto comendo"
-                  style={{ objectPosition: "center bottom", transform: `scaleX(${blackCat.isFlipped ? -1 : 1})` }}
-                />
-              ) : (
-                <SpriteAnimation
-                  frames={GATO_PRETO_IDLE}
-                  interval={300}
-                  mode="loop"
-                  alt="Gato preto"
-                  style={{ objectPosition: "center bottom", transform: `scaleX(${blackCat.isFlipped ? -1 : 1})` }}
-                />
-              )}
-            </motion.div>
-
-            {/* ============================================================== */}
-            {/* BIRD STAND AND YELLOW BIRD                                     */}
-            {/* ============================================================== */}
-            <div className="absolute left-[66%] bottom-[2px] w-[8%] h-[35%] z-5">
-              <svg viewBox="0 0 8 20" width="100%" height="100%" style={{ imageRendering: "pixelated" }}>
-                <rect x="3" y="0" width="2" height="20" fill="#58ccd4" stroke="#1a1a27" strokeWidth="1" />
-                <rect x="1" y="0" width="6" height="2" fill="#58ccd4" stroke="#1a1a27" strokeWidth="1" />
-              </svg>
-            </div>
-            <motion.div
-              className="absolute left-[64%] bottom-[30%] w-[10%] h-[15%] z-10"
-              animate={
-                status === "sleeping" 
-                  ? { y: [0, 0.4, 0] } 
-                  : { y: [0, -1, 0] }
-              }
-              transition={{ repeat: Infinity, duration: 1.6, ease: "easeInOut" }}
-            >
-              <svg viewBox="0 0 8 8" width="100%" height="100%" style={{ imageRendering: "pixelated" }}>
-                {/* Body */}
-                <rect x="2" y="2" width="4" height="4" fill="#facc15" />
-                {/* Beak */}
-                <rect x="6" y="3" width="1" height="1" fill="#f97316" />
-                {/* Eye */}
-                <rect x="4" y="3" width="1" height="1" fill="#1a1a27" />
-                {/* Tail */}
-                <rect x="0" y="3" width="2" height="2" fill="#eab308" />
-                {/* Legs */}
-                <rect x="3" y="6" width="1" height="2" fill="#f97316" />
-                <rect x="5" y="6" width="1" height="2" fill="#f97316" />
-              </svg>
+            {blackCat.action === "sleeping" ? (
+              <SpriteAnimation
+                frames={GATO_PRETO_SONO}
+                interval={450}
+                mode="pingpong"
+                alt="Gato preto dormindo"
+                style={{ objectPosition: "center bottom", transform: `scaleX(${blackCat.isFlipped ? -1 : 1})` }}
+              />
+            ) : blackCat.action === "walking" ? (
+              <SpriteAnimation
+                frames={GATO_PRETO_ANDANDO}
+                interval={300}
+                mode="loop"
+                alt="Gato preto andando"
+                style={{ objectPosition: "center bottom", transform: `scaleX(${blackCat.isFlipped ? -1 : 1})` }}
+              />
+            ) : blackCat.action === "playing" ? (
+              <SpriteAnimation
+                frames={GATO_PRETO_BRINCANDO}
+                interval={300}
+                mode="loop"
+                alt="Gato preto brincando"
+                style={{ objectPosition: "center bottom", transform: `scaleX(${blackCat.isFlipped ? -1 : 1})` }}
+              />
+            ) : blackCat.action === "begging" ? (
+              <SpriteAnimation
+                frames={GATO_PRETO_COMENDO}
+                interval={350}
+                mode="loop"
+                alt="Gato preto comendo"
+                style={{ objectPosition: "center bottom", transform: `scaleX(${blackCat.isFlipped ? -1 : 1})` }}
+              />
+            ) : (
+              <SpriteAnimation
+                frames={GATO_PRETO_IDLE}
+                interval={300}
+                mode="loop"
+                alt="Gato preto"
+                style={{ objectPosition: "center bottom", transform: `scaleX(${blackCat.isFlipped ? -1 : 1})` }}
+              />
+            )}
             </motion.div>
 
             {/* ============================================================== */}
@@ -688,7 +628,7 @@ export default function Tamagotchi() {
                 />
               ) : tabbyCat.action === "walking" ? (
                 <SpriteAnimation
-                  frames={GATO_MALHADO_ANDANDO}
+                  frames={GATO_MALHADO_WALKING}
                   interval={300}
                   mode="loop"
                   alt="Gato malhado andando"
@@ -708,6 +648,22 @@ export default function Tamagotchi() {
                   interval={350}
                   mode="loop"
                   alt="Gato malhado comendo"
+                  style={{ objectPosition: "center bottom", transform: `scaleX(${tabbyCat.isFlipped ? -1 : 1})` }}
+                />
+              ) : tabbyCat.action === "grooming" ? (
+                <SpriteAnimation
+                  frames={GATO_MALHADO_GROOMING}
+                  interval={300}
+                  mode="loop"
+                  alt="Gato malhado se limpando"
+                  style={{ objectPosition: "center bottom", transform: `scaleX(${tabbyCat.isFlipped ? -1 : 1})` }}
+                />
+              ) : tabbyCat.action === "standing" ? (
+                <SpriteAnimation
+                  frames={GATO_MALHADO_STANDING}
+                  interval={300}
+                  mode="loop"
+                  alt="Gato malhado em pe"
                   style={{ objectPosition: "center bottom", transform: `scaleX(${tabbyCat.isFlipped ? -1 : 1})` }}
                 />
               ) : (
@@ -736,72 +692,49 @@ export default function Tamagotchi() {
                   aspectRatio: "1 / 1",
                 }}
               >
-                <SpriteAnimation frames={GAROTA_SONO} interval={360} mode="loopLast3" alt="Garota dormindo na mesa" />
+                <SpriteAnimation frames={garotaSono} interval={360} mode="loopLast3" alt="Garota dormindo na mesa" />
               </div>
             ) : (
               /* TYPING GIRL, CHAIR, AND TABLE */
               <>
-                {/* Chair (Increased Size 14% x 28%) */}
-                <div className="absolute left-[38%] bottom-[2px] w-[14%] h-[28%] z-5">
-                  <svg viewBox="0 0 10 12" width="100%" height="100%" style={{ imageRendering: "pixelated" }}>
-                    <rect x="1" y="4" width="8" height="2" fill="#8d5c3d" stroke="#1a1a27" strokeWidth="1" />
-                    <rect x="2" y="6" width="1.5" height="6" fill="#8d5c3d" stroke="#1a1a27" strokeWidth="0.8" />
-                    <rect x="6.5" y="6" width="1.5" height="6" fill="#8d5c3d" stroke="#1a1a27" strokeWidth="0.8" />
-                  </svg>
-                </div>
-
-                {/* The Chix Girl (Increased Size 25% x 55% & Detailed SVG) */}
-                <motion.div
-                  className="absolute left-[35%] bottom-[5%] w-[25%] h-[55%] z-10"
-                  animate={getChixAnimation()}
-                  transition={
-                    status.startsWith("walking")
-                      ? { duration: 1.8, ease: "easeInOut" }
-                      : { repeat: Infinity, duration: 2.0, ease: "easeInOut" }
+            {/* The Chix Girl (Increased Size 25% x 55% & Detailed SVG) */}
+            <motion.div
+              className="absolute left-[35%] bottom-[5%] w-[25%] h-[55%] z-10"
+              animate={getChixAnimation()}
+              transition={
+                status.startsWith("walking")
+                  ? { duration: 1.8, ease: "easeInOut" }
+                  : { repeat: Infinity, duration: 2.0, ease: "easeInOut" }
+              }
+              style={{
+                transformOrigin: "bottom center",
+              }}
+            >
+              <motion.div
+                style={{ width: "100%", height: "100%" }}
+                animate={isSpinning ? { rotateY: [0, 360, 720] } : {}}
+                transition={{ duration: 0.5, ease: "easeInOut" }}
+              >
+                <SpriteAnimation
+                  frames={
+                    status === "eating"
+                      ? garotaComendo
+                      : status.startsWith("walking")
+                      ? garotaWalking
+                      : garotaIdle
                   }
-                  style={{
-                    transformOrigin: "bottom center",
-                  }}
-                >
-                  <motion.div
-                    style={{ width: "100%", height: "100%" }}
-                    animate={isSpinning ? { rotateY: [0, 360, 720] } : {}}
-                    transition={{ duration: 0.5, ease: "easeInOut" }}
-                  >
-                    <SpriteAnimation
-                      frames={
-                        status === "eating"
-                          ? GAROTA_COMENDO
-                          : status.startsWith("walking")
-                          ? GAROTA_WALKING
-                          : GAROTA_IDLE
-                      }
-                      interval={300}
-                      mode="loop"
-                      alt={
-                        status === "eating"
-                          ? "Garota comendo"
-                          : status.startsWith("walking")
-                          ? "Garota andando"
-                          : "Garota digitando"
-                      }
-                    />
-                  </motion.div>
-                </motion.div>
-
-                {/* Desk/Table (Increased Size 30% x 32%) */}
-                <div className="absolute left-[41%] bottom-[2px] w-[30%] h-[32%] z-5">
-                  <svg viewBox="0 0 24 20" width="100%" height="100%" style={{ imageRendering: "pixelated" }}>
-                    {/* Tabletop */}
-                    <rect x="1" y="5" width="22" height="3" fill="#a06040" stroke="#1a1a27" strokeWidth="1.2" />
-                    {/* Legs */}
-                    <rect x="3" y="8" width="2" height="12" fill="#a06040" stroke="#1a1a27" strokeWidth="1" />
-                    <rect x="19" y="8" width="2" height="12" fill="#a06040" stroke="#1a1a27" strokeWidth="1" />
-                    {/* Laptop on desk */}
-                    <path d="M 7 1 H 17 V 5 H 7 Z" fill="#c3b8f0" stroke="#1a1a27" strokeWidth="1" />
-                    <rect x="9" y="2" width="6" height="2" fill="#eef" />
-                  </svg>
-                </div>
+                  interval={300}
+                  mode="loop"
+                  alt={
+                    status === "eating"
+                      ? "Garota comendo"
+                      : status.startsWith("walking")
+                      ? "Garota andando"
+                      : "Garota digitando"
+                  }
+                />
+              </motion.div>
+            </motion.div>
               </>
             )}
 
@@ -809,64 +742,54 @@ export default function Tamagotchi() {
         )}
       </div>
 
-      {/* 3. INVISIBLE BUTTON HITBOXES */}
-      
-      {/* Button 1: Bed/Sleep */}
-      {/* Button 1: Bed/Sleep */}
-      <button 
-        onClick={handleSleepToggle}
-        className="absolute cursor-pointer rounded-full bg-transparent border-0 opacity-0 active:scale-95 transition-transform"
+      {/* 3. VISIBLE RETRO BUTTONS */}
+      <div 
+        className="absolute w-full flex justify-around px-8 z-30"
         style={{
-          left: "31.7%",
-          top: "69.3%",
-          width: "8.0%",
-          height: "10.0%",
-          zIndex: 30
+          bottom: "4%",
+          height: "11%"
         }}
-        title="Dormir / Wakeup"
-      />
+      >
+        {/* Button 1: Bed/Sleep */}
+        <button 
+          onClick={handleSleepToggle}
+          className="flex flex-col items-center justify-center bg-pink-100 hover:bg-pink-200 border-2 border-pink-400 active:scale-95 text-slate-800 rounded-lg font-mono text-[9px] font-bold w-[20%] py-1 shadow-md transition-all duration-150"
+          title="Dormir / Wakeup"
+        >
+          <span className="text-base leading-none mb-0.5">💤</span>
+          <span>DORMIR</span>
+        </button>
 
-      {/* Button 2: Food bowl */}
-      <button 
-        onClick={handleFeed}
-        className="absolute cursor-pointer rounded-full bg-transparent border-0 opacity-0 active:scale-95 transition-transform"
-        style={{
-          left: "41.9%",
-          top: "69.3%",
-          width: "8.0%",
-          height: "10.0%",
-          zIndex: 30
-        }}
-        title="Alimentar / Feed"
-      />
+        {/* Button 2: Food bowl */}
+        <button 
+          onClick={handleFeed}
+          className="flex flex-col items-center justify-center bg-yellow-100 hover:bg-yellow-200 border-2 border-yellow-400 active:scale-95 text-slate-800 rounded-lg font-mono text-[9px] font-bold w-[20%] py-1 shadow-md transition-all duration-150"
+          title="Alimentar / Feed"
+        >
+          <span className="text-base leading-none mb-0.5">🧁</span>
+          <span>COMER</span>
+        </button>
 
-      {/* Button 3: Clothes hanger */}
-      <button 
-        onClick={handleCloset}
-        className="absolute cursor-pointer rounded-full bg-transparent border-0 opacity-0 active:scale-95 transition-transform"
-        style={{
-          left: "53.4%",
-          top: "69.3%",
-          width: "8.0%",
-          height: "10.0%",
-          zIndex: 30
-        }}
-        title="Closet / Change Outfit"
-      />
+        {/* Button 3: Clothes hanger */}
+        <button 
+          onClick={handleCloset}
+          className="flex flex-col items-center justify-center bg-purple-100 hover:bg-purple-200 border-2 border-purple-400 active:scale-95 text-slate-800 rounded-lg font-mono text-[9px] font-bold w-[20%] py-1 shadow-md transition-all duration-150"
+          title="Closet / Change Outfit"
+        >
+          <span className="text-base leading-none mb-0.5">👗</span>
+          <span>ROUPA</span>
+        </button>
 
-      {/* Button 4: Outdoors/Door */}
-      <button 
-        onClick={handleOutdoors}
-        className="absolute cursor-pointer rounded-full bg-transparent border-0 opacity-0 active:scale-95 transition-transform"
-        style={{
-          left: "64.5%",
-          top: "69.3%",
-          width: "8.0%",
-          height: "10.0%",
-          zIndex: 30
-        }}
-        title="Outdoors / Walk"
-      />
+        {/* Button 4: Outdoors/Door */}
+        <button 
+          onClick={handleOutdoors}
+          className="flex flex-col items-center justify-center bg-green-100 hover:bg-green-200 border-2 border-green-400 active:scale-95 text-slate-800 rounded-lg font-mono text-[9px] font-bold w-[20%] py-1 shadow-md transition-all duration-150"
+          title="Outdoors / Walk"
+        >
+          <span className="text-base leading-none mb-0.5">🏃‍♀️</span>
+          <span>SAIR</span>
+        </button>
+      </div>
     </div>
   );
 }
