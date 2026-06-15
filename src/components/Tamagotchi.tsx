@@ -7,7 +7,13 @@ import SpriteAnimation from "./SpriteAnimation";
 const GAROTA_SONO = Array.from({ length: 9 }, (_, i) => `/img/sprites/garota-sono/frame_${i + 1}.png`);
 const GAROTA_IDLE = Array.from({ length: 4 }, (_, i) => `/img/sprites/garota-idle/frame_${i + 1}.png`);
 const GATO_PRETO_SONO = Array.from({ length: 8 }, (_, i) => `/img/sprites/gato-preto-sono/frame_${i + 1}.png`);
+const GATO_PRETO_COMENDO = Array.from({ length: 8 }, (_, i) => `/img/sprites/gato-preto-comendo/frame_${i + 1}.png`);
+const GATO_PRETO_BRINCANDO = Array.from({ length: 8 }, (_, i) => `/img/sprites/gato-preto-brincando/frame_${i + 1}.png`);
+
 const GATO_MALHADO_SONO = Array.from({ length: 8 }, (_, i) => `/img/sprites/gato-malhado-sono/frame_${i + 1}.png`);
+const GATO_MALHADO_ANDANDO = Array.from({ length: 8 }, (_, i) => `/img/sprites/gato-malhado-andando/frame_${i + 1}.png`);
+const GATO_MALHADO_COMENDO = Array.from({ length: 8 }, (_, i) => `/img/sprites/gato-malhado-comendo/frame_${i + 1}.png`);
+const GATO_MALHADO_BRINCANDO = Array.from({ length: 24 }, (_, i) => `/img/sprites/gato-malhado-brincando/frame_${i + 1}.png`);
 
 interface Particle {
   id: number;
@@ -390,7 +396,7 @@ export default function Tamagotchi() {
     <div 
       className="relative select-none w-full"
       style={{ 
-        maxWidth: "540px", // Increased overall cabinet size for desktop view
+        maxWidth: "700px", // Increased overall cabinet size for desktop view
         aspectRatio: "1024 / 819"
       }}
     >
@@ -565,6 +571,22 @@ export default function Tamagotchi() {
                   alt="Gato preto dormindo"
                   style={{ objectPosition: "center bottom", transform: `scaleX(${blackCat.isFlipped ? -1 : 1})` }}
                 />
+              ) : blackCat.action === "playing" ? (
+                <SpriteAnimation
+                  frames={GATO_PRETO_BRINCANDO}
+                  interval={200}
+                  mode="loop"
+                  alt="Gato preto brincando"
+                  style={{ objectPosition: "center bottom", transform: `scaleX(${blackCat.isFlipped ? -1 : 1})` }}
+                />
+              ) : blackCat.action === "begging" ? (
+                <SpriteAnimation
+                  frames={GATO_PRETO_COMENDO}
+                  interval={240}
+                  mode="loop"
+                  alt="Gato preto comendo"
+                  style={{ objectPosition: "center bottom", transform: `scaleX(${blackCat.isFlipped ? -1 : 1})` }}
+                />
               ) : (
               <svg
                 viewBox="0 0 10 10"
@@ -604,34 +626,6 @@ export default function Tamagotchi() {
                     <rect x="0" y="4" width="1" height="2" fill="#121215" />
                     <rect x="3" y="9" width="1" height="1" fill="#282830" />
                     <rect x="6" y="9" width="1" height="1" fill="#282830" />
-                  </>
-                ) : blackCat.action === "begging" ? (
-                  /* BEGGING FRAME: Stand on hind legs looking up */
-                  <>
-                    {/* Outlines */}
-                    <rect x="2" y="2" width="6" height="8" fill="#121215" />
-                    <rect x="3" y="-1" width="6" height="5" fill="#121215" />
-                    {/* Inner Body */}
-                    <rect x="3" y="3" width="4" height="6" fill="#282830" />
-                    <rect x="4" y="0" width="4" height="4" fill="#282830" />
-                    {/* Ears inner pink */}
-                    <rect x="5" y="0" width="1" height="1" fill="#ff9ad5" />
-                    <rect x="7" y="0" width="1" height="1" fill="#ff9ad5" />
-                    {/* Green Eyes looking up */}
-                    <rect x="5" y="1" width="1" height="1" fill="#4ade80" />
-                    <rect x="7" y="1" width="1" height="1" fill="#4ade80" />
-                    {/* Paws waving */}
-                    {tick % 2 === 0 ? (
-                      <>
-                        <rect x="1" y="2" width="2.2" height="1.2" fill="#282830" />
-                        <rect x="1.5" y="1" width="1.2" height="1.2" fill="#282830" />
-                      </>
-                    ) : (
-                      <rect x="1" y="2.5" width="2" height="1.2" fill="#282830" />
-                    )}
-                    <rect x="3" y="9" width="1.2" height="1" fill="#282830" />
-                    <rect x="6" y="9" width="1.2" height="1" fill="#282830" />
-                    <rect x="7.5" y="4" width="1" height="3" fill="#282830" />
                   </>
                 ) : blackCat.action === "walking" ? (
                   /* WALKING FRAME: Alternating legs */
@@ -773,6 +767,30 @@ export default function Tamagotchi() {
                   alt="Gato malhado dormindo"
                   style={{ objectPosition: "center bottom", transform: `scaleX(${tabbyCat.isFlipped ? -1 : 1})` }}
                 />
+              ) : tabbyCat.action === "walking" ? (
+                <SpriteAnimation
+                  frames={GATO_MALHADO_ANDANDO}
+                  interval={200}
+                  mode="loop"
+                  alt="Gato malhado andando"
+                  style={{ objectPosition: "center bottom", transform: `scaleX(${tabbyCat.isFlipped ? -1 : 1})` }}
+                />
+              ) : tabbyCat.action === "playing" ? (
+                <SpriteAnimation
+                  frames={GATO_MALHADO_BRINCANDO}
+                  interval={200}
+                  mode="loop"
+                  alt="Gato malhado brincando"
+                  style={{ objectPosition: "center bottom", transform: `scaleX(${tabbyCat.isFlipped ? -1 : 1})` }}
+                />
+              ) : tabbyCat.action === "begging" ? (
+                <SpriteAnimation
+                  frames={GATO_MALHADO_COMENDO}
+                  interval={240}
+                  mode="loop"
+                  alt="Gato malhado comendo"
+                  style={{ objectPosition: "center bottom", transform: `scaleX(${tabbyCat.isFlipped ? -1 : 1})` }}
+                />
               ) : (
               <svg
                 viewBox="0 0 12 10"
@@ -780,7 +798,7 @@ export default function Tamagotchi() {
                 height="100%"
                 style={{
                   imageRendering: "pixelated",
-                  transform: tabbyCat.action === "playing" ? "none" : `scaleX(${tabbyCat.isFlipped ? -1 : 1})`
+                  transform: `scaleX(${tabbyCat.isFlipped ? -1 : 1})`
                 }}
               >
                 {/* Outlined and detailed SVG for tabby cat */}
@@ -812,104 +830,6 @@ export default function Tamagotchi() {
                       <rect x="1.5" y="4.5" width="1.8" height="1.8" fill="#9f9fa8" />
                     )}
                     <rect x="10" y="5" width="1" height="3" fill="#3a2a1d" />
-                  </>
-                ) : tabbyCat.action === "playing" ? (
-                  /* PLAYING FRAME: Rolling on back */
-                  <>
-                    {/* Outline */}
-                    <rect x="1.5" y="3" width="9" height="7" fill="#3a2a1d" />
-                    <rect x="1" y="0.5" width="7" height="5.2" fill="#3a2a1d" />
-                    {/* Inner Body */}
-                    <rect x="2" y="4" width="7.5" height="5" fill="#9f9fa8" />
-                    <rect x="3.5" y="4" width="4.5" height="3" fill="#ffffff" />
-                    {/* Stripes */}
-                    <rect x="2.5" y="5" width="1.5" height="1" fill="#6e4f37" />
-                    <rect x="7" y="6" width="1.5" height="1" fill="#6e4f37" />
-                    {/* Head */}
-                    <rect x="2" y="1" width="5" height="4.2" fill="#9f9fa8" />
-                    {/* Ears inner pink */}
-                    <rect x="2.5" y="1" width="1" height="1" fill="#ff9ad5" />
-                    <rect x="4.5" y="1" width="1" height="1" fill="#ff9ad5" />
-                    {/* Yellow Eyes wide open */}
-                    <rect x="3" y="2.5" width="1.2" height="1.2" fill="#fbbf24" />
-                    <rect x="5" y="2.5" width="1.2" height="1.2" fill="#fbbf24" />
-                    {/* Waving paws */}
-                    {tick % 2 === 0 ? (
-                      <>
-                        <rect x="4.5" y="7" width="1.2" height="2" fill="#ffffff" />
-                        <rect x="7.5" y="7" width="1.2" height="2" fill="#ffffff" />
-                      </>
-                    ) : (
-                      <>
-                        <rect x="3.5" y="7.5" width="1.2" height="1.5" fill="#ffffff" />
-                        <rect x="6.5" y="7.5" width="1.2" height="1.5" fill="#ffffff" />
-                      </>
-                    )}
-                    <rect x="9.5" y={tick % 2 === 0 ? 3 : 5} width="1.2" height="2" fill="#3a2a1d" />
-                  </>
-                ) : tabbyCat.action === "begging" ? (
-                  /* BEGGING FRAME: Sitting looking up */
-                  <>
-                    {/* Outline */}
-                    <rect x="2" y="1.5" width="9" height="8" fill="#3a2a1d" />
-                    <rect x="1.5" y="-1.5" width="7.2" height="5" fill="#3a2a1d" />
-                    {/* Inner Body */}
-                    <rect x="3" y="2.5" width="7" height="6.5" fill="#9f9fa8" />
-                    <rect x="4.5" y="4.5" width="4" height="4.5" fill="#ffffff" />
-                    {/* Head */}
-                    <rect x="2.5" y="-0.5" width="5.2" height="4" fill="#9f9fa8" />
-                    {/* Ears inner pink */}
-                    <rect x="3" y="-0.5" width="1" height="1" fill="#ff9ad5" />
-                    <rect x="6" y="-0.5" width="1" height="1" fill="#ff9ad5" />
-                    {/* Yellow eyes looking up */}
-                    <rect x="3.5" y="0.8" width="1.2" height="1.2" fill="#fbbf24" />
-                    <rect x="5.5" y="0.8" width="1.2" height="1.2" fill="#fbbf24" />
-                    {/* Waving Paws */}
-                    {tick % 2 === 0 ? (
-                      <>
-                        <rect x="1" y="2.2" width="2" height="1.2" fill="#9f9fa8" />
-                        <rect x="1.5" y="1.2" width="1" height="1.2" fill="#9f9fa8" />
-                      </>
-                    ) : (
-                      <rect x="1.5" y="2.5" width="2.2" height="1.2" fill="#9f9fa8" />
-                    )}
-                    <rect x="3.5" y="9" width="1.5" height="1" fill="#9f9fa8" />
-                    <rect x="7" y="9" width="1.5" height="1" fill="#9f9fa8" />
-                    <rect x="10" y="4.5" width="1" height="3" fill="#3a2a1d" />
-                  </>
-                ) : tabbyCat.action === "walking" ? (
-                  /* WALKING FRAME: Alternating legs */
-                  <>
-                    {/* Outline */}
-                    <rect x="1" y="2" width="9.5" height="8" fill="#3a2a1d" />
-                    <rect x="0" y={tick % 2 === 0 ? -1 : 0} width="7.2" height="5" fill="#3a2a1d" />
-                    {/* Inner Body */}
-                    <rect x="2" y="3" width="7.5" height="5.2" fill="#9f9fa8" />
-                    <rect x="3" y="5" width="4.5" height="3" fill="#ffffff" />
-                    {/* Stripes */}
-                    <rect x="2" y="4" width="1.5" height="1" fill="#6e4f37" />
-                    <rect x="6" y="3" width="1.5" height="1" fill="#6e4f37" />
-                    {/* Head */}
-                    <rect x="1" y={tick % 2 === 0 ? 0 : 1} width="5.2" height="4" fill="#9f9fa8" />
-                    {/* Ears inner pink */}
-                    <rect x="1.5" y={tick % 2 === 0 ? 0 : 1} width="1" height="1" fill="#ff9ad5" />
-                    <rect x="4.2" y={tick % 2 === 0 ? 0 : 1} width="1" height="1" fill="#ff9ad5" />
-                    {/* Eyes */}
-                    <rect x="2.2" y={tick % 2 === 0 ? 1.5 : 2.5} width="1.2" height="1.2" fill="#fbbf24" />
-                    <rect x="4.2" y={tick % 2 === 0 ? 1.5 : 2.5} width="1.2" height="1.2" fill="#fbbf24" />
-                    {/* Legs */}
-                    {tick % 2 === 0 ? (
-                      <>
-                        <rect x="3" y="8.2" width="1.5" height="1.8" fill="#9f9fa8" />
-                        <rect x="7" y="8" width="1.5" height="1" fill="#9f9fa8" />
-                      </>
-                    ) : (
-                      <>
-                        <rect x="3" y="8" width="1.5" height="1" fill="#9f9fa8" />
-                        <rect x="7" y="8.2" width="1.5" height="1.8" fill="#9f9fa8" />
-                      </>
-                    )}
-                    <rect x="9.5" y={tick % 2 === 0 ? 4 : 5} width="1" height="3" fill="#3a2a1d" />
                   </>
                 ) : (
                   /* DEFAULT STANDING / IDLE */
