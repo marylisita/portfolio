@@ -21,6 +21,9 @@ const getGarotaFrames = (outfitIndex: number, type: "idle" | "walking" | "sono" 
       `/img/sprites/outfit_${outfitIndex}/garota-comendo/frame_6.png`,
     ];
   }
+  if (type === "sono") {
+    return Array.from({ length: 9 }, (_, i) => `/img/sprites/outfit_${outfitIndex}/garota-sono/frame_${i + 1}.png`);
+  }
   return Array.from({ length: 6 }, (_, i) => `/img/sprites/outfit_${outfitIndex}/garota-${type}/frame_${i + 1}.png`);
 };
 
@@ -129,7 +132,7 @@ export default function Tamagotchi() {
     }
   }, [status]);
 
-  // Cats Random AI Behavior Loop
+  // Cats Random AI Behavior Loop (calmer cats, 15-second interval)
   useEffect(() => {
     if (status === "sleeping" || status === "eating" || status.startsWith("walking")) return;
 
@@ -137,14 +140,14 @@ export default function Tamagotchi() {
       setBlackCat((prev) => {
         if (prev.action === "walking") return prev;
         const rand = Math.random();
-        if (rand < 0.12) {
+        if (rand < 0.06) { // 6% chance of walking
           const newTarget = clampX(BLACK_CAT_MIN_X + 5 + Math.random() * (BLACK_CAT_MAX_X - BLACK_CAT_MIN_X - 5), BLACK_CAT_MIN_X, BLACK_CAT_MAX_X);
           return { ...prev, action: "walking", targetX: newTarget, isFlipped: newTarget < prev.x };
-        } else if (rand < 0.22) {
+        } else if (rand < 0.14) { // 8% chance of grooming
           return { ...prev, action: "grooming" };
-        } else if (rand < 0.28) {
+        } else if (rand < 0.18) { // 4% chance of playing
           return { ...prev, action: "playing" };
-        } else if (rand < 0.36) {
+        } else if (rand < 0.24) { // 6% chance of meowing
           setBlackCatMeow(Math.random() > 0.5 ? "Miau! ❤️" : "Purr...");
           setTimeout(() => setBlackCatMeow(null), 1500);
           return { ...prev, action: "sitting" };
@@ -156,14 +159,14 @@ export default function Tamagotchi() {
       setTabbyCat((prev) => {
         if (prev.action === "walking") return prev;
         const rand = Math.random();
-        if (rand < 0.12) {
+        if (rand < 0.06) { // 6% chance of walking
           const newTarget = clampX(TABBY_CAT_MIN_X + 5 + Math.random() * (TABBY_CAT_MAX_X - TABBY_CAT_MIN_X - 5), TABBY_CAT_MIN_X, TABBY_CAT_MAX_X);
           return { ...prev, action: "walking", targetX: newTarget, isFlipped: newTarget < prev.x };
-        } else if (rand < 0.22) {
+        } else if (rand < 0.14) { // 8% chance of grooming
           return { ...prev, action: "grooming" };
-        } else if (rand < 0.28) {
+        } else if (rand < 0.18) { // 4% chance of playing
           return { ...prev, action: "playing" };
-        } else if (rand < 0.36) {
+        } else if (rand < 0.24) { // 6% chance of meowing
           setTabbyCatMeow(Math.random() > 0.5 ? "Meow! 😸" : "Ronronar");
           setTimeout(() => setTabbyCatMeow(null), 1500);
           return { ...prev, action: "standing" };
@@ -171,7 +174,7 @@ export default function Tamagotchi() {
           return { ...prev, action: "standing" };
         }
       });
-    }, 6500);
+    }, 15000);
 
     return () => clearInterval(interval);
   }, [status]);
