@@ -25,12 +25,14 @@ export default function SpriteAnimation({
 
   const framesKey = frames.join(",");
 
+  const version = "6";
+
   // Pré-carrega todos os quadros pra não piscar/sumir na primeira vez que a
   // animação roda (comer/dormir entravam sem cache e apareciam em branco).
   useEffect(() => {
     frames.forEach((src) => {
       const im = new Image();
-      im.src = src;
+      im.src = `${src}?v=${version}`;
     });
   }, [framesKey]);
 
@@ -59,9 +61,11 @@ export default function SpriteAnimation({
     }
   }
 
+  const imgSrc = frames[idx] ? `${frames[idx]}?v=${version}` : "";
+
   return (
     <img
-      src={frames[idx]}
+      src={imgSrc}
       alt={alt}
       draggable={false}
       style={{
