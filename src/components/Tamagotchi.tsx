@@ -511,7 +511,7 @@ export default function Tamagotchi() {
                   bottom: "4%",
                   transform: "translateX(-50%)",
                   height: "38%",
-                  aspectRatio: "1 / 1.4",
+                  aspectRatio: "1.16 / 1",
                 }}
               >
                 <SpriteAnimation frames={garotaSono} interval={360} mode="loopLast3" style={{ objectPosition: "center bottom" }} alt="Garota dormindo" />
