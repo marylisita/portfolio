@@ -57,13 +57,13 @@ export default function Tamagotchi() {
 
     const dpr = Math.min(2, window.devicePixelRatio || 1);
     const w = canvas.clientWidth || 300;
-    const h = canvas.clientHeight || 258;
+    const h = canvas.clientHeight || 230;
     canvas.width = w * dpr;
     canvas.height = h * dpr;
     ctx.scale(dpr, dpr);
 
-    const colors = ["#ffffff", "#ff9ec4", "#c9a0ff"];
-    const numStars = Math.round((w * h) / 820);
+    const colors = ["#ffffff", "#ffbee3", "#c9a0ff", "#a3f3ff"];
+    const numStars = Math.round((w * h) / 780);
     const stars = Array.from({ length: numStars }, () => ({
       x: Math.random() * w,
       y: Math.random() * h,
@@ -84,7 +84,7 @@ export default function Tamagotchi() {
         st.y += st.dy;
         if (st.y > h) st.y = 0;
 
-        ctx.globalAlpha = 0.22 + 0.62 * Math.abs(Math.sin((t / 650) * st.sp + st.ph));
+        ctx.globalAlpha = 0.25 + 0.65 * Math.abs(Math.sin((t / 650) * st.sp + st.ph));
         ctx.fillStyle = st.col;
         ctx.fillRect(Math.floor(st.x), Math.floor(st.y), st.s, st.s);
       });
@@ -191,18 +191,18 @@ export default function Tamagotchi() {
   }
 
   return (
-    <div className="flex flex-col items-center w-full max-w-[380px] mx-auto select-none">
+    <div className="flex flex-col items-center w-full max-w-[390px] mx-auto select-none relative pb-10">
       
       {/* Dynamic Keyframes injection */}
       <style dangerouslySetInnerHTML={{ __html: `
+        @keyframes holoShift {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
         @keyframes crtSheen {
           0% { transform: translateY(-70%); }
           100% { transform: translateY(240%); }
-        }
-        @keyframes crtFlick {
-          0%, 100% { opacity: 0.35; }
-          48% { opacity: 0.9; }
-          52% { opacity: 0.5; }
         }
         @keyframes crtLineOff {
           0% { opacity: 0; transform: translate(-50%, -50%) scaleX(0.03); }
@@ -216,237 +216,257 @@ export default function Tamagotchi() {
           70% { opacity: 0; transform: translate(-50%, -50%) scaleX(0.05); }
           100% { opacity: 0; transform: translate(-50%, -50%) scaleX(0); }
         }
-        .crt-sheen-anim {
-          animation: crtSheen 7s linear infinite;
+        .holo-screen-bg {
+          background: linear-gradient(125deg, #ff9ec4 0%, #c9a0ff 33%, #54cfe0 66%, #ffbfe3 100%);
+          background-size: 300% 300%;
+          animation: holoShift 12s ease infinite;
         }
-        .crt-flicker-anim {
-          animation: crtFlick 4.5s steps(3) infinite;
+        .crt-sheen-anim {
+          animation: crtSheen 8s linear infinite;
         }
       `}} />
 
-      {/* ─── KAWAII CRT MONITOR CABINET ─── */}
+      {/* PERSPECTIVE WRAPPER (Fixed 3D rotation, NO Parallax) */}
       <div 
-        className="w-full relative rounded-[24px] p-[26px] pb-0 shadow-[0_30px_50px_-22px_rgba(30,60,70,0.6),inset_0_2px_0_rgba(255,255,255,0.65),inset_0_-14px_30px_-10px_rgba(120,90,50,0.28)]"
         style={{
-          background: "linear-gradient(165deg, #f4eee2, #e8dfcc 55%, #dacdb6)",
-          imageRendering: "pixelated",
+          perspective: "1000px",
+          transformStyle: "preserve-3d",
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center"
         }}
       >
-        {/* Soft shadow gradients */}
+        
+        {/* ─── TRANSLUCENT NEON MONITOR CABINET ─── */}
         <div 
-          className="absolute inset-0 rounded-[24px] pointer-events-none"
+          className="w-full relative rounded-[28px] p-4 pb-1 border-[2.5px] border-white/40 shadow-[0_25px_50px_-12px_rgba(168,85,247,0.45),inset_0_2px_2px_rgba(255,255,255,0.6),inset_0_-8px_20px_-5px_rgba(0,0,0,0.15)]"
           style={{
-            background: "radial-gradient(circle at 84% 10%, rgba(150,110,60,0.13), transparent 18%), radial-gradient(circle at 11% 90%, rgba(150,110,60,0.1), transparent 14%)"
-          }}
-        />
-
-        {/* 1. BEZEL INSET PANEL */}
-        <div 
-          className="rounded-[17px] p-4"
-          style={{
-            background: "#d9cdb6",
-            boxShadow: "inset 0 2px 6px rgba(90,70,40,0.4), inset 0 -2px 4px rgba(255,255,255,0.4)"
+            background: "linear-gradient(135deg, rgba(236,72,153,0.48) 0%, rgba(168,85,247,0.42) 100%)",
+            backdropFilter: "blur(12px) saturate(145%)",
+            transform: "rotateY(-12deg) rotateX(8deg) rotateZ(-2deg)",
+            transformStyle: "preserve-3d",
+            imageRendering: "pixelated",
           }}
         >
-          {/* 2. CRT SCREEN OUTER CONTAINER */}
+          {/* Glass glare highlight */}
           <div 
-            className="crt-screen relative w-full h-[258px] overflow-hidden"
+            className="absolute inset-0 rounded-[28px] pointer-events-none"
             style={{
-              borderRadius: "18px / 24px",
-              background: "radial-gradient(120% 120% at 50% 45%, #4a2a6a 0%, #2a1747 68%, #1a0e30 100%)",
-              boxShadow: "inset 0 0 34px 7px rgba(0,0,0,0.55), inset 0 0 90px rgba(0,0,0,0.42)"
+              background: "linear-gradient(135deg, rgba(255,255,255,0.18) 0%, transparent 50%, rgba(0,0,0,0.05) 100%)"
+            }}
+          />
+
+          {/* 1. SCREEN MOLD BEZEL (Glossy Dark Translucent Glass) */}
+          <div 
+            className="rounded-[20px] p-3 border border-white/20"
+            style={{
+              background: "rgba(15, 10, 25, 0.45)",
+              boxShadow: "inset 0 2px 6px rgba(0,0,0,0.5), inset 0 -2px 4px rgba(255,255,255,0.15)"
             }}
           >
-            {/* Screen Content Wrapper (animates on/off) */}
+            {/* 2. CRT SCREEN (Interactive area) */}
             <div 
-              className="crt-pic absolute inset-0 origin-center"
-              style={picStyle}
-            >
-              {/* Stars Canvas Background */}
-              <canvas 
-                ref={canvasRef} 
-                className="crt-stars absolute inset-0 w-full h-full"
-              />
-
-              {/* Static Horizontal Scanlines */}
-              <div 
-                className="absolute inset-0 pointer-events-none"
-                style={{
-                  backgroundImage: "repeating-linear-gradient(rgba(0,0,0,0.17) 0 1px, transparent 1px 3px)"
-                }}
-              />
-
-              {/* Moving glass sheen beam */}
-              <div 
-                className="crt-sheen-anim absolute left-0 right-0 h-[46%] pointer-events-none"
-                style={{
-                  background: "linear-gradient(rgba(255,255,255,0), rgba(255,255,255,0.05) 50%, rgba(255,255,255,0))"
-                }}
-              />
-
-              {/* Top glass bulbous light reflection */}
-              <div 
-                className="absolute inset-0 pointer-events-none"
-                style={{
-                  borderRadius: "18px / 24px",
-                  background: "radial-gradient(60% 42% at 26% 18%, rgba(255,255,255,0.15), transparent 60%)"
-                }}
-              />
-
-              {/* Subtle screen flickering overlay */}
-              <div 
-                className="crt-flicker-anim absolute inset-0 pointer-events-none"
-                style={{
-                  background: "rgba(180,150,255,0.04)"
-                }}
-              />
-
-              {/* Floating click particles */}
-              <AnimatePresence>
-                {particles.map((p) => (
-                  <motion.span
-                    key={p.id}
-                    className="absolute text-base z-40 pointer-events-none font-sans"
-                    initial={{ opacity: 1, scale: 0.5, left: `${p.x}%`, top: `${p.y}%` }}
-                    animate={{
-                      opacity: 0,
-                      scale: 1.4,
-                      top: `${p.y - 25}%`,
-                      left: `${p.x + (Math.random() - 0.5) * 15}%`,
-                    }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.9, ease: "easeOut" }}
-                  >
-                    {p.emoji}
-                  </motion.span>
-                ))}
-              </AnimatePresence>
-
-              {/* Cozy Deep Purple Carpet */}
-              <div className="absolute bottom-[2%] left-1/2 -translate-x-1/2 w-[80%] h-[18%] bg-[#391d63]/80 border-[2px] border-dashed border-[#ff9ec4]/30 rounded-full opacity-60 z-0 pointer-events-none" />
-
-              {/* ─── CHARACTERS LAYER ─── */}
-
-              {/* A. MARY (Center) */}
-              <div
-                className="absolute bottom-[8%] left-[34%] w-[32%] h-[68%] z-10 cursor-pointer flex items-end justify-center"
-                onClick={(e) => spawnParticles(e, "mary")}
-              >
-                <SpriteAnimation
-                  frames={girlFrames}
-                  interval={280}
-                  mode="loop"
-                  alt="Mary Pixel Art"
-                />
-              </div>
-
-              {/* B. BLACK KITTEN (Left) */}
-              <div
-                className="absolute bottom-[6%] left-[6%] w-[25%] h-[32%] z-20 cursor-pointer flex items-end justify-center"
-                style={{ transform: "scale(0.72)", transformOrigin: "bottom center" }}
-                onClick={(e) => spawnParticles(e, "blackCat")}
-              >
-                <SpriteAnimation
-                  frames={blackCatFrames}
-                  interval={250}
-                  mode="loop"
-                  alt="Gatinha Preta Filhote"
-                />
-              </div>
-
-              {/* C. TABBY CAT (Right) */}
-              <div
-                className="absolute bottom-[6%] left-[69%] w-[25%] h-[32%] z-20 cursor-pointer flex items-end justify-center"
-                style={{ transform: "scale(0.9)", transformOrigin: "bottom center" }}
-                onClick={(e) => spawnParticles(e, "tabbyCat")}
-              >
-                <SpriteAnimation
-                  frames={tabbyCatFrames}
-                  interval={280}
-                  mode="loop"
-                  alt="Gatinha Tigrada"
-                />
-              </div>
-
-            </div>
-
-            {/* CRT Flare Line */}
-            <div 
-              className="crt-line absolute left-1/2 top-1/2 w-[84%] h-[3px] rounded-[3px] bg-white pointer-events-none"
+              className="crt-screen relative w-full h-[230px] overflow-hidden"
               style={{
-                boxShadow: "0 0 14px 4px rgba(255,255,255,0.9)",
-                transform: "translate(-50%, -50%)",
-                ...lineStyle
+                borderRadius: "14px / 18px",
+                boxShadow: "inset 0 0 30px rgba(0,0,0,0.7)"
               }}
-            />
+            >
+              {/* Screen Content Wrapper */}
+              <div 
+                className="crt-pic absolute inset-0 origin-center holo-screen-bg"
+                style={picStyle}
+              >
+                {/* Stars Canvas Background */}
+                <canvas 
+                  ref={canvasRef} 
+                  className="crt-stars absolute inset-0 w-full h-full"
+                />
 
-            {/* CRT Pitch Black Overlay Mask */}
-            <div 
-              className="crt-dark absolute inset-0 bg-[#050409] pointer-events-none"
-              style={darkStyle}
-            />
+                {/* Glitchy Scanlines */}
+                <div 
+                  className="absolute inset-0 pointer-events-none"
+                  style={{
+                    backgroundImage: "repeating-linear-gradient(rgba(0,0,0,0.15) 0 1px, transparent 1px 3px)",
+                    mixBlendMode: "overlay"
+                  }}
+                />
 
-          </div>
-        </div>
+                {/* Shifting Sheen beam */}
+                <div 
+                  className="crt-sheen-anim absolute left-0 right-0 h-[46%] pointer-events-none"
+                  style={{
+                    background: "linear-gradient(rgba(255,255,255,0), rgba(255,255,255,0.08) 50%, rgba(255,255,255,0))"
+                  }}
+                />
 
-        {/* 3. LOWER DIAL / HARDWARE PANEL */}
-        <div className="py-[18px] px-2 flex flex-col gap-[13px]">
-          
-          <div className="flex justify-between items-center">
-            {/* Left bezel vents/indents */}
-            <div className="flex gap-1.5">
-              <div className="w-[30px] h-1.5 rounded-[3px] bg-[#c8bca4]" style={{ boxShadow: "inset 0 1px 1px rgba(90,70,40,0.4)" }} />
-              <div className="w-4 h-1.5 rounded-[3px] bg-[#c8bca4]" style={{ boxShadow: "inset 0 1px 1px rgba(90,70,40,0.4)" }} />
+                {/* Glass reflections */}
+                <div 
+                  className="absolute inset-0 pointer-events-none"
+                  style={{
+                    borderRadius: "14px / 18px",
+                    background: "radial-gradient(55% 40% at 28% 18%, rgba(255,255,255,0.2), transparent 60%)"
+                  }}
+                />
+
+                {/* Floating click particles */}
+                <AnimatePresence>
+                  {particles.map((p) => (
+                    <motion.span
+                      key={p.id}
+                      className="absolute text-base z-40 pointer-events-none font-sans"
+                      initial={{ opacity: 1, scale: 0.5, left: `${p.x}%`, top: `${p.y}%` }}
+                      animate={{
+                        opacity: 0,
+                        scale: 1.4,
+                        top: `${p.y - 25}%`,
+                        left: `${p.x + (Math.random() - 0.5) * 15}%`,
+                      }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.9, ease: "easeOut" }}
+                    >
+                      {p.emoji}
+                    </motion.span>
+                  ))}
+                </AnimatePresence>
+
+                {/* Cozy Semi-Transparent Holographic Carpet */}
+                <div className="absolute bottom-[2%] left-1/2 -translate-x-1/2 w-[80%] h-[18%] bg-[#54cfe0]/20 border-[2px] border-dashed border-[#ffbee3]/50 rounded-full opacity-60 z-0 pointer-events-none" />
+
+                {/* ─── CHARACTERS LAYER ─── */}
+
+                {/* A. MARY (Center) */}
+                <div
+                  className="absolute bottom-[8%] left-[34%] w-[32%] h-[68%] z-10 cursor-pointer flex items-end justify-center"
+                  onClick={(e) => spawnParticles(e, "mary")}
+                >
+                  <SpriteAnimation
+                    frames={girlFrames}
+                    interval={280}
+                    mode="loop"
+                    alt="Mary Pixel Art"
+                  />
+                </div>
+
+                {/* B. BLACK KITTEN (Left) */}
+                <div
+                  className="absolute bottom-[6%] left-[6%] w-[25%] h-[32%] z-20 cursor-pointer flex items-end justify-center"
+                  style={{ transform: "scale(0.72)", transformOrigin: "bottom center" }}
+                  onClick={(e) => spawnParticles(e, "blackCat")}
+                >
+                  <SpriteAnimation
+                    frames={blackCatFrames}
+                    interval={250}
+                    mode="loop"
+                    alt="Gatinha Preta Filhote"
+                  />
+                </div>
+
+                {/* C. TABBY CAT (Right) */}
+                <div
+                  className="absolute bottom-[6%] left-[69%] w-[25%] h-[32%] z-20 cursor-pointer flex items-end justify-center"
+                  style={{ transform: "scale(0.9)", transformOrigin: "bottom center" }}
+                  onClick={(e) => spawnParticles(e, "tabbyCat")}
+                >
+                  <SpriteAnimation
+                    frames={tabbyCatFrames}
+                    interval={280}
+                    mode="loop"
+                    alt="Gatinha Tigrada"
+                  />
+                </div>
+
+              </div>
+
+              {/* CRT Shrinking white line */}
+              <div 
+                className="crt-line absolute left-1/2 top-1/2 w-[84%] h-[3px] rounded-[3px] bg-white pointer-events-none"
+                style={{
+                  boxShadow: "0 0 14px 4px rgba(255,255,255,0.9)",
+                  transform: "translate(-50%, -50%)",
+                  ...lineStyle
+                }}
+              />
+
+              {/* CRT Dark overlay screen */}
+              <div 
+                className="crt-dark absolute inset-0 bg-[#0c051a] pointer-events-none"
+                style={darkStyle}
+              />
+
             </div>
+          </div>
 
-            {/* Right physical controls */}
-            <div className="flex gap-2.5 items-center">
-              {/* Orange LED / Power Button (Click to toggle screen) */}
+          {/* Lower bezel chin panel */}
+          <div className="pt-2 px-1 flex justify-between items-center relative">
+            {/* LED Power indicator & Dial inside the chin */}
+            <div className="flex gap-2.5 items-center ml-auto">
+              
+              {/* Dial Button (Secret Outfit Cycle) */}
+              <button
+                onClick={cycleOutfit}
+                title="Trocar Look (Easter Egg)"
+                className="w-4 h-4 rounded-full border border-white/20 active:scale-90 transition-transform cursor-pointer focus:outline-none"
+                style={{
+                  background: "rgba(255,255,255,0.2)",
+                  boxShadow: "inset 0 1px 1px rgba(255,255,255,0.3), 1px 1px 3px rgba(0,0,0,0.1)",
+                }}
+              />
+
+              {/* LED power button (Click to power toggle) */}
               <button
                 onClick={handlePower}
-                title="Ligar / Desligar Monitor"
-                className="crt-led w-[13px] h-[13px] rounded-full focus:outline-none transition-all duration-300"
+                title="Ligar/Desligar Monitor"
+                className="w-3.5 h-3.5 rounded-full focus:outline-none cursor-pointer border border-white/20 transition-all duration-300"
                 style={{
-                  cursor: "pointer",
                   ...(isPowerOn 
                     ? {
-                        background: "radial-gradient(circle at 35% 30%, #ff8a5c, #e8431f)",
-                        boxShadow: "0 0 10px 1px rgba(255,90,40,0.6)"
+                        background: "radial-gradient(circle at 35% 30%, #a3f3ff, #06b6d4)",
+                        boxShadow: "0 0 8px #06b6d4"
                       }
                     : {
-                        background: "radial-gradient(circle at 35% 30%, #ff8a5c, #e8431f)",
-                        filter: "brightness(0.4) saturate(0.55)",
+                        background: "rgba(255,255,255,0.1)",
                         boxShadow: "none"
                       }
                   )
                 }}
               />
 
-              {/* Gray Dial (Secret Look Changer) */}
-              <button
-                onClick={cycleOutfit}
-                title="Trocar Look (Easter Egg)"
-                className="w-[15px] h-[15px] rounded-full focus:outline-none active:scale-90 transition-transform"
-                style={{
-                  background: "#cdbfa6",
-                  boxShadow: "inset 0 1px 2px rgba(90,70,40,0.5), inset 0 -1px 1px rgba(255,255,255,0.4)",
-                  cursor: "pointer"
-                }}
-              />
             </div>
           </div>
 
-          {/* Bottom grille slot */}
-          <div 
-            className="h-[50px] rounded-[7px]" 
-            style={{
-              background: "#d4c8b1",
-              boxShadow: "inset 0 1px 3px rgba(90,70,40,0.35)",
-              backgroundImage: "repeating-linear-gradient(180deg, #c6ba9f 0 2px, #dbcfb8 2px 8px)"
-            }}
-          />
-
         </div>
+
+        {/* ─── 3D TRANSLUCENT STAND STEM ─── */}
+        <div 
+          style={{
+            width: "55px",
+            height: "65px",
+            background: "linear-gradient(to bottom, rgba(236, 72, 153, 0.58), rgba(168, 85, 247, 0.48))",
+            border: "2px solid rgba(255, 255, 255, 0.35)",
+            transform: "rotateY(-12deg) rotateX(8deg) translateY(-22px) translateZ(-15px)",
+            backdropFilter: "blur(6px)",
+            boxShadow: "inset 0 2px 2px rgba(255,255,255,0.3), 0 5px 10px rgba(0,0,0,0.1)",
+            zIndex: -1,
+          }}
+          className="rounded-t-[8px] rounded-b-[4px]"
+        />
+
+        {/* ─── 3D TRANSLUCENT STAND BASE ─── */}
+        <div 
+          style={{
+            width: "170px",
+            height: "60px",
+            background: "linear-gradient(to bottom, rgba(236, 72, 153, 0.65), rgba(168, 85, 247, 0.55))",
+            border: "2px solid rgba(255, 255, 255, 0.4)",
+            transform: "rotateX(70deg) rotateY(-6deg) translateY(-40px) translateZ(-35px)",
+            backdropFilter: "blur(8px)",
+            boxShadow: "0 15px 30px rgba(168, 85, 247, 0.25), inset 0 2px 2px rgba(255, 255, 255, 0.4)",
+            borderRadius: "14px 14px 24px 24px",
+            zIndex: -2,
+          }}
+        />
 
       </div>
 
