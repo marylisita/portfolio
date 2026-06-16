@@ -25,6 +25,15 @@ export default function SpriteAnimation({
 
   const framesKey = frames.join(",");
 
+  // Pré-carrega todos os quadros pra não piscar/sumir na primeira vez que a
+  // animação roda (comer/dormir entravam sem cache e apareciam em branco).
+  useEffect(() => {
+    frames.forEach((src) => {
+      const im = new Image();
+      im.src = src;
+    });
+  }, [framesKey]);
+
   useEffect(() => {
     setT(0); // reinicia no frame 0 sempre que a animação muda (evita começar no meio)
     if (frames.length <= 1) return;

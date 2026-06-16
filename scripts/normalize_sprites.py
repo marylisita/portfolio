@@ -85,6 +85,12 @@ GROUPS.append({
     "scale_match": {"gato-malhado-idle", "gato-malhado-andando", "gato-malhado-comendo"},
 })
 
+# Nesta passada normalizamos SO a garota: os gatos ja estao normalizados (575x387
+# etc.) e estao bons; re-processa-los so encolheria de novo.
+import os as _os
+if _os.environ.get("NORMALIZE_ONLY_GAROTA", "1") == "1":
+    GROUPS = [g for g in GROUPS if g["name"].startswith("garota")]
+
 
 def list_frames(folder_abs):
     if not os.path.isdir(folder_abs):
