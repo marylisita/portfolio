@@ -3,59 +3,52 @@ import AnimatedButton from "@/components/AnimatedButton";
 import LiquidImage from "@/components/LiquidImage";
 import GiantFooter from "@/components/GiantFooter";
 import PixelMotifs from "@/components/PixelMotifs";
+import Nav from "@/components/Nav";
+import { useT } from "@/i18n/LanguageContext";
 
 export default function Work() {
+  const { t } = useT();
+
   return (
     <>
       <PixelMotifs />
-      
-      {/* Shared Nav */}
-      <nav className="nav">
-        <div className="nav__inner">
-          <a href="/" className="nav__logo" style={{ textDecoration: "none", color: "var(--fg)" }}>MARY L.</a>
-          <ul className="nav__links">
-            <li><a href="/work" className="hover-trigger">Trabalhos</a></li>
-            <li><a href="/experiments" className="hover-trigger">Experimentos</a></li>
-          </ul>
-          <a href="#contact" className="nav__cta hover-trigger">Fale Comigo</a>
-        </div>
-      </nav>
+      <Nav />
 
       <main style={{ minHeight: "100vh", backgroundColor: "var(--surface)" }}>
-        
+
         {/* Top Header - Light Blue */}
-        <section style={{ 
-          backgroundColor: "#e6f0ff", 
-          padding: "180px 2rem 140px", 
+        <section style={{
+          backgroundColor: "#e6f0ff",
+          padding: "180px 2rem 140px",
           textAlign: "center",
           borderBottom: "var(--border)"
         }}>
-          <h1 style={{ 
-            fontFamily: "var(--font-head)", 
-            fontSize: "clamp(3rem, 6vw, 5rem)", 
+          <h1 style={{
+            fontFamily: "var(--font-head)",
+            fontSize: "clamp(3rem, 6vw, 5rem)",
             color: "var(--fg)",
-            margin: "0 0 1rem" 
+            margin: "0 0 1rem"
           }}>
-            Trabalhos Selecionados
+            {t("work_page_title")}
           </h1>
-          <p style={{ 
-            fontFamily: "var(--font-body)", 
-            fontSize: "1.2rem", 
-            color: "var(--gray-600)", 
-            maxWidth: "600px", 
+          <p style={{
+            fontFamily: "var(--font-body)",
+            fontSize: "1.2rem",
+            color: "var(--gray-600)",
+            maxWidth: "600px",
             margin: "0 auto",
             lineHeight: 1.6
           }}>
-            Explore alguns dos meus projetos recentes, onde uno design sistemático, direção de arte e estética experimental para criar narrativas digitais únicas.
+            {t("work_page_sub")}
           </p>
         </section>
 
-        {/* Projects List - Overlapping the blue header */}
-        <section style={{ 
-          padding: "0 2rem", 
-          maxWidth: "1200px", 
+        {/* Projects List */}
+        <section style={{
+          padding: "0 2rem",
+          maxWidth: "1200px",
           margin: "0 auto",
-          marginTop: "-80px", // Pull up over the blue background
+          marginTop: "-80px",
           display: "flex",
           flexDirection: "column",
           gap: "40px",
@@ -63,8 +56,8 @@ export default function Work() {
           position: "relative",
           zIndex: 10
         }}>
-          
-          {/* Project Card: Isadora Ruppert (Brutalist Theme) */}
+
+          {/* Project Card: Isadora Ruppert */}
           <div style={{
             backgroundColor: "#fff",
             borderRadius: "var(--r-xl)",
@@ -77,29 +70,29 @@ export default function Work() {
             boxShadow: "0 20px 40px rgba(0,0,0,0.02)"
           }}>
             <div>
-              <h2 style={{ 
-                fontFamily: "var(--font-head)", 
-                fontSize: "3rem", 
+              <h2 style={{
+                fontFamily: "var(--font-head)",
+                fontSize: "3rem",
                 color: "#4A0E17",
                 margin: "0 0 0.5rem",
                 lineHeight: 1.1
               }}>
                 Isadora Ruppert Press Kit
               </h2>
-              <div style={{ 
-                fontFamily: "var(--font-mono)", 
-                fontSize: "0.8rem", 
-                textTransform: "uppercase", 
+              <div style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: "0.8rem",
+                textTransform: "uppercase",
                 letterSpacing: "1px",
                 color: "#C29F55",
                 marginBottom: "2rem"
               }}>
-                Direção de Arte, Design Editorial
+                {t("work_isadora_tags")}
               </div>
               <p style={{ color: "var(--gray-600)", fontFamily: "var(--font-body)", lineHeight: 1.6, marginBottom: "2rem" }}>
-                Um press kit digital com estética brutalista de alto padrão para a atriz Isadora Ruppert. Apresenta visuais de papel rasgado, cores vintage de Hollywood e colagens editoriais marcantes.
+                {t("work_isadora_desc")}
               </p>
-              <AnimatedButton href="/work/isadora" variant="outline">Ver Projeto</AnimatedButton>
+              <AnimatedButton href="/work/isadora" variant="outline">{t("view_project")}</AnimatedButton>
             </div>
             <div style={{ padding: "40px", backgroundColor: "#D8C3A5", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "var(--r-lg)", border: "1px solid #111" }}>
               <div style={{ position: "relative", width: "100%", border: "1px solid #111", backgroundColor: "#fff", boxShadow: "0 15px 35px rgba(0,0,0,0.15)" }}>
@@ -108,7 +101,7 @@ export default function Work() {
             </div>
           </div>
 
-          {/* Project Card: Magazine Layout */}
+          {/* Project Card: Magazine */}
           <div style={{
             backgroundColor: "#fff",
             borderRadius: "var(--r-xl)",
@@ -122,15 +115,15 @@ export default function Work() {
           }}>
             <div>
               <h2 style={{ fontFamily: "var(--font-head)", fontSize: "3rem", color: "var(--fg)", margin: "0 0 0.5rem", lineHeight: 1.1 }}>
-                HELVETICA:<br/>A Fonte da Discórdia
+                {t("work_helvetica_title").split("\n").map((line, i) => i === 0 ? <span key={i}>{line}<br/></span> : <span key={i}>{line}</span>)}
               </h2>
               <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.8rem", textTransform: "uppercase", letterSpacing: "1px", color: "var(--gray-600)", marginBottom: "2rem" }}>
-                Editorial, Grunge, Tipografia
+                {t("work_helvetica_tags")}
               </div>
               <p style={{ color: "var(--gray-600)", fontFamily: "var(--font-body)", lineHeight: 1.6, marginBottom: "2rem" }}>
-                Um projeto editorial que opõe a neutralidade da Helvetica ao caos do estilo grunge (David Carson), quebrando as regras de grid.
+                {t("work_helvetica_desc")}
               </p>
-              <AnimatedButton href="/work/magazine" variant="outline">Ver Projeto</AnimatedButton>
+              <AnimatedButton href="/work/magazine" variant="outline">{t("view_project")}</AnimatedButton>
             </div>
             <div style={{ padding: "40px", backgroundColor: "#EAEAEA", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "var(--r-lg)", border: "1px solid #111" }}>
               <div style={{ position: "relative", width: "100%", border: "1px solid #111", backgroundColor: "#fff", boxShadow: "0 15px 35px rgba(0,0,0,0.15)" }}>
@@ -157,12 +150,12 @@ export default function Work() {
                 GenLab:<br/>Experimental Lab
               </h2>
               <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.8rem", textTransform: "uppercase", letterSpacing: "1px", color: "var(--gray-600)", marginBottom: "2rem" }}>
-                Tecnologia Criativa, Pesquisa, IA
+                {t("work_genlab_tags")}
               </div>
               <p style={{ color: "var(--gray-600)", fontFamily: "var(--font-body)", lineHeight: 1.6, marginBottom: "2rem" }}>
-                Um laboratório de pesquisa focado na intersecção entre arte generativa e tecnologia. Análises críticas de algoritmos e estética digital.
+                {t("work_genlab_desc")}
               </p>
-              <AnimatedButton href="/work/genlab" variant="outline">Ver Projeto</AnimatedButton>
+              <AnimatedButton href="/work/genlab" variant="outline">{t("view_project")}</AnimatedButton>
             </div>
             <div style={{ padding: "40px", backgroundColor: "#FFDDEE", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "var(--r-lg)", border: "1px solid #111" }}>
               <div style={{ position: "relative", width: "100%", border: "1px solid #111", backgroundColor: "#fff", boxShadow: "0 15px 35px rgba(0,0,0,0.15)" }}>
@@ -186,19 +179,19 @@ export default function Work() {
           }}>
             <div>
               <h2 style={{ fontFamily: "var(--font-head)", fontSize: "3rem", color: "var(--fg)", margin: "0 0 0.5rem", lineHeight: 1.1 }}>
-                EBAT:<br/>Arte & Tecnologia
+                {t("work_ebat_title").split("\n").map((line, i) => i === 0 ? <span key={i}>{line}<br/></span> : <span key={i}>{line}</span>)}
               </h2>
               <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.8rem", textTransform: "uppercase", letterSpacing: "1px", color: "var(--gray-600)", marginBottom: "2rem" }}>
-                Design Gráfico, Social Media
+                {t("work_ebat_tags")}
               </div>
               <p style={{ color: "var(--gray-600)", fontFamily: "var(--font-body)", lineHeight: 1.6, marginBottom: "2rem" }}>
-                Campanha audiovisual para o São Paulo Innovation Week (SPIW) e identidade visual para redes sociais.
+                {t("work_ebat_desc")}
               </p>
-              <AnimatedButton href="/work/ebat" variant="outline">Ver Projeto</AnimatedButton>
+              <AnimatedButton href="/work/ebat" variant="outline">{t("view_project")}</AnimatedButton>
             </div>
             <div style={{ padding: "40px", backgroundColor: "#dcfce7", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "var(--r-lg)", border: "1px solid #111" }}>
               <div style={{ position: "relative", width: "100%", border: "1px solid #111", backgroundColor: "#fff", boxShadow: "0 15px 35px rgba(0,0,0,0.15)" }}>
-                <LiquidImage src="/img/ebat/mockup inner.png" alt="EBAT Project" fill={false} />
+                <LiquidImage src="/img/ebat/manual-capa.jpg" alt="EBAT — Manual de Marca" fill={false} />
               </div>
             </div>
           </div>

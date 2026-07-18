@@ -5,24 +5,19 @@ import TextHighlight from "@/components/TextHighlight";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import AnimatedButton from "@/components/AnimatedButton";
+import Nav from "@/components/Nav";
+import { useT } from "@/i18n/LanguageContext";
 
 export default function GenLabProject() {
+  const { t } = useT();
+
   return (
     <>
-      <nav className="nav">
-        <div className="nav__inner">
-          <a href="/" className="nav__logo" style={{ textDecoration: "none", color: "inherit" }}>MARY L.</a>
-          <ul className="nav__links">
-            <li><a href="/work" className="hover-trigger">Trabalhos</a></li>
-            <li><a href="/experiments" className="hover-trigger">Experimentos</a></li>
-          </ul>
-          <a href="/#contact" className="nav__cta hover-trigger">Fale Comigo</a>
-        </div>
-      </nav>
+      <Nav />
 
       <main style={{ backgroundColor: "#FFF0F6", color: "var(--fg)", minHeight: "100vh" }}>
         <PixelMotifs />
-        
+
         {/* Project Hero */}
         <section className="wrap" style={{ paddingTop: "160px", paddingBottom: "100px" }}>
           <motion.div
@@ -31,17 +26,17 @@ export default function GenLabProject() {
             transition={{ duration: 0.8 }}
           >
             <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.9rem", color: "#FF4D94", marginBottom: "1rem" }}>
-              Projeto 03 — Laboratório de Pesquisa
+              {t("genlab_subtitle")}
             </div>
-            <h1 style={{ 
-              fontFamily: "var(--font-head)", 
-              fontSize: "clamp(2.5rem, 6vw, 5rem)", 
+            <h1 style={{
+              fontFamily: "var(--font-head)",
+              fontSize: "clamp(2.5rem, 6vw, 5rem)",
               color: "var(--fg)",
               margin: "0 0 1.5rem",
               lineHeight: 1,
               fontWeight: 600
             }}>
-              GenLab: Ideias que moldam<br /> o mundo digital.
+              {t("genlab_title").split("\n").map((line, i) => i === 0 ? <span key={i}>{line}<br /></span> : <span key={i}>{line}</span>)}
             </h1>
             <p style={{
               fontFamily: "var(--font-body)",
@@ -50,12 +45,12 @@ export default function GenLabProject() {
               maxWidth: "800px",
               lineHeight: 1.5
             }}>
-              Laboratório experimental focado em código, <TextHighlight variant="ios" delay={0.8}>arte generativa</TextHighlight> e UI/UX imersiva. Explorando a interseção entre filosofia humana e <TextHighlight variant="marker" color="rgba(255, 77, 148, 0.2)" delay={1.1}>lógica de máquina.</TextHighlight>
+              {t("genlab_desc")} <TextHighlight variant="ios" delay={0.8}>{t("genlab_highlight1")}</TextHighlight> {t("genlab_desc2")} <TextHighlight variant="marker" color="rgba(255, 77, 148, 0.2)" delay={1.1}>{t("genlab_highlight2")}</TextHighlight>
             </p>
           </motion.div>
 
           {/* Project Meta Info */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 0.3 }}
@@ -70,16 +65,16 @@ export default function GenLabProject() {
             }}
           >
             <div>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "1px", color: "var(--gray-400)", marginBottom: "8px" }}>Plataforma</div>
-              <div style={{ fontFamily: "var(--font-body)", fontSize: "1.1rem", fontWeight: 500, color: "var(--fg)" }}>Editorial & Laboratório</div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "1px", color: "var(--gray-400)", marginBottom: "8px" }}>{t("genlab_meta_platform")}</div>
+              <div style={{ fontFamily: "var(--font-body)", fontSize: "1.1rem", fontWeight: 500, color: "var(--fg)" }}>{t("genlab_meta_platform_val")}</div>
             </div>
             <div>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "1px", color: "var(--gray-400)", marginBottom: "8px" }}>Serviços</div>
-              <div style={{ fontFamily: "var(--font-body)", fontSize: "1.1rem", fontWeight: 500, color: "var(--fg)" }}>Tecnologia Criativa, Pesquisa</div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "1px", color: "var(--gray-400)", marginBottom: "8px" }}>{t("genlab_meta_services")}</div>
+              <div style={{ fontFamily: "var(--font-body)", fontSize: "1.1rem", fontWeight: 500, color: "var(--fg)" }}>{t("genlab_meta_services_val")}</div>
             </div>
             <div>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "1px", color: "var(--gray-400)", marginBottom: "8px" }}>Status</div>
-              <div style={{ fontFamily: "var(--font-body)", fontSize: "1.1rem", fontWeight: 500, color: "var(--fg)" }}>Pesquisa Ativa</div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "1px", color: "var(--gray-400)", marginBottom: "8px" }}>{t("genlab_meta_status")}</div>
+              <div style={{ fontFamily: "var(--font-body)", fontSize: "1.1rem", fontWeight: 500, color: "var(--fg)" }}>{t("genlab_meta_status_val")}</div>
             </div>
           </motion.div>
         </section>
@@ -93,15 +88,15 @@ export default function GenLabProject() {
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
             >
-              <h2 style={{ fontFamily: "var(--font-head)", fontSize: "2.5rem", marginBottom: "2rem" }}>Um Laboratório de Pesquisa para Tecnologia Criativa</h2>
+              <h2 style={{ fontFamily: "var(--font-head)", fontSize: "2.5rem", marginBottom: "2rem" }}>{t("genlab_feature_title")}</h2>
               <p style={{ color: "var(--gray-600)", fontFamily: "var(--font-body)", fontSize: "1.1rem", lineHeight: 1.8, marginBottom: "1.5rem" }}>
-                O GenLab é um laboratório digital independente e uma plataforma editorial dedicada à análise crítica de algoritmos generativos, programação criativa e estética digital moderna.
+                {t("genlab_feature_p1")}
               </p>
               <p style={{ color: "var(--gray-600)", fontFamily: "var(--font-body)", fontSize: "1.1rem", lineHeight: 1.8 }}>
-                Eu crio uma ponte entre conceitos abstratos de ciência da computação e o design centrado no humano, oferecendo análises profundas de como a lógica da máquina molda nossos ambientes físicos e online.
+                {t("genlab_feature_p2")}
               </p>
             </motion.div>
-            
+
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               whileInView={{ opacity: 1, scale: 1 }}
@@ -114,15 +109,14 @@ export default function GenLabProject() {
           </div>
         </section>
 
-
         <section className="wrap" style={{ padding: "120px 0", textAlign: "center" }}>
-          <h2 style={{ fontFamily: "var(--font-head)", fontSize: "3rem", marginBottom: "2rem" }}>Visite o GenLab</h2>
+          <h2 style={{ fontFamily: "var(--font-head)", fontSize: "3rem", marginBottom: "2rem" }}>{t("genlab_visit")}</h2>
           <div style={{ display: "flex", justifyContent: "center", gap: "20px" }}>
             <AnimatedButton href="https://marylisita.github.io/genlabdesign/index.html" variant="primary">
-              Acessar Site
+              {t("genlab_access")}
             </AnimatedButton>
             <AnimatedButton href="/work" variant="outline">
-              Voltar para Trabalhos
+              {t("genlab_back")}
             </AnimatedButton>
           </div>
         </section>

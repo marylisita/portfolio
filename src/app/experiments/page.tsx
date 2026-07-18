@@ -4,6 +4,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import GiantFooter from "@/components/GiantFooter";
 import Cursor from "@/components/Cursor";
 import PixelMotifs from "@/components/PixelMotifs";
+import Nav from "@/components/Nav";
+import { useT } from "@/i18n/LanguageContext";
+import type { DictKey } from "@/i18n/dictionaries";
 
 /* ─────────────────────────────────────────
    1. FLOW FIELD — Particles that follow a
@@ -405,61 +408,29 @@ function LorenzAttractor({ active }: { active: boolean }) {
 /* ─────────────────────────────────────────
    MAIN EXPERIMENTS PAGE
    ───────────────────────────────────────── */
-const experiments = [
-  {
-    id: "flow-field",
-    title: "Campo de Fluxo",
-    description: "1200 partículas navegando em um campo vetorial contínuo de ruído Perlin. Observe padrões emergentes se formarem e dissolverem.",
-    tags: ["Ruído Perlin", "Partículas", "Generativo"],
-    Component: FlowField,
-  },
-  {
-    id: "reaction-diffusion",
-    title: "Reação-Difusão",
-    description: "Modelo Gray-Scott simulando dois componentes químicos virtuais que interagem e produzem padrões orgânicos de crescimento.",
-    tags: ["Simulação", "Gray-Scott", "Orgânico"],
-    Component: ReactionDiffusion,
-  },
-  {
-    id: "fractal-tree",
-    title: "Árvore Fractal",
-    description: "Uma árvore desenhada recursivamente cujo ângulo de ramificação segue o seu mouse. Mova o cursor para moldar a copa.",
-    tags: ["Recursão", "Interativo", "Fractal"],
-    Component: FractalTree,
-  },
-  {
-    id: "voronoi",
-    title: "Células de Voronoi",
-    description: "24 pontos semente animados gerando uma tesselação de Voronoi viva. As bordas emergem a partir de relações de proximidade.",
-    tags: ["Geometria", "Tesselação", "Tempo Real"],
-    Component: VoronoiCells,
-  },
-  {
-    id: "lorenz",
-    title: "Atrator de Lorenz",
-    description: "O famoso sistema caótico renderizado em tempo real. Um atrator estranho em forma de borboleta traça o caos determinístico.",
-    tags: ["Teoria do Caos", "3D", "Matemática"],
-    Component: LorenzAttractor,
-  },
+const experimentDefs = [
+  { id: "flow-field", titleKey: "exp_flow_title" as DictKey, descKey: "exp_flow_desc" as DictKey, tagsKey: "exp_flow_tags" as DictKey, Component: FlowField },
+  { id: "reaction-diffusion", titleKey: "exp_rd_title" as DictKey, descKey: "exp_rd_desc" as DictKey, tagsKey: "exp_rd_tags" as DictKey, Component: ReactionDiffusion },
+  { id: "fractal-tree", titleKey: "exp_tree_title" as DictKey, descKey: "exp_tree_desc" as DictKey, tagsKey: "exp_tree_tags" as DictKey, Component: FractalTree },
+  { id: "voronoi", titleKey: "exp_voronoi_title" as DictKey, descKey: "exp_voronoi_desc" as DictKey, tagsKey: "exp_voronoi_tags" as DictKey, Component: VoronoiCells },
+  { id: "lorenz", titleKey: "exp_lorenz_title" as DictKey, descKey: "exp_lorenz_desc" as DictKey, tagsKey: "exp_lorenz_tags" as DictKey, Component: LorenzAttractor },
 ];
 
 export default function Experiments() {
+  const { t } = useT();
   const [activeExperiment, setActiveExperiment] = useState<string | null>(null);
+
+  const experiments = experimentDefs.map(e => ({
+    ...e,
+    title: t(e.titleKey),
+    description: t(e.descKey),
+    tags: t(e.tagsKey).split(","),
+  }));
 
   return (
     <>
       <PixelMotifs />
-
-      <nav className="nav">
-        <div className="nav__inner">
-          <a href="/" className="nav__logo" style={{ textDecoration: "none", color: "var(--fg)" }}>MARY L.</a>
-          <ul className="nav__links">
-            <li><a href="/work" className="hover-trigger">Trabalhos</a></li>
-            <li><a href="/experiments" className="hover-trigger">Experimentos</a></li>
-          </ul>
-          <a href="#contact" className="nav__cta hover-trigger">Fale Comigo</a>
-        </div>
-      </nav>
+      <Nav />
 
       <main style={{ minHeight: "100vh", backgroundColor: "var(--surface)", paddingTop: "120px" }}>
 
@@ -477,7 +448,7 @@ export default function Experiments() {
             margin: "0 0 1rem",
             lineHeight: 1.05,
           }}>
-            Experimentos
+            {t("exp_title")}
           </h1>
           <p style={{
             fontFamily: "var(--font-body)",
@@ -487,7 +458,7 @@ export default function Experiments() {
             margin: "0 auto",
             lineHeight: 1.7
           }}>
-            Uma biblioteca imersiva de arte generativa e explorações computacionais. Cada experimento roda em tempo real no seu navegador usando algoritmos nativos e Canvas.
+            {t("exp_sub")}
           </p>
         </section>
 
@@ -635,7 +606,7 @@ export default function Experiments() {
                         flexShrink: 0,
                       }}
                     >
-                      Fechar ×
+                      {t("exp_close")}
                     </button>
                   </div>
                 </motion.div>

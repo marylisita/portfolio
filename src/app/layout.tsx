@@ -5,6 +5,7 @@ import SmoothScroll from "@/components/SmoothScroll";
 import FloatingBackToTop from "@/components/FloatingBackToTop";
 import Cursor from "@/components/Cursor";
 import { PageTransitionProvider } from "@/components/Curtains";
+import { LanguageProvider } from "@/i18n/LanguageContext";
 
 const poppins = Poppins({
   weight: ["400", "500", "600"],
@@ -40,13 +41,15 @@ export default function RootLayout({
         <link rel="stylesheet" href="https://cdn.cursors-4u.net/cursors/animated/red-cat-a526d80e-32.css" />
       </head>
       <body className="antialiased">
-        <SmoothScroll>
-          <PageTransitionProvider>
-            <Cursor />
-            {children}
-            <FloatingBackToTop />
-          </PageTransitionProvider>
-        </SmoothScroll>
+        <LanguageProvider>
+          <SmoothScroll>
+            <PageTransitionProvider>
+              <Cursor />
+              {children}
+              <FloatingBackToTop />
+            </PageTransitionProvider>
+          </SmoothScroll>
+        </LanguageProvider>
       </body>
     </html>
   );

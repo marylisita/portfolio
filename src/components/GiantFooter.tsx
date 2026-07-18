@@ -1,13 +1,14 @@
 "use client";
 import { motion } from "framer-motion";
 import AnimatedButton from "./AnimatedButton";
+import { useT } from "@/i18n/LanguageContext";
 
 function SpinningBadge() {
   const text = "LET'S WORK TOGETHER • SAY HELLO • ";
   const radius = 60;
-  
+
   return (
-    <motion.div 
+    <motion.div
       className="circle-badge"
       style={{ position: "relative", width: "160px", height: "160px", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}
       animate={{ rotate: 360 }}
@@ -16,7 +17,7 @@ function SpinningBadge() {
     >
       {/* Center Icon/Dot */}
       <div style={{ width: "20px", height: "20px", background: "var(--fg)", borderRadius: "50%", position: "absolute" }} />
-      
+
       {/* Circular Text */}
       <svg viewBox="0 0 160 160" width="160" height="160" style={{ position: "absolute", inset: 0 }}>
         <path id="circlePath" d="M 80, 80 m -60, 0 a 60,60 0 1,1 120,0 a 60,60 0 1,1 -120,0" fill="transparent" />
@@ -31,13 +32,15 @@ function SpinningBadge() {
 }
 
 export default function GiantFooter() {
+  const { t } = useT();
+
   return (
     <footer className="giant-footer" style={{ background: "#1A1A1A", borderTop: "none", position: "relative", overflow: "hidden" }}>
       <div style={{ maxWidth: "1200px", margin: "0 auto", position: "relative" }}>
-        
+
         {/* Main Center Content */}
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: "2rem", marginBottom: "80px" }}>
-          
+
           {/* Custom Chat Bubble */}
           <div style={{ display: "inline-block" }}>
             <svg width="60" height="48" viewBox="0 0 60 48" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -49,25 +52,25 @@ export default function GiantFooter() {
             </svg>
           </div>
 
-          <h2 style={{ 
-            fontFamily: "var(--font-head)", 
-            fontSize: "clamp(3rem, 6vw, 5rem)", 
-            lineHeight: 1.1, 
+          <h2 style={{
+            fontFamily: "var(--font-head)",
+            fontSize: "clamp(3rem, 6vw, 5rem)",
+            lineHeight: 1.1,
             fontWeight: 400,
             maxWidth: "800px",
             color: "#fff",
             margin: 0
           }}>
-            Vamos conversar sobre<br/>o seu projeto.
+            {t("footer_heading").split("\n").map((line, i) => i === 0 ? <span key={i}>{line}<br/></span> : <span key={i}>{line}</span>)}
           </h2>
-          
+
           <p style={{ fontFamily: "var(--font-body)", fontSize: "1.2rem", color: "#A0A0A0", maxWidth: "600px", margin: "0 auto", lineHeight: 1.6 }}>
-            Tem um projeto em mente? Podemos transformar essa ideia em um produto real.
+            {t("footer_sub")}
           </p>
 
           <div style={{ position: "relative", marginTop: "2rem", display: "flex", flexDirection: "column", alignItems: "center", gap: "1.5rem" }}>
             <AnimatedButton href="mailto:lisita.medeiros@gmail.com" variant="light">
-              Fale Comigo
+              {t("footer_cta")}
             </AnimatedButton>
             <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.85rem", color: "#A0A0A0", letterSpacing: "1px" }}>
               lisita.medeiros@gmail.com
@@ -83,7 +86,7 @@ export default function GiantFooter() {
           <div style={{ display: "flex", gap: "2rem", alignItems: "center" }}>
             <a href="https://www.linkedin.com/in/maria-lisita/" target="_blank" rel="noopener noreferrer" className="hover-trigger" style={{ textDecoration: "none", color: "inherit" }}>LinkedIn</a>
             <a href="https://www.behance.net/marylisita" target="_blank" rel="noopener noreferrer" className="hover-trigger" style={{ textDecoration: "none", color: "inherit" }}>Behance</a>
-            <a href="/Curriculo_Maria_Isabel_Lisita.pdf" target="_blank" rel="noopener noreferrer" className="hover-trigger" style={{ textDecoration: "none", color: "inherit" }}>Currículo</a>
+            <a href="/Curriculo_Maria_Isabel_Lisita.pdf" target="_blank" rel="noopener noreferrer" className="hover-trigger" style={{ textDecoration: "none", color: "inherit" }}>{t("footer_cv")}</a>
             <a href="https://wa.me/5521936180477" target="_blank" rel="noopener noreferrer" className="hover-trigger" style={{ textDecoration: "none", color: "inherit", display: "flex", alignItems: "center", gap: "0.4rem" }}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
@@ -91,7 +94,7 @@ export default function GiantFooter() {
               WhatsApp
             </a>
           </div>
-          
+
           <div>
             MARY © {new Date().getFullYear()} — Designed & Built with Next.js
           </div>

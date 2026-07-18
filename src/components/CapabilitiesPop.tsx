@@ -1,7 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useT } from "@/i18n/LanguageContext";
 
 export default function CapabilitiesPop() {
+  const { t } = useT();
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
 
   useEffect(() => {
@@ -23,9 +25,9 @@ export default function CapabilitiesPop() {
   }, []);
 
   const tagsData = [
-    { 
-      text: "Design Gráfico", 
-      color: "#FF2A85", 
+    {
+      text: t("cap_graphic"),
+      color: "#FF2A85",
       hoverBg: "#ffd3e8",
       icon: (
         <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
@@ -39,9 +41,9 @@ export default function CapabilitiesPop() {
         </svg>
       )
     },
-    { 
-      text: "Web & UI Design", 
-      color: "#3A86FF", 
+    {
+      text: t("cap_webui"),
+      color: "#3A86FF",
       hoverBg: "#d0e0fc",
       icon: (
         <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
@@ -57,9 +59,9 @@ export default function CapabilitiesPop() {
         </svg>
       )
     },
-    { 
-      text: "Direção de Arte", 
-      color: "#FFAA00", 
+    {
+      text: t("cap_artdir"),
+      color: "#FFAA00",
       hoverBg: "#ffe5a3",
       icon: (
         <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
@@ -71,9 +73,9 @@ export default function CapabilitiesPop() {
         </svg>
       )
     },
-    { 
-      text: "Identidade Visual", 
-      color: "#8B5CF6", 
+    {
+      text: t("cap_identity"),
+      color: "#8B5CF6",
       hoverBg: "#e8d8fc",
       icon: (
         <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
@@ -88,9 +90,9 @@ export default function CapabilitiesPop() {
         </svg>
       )
     },
-    { 
-      text: "Tecnologia Criativa", 
-      color: "#10B981", 
+    {
+      text: t("cap_creative"),
+      color: "#10B981",
       hoverBg: "#d4ffc8",
       icon: (
         <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
@@ -105,9 +107,9 @@ export default function CapabilitiesPop() {
         </svg>
       )
     },
-    { 
-      text: "IA Generativa", 
-      color: "#EC4899", 
+    {
+      text: t("cap_genai"),
+      color: "#EC4899",
       hoverBg: "#ffd3f5",
       icon: (
         <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
@@ -124,9 +126,9 @@ export default function CapabilitiesPop() {
         </svg>
       )
     },
-    { 
-      text: "Prototipagem", 
-      color: "#14B8A6", 
+    {
+      text: t("cap_proto"),
+      color: "#14B8A6",
       hoverBg: "#cbfaf4",
       icon: (
         <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
@@ -143,20 +145,20 @@ export default function CapabilitiesPop() {
   return (
     <section className="capabilities" style={{ border: "none" }}>
       <div className="wrap">
-        <h2 className="capabilities__title" style={{ fontFamily: "var(--font-head)", textAlign: "center" }}>Minhas Capacidades</h2>
+        <h2 className="capabilities__title" style={{ fontFamily: "var(--font-head)", textAlign: "center" }}>{t("cap_title")}</h2>
         <p className="capabilities__sub" style={{ fontFamily: "var(--font-body)", fontSize: "1.1rem", textAlign: "center", margin: "0 auto", maxWidth: "600px" }}>
-          Equilibrando estética experimental e usabilidade refinada para criar marcas e experiências digitais memoráveis.
+          {t("cap_sub")}
         </p>
 
         <div className="capabilities__tags" style={{ padding: "40px 0 40px", maxWidth: "720px", margin: "0 auto", display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "18px" }}>
           {tagsData.map((tag, idx) => {
             const isHovered = hoveredIdx === idx;
             return (
-              <div 
-                key={idx} 
-                className="cap-tag" 
+              <div
+                key={idx}
+                className="cap-tag"
                 data-delay={idx}
-                style={{ 
+                style={{
                   backgroundColor: isHovered ? tag.hoverBg : "#fff",
                 }}
                 onMouseEnter={() => setHoveredIdx(idx)}

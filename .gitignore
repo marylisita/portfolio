@@ -43,3 +43,9 @@ next-env.d.ts
 # sprites backups
 public/img/sprites/*_backup/
 
+# agents/tooling
+.agent/
+.agents/
+.claude/
+outfit_1_ascii_map.txt
+
