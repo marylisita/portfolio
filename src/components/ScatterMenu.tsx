@@ -24,11 +24,11 @@ const styles = `
     position: absolute;
     z-index: 10;
     display: inline-block;
-    font-family: var(--font-mono);
-    font-size: .8rem;
-    font-weight: 700;
+    font-family: var(--font-body);
+    font-size: .78rem;
+    font-weight: 600;
     text-transform: lowercase;
-    letter-spacing: .08em;
+    letter-spacing: .04em;
     background: var(--acid);
     color: #000000;
     border: 3px solid #000000;

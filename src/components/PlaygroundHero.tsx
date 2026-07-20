@@ -66,10 +66,10 @@ const styles = `
     display: flex;
     justify-content: space-between;
     gap: 1rem;
-    font-family: var(--font-mono);
-    font-size: .7rem;
-    text-transform: uppercase;
-    letter-spacing: .16em;
+    font-family: var(--font-body);
+    font-size: .78rem;
+    text-transform: lowercase;
+    letter-spacing: .12em;
     padding-bottom: .9rem;
     background-image: ${PIXEL_LINE};
     background-size: 100% 2px;
@@ -119,10 +119,9 @@ const styles = `
     line-height: 1.5;
   }
   .ph__scroll {
-    font-family: var(--font-mono);
-    font-size: .7rem;
-    text-transform: uppercase;
-    letter-spacing: .16em;
+    font-family: var(--font-hand);
+    font-size: 1.35rem;
+    letter-spacing: .01em;
   }
   .ph__em { font-family: var(--font-head); font-style: italic; letter-spacing: -0.01em; }
 
@@ -136,10 +135,10 @@ const styles = `
   }
   .ph__sticker:active { cursor: grabbing; }
   .ph__note {
-    font-family: var(--font-mono);
-    font-size: .68rem;
-    text-transform: uppercase;
-    letter-spacing: .14em;
+    font-family: var(--font-body);
+    font-size: .78rem;
+    text-transform: lowercase;
+    letter-spacing: .08em;
     white-space: nowrap;
     pointer-events: none;
   }

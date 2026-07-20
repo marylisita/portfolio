@@ -17,8 +17,8 @@ const styles = `
     background-repeat: no-repeat;
   }
   .ef__label {
-    font-family: var(--font-mono); font-size: .7rem;
-    text-transform: uppercase; letter-spacing: .16em;
+    font-family: var(--font-body); font-size: .8rem;
+    text-transform: lowercase; letter-spacing: .12em;
     margin-bottom: 2.5rem; display: block;
   }
   .ef__talk {
@@ -72,14 +72,14 @@ const styles = `
     text-transform: lowercase;
   }
   .ef__num, .ef__arrow {
-    font-family: var(--font-mono); font-size: .7rem;
-    text-transform: uppercase; letter-spacing: .16em;
+    font-family: var(--font-pixel); font-size: .95rem;
+    text-transform: lowercase; letter-spacing: .04em;
   }
   .ef__bottom {
     display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
     padding-top: 1.4rem; margin-top: 4rem;
-    font-family: var(--font-mono); font-size: .68rem;
-    text-transform: lowercase; letter-spacing: .1em;
+    font-family: var(--font-body); font-size: .76rem;
+    text-transform: lowercase; letter-spacing: .06em;
     opacity: .65;
   }
   @media (max-width: 720px) {

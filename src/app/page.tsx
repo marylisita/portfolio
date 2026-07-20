@@ -56,8 +56,8 @@ const rmStyles = `
   /* --- sem navbar tradicional: só marcas mínimas nos cantos --- */
   .rm-corner {
     position: fixed; top: 1rem; z-index: 1000;
-    font-family: var(--font-mono);
-    font-size: .7rem; text-transform: lowercase; letter-spacing: .14em;
+    font-family: var(--font-body);
+    font-size: .78rem; text-transform: lowercase; letter-spacing: .1em;
     color: var(--ink);
   }
   .rm-corner--l { left: 1.4rem; }
@@ -66,8 +66,8 @@ const rmStyles = `
   /* --- seções --- */
   .rm-sec { padding: 6rem 2rem; }
   .rm-label {
-    font-family: var(--font-mono); font-size: .7rem;
-    text-transform: uppercase; letter-spacing: .16em;
+    font-family: var(--font-body); font-size: .8rem;
+    text-transform: lowercase; letter-spacing: .12em;
     display: flex; justify-content: space-between;
     padding-bottom: .9rem; margin-bottom: 3rem;
     background-image: repeating-linear-gradient(90deg, var(--ink) 0 6px, transparent 6px 12px);
@@ -94,8 +94,8 @@ const rmStyles = `
     background-size: 100% 2px;
     background-position: top left;
     background-repeat: no-repeat;
-    font-family: var(--font-mono); font-size: .72rem;
-    text-transform: uppercase; letter-spacing: .1em;
+    font-family: var(--font-body); font-size: .82rem;
+    text-transform: lowercase; letter-spacing: .06em;
   }
   .rm-tool-row:last-child {
     background-image:

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Instrument_Serif, Space_Mono, Poppins, Rock_Salt } from "next/font/google";
+import { Instrument_Serif, Space_Mono, Poppins } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
 import FloatingBackToTop from "@/components/FloatingBackToTop";
@@ -25,14 +26,23 @@ const spaceMono = Space_Mono({
   variable: "--font-mono",
 });
 
-/* Manuscrita crua de marcador, pra palavra gigante do fundo.
-   Pra trocar: só mudar o import e o nome aqui — sugestões alternativas em
-   next/font/google: Reenie_Beanie (rabisco fino), Permanent_Marker (mais
-   grosso), Caveat (mais leve), Redacted_Script (ilegível de propósito). */
-const rockSalt = Rock_Salt({
-  weight: "400",
-  subsets: ["latin"],
+/* Fontes dela (arquivos em src/app/fonts/) */
+const seratonin = localFont({
+  src: "./fonts/Seratonin.otf",
   variable: "--font-hand",
+  display: "swap",
+});
+
+const pixelPoiiz = localFont({
+  src: "./fonts/PixelPoiiz.ttf",
+  variable: "--font-pixel",
+  display: "swap",
+});
+
+const emojiFont = localFont({
+  src: "./fonts/EmojiFont.ttf",
+  variable: "--font-emoji",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -46,7 +56,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${poppins.variable} ${instrument.variable} ${spaceMono.variable} ${rockSalt.variable}`}>
+    <html lang="en" className={`${poppins.variable} ${instrument.variable} ${spaceMono.variable} ${seratonin.variable} ${pixelPoiiz.variable} ${emojiFont.variable}`}>
       <head>
         <link rel="stylesheet" href="https://cdn.cursors-4u.net/cursors/animated/red-cat-a526d80e-32.css" />
       </head>

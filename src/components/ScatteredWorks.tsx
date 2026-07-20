@@ -88,16 +88,18 @@ const styles = `
   .sw__cap {
     display: block;
     margin-top: .7rem;
-    font-family: var(--font-mono);
-    font-size: .72rem;
-    line-height: 1.5;
-    letter-spacing: .04em;
+    font-family: var(--font-body);
+    font-size: .82rem;
+    line-height: 1.65;
+    letter-spacing: .02em;
     text-transform: lowercase;
     text-align: center;
     transition: color .3s ease;
   }
   .sw__item:hover .sw__cap { color: var(--acid); }
-  .sw__num { opacity: .5; }
+  /* a pixel so aparece onde NUNCA ha acento (ela nao tem glifo acentuado):
+     numeros da colagem. Rotulos com texto usam a sans. */
+  .sw__num { opacity: .55; font-family: var(--font-pixel); font-size: 1.05em; }
 
   @media (max-width: 860px) {
     /* no mobile a colagem vira coluna — legível e sem sobreposição */

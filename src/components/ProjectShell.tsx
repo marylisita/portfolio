@@ -47,8 +47,8 @@ const styles = `
 
   .pj-corner {
     position: fixed; top: 1rem; z-index: 1000;
-    font-family: var(--font-mono);
-    font-size: .7rem; text-transform: lowercase; letter-spacing: .14em;
+    font-family: var(--font-body);
+    font-size: .78rem; text-transform: lowercase; letter-spacing: .1em;
     color: var(--ink); text-decoration: none;
   }
   .pj-corner--l { left: 1.4rem; }
@@ -59,7 +59,7 @@ const styles = `
     display: flex; flex-direction: column; align-items: flex-end; gap: .45rem;
   }
   .pj-tag {
-    font-family: var(--font-mono); font-size: .68rem;
+    font-family: var(--font-body); font-size: .76rem;
     text-transform: lowercase; letter-spacing: .08em;
     background: #000000; color: #ffffff;
     border: 1.5px solid var(--acid);
@@ -76,8 +76,8 @@ const styles = `
   }
   .pj-back {
     display: inline-block;
-    font-family: var(--font-mono); font-size: .72rem;
-    text-transform: lowercase; letter-spacing: .14em;
+    font-family: var(--font-hand); font-size: 1.25rem;
+    text-transform: lowercase; letter-spacing: .01em;
     color: var(--acid); text-decoration: none;
     margin-bottom: 2.2rem;
   }
@@ -110,8 +110,8 @@ const styles = `
     background-repeat: no-repeat, no-repeat;
   }
   .pj-meta__label {
-    font-family: var(--font-mono); font-size: .68rem;
-    text-transform: uppercase; letter-spacing: .14em;
+    font-family: var(--font-body); font-size: .76rem;
+    text-transform: lowercase; letter-spacing: .1em;
     color: var(--gray-400); margin-bottom: 6px;
   }
   .pj-meta__value { font-family: var(--font-body); font-size: .95rem; color: var(--ink); }
