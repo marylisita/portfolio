@@ -49,33 +49,35 @@ const styles = `
     pointer-events: none;
     user-select: none;
     line-height: 1;
-    /* a palavra é mascarada por colunas de pixel que deslizam devagar:
-       ela parece se remontar, na mesma linguagem da revelação das capas */
-    -webkit-mask-image: repeating-linear-gradient(90deg, #000 0 7px, rgba(0,0,0,.6) 7px 14px);
-    mask-image: repeating-linear-gradient(90deg, #000 0 7px, rgba(0,0,0,.6) 7px 14px);
-    -webkit-mask-size: 14px 100%;
-    mask-size: 14px 100%;
-    animation: sw-pixelshift 9s steps(14) infinite;
-  }
-  @keyframes sw-pixelshift {
-    from { -webkit-mask-position: 0 0; mask-position: 0 0; }
-    to   { -webkit-mask-position: 14px 0; mask-position: 14px 0; }
+    /* a palavra fica SEMPRE visível; uma faixa mais forte passeia por cima,
+       em passos (steps) pra ficar pixelada — mesma língua da revelação das
+       capas, mas sem fazer a palavra piscar. */
+    -webkit-mask-image: linear-gradient(90deg, rgba(0,0,0,.4) 0 30%, #000 42% 58%, rgba(0,0,0,.4) 70% 100%);
+    mask-image: linear-gradient(90deg, rgba(0,0,0,.4) 0 30%, #000 42% 58%, rgba(0,0,0,.4) 70% 100%);
+    -webkit-mask-size: 220% 100%;
+    mask-size: 220% 100%;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
   }
   .sw__bg--a {
     top: 12%;
     left: -6%;
     font-size: clamp(200px, 30vw, 540px);
     color: var(--ink);
-    opacity: .05;
-    animation: sw-pixelshift 9s steps(14) infinite, sw-drift-a 80s ease-in-out infinite alternate;
+    opacity: .13;
+    animation: sw-sweep 16s steps(22) infinite, sw-drift-a 80s ease-in-out infinite alternate;
   }
   .sw__bg--b {
     top: 62%;
     left: 14%;
     font-size: clamp(160px, 24vw, 430px);
     color: var(--acid);
-    opacity: .045;
-    animation: sw-pixelshift 11s steps(14) infinite, sw-drift-b 95s ease-in-out infinite alternate;
+    opacity: .115;
+    animation: sw-sweep 21s steps(22) infinite 4s, sw-drift-b 95s ease-in-out infinite alternate;
+  }
+  @keyframes sw-sweep {
+    from { -webkit-mask-position: -120% 0; mask-position: -120% 0; }
+    to   { -webkit-mask-position: 120% 0;  mask-position: 120% 0; }
   }
   @keyframes sw-drift-a {
     from { transform: rotate(-10deg) translate(0, 0); }
