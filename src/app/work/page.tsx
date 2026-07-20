@@ -1,56 +1,9 @@
 "use client";
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import PixelScrollImage from "@/components/PixelScrollImage";
 import { useT } from "@/i18n/LanguageContext";
 import { useProjects } from "@/components/useProjects";
 import EditorialFooter from "@/components/EditorialFooter";
 import LangToggle from "@/components/LangToggle";
-
-// Pixelated disintegration overlay component
-function PixelOverlay({ active }: { active: boolean }) {
-  const cols = 12;
-  const rows = 8;
-  const total = cols * rows;
-  const [delays] = useState(() =>
-    Array.from({ length: total }, () => Math.random() * 0.45)
-  );
-
-  return (
-    <div
-      style={{
-        position: "absolute",
-        inset: 0,
-        zIndex: 5,
-        display: "grid",
-        gridTemplateColumns: `repeat(${cols}, 1fr)`,
-        gridTemplateRows: `repeat(${rows}, 1fr)`,
-        pointerEvents: "none",
-      }}
-    >
-      {delays.map((delay, idx) => (
-        <motion.div
-          key={idx}
-          initial={{ scale: 1, opacity: 1 }}
-          animate={{
-            scale: active ? 0 : 1,
-            opacity: active ? 0 : 1,
-          }}
-          transition={{
-            delay: active ? delay : delay * 0.25,
-            duration: 0.18,
-            ease: "easeInOut",
-          }}
-          style={{
-            backgroundColor: "var(--site-paper)", // acompanha o fundo da pagina
-            border: "0.5px solid var(--site-paper)",
-            width: "100%",
-            height: "100%",
-          }}
-        />
-      ))}
-    </div>
-  );
-}
 
 interface ProjectCardProps {
   num: string;
@@ -59,10 +12,10 @@ interface ProjectCardProps {
   href: string;
   img: string;
   desc: string;
+  ratio: number;
 }
 
-function ProjectCard({ num, title, tags, href, img, desc }: ProjectCardProps) {
-  const [inView, setInView] = useState(false);
+function ProjectCard({ num, title, tags, href, img, desc, ratio }: ProjectCardProps) {
   const { t } = useT();
 
   return (
@@ -139,34 +92,10 @@ function ProjectCard({ num, title, tags, href, img, desc }: ProjectCardProps) {
         {desc}
       </p>
 
-      {/* Giant Cover Image with Pixelated Disintegration */}
-      <motion.div
-        onViewportEnter={() => setInView(true)}
-        onViewportLeave={() => setInView(false)}
-        viewport={{ amount: 0.25, once: false }}
-        style={{
-          position: "relative",
-          width: "100%",
-          height: "clamp(240px, 45vh, 480px)",
-          overflow: "hidden",
-          border: "3px solid var(--ink, #1C1B18)",
-          backgroundColor: "var(--site-tint-b)",
-        }}
-      >
-        {/* Pixel Disintegration Cover */}
-        <PixelOverlay active={inView} />
-
-        <img
-          src={img}
-          alt={title}
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            display: "block",
-          }}
-        />
-      </motion.div>
+      {/* capa: mesma revelação em pixels da landing, sem borda */}
+      <div style={{ width: "100%", overflow: "hidden", backgroundColor: "var(--site-tint-b)" }}>
+        <PixelScrollImage src={img} alt={title} ratio={ratio} style={{ width: "100%" }} />
+      </div>
 
       {/* Brutalist Button link to project */}
       <div>
@@ -313,6 +242,7 @@ export default function Work() {
               href={proj.href}
               img={proj.img}
               desc={getDesc(proj.href)}
+              ratio={proj.ratio}
             />
           ))}
         </div>

@@ -10,6 +10,9 @@ export type IndexItem = {
   tags: string;
   href: string;
   img: string;
+  /** proporção real do arquivo (altura/largura) — só evita pulo de layout;
+   *  o PixelScrollImage mede a imagem e assume a proporção verdadeira. */
+  ratio: number;
 };
 
 // Tamanho da imagem que segue o cursor (usado também para centralizá-la no ponteiro).

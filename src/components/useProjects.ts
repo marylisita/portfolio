@@ -13,6 +13,7 @@ export function useProjects(): IndexItem[] {
       title: "isadora ruppert press kit",
       tags: `${t("p01_tag1")} / ${t("p01_tag2")}`,
       href: "/work/isadora",
+      ratio: 0.562,
       img: "/img/ISADORA CAPA-THUMBNAIL.webp",
     },
     {
@@ -20,6 +21,7 @@ export function useProjects(): IndexItem[] {
       title: flat(t("p02_title")),
       tags: `${t("p02_tag1")} / ${t("p02_tag2")}`,
       href: "/work/magazine",
+      ratio: 0.667,
       img: "/img/helvetica/9.jpg",
     },
     {
@@ -27,6 +29,7 @@ export function useProjects(): IndexItem[] {
       title: "genlab",
       tags: `${t("p03_tag1")} / ${t("p03_tag2")}`,
       href: "/work/genlab",
+      ratio: 0.498,
       img: "/img/genlab.png",
     },
     {
@@ -34,6 +37,7 @@ export function useProjects(): IndexItem[] {
       title: flat(t("p04_title")),
       tags: `${t("p04_tag1")} / ${t("p04_tag2")}`,
       href: "/work/ebat",
+      ratio: 0.562,
       img: "/img/ebat/manual-capa.jpg",
     },
     {
@@ -41,6 +45,7 @@ export function useProjects(): IndexItem[] {
       title: "apple academy: graduation",
       tags: t("p05_tags").replace(", ", " / "),
       href: "/work/graduation",
+      ratio: 0.643,
       img: "/img/graduation/7.jpg",
     },
     {
@@ -48,6 +53,7 @@ export function useProjects(): IndexItem[] {
       title: "devs no pilotis",
       tags: t("p06_tags").replace(", ", " / "),
       href: "/work/pilotis",
+      ratio: 0.319,
       img: "/img/pilotis/1.jpg",
     },
     {
@@ -55,6 +61,7 @@ export function useProjects(): IndexItem[] {
       title: "china–rio: pontes para inovação",
       tags: t("p07_tags").replace(", ", " / "),
       href: "/work/chinario",
+      ratio: 0.667,
       img: "/img/chinario/1.jpg",
     },
   ];

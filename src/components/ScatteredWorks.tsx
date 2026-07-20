@@ -2,6 +2,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import PixelScrollImage from "./PixelScrollImage";
+import PixelScrollText from "./PixelScrollText";
 import type { IndexItem } from "./EditorialIndex";
 
 /**
@@ -49,35 +50,20 @@ const styles = `
     pointer-events: none;
     user-select: none;
     line-height: 1;
-    /* a palavra fica SEMPRE visível; uma faixa mais forte passeia por cima,
-       em passos (steps) pra ficar pixelada — mesma língua da revelação das
-       capas, mas sem fazer a palavra piscar. */
-    -webkit-mask-image: linear-gradient(90deg, rgba(0,0,0,.4) 0 30%, #000 42% 58%, rgba(0,0,0,.4) 70% 100%);
-    mask-image: linear-gradient(90deg, rgba(0,0,0,.4) 0 30%, #000 42% 58%, rgba(0,0,0,.4) 70% 100%);
-    -webkit-mask-size: 220% 100%;
-    mask-size: 220% 100%;
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
   }
   .sw__bg--a {
     top: 12%;
     left: -6%;
-    font-size: clamp(200px, 30vw, 540px);
     color: var(--ink);
     opacity: .13;
-    animation: sw-sweep 16s steps(22) infinite, sw-drift-a 80s ease-in-out infinite alternate;
+    animation: sw-drift-a 80s ease-in-out infinite alternate;
   }
   .sw__bg--b {
     top: 62%;
     left: 14%;
-    font-size: clamp(160px, 24vw, 430px);
     color: var(--acid);
     opacity: .115;
-    animation: sw-sweep 21s steps(22) infinite 4s, sw-drift-b 95s ease-in-out infinite alternate;
-  }
-  @keyframes sw-sweep {
-    from { -webkit-mask-position: -120% 0; mask-position: -120% 0; }
-    to   { -webkit-mask-position: 120% 0;  mask-position: 120% 0; }
+    animation: sw-drift-b 95s ease-in-out infinite alternate;
   }
   @keyframes sw-drift-a {
     from { transform: rotate(-10deg) translate(0, 0); }
@@ -124,8 +110,8 @@ export default function ScatteredWorks({ items, bgWord }: { items: IndexItem[]; 
     <>
       <style>{styles}</style>
       <div className="sw">
-        <div className="sw__bg sw__bg--a" aria-hidden="true">{bgWord}</div>
-        <div className="sw__bg sw__bg--b" aria-hidden="true">{bgWord}</div>
+        <PixelScrollText className="sw__bg sw__bg--a" text={bgWord} fontSize={420} color="var(--ink)" />
+        <PixelScrollText className="sw__bg sw__bg--b" text={bgWord} fontSize={330} color="var(--acid)" />
         {items.map((item, i) => {
           const s = SPOTS[i % SPOTS.length];
           return (
