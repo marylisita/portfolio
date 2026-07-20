@@ -186,6 +186,7 @@ export default function PlaygroundHero({
   subHighlight,
   scrollLabel,
   welcome,
+  children,
 }: {
   lines: string[];
   location: string;
@@ -193,6 +194,7 @@ export default function PlaygroundHero({
   subHighlight: string;
   scrollLabel: string;
   welcome: string;
+  children?: React.ReactNode;
 }) {
   const bounds = useRef<HTMLElement>(null);
 
@@ -257,6 +259,9 @@ export default function PlaygroundHero({
           {s.el}
         </motion.div>
       ))}
+
+      {/* menu espalhado (ScatterMenu) e afins */}
+      {children}
 
       <h1 className="ph__title">
         {lines.map((l, i) => (

@@ -4,6 +4,7 @@ import PlaygroundHero from "@/components/PlaygroundHero";
 import EditorialIndex, { type IndexItem } from "@/components/EditorialIndex";
 import Marquee from "@/components/Marquee";
 import AsciiAnim from "@/components/AsciiAnim";
+import ScatterMenu, { type MenuItem } from "@/components/ScatterMenu";
 import { GATO_FRAMES, GAROTA_FRAMES, GATO_PRETO_FRAMES } from "@/components/asciiArt";
 import EditorialFooter from "@/components/EditorialFooter";
 import LangToggle from "@/components/LangToggle";
@@ -50,26 +51,15 @@ const rmStyles = `
     background-repeat: no-repeat;
   }
 
-  /* --- nav --- */
-  .rm-nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 1rem;
-    padding: .85rem 2rem;
-    background: var(--paper);
-    border-bottom: 1px solid var(--ink);
+  /* --- sem navbar tradicional: só marcas mínimas nos cantos --- */
+  .rm-corner {
+    position: fixed; top: 1rem; z-index: 1000;
     font-family: var(--font-mono);
-    font-size: .7rem; text-transform: uppercase; letter-spacing: .16em;
+    font-size: .7rem; text-transform: lowercase; letter-spacing: .14em;
+    color: var(--ink);
   }
-  .rm-nav__links { display: flex; gap: 1.5rem; align-items: center; list-style: none; }
-  .rm-nav a { position: relative; }
-  .rm-nav a::after {
-    content: ""; position: absolute; left: 0; bottom: -3px;
-    width: 100%; height: 2px; background: var(--ink);
-    transform: scaleX(0); transform-origin: right;
-    transition: transform .35s cubic-bezier(.16,1,.3,1);
-  }
-  .rm-nav a:hover::after { transform: scaleX(1); transform-origin: left; }
+  .rm-corner--l { left: 1.4rem; }
+  .rm-corner--r { right: 1.4rem; display: flex; align-items: center; gap: .8rem; }
 
   /* --- seções --- */
   .rm-sec { padding: 6rem 2rem; }
@@ -167,6 +157,13 @@ export default function Home() {
       href: "/work/ebat",
       img: "/img/ebat/manual-capa.jpg",
     },
+    {
+      num: "05",
+      title: "apple academy: graduation",
+      tags: t("p05_tags").replace(", ", " / "),
+      href: "/work/graduation",
+      img: "/img/graduation/7.jpg",
+    },
   ];
 
   const marquee = [
@@ -184,15 +181,8 @@ export default function Home() {
     <div className="rm">
       <style>{rmStyles}</style>
 
-      <nav className="rm-nav">
-        <span>mary l.</span>
-        <ul className="rm-nav__links">
-          <li><a href="/work" className="hover-trigger">{t("nav_work")}</a></li>
-          <li><a href="/experiments" className="hover-trigger">{t("nav_experiments")}</a></li>
-          <li><a href="#contact" className="hover-trigger">{t("nav_cta")}</a></li>
-          <li><LangToggle /></li>
-        </ul>
-      </nav>
+      <span className="rm-corner rm-corner--l">mary l. ✳</span>
+      <span className="rm-corner rm-corner--r"><LangToggle /></span>
 
       <main>
         <PlaygroundHero
@@ -202,7 +192,15 @@ export default function Home() {
           subHighlight={t("hero_sub_highlight")}
           scrollLabel={t("rm_scroll")}
           welcome={t("rm_welcome")}
-        />
+        >
+          <ScatterMenu
+            items={[
+              { label: t("nav_work").toLowerCase(), href: "#work", left: "18%", top: "26%", rotate: -6 },
+              { label: t("rm_menu_about"), href: "#about", left: "64%", top: "62%", rotate: 4 },
+              { label: t("rm_menu_contact"), href: "#contact", left: "32%", top: "74%", rotate: -3 },
+            ] satisfies MenuItem[]}
+          />
+        </PlaygroundHero>
 
         <Marquee items={marquee} />
 

@@ -1,359 +1,170 @@
 "use client";
-import GiantFooter from "@/components/GiantFooter";
-import PixelMotifs from "@/components/PixelMotifs";
-import LiquidImage from "@/components/LiquidImage";
-import TextHighlight from "@/components/TextHighlight";
 import { motion } from "framer-motion";
-import Link from "next/link";
-import Nav from "@/components/Nav";
+import LiquidImage from "@/components/LiquidImage";
+import ProjectShell from "@/components/ProjectShell";
 import { useT } from "@/i18n/LanguageContext";
 
 export default function MagazineProject() {
   const { t } = useT();
 
-  const images = [
-    "1.png", "2.png", "3.png", "4.png", "5.png",
-    "6.png", "7.png", "8.png", "9.jpg", "10.jpg"
-  ];
+  const collage = ["5.png", "6.png", "7.png"];
 
   return (
-    <>
-      <PixelMotifs />
-      <Nav />
+    <ProjectShell
+      title={t("work_helvetica_title").replace(/\n/g, " ")}
+      desc={
+        <>
+          {t("magazine_p1")} <span className="pj-em">{t("magazine_p1_highlight")}</span> {t("magazine_p1_rest")}{" "}
+          {t("magazine_p2")} <span className="pj-em">{t("magazine_p2_highlight")}</span> {t("magazine_p2_rest")}
+        </>
+      }
+      meta={[
+        { label: t("ebat_meta_role"), value: t("work_helvetica_tags") },
+        { label: t("ebat_meta_year"), value: "2025" },
+      ]}
+    >
+      {/* nota de processo */}
+      <section style={{ maxWidth: "1100px", margin: "0 auto", padding: "0 2rem 4rem" }}>
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: ".85rem",
+            color: "var(--ink)",
+            lineHeight: 1.7,
+            padding: "20px",
+            border: "1px dashed rgba(242,241,236,.4)",
+            maxWidth: "760px",
+          }}
+        >
+          {t("magazine_p3")}
+        </motion.p>
+      </section>
 
-      {/* Grunge Background */}
-      <main style={{
-        minHeight: "100vh",
-        backgroundColor: "#EAEAEA",
-        paddingTop: "140px"
-      }}>
-
-        {/* Project Header */}
-        <section style={{
-          maxWidth: "1200px",
+      {/* spreads da revista — as folhas brancas saltam no fundo escuro */}
+      <section
+        style={{
+          maxWidth: "1300px",
           margin: "0 auto",
-          padding: "40px 2rem 100px",
-          position: "relative"
-        }}>
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <Link href="/work" style={{
-              display: "inline-block",
-              marginBottom: "4rem",
-              fontFamily: "var(--font-mono)",
-              fontSize: "0.8rem",
-              color: "var(--gray-600)",
-              textDecoration: "none",
-              textTransform: "uppercase",
-              letterSpacing: "2px",
-              borderBottom: "1px solid var(--gray-400)",
-              paddingBottom: "4px"
-            }} className="hover-trigger">
-              {t("magazine_back")}
-            </Link>
-          </motion.div>
-
-          <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: "80px", alignItems: "start" }}>
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
-            >
-              <h1 style={{
-                fontFamily: "var(--font-head)",
-                fontSize: "clamp(3.5rem, 8vw, 7rem)",
-                color: "#111",
-                margin: "0",
-                lineHeight: 0.9,
-                fontWeight: 800,
-                letterSpacing: "-0.04em",
-                textTransform: "uppercase"
-              }}>
-                HELVETICA
-              </h1>
-              <motion.div
-                initial={{ rotate: -5, scale: 0.9, opacity: 0 }}
-                animate={{ rotate: 0, scale: 1, opacity: 1 }}
-                transition={{ duration: 0.8, delay: 0.6 }}
-                style={{
-                  display: "inline-block",
-                  backgroundColor: "#FF3300",
-                  color: "#FFF",
-                  padding: "5px 15px",
-                  fontFamily: "var(--font-mono)",
-                  textTransform: "uppercase",
-                  fontSize: "1rem",
-                  fontWeight: 700,
-                  transform: "rotate(-3deg) translateY(-10px)",
-                  boxShadow: "4px 4px 0 #000"
-                }}
-              >
-                {t("magazine_grunge_label")}
-              </motion.div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 0.4 }}
-              style={{
-                borderLeft: "4px solid #111",
-                paddingLeft: "30px",
-                position: "relative"
-              }}
-            >
-              <div style={{
-                position: "absolute",
-                top: "-40px",
-                right: "-20px",
-                fontFamily: "var(--font-head)",
-                fontSize: "8rem",
-                color: "rgba(0,0,0,0.03)",
-                lineHeight: 0.8,
-                pointerEvents: "none",
-                userSelect: "none"
-              }}>
-                NEUTRA.
-              </div>
-
-              <p style={{
-                fontFamily: "var(--font-body)",
-                fontSize: "1.1rem",
-                color: "#333",
-                lineHeight: 1.8,
-                fontWeight: 500,
-                marginBottom: "20px",
-                position: "relative",
-                zIndex: 2
-              }}>
-                {t("magazine_p1")} <TextHighlight variant="ios" delay={0.8}>{t("magazine_p1_highlight")}</TextHighlight> {t("magazine_p1_rest")}
-              </p>
-              <p style={{
-                fontFamily: "var(--font-body)",
-                fontSize: "1rem",
-                color: "var(--gray-600)",
-                lineHeight: 1.7,
-                marginBottom: "20px",
-                position: "relative",
-                zIndex: 2
-              }}>
-                {t("magazine_p2")} <TextHighlight variant="marker" color="#FFD1EA" delay={1.1}>{t("magazine_p2_highlight")}</TextHighlight> {t("magazine_p2_rest")}
-              </p>
-              <p style={{
-                fontFamily: "var(--font-mono)",
-                fontSize: "0.85rem",
-                color: "#111",
-                lineHeight: 1.6,
-                padding: "20px",
-                backgroundColor: "rgba(0,0,0,0.05)",
-                border: "1px dashed #666",
-                position: "relative",
-                zIndex: 2
-              }}>
-                {t("magazine_p3")}
-              </p>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* Magazine Spreads */}
-        <section style={{
-          maxWidth: "1400px",
-          margin: "0 auto",
-          padding: "0 2rem 120px",
+          padding: "0 2rem 6rem",
           display: "flex",
           flexDirection: "column",
-          gap: "120px",
-          position: "relative"
-        }}>
-
-          {/* Cover Spread */}
-          <div style={{ position: "relative" }}>
-            <motion.div
-              initial={{ opacity: 0, rotate: -2, y: 40 }}
-              whileInView={{ opacity: 1, rotate: 0, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 1, type: "spring", stiffness: 50 }}
-              style={{
-                width: "80%",
-                border: "1px solid #111",
-                backgroundColor: "#fff",
-                boxShadow: "30px 30px 0px rgba(0,0,0,0.1)",
-                margin: "0 auto",
-                display: "flex"
-              }}
-            >
-              <LiquidImage src={`/img/helvetica/1.png`} alt="Cover Spread" fill={false} />
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1, delay: 0.5 }}
-              style={{
-                position: "absolute",
-                top: "20%",
-                right: "5%",
-                fontFamily: "var(--font-body)",
-                fontSize: "4rem",
-                fontWeight: 800,
-                color: "transparent",
-                WebkitTextStroke: "2px #111",
-                transform: "rotate(90deg)",
-                transformOrigin: "right bottom",
-                mixBlendMode: "difference",
-                pointerEvents: "none"
-              }}
-            >
-              DAVID CARSON
-            </motion.div>
-          </div>
-
-          {/* Staggered Pages 2 & 3 */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "60px", position: "relative" }}>
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-              style={{
-                border: "1px solid #111",
-                backgroundColor: "#fff",
-                boxShadow: "-15px 15px 0px #FF3300",
-                display: "flex",
-                transform: "rotate(-1deg)"
-              }}
-            >
-              <LiquidImage src={`/img/helvetica/2.png`} alt="Spread 2" fill={false} />
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              style={{
-                border: "1px solid #111",
-                backgroundColor: "#fff",
-                boxShadow: "15px 15px 0px #111",
-                display: "flex",
-                marginTop: "100px",
-                transform: "rotate(2deg)"
-              }}
-            >
-              <LiquidImage src={`/img/helvetica/3.png`} alt="Spread 3" fill={false} />
-            </motion.div>
-          </div>
-
-          {/* Full Width Impact (4) */}
+          gap: "100px",
+          position: "relative",
+        }}
+      >
+        <div style={{ position: "relative" }}>
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, filter: "grayscale(100%)" }}
-            whileInView={{ opacity: 1, scale: 1, filter: "grayscale(0%)" }}
-            viewport={{ once: true }}
-            transition={{ duration: 1.2 }}
-            style={{
-              width: "100%",
-              border: "1px solid #111",
-              backgroundColor: "#fff",
-              display: "flex"
-            }}
+            initial={{ opacity: 0, rotate: -2, y: 40 }}
+            whileInView={{ opacity: 1, rotate: 0, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 1, type: "spring", stiffness: 50 }}
+            style={{ width: "84%", margin: "0 auto", border: "1px solid rgba(242,241,236,.3)", backgroundColor: "#fff", display: "flex", boxShadow: "26px 26px 0 rgba(200,245,46,.12)" }}
           >
-            <LiquidImage src={`/img/helvetica/4.png`} alt="Spread 4" fill={false} />
+            <LiquidImage src="/img/helvetica/1.png" alt="Cover Spread" fill={false} />
           </motion.div>
 
-          {/* Collage Gallery (5, 6, 7) */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "20px" }}>
-            {images.slice(4, 7).map((img, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 50, rotate: i % 2 === 0 ? -3 : 3 }}
-                whileInView={{ opacity: 1, y: 0, rotate: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: i * 0.15 }}
-                style={{
-                  border: "1px solid #111",
-                  backgroundColor: "#fff",
-                  display: "flex",
-                  boxShadow: "8px 8px 0px rgba(0,0,0,0.15)"
-                }}
-              >
-                <LiquidImage src={`/img/helvetica/${img}`} alt={`Spread ${i + 5}`} fill={false} />
-              </motion.div>
-            ))}
-          </div>
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1, delay: 0.5 }}
+            style={{
+              position: "absolute",
+              top: "20%",
+              right: "2%",
+              fontFamily: "var(--font-grotesk)",
+              fontSize: "3.4rem",
+              fontWeight: 800,
+              color: "transparent",
+              WebkitTextStroke: "2px var(--acid)",
+              transform: "rotate(90deg)",
+              transformOrigin: "right bottom",
+              pointerEvents: "none",
+            }}
+          >
+            DAVID CARSON
+          </motion.div>
+        </div>
 
-          {/* Final Spreads (8, 9, 10) */}
-          <div style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            marginTop: "60px",
-            position: "relative"
-          }}>
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "100px", width: "100%" }}>
-              <motion.div
-                initial={{ opacity: 0, x: -100, rotate: -10 }}
-                whileInView={{ opacity: 1, x: 0, rotate: -4 }}
-                viewport={{ once: true }}
-                transition={{ duration: 1 }}
-                style={{
-                  width: "80%",
-                  maxWidth: "900px",
-                  border: "1px solid #111",
-                  backgroundColor: "#fff",
-                  display: "flex",
-                  boxShadow: "0 20px 40px rgba(0,0,0,0.2)"
-                }}
-              >
-                <LiquidImage src={`/img/helvetica/8.png`} alt="Spread 8" fill={false} />
-              </motion.div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "60px" }}>
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            style={{ border: "1px solid rgba(242,241,236,.3)", backgroundColor: "#fff", boxShadow: "-15px 15px 0 #FF3300", display: "flex", transform: "rotate(-1deg)" }}
+          >
+            <LiquidImage src="/img/helvetica/2.png" alt="Spread 2" fill={false} />
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            style={{ border: "1px solid rgba(242,241,236,.3)", backgroundColor: "#fff", boxShadow: "15px 15px 0 var(--acid)", display: "flex", marginTop: "80px", transform: "rotate(2deg)" }}
+          >
+            <LiquidImage src="/img/helvetica/3.png" alt="Spread 3" fill={false} />
+          </motion.div>
+        </div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 100 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 1, delay: 0.2 }}
-                style={{
-                  width: "85%",
-                  maxWidth: "1000px",
-                  border: "1px solid #111",
-                  backgroundColor: "#fff",
-                  display: "flex",
-                  boxShadow: "0 20px 40px rgba(0,0,0,0.2)"
-                }}
-              >
-                <LiquidImage src={`/img/helvetica/9.jpg`} alt="Spread 9" fill={false} />
-              </motion.div>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95, filter: "grayscale(100%)" }}
+          whileInView={{ opacity: 1, scale: 1, filter: "grayscale(0%)" }}
+          viewport={{ once: true }}
+          transition={{ duration: 1.2 }}
+          style={{ width: "100%", border: "1px solid rgba(242,241,236,.3)", backgroundColor: "#fff", display: "flex" }}
+        >
+          <LiquidImage src="/img/helvetica/4.png" alt="Spread 4" fill={false} />
+        </motion.div>
 
-              <motion.div
-                initial={{ opacity: 0, x: 100, rotate: 10 }}
-                whileInView={{ opacity: 1, x: 0, rotate: 5 }}
-                viewport={{ once: true }}
-                transition={{ duration: 1, delay: 0.4 }}
-                style={{
-                  width: "75%",
-                  maxWidth: "800px",
-                  border: "1px solid #111",
-                  backgroundColor: "#fff",
-                  display: "flex",
-                  boxShadow: "0 20px 40px rgba(0,0,0,0.3)"
-                }}
-              >
-                <LiquidImage src={`/img/helvetica/10.jpg`} alt="Spread 10" fill={false} />
-              </motion.div>
-            </div>
-          </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "20px" }}>
+          {collage.map((img, i) => (
+            <motion.div
+              key={img}
+              initial={{ opacity: 0, y: 50, rotate: i % 2 === 0 ? -3 : 3 }}
+              whileInView={{ opacity: 1, y: 0, rotate: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: i * 0.15 }}
+              style={{ border: "1px solid rgba(242,241,236,.3)", backgroundColor: "#fff", display: "flex", boxShadow: "8px 8px 0 rgba(200,245,46,.18)" }}
+            >
+              <LiquidImage src={`/img/helvetica/${img}`} alt={`Spread ${i + 5}`} fill={false} />
+            </motion.div>
+          ))}
+        </div>
 
-        </section>
-      </main>
-
-      <div id="contact">
-        <GiantFooter />
-      </div>
-    </>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "90px", width: "100%" }}>
+          <motion.div
+            initial={{ opacity: 0, x: -100, rotate: -10 }}
+            whileInView={{ opacity: 1, x: 0, rotate: -4 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1 }}
+            style={{ width: "82%", maxWidth: "900px", border: "1px solid rgba(242,241,236,.3)", backgroundColor: "#fff", display: "flex", boxShadow: "0 20px 40px rgba(0,0,0,.5)" }}
+          >
+            <LiquidImage src="/img/helvetica/8.png" alt="Spread 8" fill={false} />
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 100 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1, delay: 0.2 }}
+            style={{ width: "88%", maxWidth: "1000px", border: "1px solid rgba(242,241,236,.3)", backgroundColor: "#fff", display: "flex", boxShadow: "0 20px 40px rgba(0,0,0,.5)" }}
+          >
+            <LiquidImage src="/img/helvetica/9.jpg" alt="Spread 9" fill={false} />
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, x: 100, rotate: 10 }}
+            whileInView={{ opacity: 1, x: 0, rotate: 5 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1, delay: 0.4 }}
+            style={{ width: "78%", maxWidth: "800px", border: "1px solid rgba(242,241,236,.3)", backgroundColor: "#fff", display: "flex", boxShadow: "0 20px 40px rgba(0,0,0,.6)" }}
+          >
+            <LiquidImage src="/img/helvetica/10.jpg" alt="Spread 10" fill={false} />
+          </motion.div>
+        </div>
+      </section>
+    </ProjectShell>
   );
 }

@@ -11,7 +11,6 @@ export default function Nav({ logoHref = "/" }: { logoHref?: string }) {
         <a href={logoHref} className="nav__logo" style={{ textDecoration: "none", color: "var(--fg)" }}>MARY L.</a>
         <ul className="nav__links">
           <li><a href="/work" className="hover-trigger">{t("nav_work")}</a></li>
-          <li><a href="/experiments" className="hover-trigger">{t("nav_experiments")}</a></li>
         </ul>
         <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
           <LangToggle />

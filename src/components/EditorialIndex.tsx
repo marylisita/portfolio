@@ -134,6 +134,7 @@ export default function EditorialIndex({ items }: { items: IndexItem[] }) {
               {/* câmera de vigilância detectando o projeto — conexão com o TCC dela */}
               <SpyImage
                 src={items[active].img}
+                tag={items[active].href.split("/").pop() ?? "projeto"}
                 camLabel={`cam 0${active + 1}`}
                 width={PREVIEW_W}
                 height={PREVIEW_H}

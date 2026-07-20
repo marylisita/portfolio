@@ -2,12 +2,19 @@
 import { useEffect, useRef, useState } from "react";
 
 /**
- * Imagem com tratamento de câmera de vigilância (referência: barbianaliu.com,
- * e o TCC dela — vigilância/mediação algorítmica):
- * - nasce pixelada grossa e "foca" (blocos diminuem) como uma CFTV detectando;
- * - overlay REC piscando, timestamp ao vivo e cantoneiras.
- * Usa setInterval (não rAF) de propósito: continua funcionando em abas ocultas.
+ * Tratamento "Barbiana Liu" (pedido dela: exatamente como a menina do
+ * barbianaliu.com) aplicado às imagens de projeto:
+ * - mosaico de blocos GRANDES, permanente — nunca resolve para nítido;
+ * - os pixels AUMENTAM com a velocidade do mouse (mexeu rápido → mais
+ *   abstrato; parou → assenta no chunky);
+ * - caixa amarela de detecção com etiqueta (@projeto), com jitter de
+ *   rastreamento, como visão de IA/vigilância — conexão com o TCC dela;
+ * - HUD CFTV (REC / cam / relógio / cantoneiras) mantido em lime.
+ * setInterval (não rAF) de propósito: continua rodando em aba oculta.
  */
+
+const BASE_BLOCK = 16;   // chunky permanente (referência: ~19 blocos na largura)
+const MAX_BLOCK = 40;    // explosão máxima com movimento rápido
 
 const CCTV_CSS = `
   .spy { position: relative; width: 100%; height: 100%; background: #000; }
@@ -32,18 +39,41 @@ const CCTV_CSS = `
   .spy__corner--br { bottom: 4px; right: 4px; border-bottom-width: 1px; border-right-width: 1px; }
   .spy__scan {
     position: absolute; inset: 0;
-    background: repeating-linear-gradient(0deg, rgba(0,0,0,.14) 0 1px, transparent 1px 3px);
+    background: repeating-linear-gradient(0deg, rgba(0,0,0,.12) 0 1px, transparent 1px 3px);
     mix-blend-mode: multiply;
+  }
+  /* caixa de detecção amarela — exatamente como a da referência */
+  .spy__track {
+    position: absolute;
+    border: 2px solid #FFE750;
+    animation: spy-jitter 2.4s steps(2, end) infinite;
+  }
+  .spy__tag {
+    position: absolute;
+    top: -20px; left: -2px;
+    background: #FFE750; color: #111;
+    font-family: var(--font-mono); font-size: 9px;
+    letter-spacing: .06em; text-transform: lowercase;
+    padding: 3px 6px; white-space: nowrap;
+  }
+  @keyframes spy-jitter {
+    0%   { transform: translate(0, 0); }
+    25%  { transform: translate(2px, -1px); }
+    50%  { transform: translate(-1px, 2px); }
+    75%  { transform: translate(1px, 1px); }
+    100% { transform: translate(0, 0); }
   }
 `;
 
 export default function SpyImage({
   src,
+  tag,
   camLabel = "cam 01",
   width = 300,
   height = 380,
 }: {
   src: string;
+  tag: string;
   camLabel?: string;
   width?: number;
   height?: number;
@@ -66,7 +96,7 @@ export default function SpyImage({
     return () => clearInterval(id);
   }, []);
 
-  // pixelação que "foca": blocos 26px → 5px quando a imagem troca
+  // mosaico permanente + reação à velocidade do mouse
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -78,11 +108,29 @@ export default function SpyImage({
     const img = new Image();
     img.src = src;
 
-    let block = 26;
-    let id: ReturnType<typeof setInterval> | undefined;
+    let block = MAX_BLOCK;        // entra estourado e assenta no chunky
+    let target = BASE_BLOCK;
+    let lastDrawnBlock = -1;
+    let last: { x: number; y: number; t: number } | null = null;
+
+    const onMove = (e: MouseEvent) => {
+      const now = performance.now();
+      if (last) {
+        const dt = Math.max(8, now - last.t);
+        const speed = Math.hypot(e.clientX - last.x, e.clientY - last.y) / dt; // px/ms
+        // mexeu rápido → pixels crescem (até MAX); parar deixa decair p/ BASE
+        target = Math.max(target, Math.min(MAX_BLOCK, BASE_BLOCK + speed * 14));
+      }
+      last = { x: e.clientX, y: e.clientY, t: now };
+    };
+    window.addEventListener("mousemove", onMove);
 
     const draw = () => {
       if (!img.complete || img.naturalWidth === 0) return;
+      const b = Math.round(block);
+      if (b === lastDrawnBlock) return;
+      lastDrawnBlock = b;
+
       // recorte proporcional tipo object-fit: cover
       const scale = Math.max(width / img.naturalWidth, height / img.naturalHeight);
       const sw = width / scale;
@@ -90,31 +138,26 @@ export default function SpyImage({
       const sx = (img.naturalWidth - sw) / 2;
       const sy = (img.naturalHeight - sh) / 2;
 
-      const cw = Math.max(1, Math.round(width / block));
-      const ch = Math.max(1, Math.round(height / block));
+      const cw = Math.max(1, Math.round(width / b));
+      const ch = Math.max(1, Math.round(height / b));
       ctx.imageSmoothingEnabled = true;
       ctx.clearRect(0, 0, width, height);
-      // desenha pequeno...
       ctx.drawImage(img, sx, sy, sw, sh, 0, 0, cw, ch);
-      // ...e amplia sem suavizar = mosaico
       ctx.imageSmoothingEnabled = false;
       ctx.drawImage(canvas, 0, 0, cw, ch, 0, 0, width, height);
     };
 
-    const start = () => {
+    const id = setInterval(() => {
+      block += (target - block) * 0.25;        // persegue o alvo
+      target += (BASE_BLOCK - target) * 0.08;  // alvo decai p/ o chunky base
       draw();
-      id = setInterval(() => {
-        block = Math.max(5, block - 3);
-        draw();
-        if (block <= 5 && id) clearInterval(id);
-      }, 55);
-    };
+    }, 50);
 
-    if (img.complete) start();
-    else img.onload = start;
+    if (!img.complete) img.onload = () => { lastDrawnBlock = -1; draw(); };
 
     return () => {
-      if (id) clearInterval(id);
+      clearInterval(id);
+      window.removeEventListener("mousemove", onMove);
       img.onload = null;
     };
   }, [src, width, height]);
@@ -134,6 +177,10 @@ export default function SpyImage({
         <span className="spy__corner spy__corner--tr" />
         <span className="spy__corner spy__corner--bl" />
         <span className="spy__corner spy__corner--br" />
+        {/* caixa de detecção com etiqueta, estilo @designbarbiana */}
+        <span className="spy__track" style={{ left: "22%", top: "26%", width: "56%", height: "42%" }}>
+          <span className="spy__tag">@{tag}</span>
+        </span>
       </div>
     </div>
   );
