@@ -49,6 +49,17 @@ const styles = `
     pointer-events: none;
     user-select: none;
     line-height: 1;
+    /* a palavra é mascarada por colunas de pixel que deslizam devagar:
+       ela parece se remontar, na mesma linguagem da revelação das capas */
+    -webkit-mask-image: repeating-linear-gradient(90deg, #000 0 7px, rgba(0,0,0,.6) 7px 14px);
+    mask-image: repeating-linear-gradient(90deg, #000 0 7px, rgba(0,0,0,.6) 7px 14px);
+    -webkit-mask-size: 14px 100%;
+    mask-size: 14px 100%;
+    animation: sw-pixelshift 9s steps(14) infinite;
+  }
+  @keyframes sw-pixelshift {
+    from { -webkit-mask-position: 0 0; mask-position: 0 0; }
+    to   { -webkit-mask-position: 14px 0; mask-position: 14px 0; }
   }
   .sw__bg--a {
     top: 12%;
@@ -56,7 +67,7 @@ const styles = `
     font-size: clamp(200px, 30vw, 540px);
     color: var(--ink);
     opacity: .05;
-    animation: sw-drift-a 80s ease-in-out infinite alternate;
+    animation: sw-pixelshift 9s steps(14) infinite, sw-drift-a 80s ease-in-out infinite alternate;
   }
   .sw__bg--b {
     top: 62%;
@@ -64,7 +75,7 @@ const styles = `
     font-size: clamp(160px, 24vw, 430px);
     color: var(--acid);
     opacity: .045;
-    animation: sw-drift-b 95s ease-in-out infinite alternate;
+    animation: sw-pixelshift 11s steps(14) infinite, sw-drift-b 95s ease-in-out infinite alternate;
   }
   @keyframes sw-drift-a {
     from { transform: rotate(-10deg) translate(0, 0); }
@@ -75,16 +86,14 @@ const styles = `
     to   { transform: rotate(-8deg) translate(-6vw, -2vh); }
   }
   @media (prefers-reduced-motion: reduce) {
-    .sw__bg { animation: none; }
+    .sw__bg, .sw__bg--a, .sw__bg--b { animation: none; }
   }
   .sw__frame {
-    border: 1px solid rgba(28,27,24,.35);
     overflow: hidden;
     background: var(--site-tint-b);
     clip-path: polygon(0 8px, 8px 8px, 8px 0, calc(100% - 8px) 0, calc(100% - 8px) 8px, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 8px calc(100% - 8px), 0 calc(100% - 8px));
-    transition: border-color .3s ease;
+    transition: opacity .3s ease;
   }
-  .sw__item:hover .sw__frame { border-color: var(--acid); }
   .sw__cap {
     display: block;
     margin-top: .7rem;

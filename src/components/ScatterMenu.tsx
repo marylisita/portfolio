@@ -29,22 +29,18 @@ const styles = `
     font-weight: 600;
     text-transform: lowercase;
     letter-spacing: .04em;
-    background: var(--acid);
-    color: #000000;
-    border: 3px solid #000000;
-    box-shadow: 6px 6px 0px #000000;
-    padding: .5rem .9rem;
+    /* bloco sólido chapado, sem borda nem sombra (referência barbianaliu) */
+    background: var(--ink);
+    color: var(--paper);
+    padding: .42rem .8rem;
     text-decoration: none;
-    clip-path: ${PIXEL_CLIP};
     cursor: pointer;
     animation: sm-float 5s ease-in-out infinite;
-    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+    transition: background 0.25s ease, color 0.25s ease;
   }
   .sm__tag:hover {
-    background: #000000;
-    color: var(--acid);
-    border-color: var(--acid);
-    box-shadow: 0px 0px 0px #000000;
+    background: var(--acid);
+    color: var(--paper);
   }
   @keyframes sm-float {
     0%, 100% { transform: translateY(0); }

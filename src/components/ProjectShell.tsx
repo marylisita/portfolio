@@ -61,13 +61,11 @@ const styles = `
   .pj-tag {
     font-family: var(--font-body); font-size: .76rem;
     text-transform: lowercase; letter-spacing: .08em;
-    background: #000000; color: #ffffff;
-    border: 1.5px solid var(--acid);
-    padding: .38rem .7rem; text-decoration: none;
-    clip-path: polygon(0 8px, 8px 8px, 8px 0, calc(100% - 8px) 0, calc(100% - 8px) 8px, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 8px calc(100% - 8px), 0 calc(100% - 8px));
-    transition: background .25s ease, color .25s ease, border-color .25s ease;
+    background: var(--ink); color: var(--paper);
+    padding: .38rem .72rem; text-decoration: none;
+    transition: background .25s ease;
   }
-  .pj-tag:hover { background: var(--acid); color: #000000; border-color: var(--acid); }
+  .pj-tag:hover { background: var(--acid); }
 
   .pj-head {
     max-width: 1100px; margin: 0 auto;
