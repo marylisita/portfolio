@@ -178,21 +178,18 @@ function ProjectCard({ num, title, tags, href, img, desc }: ProjectCardProps) {
             fontFamily: "var(--font-mono), monospace",
             fontSize: "0.74rem",
             letterSpacing: "0.08em",
-            background: "#000000",
-            color: "#ffffff",
-            border: "1.5px solid var(--acid, #E4462A)",
+            background: "var(--ink)",
+            color: "var(--paper)",
             padding: "0.5rem 1rem",
             textDecoration: "none",
             cursor: "pointer",
             transition: "background 0.25s ease, color 0.25s ease, border-color 0.25s ease",
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = "var(--acid, #E4462A)";
-            e.currentTarget.style.color = "#000000";
+            e.currentTarget.style.backgroundColor = "var(--acid)";
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = "#000000";
-            e.currentTarget.style.color = "#ffffff";
+            e.currentTarget.style.backgroundColor = "var(--ink)";
           }}
         >
           [ {t("view_project").toLowerCase()} ]
@@ -256,16 +253,15 @@ export default function Work() {
       font-size: .68rem;
       text-transform: lowercase;
       letter-spacing: .08em;
-      background: #000000;
-      color: #ffffff;
-      border: 1.5px solid var(--acid, #E4462A);
+      background: var(--ink);
+      color: var(--paper);
       padding: 0.35rem 0.7rem;
       text-decoration: none;
       transition: background 0.25s ease, color 0.25s ease;
     }
     .wk-back-btn:hover {
       background: var(--acid, #E4462A);
-      color: #000000;
+      color: var(--paper);
     }
   `;
 

@@ -55,8 +55,18 @@ const styles = `
   .pj-corner--r { right: 1.4rem; display: flex; align-items: center; gap: .8rem; }
 
   .pj-cluster {
-    position: fixed; right: 1.2rem; bottom: 1.2rem; z-index: 900;
+    /* acima do botão flutuante de voltar ao topo, que cobria a etiqueta do meio */
+    position: fixed; right: 1.2rem; bottom: 5.5rem; z-index: 900;
     display: flex; flex-direction: column; align-items: flex-end; gap: .45rem;
+  }
+  @media (max-width: 720px) {
+    /* em tela estreita vira fita horizontal, como na landing */
+    .pj-cluster {
+      flex-direction: row; align-items: center; flex-wrap: nowrap;
+      left: .6rem; right: 4.6rem; bottom: 1rem; gap: .28rem;
+      justify-content: flex-start;
+    }
+    .pj-tag { font-size: .58rem; padding: .3rem .45rem; }
   }
   .pj-tag {
     font-family: var(--font-body); font-size: .76rem;

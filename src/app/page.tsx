@@ -187,7 +187,7 @@ export default function Home() {
         >
           <ScatterMenu
             items={[
-              { label: t("nav_work").toLowerCase(), href: "#work", left: "18%", top: "26%", rotate: -6 },
+              { label: t("nav_work").toLowerCase(), href: "/work", left: "18%", top: "26%", rotate: -6 },
               { label: t("rm_menu_about"), href: "#about", left: "64%", top: "62%", rotate: 4 },
               { label: t("rm_menu_contact"), href: "#contact", left: "32%", top: "74%", rotate: -3 },
             ] satisfies MenuItem[]}
