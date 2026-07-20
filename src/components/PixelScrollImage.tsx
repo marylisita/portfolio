@@ -24,11 +24,15 @@ const REVEAL_END = 0.72; // até aqui os blocos aparecem; depois o mosaico afina
 export default function PixelScrollImage({
   src,
   alt = "",
+  ratio,
   className,
   style,
 }: {
   src: string;
   alt?: string;
+  /** proporção provisória (altura/largura) só pra evitar pulo antes de carregar;
+   *  ao carregar, a proporção REAL do arquivo assume e manda. */
+  ratio: number;
   className?: string;
   style?: React.CSSProperties;
 }) {
@@ -51,11 +55,16 @@ export default function PixelScrollImage({
     let lastKey = "";
 
     const sizeCanvas = () => {
-      const r = wrap.getBoundingClientRect();
-      if (!r.width) return;
+      // offsetWidth/Height, NÃO getBoundingClientRect: as peças da colagem são
+      // rotacionadas, e o rect devolve a caixa envolvente inclinada — isso
+      // dimensionava o bitmap errado e achatava a imagem (a EBAT, girada -4°,
+      // era a mais distorcida).
+      const w = wrap.offsetWidth;
+      const h = wrap.offsetHeight;
+      if (!w || !h) return;
       const dpr = Math.min(2, window.devicePixelRatio || 1);
-      canvas.width = Math.round(r.width * dpr);
-      canvas.height = Math.round(r.height * dpr);
+      canvas.width = Math.round(w * dpr);
+      canvas.height = Math.round(h * dpr);
       lastKey = "";
     };
 
@@ -76,12 +85,12 @@ export default function PixelScrollImage({
       const cols = COLS;
       const rows = Math.max(1, Math.round(cols * aspect));
 
-      // recorte proporcional (cover)
-      const scale = Math.max(W / img.naturalWidth, H / img.naturalHeight);
-      const sw = W / scale;
-      const sh = H / scale;
-      const sx = (img.naturalWidth - sw) / 2;
-      const sy = (img.naturalHeight - sh) / 2;
+      // a moldura já tem a proporção EXATA do arquivo (definida no load), então
+      // desenhamos a imagem inteira: nada de recorte, nada de esticar.
+      const sx = 0;
+      const sy = 0;
+      const sw = img.naturalWidth;
+      const sh = img.naturalHeight;
 
       ctx.clearRect(0, 0, W, H);
 
@@ -162,7 +171,13 @@ export default function PixelScrollImage({
     wrap.addEventListener("mouseenter", onEnter);
     wrap.addEventListener("mouseleave", onLeave);
 
-    const start = () => { ready = true; sizeCanvas(); update(); };
+    const start = () => {
+      ready = true;
+      // a proporção real do arquivo assume — impossível esticar ou cortar
+      wrap.style.aspectRatio = `${img.naturalWidth} / ${img.naturalHeight}`;
+      sizeCanvas();
+      update();
+    };
     if (img.complete && img.naturalWidth) start();
     else img.onload = start;
 
@@ -182,7 +197,11 @@ export default function PixelScrollImage({
   }, [src]);
 
   return (
-    <div ref={wrapRef} className={className} style={{ position: "relative", ...style }}>
+    <div
+      ref={wrapRef}
+      className={className}
+      style={{ position: "relative", aspectRatio: `1 / ${ratio}`, ...style }}
+    >
       <canvas
         ref={canvasRef}
         aria-label={alt}

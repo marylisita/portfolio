@@ -13,12 +13,12 @@ import type { IndexItem } from "./EditorialIndex";
  * scroll NATIVO (ela odeia scroll travado). No mobile vira coluna simples.
  */
 
-// Posições à mão pra dar ritmo de colagem (não é grid). Duas regras:
-// 1. `ratio` = proporção REAL do arquivo (altura/largura) — nada de recorte
-//    forçado; é o que dá variedade natural (o banner do Pilotis é 0.32, o
-//    GenLab é 2:1). Se trocar uma capa, medir a imagem e atualizar aqui.
-// 2. peças próximas na vertical NÃO podem dividir faixa de X, senão a legenda
-//    de uma cai em cima da outra (aprendido vendo o print).
+// Posições à mão pra dar ritmo de colagem (não é grid).
+// `ratio` aqui é só um PALPITE inicial pra não dar pulo de layout — ao carregar,
+// o PixelScrollImage mede o arquivo e assume a proporção real. Trocar uma capa
+// não quebra nada, mesmo que o número aqui fique desatualizado.
+// Regra de posicionamento: peças próximas na vertical NÃO podem dividir faixa
+// de X, senão a legenda de uma cai em cima da outra (aprendido vendo o print).
 const SPOTS = [
   { left: "2%",  top: "0vh",   w: "clamp(300px, 46vw, 700px)", ratio: 0.562, rot: -2 }, // isadora 1920x1080
   { left: "62%", top: "26vh",  w: "clamp(240px, 30vw, 440px)", ratio: 0.667, rot: 3 },  // helvetica 948x632
@@ -44,8 +44,7 @@ const styles = `
   .sw__bg {
     position: absolute;
     z-index: 0;
-    font-family: var(--font-head);
-    font-style: italic;
+    font-family: var(--font-hand);
     white-space: nowrap;
     pointer-events: none;
     user-select: none;
@@ -128,8 +127,10 @@ export default function ScatteredWorks({ items, bgWord }: { items: IndexItem[]; 
               whileHover={{ scale: 1.02, rotate: 0 }}
             >
               <Link href={item.href} className="sw__item hover-trigger" style={{ position: "static", display: "block" }}>
-                <div className="sw__frame" style={{ aspectRatio: String(1 / s.ratio) }}>
-                  <PixelScrollImage src={item.img} alt={item.title} style={{ width: "100%", height: "100%" }} />
+                {/* sem aspect-ratio fixo aqui: quem manda é a proporção real
+                    do arquivo, definida pelo próprio PixelScrollImage */}
+                <div className="sw__frame">
+                  <PixelScrollImage src={item.img} alt={item.title} ratio={s.ratio} style={{ width: "100%" }} />
                 </div>
                 <span className="sw__cap">
                   <span className="sw__num">{item.num}</span> {item.title}
