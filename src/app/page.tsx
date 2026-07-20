@@ -164,6 +164,20 @@ export default function Home() {
       href: "/work/graduation",
       img: "/img/graduation/7.jpg",
     },
+    {
+      num: "06",
+      title: "devs no pilotis",
+      tags: t("p06_tags").replace(", ", " / "),
+      href: "/work/pilotis",
+      img: "/img/pilotis/1.jpg",
+    },
+    {
+      num: "07",
+      title: "china–rio: pontes para inovação",
+      tags: t("p07_tags").replace(", ", " / "),
+      href: "/work/chinario",
+      img: "/img/chinario/1.jpg",
+    },
   ];
 
   const marquee = [
