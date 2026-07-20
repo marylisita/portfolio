@@ -20,24 +20,64 @@ import type { IndexItem } from "./EditorialIndex";
 // 2. peças próximas na vertical NÃO podem dividir faixa de X, senão a legenda
 //    de uma cai em cima da outra (aprendido vendo o print).
 const SPOTS = [
-  { left: "4%",  top: "0vh",   w: "clamp(220px, 30vw, 460px)", ratio: 0.562, rot: -2 }, // isadora 1920x1080
-  { left: "62%", top: "14vh",  w: "clamp(180px, 22vw, 320px)", ratio: 0.667, rot: 3 },  // helvetica 948x632
-  { left: "22%", top: "44vh",  w: "clamp(240px, 34vw, 520px)", ratio: 0.498, rot: 1 },  // genlab 1743x868
-  { left: "68%", top: "68vh",  w: "clamp(170px, 21vw, 300px)", ratio: 0.562, rot: -4 }, // ebat 2400x1350
-  { left: "5%",  top: "92vh",  w: "clamp(200px, 26vw, 380px)", ratio: 0.643, rot: 2 },  // graduation 1401x901
-  { left: "40%", top: "122vh", w: "clamp(260px, 38vw, 560px)", ratio: 0.319, rot: -1 }, // pilotis 1600x511
-  { left: "10%", top: "152vh", w: "clamp(190px, 24vw, 350px)", ratio: 0.667, rot: 4 },  // chinario 1600x1068
+  { left: "2%",  top: "0vh",   w: "clamp(300px, 46vw, 700px)", ratio: 0.562, rot: -2 }, // isadora 1920x1080
+  { left: "62%", top: "26vh",  w: "clamp(240px, 30vw, 440px)", ratio: 0.667, rot: 3 },  // helvetica 948x632
+  { left: "30%", top: "70vh",  w: "clamp(320px, 52vw, 780px)", ratio: 0.498, rot: 1 },  // genlab 1743x868
+  { left: "2%",  top: "108vh", w: "clamp(230px, 28vw, 420px)", ratio: 0.562, rot: -4 }, // ebat 2400x1350
+  { left: "52%", top: "128vh", w: "clamp(280px, 40vw, 600px)", ratio: 0.643, rot: 2 },  // graduation 1401x901
+  { left: "6%",  top: "180vh", w: "clamp(340px, 58vw, 880px)", ratio: 0.319, rot: -1 }, // pilotis 1600x511
+  { left: "66%", top: "210vh", w: "clamp(250px, 30vw, 460px)", ratio: 0.667, rot: 4 },  // chinario 1600x1068
 ];
 
 const styles = `
   .sw {
     position: relative;
-    /* altura do canvas: última peça (152vh) + sua altura + legenda */
-    height: 190vh;
+    /* altura do canvas: última peça (210vh) + sua altura + legenda */
+    height: 255vh;
     margin: 0 auto;
     max-width: 1500px;
   }
-  .sw__item { position: absolute; text-decoration: none; color: var(--ink); }
+  .sw__item { position: absolute; z-index: 1; text-decoration: none; color: var(--ink); }
+
+  /* palavra gigante deslizando ao fundo (referência t-i-n-y: o "Bienvenue!"),
+     opacidade baixíssima pra não roubar legibilidade de nada */
+  .sw__bg {
+    position: absolute;
+    z-index: 0;
+    font-family: var(--font-head);
+    font-style: italic;
+    white-space: nowrap;
+    pointer-events: none;
+    user-select: none;
+    line-height: 1;
+  }
+  .sw__bg--a {
+    top: 12%;
+    left: -6%;
+    font-size: clamp(200px, 30vw, 540px);
+    color: var(--ink);
+    opacity: .05;
+    animation: sw-drift-a 80s ease-in-out infinite alternate;
+  }
+  .sw__bg--b {
+    top: 62%;
+    left: 14%;
+    font-size: clamp(160px, 24vw, 430px);
+    color: var(--acid);
+    opacity: .045;
+    animation: sw-drift-b 95s ease-in-out infinite alternate;
+  }
+  @keyframes sw-drift-a {
+    from { transform: rotate(-10deg) translate(0, 0); }
+    to   { transform: rotate(-10deg) translate(7vw, 3vh); }
+  }
+  @keyframes sw-drift-b {
+    from { transform: rotate(-8deg) translate(0, 0); }
+    to   { transform: rotate(-8deg) translate(-6vw, -2vh); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sw__bg { animation: none; }
+  }
   .sw__frame {
     border: 1px solid rgba(242,241,236,.35);
     overflow: hidden;
@@ -67,11 +107,13 @@ const styles = `
   }
 `;
 
-export default function ScatteredWorks({ items }: { items: IndexItem[] }) {
+export default function ScatteredWorks({ items, bgWord }: { items: IndexItem[]; bgWord: string }) {
   return (
     <>
       <style>{styles}</style>
       <div className="sw">
+        <div className="sw__bg sw__bg--a" aria-hidden="true">{bgWord}</div>
+        <div className="sw__bg sw__bg--b" aria-hidden="true">{bgWord}</div>
         {items.map((item, i) => {
           const s = SPOTS[i % SPOTS.length];
           return (

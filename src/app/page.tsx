@@ -210,7 +210,7 @@ export default function Home() {
             <span>{projects.length.toString().padStart(2, "0")} —</span>
           </div>
           {/* projetos jogados no canvas (t-i-n-y) — capas nascem nítidas e viram pixel no scroll */}
-          <ScatteredWorks items={projects} />
+          <ScatteredWorks items={projects} bgWord={`${t("nav_work").toLowerCase()}!`} />
         </section>
 
         {/* Sobre */}
