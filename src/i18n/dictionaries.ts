@@ -25,6 +25,12 @@ const dictionaries = {
     // Selected Work
     selected_work: "Trabalhos Selecionados",
     view_project: "Ver Projeto",
+    rm_scroll: "role para ver ↓",
+    rm_tools_label: "Ferramentas",
+    rm_welcome: "oi! que bom te ver no meu cantinho da internet ✳",
+    rm_footer_label: "Contato",
+    rm_footer_talk: "vamos conversar?",
+    rm_footer_made: "feito no rio, com next.js e carinho",
 
     // Project 01 - Isadora
     p01_tag1: "Direção de Arte",
@@ -208,6 +214,12 @@ const dictionaries = {
     // Selected Work
     selected_work: "Selected Work",
     view_project: "View Project",
+    rm_scroll: "scroll to explore ↓",
+    rm_tools_label: "Tools",
+    rm_welcome: "hi! welcome to my little corner of the internet ✳",
+    rm_footer_label: "Contact",
+    rm_footer_talk: "let's talk?",
+    rm_footer_made: "made in rio, with next.js and love",
 
     // Project 01 - Isadora
     p01_tag1: "Art Direction",
