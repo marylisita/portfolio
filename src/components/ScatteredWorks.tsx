@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import PixelScrollImage from "./PixelScrollImage";
 import PixelScrollText from "./PixelScrollText";
+import AsciiAnim from "./AsciiAnim";
+import { QUERUBIM, ASAS, SPARKLE, ROSA, CORACAO } from "./asciiOrnamentos";
 import type { IndexItem } from "./EditorialIndex";
 
 /**
@@ -76,6 +78,12 @@ const styles = `
   @media (prefers-reduced-motion: reduce) {
     .sw__bg, .sw__bg--a, .sw__bg--b { animation: none; }
   }
+  /* desenhos ASCII grandes (glifos da fonte de emoji dela) ocupando os vazios */
+  .sw__deco { position: absolute; z-index: 0; pointer-events: none; }
+  @media (max-width: 860px) {
+    .sw__deco { display: none; }
+  }
+
   .sw__frame {
     overflow: hidden;
     background: var(--site-tint-b);
@@ -111,6 +119,20 @@ export default function ScatteredWorks({ items, bgWord }: { items: IndexItem[]; 
       <style>{styles}</style>
       <div className="sw">
         <PixelScrollText className="sw__bg sw__bg--a" text={bgWord} fontSize={420} color="var(--ink)" />
+
+        {/* Ornamentos ASCII (querubim/angelcore) nos vazios entre as peças.
+            Desenhados à mão como silhueta em contorno grosso e convertidos.
+            Se mexer em SPOTS, remedir as folgas. */}
+        <AsciiAnim frames={[SPARKLE]} fontSize={9} opacity={0.4} color="var(--acid)"
+          className="sw__deco" style={{ left: "58%", top: "1vh" }} />
+        <AsciiAnim frames={[ROSA]} fontSize={8} opacity={0.4} color="var(--ink)"
+          className="sw__deco" style={{ left: "8%", top: "53vh" }} />
+        <AsciiAnim frames={[QUERUBIM]} fontSize={10} opacity={0.52} color="var(--ink)"
+          className="sw__deco" style={{ left: "4%", top: "148vh" }} />
+        <AsciiAnim frames={[ASAS]} fontSize={10} opacity={0.42} color="var(--acid)"
+          className="sw__deco" style={{ left: "68%", top: "181vh" }} />
+        <AsciiAnim frames={[CORACAO]} fontSize={10} opacity={0.4} color="var(--ink)"
+          className="sw__deco" style={{ left: "10%", top: "220vh" }} />
         <PixelScrollText className="sw__bg sw__bg--b" text={bgWord} fontSize={330} color="var(--acid)" />
         {items.map((item, i) => {
           const s = SPOTS[i % SPOTS.length];

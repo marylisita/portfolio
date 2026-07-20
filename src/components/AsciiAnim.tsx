@@ -12,6 +12,7 @@ export default function AsciiAnim({
   fontSize = 8,
   color = "var(--ink)",
   opacity = 0.6,
+  className,
   style,
 }: {
   frames: string[];
@@ -19,6 +20,7 @@ export default function AsciiAnim({
   fontSize?: number;
   color?: string;
   opacity?: number;
+  className?: string;
   style?: React.CSSProperties;
 }) {
   const [i, setI] = useState(0);
@@ -32,6 +34,7 @@ export default function AsciiAnim({
   return (
     <motion.pre
       aria-hidden="true"
+      className={className}
       initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
