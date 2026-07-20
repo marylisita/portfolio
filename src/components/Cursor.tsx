@@ -228,15 +228,6 @@ export default function Cursor() {
 
   return (
     <>
-      {/* Hide native cursor globally on desktop */}
-      <style>{`
-        @media (min-width: 900px) {
-          body, a, button, .hover-trigger, [role="button"], input, select, textarea {
-            cursor: none !important;
-          }
-        }
-      `}</style>
-
       {/* Canvas for Glitter Trail Particles Overlay */}
       <canvas
         ref={canvasRef}
@@ -248,7 +239,7 @@ export default function Cursor() {
         }}
       />
 
-      {/* CCTV Viewfinder Surveillance Cursor Tracker */}
+      {/* Claws Overlay Cursor Tracker */}
       <motion.div
         style={{
           position: "fixed",
@@ -258,47 +249,65 @@ export default function Cursor() {
           y: cursorY,
           pointerEvents: "none",
           zIndex: 10000,
-          transform: "translate(-50%, -50%)", // perfectly center
         }}
       >
         <motion.div
-          animate={{
-            scale: hovered ? 1.25 : 1,
-            rotate: hovered ? 90 : 0,
-          }}
-          transition={{ type: "spring", stiffness: 320, damping: 24 }}
-          style={{
-            width: "36px",
-            height: "36px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            position: "relative",
-          }}
+          style={{ width: "32px", height: "32px", position: "relative" }}
         >
-          {/* Viewfinder Corners in neon/white */}
-          <svg width="36" height="36" viewBox="0 0 36 36" fill="none" style={{ position: "absolute" }}>
-            <path d="M 6 12 L 6 6 L 12 6" stroke="var(--acid, #C8F52E)" strokeWidth="1.5" strokeLinecap="square" />
-            <path d="M 30 6 L 30 12" stroke="var(--acid, #C8F52E)" strokeWidth="1.5" strokeLinecap="square" />
-            <path d="M 24 6 L 30 6" stroke="var(--acid, #C8F52E)" strokeWidth="1.5" strokeLinecap="square" />
-            <path d="M 6 24 L 6 30 L 12 30" stroke="var(--acid, #C8F52E)" strokeWidth="1.5" strokeLinecap="square" />
-            <path d="M 30 24 L 30 30 L 24 30" stroke="var(--acid, #C8F52E)" strokeWidth="1.5" strokeLinecap="square" />
-          </svg>
-
-          {/* CCTV Center Reticle Crosshair */}
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-            <line x1="6" y1="2" x2="6" y2="10" stroke="var(--acid, #C8F52E)" strokeWidth="1.2" />
-            <line x1="2" y1="6" x2="10" y2="6" stroke="var(--acid, #C8F52E)" strokeWidth="1.2" />
+          <svg
+            viewBox="0 0 32 32"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            style={{ width: "100%", height: "100%", position: "absolute", top: 0, left: 0 }}
+          >
+            <motion.path
+              d="M 6 10 L 2 4 L 8 6"
+              fill="#000000"
+              stroke="var(--acid, #C8F52E)"
+              strokeWidth="0.8"
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{
+                opacity: hovered ? 1 : 0,
+                scale: hovered ? 1 : 0.5,
+                x: hovered ? -2 : 0,
+                y: hovered ? -2 : 0,
+              }}
+            />
+            <motion.path
+              d="M 14 6 L 12 0 L 17 4"
+              fill="#000000"
+              stroke="var(--acid, #C8F52E)"
+              strokeWidth="0.8"
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{
+                opacity: hovered ? 1 : 0,
+                scale: hovered ? 1 : 0.5,
+                y: hovered ? -3 : 0,
+              }}
+            />
+            <motion.path
+              d="M 22 8 L 24 1 L 26 7"
+              fill="#000000"
+              stroke="var(--acid, #C8F52E)"
+              strokeWidth="0.8"
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{
+                opacity: hovered ? 1 : 0,
+                scale: hovered ? 1 : 0.5,
+                x: hovered ? 2 : 0,
+                y: hovered ? -2 : 0,
+              }}
+            />
           </svg>
         </motion.div>
 
-        {/* Dynamic CCTV Surveillance Label */}
+        {/* Dynamic Label next to Claws */}
         <AnimatePresence>
           {cursorLabel && (
             <motion.div
-              initial={{ opacity: 0, scale: 0.8, x: 24, y: -8 }}
-              animate={{ opacity: 1, scale: 1, x: 24, y: -8 }}
-              exit={{ opacity: 0, scale: 0.8, x: 20, y: -8 }}
+              initial={{ opacity: 0, scale: 0.8, x: 28, y: 12 }}
+              animate={{ opacity: 1, scale: 1, x: 28, y: 12 }}
+              exit={{ opacity: 0, scale: 0.8, x: 24, y: 12 }}
               style={{
                 position: "absolute",
                 top: 0,

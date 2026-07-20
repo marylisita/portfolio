@@ -1,215 +1,330 @@
 "use client";
-import AnimatedButton from "@/components/AnimatedButton";
-import LiquidImage from "@/components/LiquidImage";
-import GiantFooter from "@/components/GiantFooter";
-import PixelMotifs from "@/components/PixelMotifs";
-import Nav from "@/components/Nav";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useT } from "@/i18n/LanguageContext";
+import { useProjects } from "@/components/useProjects";
+import EditorialFooter from "@/components/EditorialFooter";
+import LangToggle from "@/components/LangToggle";
 
-export default function Work() {
+// Pixelated disintegration overlay component
+function PixelOverlay({ active }: { active: boolean }) {
+  const cols = 12;
+  const rows = 8;
+  const total = cols * rows;
+  const [delays] = useState(() =>
+    Array.from({ length: total }, () => Math.random() * 0.45)
+  );
+
+  return (
+    <div
+      style={{
+        position: "absolute",
+        inset: 0,
+        zIndex: 5,
+        display: "grid",
+        gridTemplateColumns: `repeat(${cols}, 1fr)`,
+        gridTemplateRows: `repeat(${rows}, 1fr)`,
+        pointerEvents: "none",
+      }}
+    >
+      {delays.map((delay, idx) => (
+        <motion.div
+          key={idx}
+          initial={{ scale: 1, opacity: 1 }}
+          animate={{
+            scale: active ? 0 : 1,
+            opacity: active ? 0 : 1,
+          }}
+          transition={{
+            delay: active ? delay : delay * 0.25,
+            duration: 0.18,
+            ease: "easeInOut",
+          }}
+          style={{
+            backgroundColor: "#0E0E0E", // match dark page background
+            border: "0.5px solid #0E0E0E",
+            width: "100%",
+            height: "100%",
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+interface ProjectCardProps {
+  num: string;
+  title: string;
+  tags: string;
+  href: string;
+  img: string;
+  desc: string;
+}
+
+function ProjectCard({ num, title, tags, href, img, desc }: ProjectCardProps) {
+  const [inView, setInView] = useState(false);
   const { t } = useT();
 
   return (
-    <>
-      <PixelMotifs />
-      <Nav />
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "1.5rem",
+        width: "100%",
+        marginBottom: "6rem",
+      }}
+    >
+      {/* Card Header (horizontal info line) */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "3rem 1fr auto",
+          alignItems: "baseline",
+          gap: "1rem",
+          paddingBottom: "0.8rem",
+          backgroundImage: "repeating-linear-gradient(90deg, var(--ink) 0 6px, transparent 6px 12px)",
+          backgroundSize: "100% 2px",
+          backgroundPosition: "bottom left",
+          backgroundRepeat: "no-repeat",
+        }}
+      >
+        <span
+          style={{
+            fontFamily: "var(--font-mono), monospace",
+            fontSize: "0.8rem",
+            color: "var(--acid, #C8F52E)",
+            fontWeight: 700,
+          }}
+        >
+          {num}
+        </span>
+        <h2
+          style={{
+            fontFamily: "var(--font-grotesk), sans-serif",
+            fontSize: "clamp(1.4rem, 4vw, 2.5rem)",
+            fontWeight: 700,
+            textTransform: "lowercase",
+            letterSpacing: "-0.03em",
+            margin: 0,
+            lineHeight: 1.1,
+          }}
+        >
+          {title}
+        </h2>
+        <span
+          style={{
+            fontFamily: "var(--font-mono), monospace",
+            fontSize: "0.68rem",
+            textTransform: "uppercase",
+            letterSpacing: "0.1em",
+            textAlign: "right",
+          }}
+        >
+          {tags}
+        </span>
+      </div>
 
-      <main style={{ minHeight: "100vh", backgroundColor: "var(--surface)" }}>
+      {/* Project Description */}
+      <p
+        style={{
+          fontFamily: "var(--font-body), sans-serif",
+          fontSize: "0.92rem",
+          lineHeight: "1.7",
+          opacity: 0.8,
+          maxWidth: "750px",
+          margin: 0,
+        }}
+      >
+        {desc}
+      </p>
 
-        {/* Top Header - Light Blue */}
-        <section style={{
-          backgroundColor: "#e6f0ff",
-          padding: "180px 2rem 140px",
-          textAlign: "center",
-          borderBottom: "var(--border)"
-        }}>
-          <h1 style={{
-            fontFamily: "var(--font-head)",
-            fontSize: "clamp(3rem, 6vw, 5rem)",
-            color: "var(--fg)",
-            margin: "0 0 1rem"
-          }}>
-            {t("work_page_title")}
-          </h1>
-          <p style={{
-            fontFamily: "var(--font-body)",
-            fontSize: "1.2rem",
-            color: "var(--gray-600)",
-            maxWidth: "600px",
-            margin: "0 auto",
-            lineHeight: 1.6
-          }}>
-            {t("work_page_sub")}
-          </p>
-        </section>
-
-        {/* Projects List */}
-        <section style={{
-          padding: "0 2rem",
-          maxWidth: "1200px",
-          margin: "0 auto",
-          marginTop: "-80px",
-          display: "flex",
-          flexDirection: "column",
-          gap: "40px",
-          paddingBottom: "120px",
+      {/* Giant Cover Image with Pixelated Disintegration */}
+      <motion.div
+        onViewportEnter={() => setInView(true)}
+        onViewportLeave={() => setInView(false)}
+        viewport={{ amount: 0.25, once: false }}
+        style={{
           position: "relative",
-          zIndex: 10
-        }}>
+          width: "100%",
+          height: "clamp(240px, 45vh, 480px)",
+          overflow: "hidden",
+          border: "3px solid var(--ink, #F2F1EC)",
+          backgroundColor: "#000",
+        }}
+      >
+        {/* Pixel Disintegration Cover */}
+        <PixelOverlay active={inView} />
 
-          {/* Project Card: Isadora Ruppert */}
-          <div style={{
-            backgroundColor: "#fff",
-            borderRadius: "var(--r-xl)",
-            border: "var(--border)",
-            padding: "40px",
-            display: "grid",
-            gridTemplateColumns: "1fr 1.5fr",
-            gap: "60px",
-            alignItems: "center",
-            boxShadow: "0 20px 40px rgba(0,0,0,0.02)"
-          }}>
-            <div>
-              <h2 style={{
-                fontFamily: "var(--font-head)",
-                fontSize: "3rem",
-                color: "#4A0E17",
-                margin: "0 0 0.5rem",
-                lineHeight: 1.1
-              }}>
-                Isadora Ruppert Press Kit
-              </h2>
-              <div style={{
-                fontFamily: "var(--font-mono)",
-                fontSize: "0.8rem",
-                textTransform: "uppercase",
-                letterSpacing: "1px",
-                color: "#C29F55",
-                marginBottom: "2rem"
-              }}>
-                {t("work_isadora_tags")}
-              </div>
-              <p style={{ color: "var(--gray-600)", fontFamily: "var(--font-body)", lineHeight: 1.6, marginBottom: "2rem" }}>
-                {t("work_isadora_desc")}
-              </p>
-              <AnimatedButton href="/work/isadora" variant="outline">{t("view_project")}</AnimatedButton>
-            </div>
-            <div style={{ padding: "40px", backgroundColor: "#D8C3A5", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "var(--r-lg)", border: "1px solid #111" }}>
-              <div style={{ position: "relative", width: "100%", border: "1px solid #111", backgroundColor: "#fff", boxShadow: "0 15px 35px rgba(0,0,0,0.15)" }}>
-                <LiquidImage src="/img/ISADORA CAPA-THUMBNAIL.webp" alt="Isadora Ruppert" fill={false} />
-              </div>
-            </div>
-          </div>
+        <img
+          src={img}
+          alt={title}
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            display: "block",
+          }}
+        />
+      </motion.div>
 
-          {/* Project Card: Magazine */}
-          <div style={{
-            backgroundColor: "#fff",
-            borderRadius: "var(--r-xl)",
-            border: "var(--border)",
-            padding: "40px",
-            display: "grid",
-            gridTemplateColumns: "1fr 1.5fr",
-            gap: "60px",
-            alignItems: "center",
-            boxShadow: "0 20px 40px rgba(0,0,0,0.02)"
-          }}>
-            <div>
-              <h2 style={{ fontFamily: "var(--font-head)", fontSize: "3rem", color: "var(--fg)", margin: "0 0 0.5rem", lineHeight: 1.1 }}>
-                {t("work_helvetica_title").split("\n").map((line, i) => i === 0 ? <span key={i}>{line}<br/></span> : <span key={i}>{line}</span>)}
-              </h2>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.8rem", textTransform: "uppercase", letterSpacing: "1px", color: "var(--gray-600)", marginBottom: "2rem" }}>
-                {t("work_helvetica_tags")}
-              </div>
-              <p style={{ color: "var(--gray-600)", fontFamily: "var(--font-body)", lineHeight: 1.6, marginBottom: "2rem" }}>
-                {t("work_helvetica_desc")}
-              </p>
-              <AnimatedButton href="/work/magazine" variant="outline">{t("view_project")}</AnimatedButton>
-            </div>
-            <div style={{ padding: "40px", backgroundColor: "#EAEAEA", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "var(--r-lg)", border: "1px solid #111" }}>
-              <div style={{ position: "relative", width: "100%", border: "1px solid #111", backgroundColor: "#fff", boxShadow: "0 15px 35px rgba(0,0,0,0.15)" }}>
-                <LiquidImage src="/img/helvetica/9.jpg" alt="Helvetica Project" fill={false} />
-              </div>
-            </div>
-          </div>
+      {/* Brutalist Button link to project */}
+      <div>
+        <a
+          href={href}
+          className="hover-trigger"
+          style={{
+            display: "inline-block",
+            fontFamily: "var(--font-mono), monospace",
+            fontSize: "0.74rem",
+            letterSpacing: "0.08em",
+            background: "#000000",
+            color: "#ffffff",
+            border: "1.5px solid var(--acid, #C8F52E)",
+            padding: "0.5rem 1rem",
+            textDecoration: "none",
+            cursor: "pointer",
+            transition: "background 0.25s ease, color 0.25s ease, border-color 0.25s ease",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = "var(--acid, #C8F52E)";
+            e.currentTarget.style.color = "#000000";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = "#000000";
+            e.currentTarget.style.color = "#ffffff";
+          }}
+        >
+          [ {t("view_project").toLowerCase()} ]
+        </a>
+      </div>
+    </div>
+  );
+}
 
-          {/* Project Card: GenLab */}
-          <div style={{
-            backgroundColor: "#FFF0F6",
-            borderRadius: "var(--r-xl)",
-            border: "var(--border)",
-            padding: "40px",
-            display: "grid",
-            gridTemplateColumns: "1fr 1.5fr",
-            gap: "60px",
-            alignItems: "center",
-            boxShadow: "0 20px 40px rgba(0,0,0,0.02)",
-            color: "var(--fg)"
-          }}>
-            <div>
-              <h2 style={{ fontFamily: "var(--font-head)", fontSize: "3rem", color: "var(--fg)", margin: "0 0 0.5rem", lineHeight: 1.1 }}>
-                GenLab:<br/>Experimental Lab
-              </h2>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.8rem", textTransform: "uppercase", letterSpacing: "1px", color: "var(--gray-600)", marginBottom: "2rem" }}>
-                {t("work_genlab_tags")}
-              </div>
-              <p style={{ color: "var(--gray-600)", fontFamily: "var(--font-body)", lineHeight: 1.6, marginBottom: "2rem" }}>
-                {t("work_genlab_desc")}
-              </p>
-              <AnimatedButton href="/work/genlab" variant="outline">{t("view_project")}</AnimatedButton>
-            </div>
-            <div style={{ padding: "40px", backgroundColor: "#FFDDEE", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "var(--r-lg)", border: "1px solid #111" }}>
-              <div style={{ position: "relative", width: "100%", border: "1px solid #111", backgroundColor: "#fff", boxShadow: "0 15px 35px rgba(0,0,0,0.15)" }}>
-                <LiquidImage src="/img/genlab.png" alt="GenLab Project" fill={false} />
-              </div>
-            </div>
-          </div>
+export default function Work() {
+  const { t } = useT();
+  const projects = useProjects();
 
-          {/* Project Card: EBAT */}
-          <div style={{
-            backgroundColor: "#F0Fdf4",
-            borderRadius: "var(--r-xl)",
-            border: "var(--border)",
-            padding: "40px",
-            display: "grid",
-            gridTemplateColumns: "1fr 1.5fr",
-            gap: "60px",
-            alignItems: "center",
-            boxShadow: "0 20px 40px rgba(0,0,0,0.02)",
-            color: "var(--fg)"
-          }}>
-            <div>
-              <h2 style={{ fontFamily: "var(--font-head)", fontSize: "3rem", color: "var(--fg)", margin: "0 0 0.5rem", lineHeight: 1.1 }}>
-                {t("work_ebat_title").split("\n").map((line, i) => i === 0 ? <span key={i}>{line}<br/></span> : <span key={i}>{line}</span>)}
-              </h2>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.8rem", textTransform: "uppercase", letterSpacing: "1px", color: "var(--gray-600)", marginBottom: "2rem" }}>
-                {t("work_ebat_tags")}
-              </div>
-              <p style={{ color: "var(--gray-600)", fontFamily: "var(--font-body)", lineHeight: 1.6, marginBottom: "2rem" }}>
-                {t("work_ebat_desc")}
-              </p>
-              <AnimatedButton href="/work/ebat" variant="outline">{t("view_project")}</AnimatedButton>
-            </div>
-            <div style={{ padding: "40px", backgroundColor: "#dcfce7", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "var(--r-lg)", border: "1px solid #111" }}>
-              <div style={{ position: "relative", width: "100%", border: "1px solid #111", backgroundColor: "#fff", boxShadow: "0 15px 35px rgba(0,0,0,0.15)" }}>
-                <LiquidImage src="/img/ebat/manual-capa.jpg" alt="EBAT — Manual de Marca" fill={false} />
-              </div>
-            </div>
-          </div>
+  const getDesc = (href: string) => {
+    if (href.endsWith("isadora")) return t("work_isadora_desc");
+    if (href.endsWith("magazine")) return t("work_helvetica_desc");
+    if (href.endsWith("genlab")) return t("work_genlab_desc");
+    if (href.endsWith("ebat")) return t("work_ebat_desc");
+    if (href.endsWith("graduation")) return t("grad_desc_2");
+    if (href.endsWith("pilotis")) return t("pilotis_desc_2");
+    if (href.endsWith("chinario")) return t("chinario_desc_1");
+    return "";
+  };
 
-        </section>
+  const localStyles = `
+    .wk-page {
+      --ink: #F2F1EC;
+      --paper: #0E0E0E;
+      --acid: #C8F52E;
+      --font-grotesk: Arial, "Helvetica Neue", Helvetica, sans-serif;
+      background:
+        radial-gradient(1100px 700px at 18% -5%, #23103d 0%, transparent 60%),
+        radial-gradient(900px 600px at 100% 30%, #0d2036 0%, transparent 55%),
+        radial-gradient(1000px 800px at 50% 105%, #1a0f2e 0%, transparent 55%),
+        var(--paper);
+      color: var(--ink);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+    .wk-page::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 5;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      opacity: .12;
+      mix-blend-mode: overlay;
+    }
+    .wk-corner {
+      position: fixed; top: 1rem; z-index: 1000;
+      font-family: var(--font-mono);
+      font-size: .7rem; text-transform: lowercase; letter-spacing: .14em;
+      color: var(--ink);
+    }
+    .wk-corner--l { left: 1.4rem; }
+    .wk-corner--r { right: 1.4rem; display: flex; align-items: center; gap: .8rem; }
+    .wk-back-btn {
+      font-family: var(--font-mono);
+      font-size: .68rem;
+      text-transform: lowercase;
+      letter-spacing: .08em;
+      background: #000000;
+      color: #ffffff;
+      border: 1.5px solid var(--acid, #C8F52E);
+      padding: 0.35rem 0.7rem;
+      text-decoration: none;
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+    .wk-back-btn:hover {
+      background: var(--acid, #C8F52E);
+      color: #000000;
+    }
+  `;
+
+  return (
+    <div className="wk-page">
+      <style>{localStyles}</style>
+
+      {/* Navigation corners */}
+      <span className="wk-corner wk-corner--l">
+        mary l. ✳
+      </span>
+      <span className="wk-corner wk-corner--r">
+        <a href="/" className="wk-back-btn hover-trigger">
+          [ {t("pj_home").toLowerCase()} ]
+        </a>
+        <LangToggle />
+      </span>
+
+      <main style={{ padding: "8rem 2rem 4rem", maxWidth: "1100px", margin: "0 auto", position: "relative", zIndex: 10 }}>
+        {/* Title row */}
+        <div
+          style={{
+            fontFamily: "var(--font-mono), monospace",
+            fontSize: "0.7rem",
+            textTransform: "uppercase",
+            letterSpacing: "0.16em",
+            display: "flex",
+            justifyContent: "space-between",
+            paddingBottom: "0.9rem",
+            marginBottom: "4rem",
+            backgroundImage: "repeating-linear-gradient(90deg, var(--ink) 0 6px, transparent 6px 12px)",
+            backgroundSize: "100% 2px",
+            backgroundPosition: "bottom left",
+            backgroundRepeat: "no-repeat",
+          }}
+        >
+          <span>{t("work_page_title")}</span>
+          <span>{projects.length.toString().padStart(2, "0")} —</span>
+        </div>
+
+        {/* Vertical list of projects with full image pixel disintegration */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+          {projects.map((proj) => (
+            <ProjectCard
+              key={proj.href}
+              num={proj.num}
+              title={proj.title}
+              tags={proj.tags}
+              href={proj.href}
+              img={proj.img}
+              desc={getDesc(proj.href)}
+            />
+          ))}
+        </div>
       </main>
 
       <div id="contact">
-        <GiantFooter />
+        <EditorialFooter />
       </div>
-
-      <style jsx>{`
-        @media (max-width: 900px) {
-          section > div {
-            grid-template-columns: 1fr !important;
-          }
-        }
-      `}</style>
-    </>
+    </div>
   );
 }

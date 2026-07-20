@@ -233,49 +233,6 @@ export default function Home() {
       <span className="rm-corner rm-corner--l">mary l. ✳</span>
       <span className="rm-corner rm-corner--r"><LangToggle /></span>
 
-      {/* Lombadas de Revista (Magazine Spines) nas Bordas da Tela */}
-      <div
-        className="hidden lg:block"
-        style={{
-          position: "absolute",
-          left: "1.5rem",
-          top: "140vh",
-          transform: "rotate(-90deg)",
-          transformOrigin: "left top",
-          fontFamily: "var(--font-mono), monospace",
-          fontSize: "0.65rem",
-          textTransform: "lowercase",
-          letterSpacing: "0.22em",
-          color: "rgba(242,241,236,0.18)",
-          pointerEvents: "none",
-          whiteSpace: "nowrap",
-          zIndex: 10,
-        }}
-      >
-        surveillance & code // interactive visual systems
-      </div>
-
-      <div
-        className="hidden lg:block"
-        style={{
-          position: "absolute",
-          right: "1.5rem",
-          top: "220vh",
-          transform: "rotate(90deg)",
-          transformOrigin: "right top",
-          fontFamily: "var(--font-mono), monospace",
-          fontSize: "0.65rem",
-          textTransform: "lowercase",
-          letterSpacing: "0.22em",
-          color: "rgba(242,241,236,0.18)",
-          pointerEvents: "none",
-          whiteSpace: "nowrap",
-          zIndex: 10,
-        }}
-      >
-        art & tech research zine // edition 2026
-      </div>
-
       <main>
         <PlaygroundHero
           lines={[t("hero_title_1"), t("hero_title_highlight")]}
@@ -357,8 +314,6 @@ export default function Home() {
             </div>
           </div>
         </section>
-
-        <HorizontalTimeline />
       </main>
 
       <div id="contact">
