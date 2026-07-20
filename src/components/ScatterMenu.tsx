@@ -74,14 +74,19 @@ const styles = `
     .sm__cluster {
       flex-direction: row;
       align-items: center;
-      left: .75rem;
-      right: 4.8rem;
+      left: .6rem;
+      right: 4.6rem;
       bottom: 1rem;
-      gap: .35rem;
-      flex-wrap: wrap;
+      gap: .28rem;
+      /* uma linha só: quebrando em duas ele tapava a legenda dos projetos */
+      flex-wrap: nowrap;
       justify-content: flex-start;
     }
-    .sm__cluster .sm__tag { font-size: .62rem; padding: .32rem .5rem; }
+    .sm__cluster .sm__tag {
+      font-size: .56rem;
+      padding: .3rem .42rem;
+      letter-spacing: .04em;
+    }
   }
 `;
 
