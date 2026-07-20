@@ -22,7 +22,7 @@ export default function MacWindow({
     <div
       style={{
         background: "#161616",
-        border: "1px solid rgba(242,241,236,.25)",
+        border: "1px solid rgba(242,241,236,.22)",
         clipPath: PIXEL_CLIP,
         transform: rotate ? `rotate(${rotate}deg)` : undefined,
         ...style,

@@ -1,6 +1,21 @@
 @import "tailwindcss";
 
 /* ==========================================
+   PALETA DO SITE — trocar AQUI muda o site todo
+   ========================================== */
+:root {
+    --site-paper:  #EDE7DA;  /* bege quente, levemente acinzentado */
+    --site-ink:    #1C1B18;  /* cinza bem escuro (não é preto puro) */
+    --site-accent: #E4462A;  /* tomate/vermelhão — o destaque */
+    --site-accent-rgb: 228, 70, 42;
+    /* tintas quentes de fundo (antes eram roxo/azul) */
+    --site-tint-a: #F6F1E6;
+    --site-tint-b: #E6DCCB;
+    --site-tint-c: #F1E7D6;
+}
+
+
+/* ==========================================
    RESET & DESIGN TOKENS (Aura Meeko)
    ========================================== */
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }

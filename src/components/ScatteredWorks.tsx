@@ -78,9 +78,9 @@ const styles = `
     .sw__bg { animation: none; }
   }
   .sw__frame {
-    border: 1px solid rgba(242,241,236,.35);
+    border: 1px solid rgba(28,27,24,.35);
     overflow: hidden;
-    background: #000;
+    background: var(--site-tint-b);
     clip-path: polygon(0 8px, 8px 8px, 8px 0, calc(100% - 8px) 0, calc(100% - 8px) 8px, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 8px calc(100% - 8px), 0 calc(100% - 8px));
     transition: border-color .3s ease;
   }
@@ -97,9 +97,9 @@ const styles = `
     transition: color .3s ease;
   }
   .sw__item:hover .sw__cap { color: var(--acid); }
-  /* a pixel so aparece onde NUNCA ha acento (ela nao tem glifo acentuado):
-     numeros da colagem. Rotulos com texto usam a sans. */
-  .sw__num { opacity: .55; font-family: var(--font-pixel); font-size: 1.05em; }
+  /* PixelPoiiz NAO e usada: alem de nao ter acentos, o zero dela e desenhado
+     parecendo um simbolo (01 saia como "@1"). Fica carregada mas sem uso. */
+  .sw__num { opacity: .55; }
 
   @media (max-width: 860px) {
     /* no mobile a colagem vira coluna — legível e sem sobreposição */

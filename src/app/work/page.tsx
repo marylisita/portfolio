@@ -41,8 +41,8 @@ function PixelOverlay({ active }: { active: boolean }) {
             ease: "easeInOut",
           }}
           style={{
-            backgroundColor: "#0E0E0E", // match dark page background
-            border: "0.5px solid #0E0E0E",
+            backgroundColor: "var(--site-paper)", // acompanha o fundo da pagina
+            border: "0.5px solid var(--site-paper)",
             width: "100%",
             height: "100%",
           }}
@@ -93,7 +93,7 @@ function ProjectCard({ num, title, tags, href, img, desc }: ProjectCardProps) {
           style={{
             fontFamily: "var(--font-mono), monospace",
             fontSize: "0.8rem",
-            color: "var(--acid, #C8F52E)",
+            color: "var(--acid, #E4462A)",
             fontWeight: 700,
           }}
         >
@@ -149,8 +149,8 @@ function ProjectCard({ num, title, tags, href, img, desc }: ProjectCardProps) {
           width: "100%",
           height: "clamp(240px, 45vh, 480px)",
           overflow: "hidden",
-          border: "3px solid var(--ink, #F2F1EC)",
-          backgroundColor: "#000",
+          border: "3px solid var(--ink, #1C1B18)",
+          backgroundColor: "var(--site-tint-b)",
         }}
       >
         {/* Pixel Disintegration Cover */}
@@ -180,14 +180,14 @@ function ProjectCard({ num, title, tags, href, img, desc }: ProjectCardProps) {
             letterSpacing: "0.08em",
             background: "#000000",
             color: "#ffffff",
-            border: "1.5px solid var(--acid, #C8F52E)",
+            border: "1.5px solid var(--acid, #E4462A)",
             padding: "0.5rem 1rem",
             textDecoration: "none",
             cursor: "pointer",
             transition: "background 0.25s ease, color 0.25s ease, border-color 0.25s ease",
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = "var(--acid, #C8F52E)";
+            e.currentTarget.style.backgroundColor = "var(--acid, #E4462A)";
             e.currentTarget.style.color = "#000000";
           }}
           onMouseLeave={(e) => {
@@ -219,14 +219,14 @@ export default function Work() {
 
   const localStyles = `
     .wk-page {
-      --ink: #F2F1EC;
-      --paper: #0E0E0E;
-      --acid: #C8F52E;
+      --ink: var(--site-ink);
+      --paper: var(--site-paper);
+      --acid: var(--site-accent);
       --font-grotesk: Arial, "Helvetica Neue", Helvetica, sans-serif;
       background:
-        radial-gradient(1100px 700px at 18% -5%, #23103d 0%, transparent 60%),
-        radial-gradient(900px 600px at 100% 30%, #0d2036 0%, transparent 55%),
-        radial-gradient(1000px 800px at 50% 105%, #1a0f2e 0%, transparent 55%),
+        radial-gradient(1100px 700px at 18% -5%, var(--site-tint-a) 0%, transparent 60%),
+      radial-gradient(900px 600px at 100% 30%, var(--site-tint-b) 0%, transparent 55%),
+      radial-gradient(1000px 800px at 50% 105%, var(--site-tint-c) 0%, transparent 55%),
         var(--paper);
       color: var(--ink);
       min-height: 100vh;
@@ -240,8 +240,8 @@ export default function Work() {
       z-index: 5;
       pointer-events: none;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-      opacity: .12;
-      mix-blend-mode: overlay;
+      opacity: .07;
+      mix-blend-mode: multiply;
     }
     .wk-corner {
       position: fixed; top: 1rem; z-index: 1000;
@@ -258,13 +258,13 @@ export default function Work() {
       letter-spacing: .08em;
       background: #000000;
       color: #ffffff;
-      border: 1.5px solid var(--acid, #C8F52E);
+      border: 1.5px solid var(--acid, #E4462A);
       padding: 0.35rem 0.7rem;
       text-decoration: none;
       transition: background 0.25s ease, color 0.25s ease;
     }
     .wk-back-btn:hover {
-      background: var(--acid, #C8F52E);
+      background: var(--acid, #E4462A);
       color: #000000;
     }
   `;

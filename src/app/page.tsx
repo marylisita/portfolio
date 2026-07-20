@@ -21,15 +21,15 @@ import HorizontalTimeline from "@/components/HorizontalTimeline";
 const rmStyles = `
   .rm {
     /* invertido: mundo escuro, lime elétrico (refs: t-ko, barbiana, tiny) */
-    --ink: #F2F1EC;
-    --paper: #0E0E0E;
-    --acid: #C8F52E;
+    --ink: var(--site-ink);
+    --paper: var(--site-paper);
+    --acid: var(--site-accent);
     --font-grotesk: Arial, "Helvetica Neue", Helvetica, sans-serif;
     /* degradê profundo: roxo/azul da id EBAT respirando por baixo do preto */
     background:
-      radial-gradient(1100px 700px at 18% -5%, #23103d 0%, transparent 60%),
-      radial-gradient(900px 600px at 100% 30%, #0d2036 0%, transparent 55%),
-      radial-gradient(1000px 800px at 50% 105%, #1a0f2e 0%, transparent 55%),
+      radial-gradient(1100px 700px at 18% -5%, var(--site-tint-a) 0%, transparent 60%),
+      radial-gradient(900px 600px at 100% 30%, var(--site-tint-b) 0%, transparent 55%),
+      radial-gradient(1000px 800px at 50% 105%, var(--site-tint-c) 0%, transparent 55%),
       var(--paper);
     color: var(--ink);
     overflow-x: hidden;
@@ -43,8 +43,8 @@ const rmStyles = `
     z-index: 5;
     pointer-events: none;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    opacity: .12;
-    mix-blend-mode: overlay;
+    opacity: .07;
+    mix-blend-mode: multiply;
   }
   .rm ::selection { background: var(--acid); color: #111; }
   .px-line {

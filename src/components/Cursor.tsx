@@ -263,7 +263,7 @@ export default function Cursor() {
             <motion.path
               d="M 6 10 L 2 4 L 8 6"
               fill="#000000"
-              stroke="var(--acid, #C8F52E)"
+              stroke="var(--acid, #E4462A)"
               strokeWidth="0.8"
               initial={{ opacity: 0, scale: 0 }}
               animate={{
@@ -276,7 +276,7 @@ export default function Cursor() {
             <motion.path
               d="M 14 6 L 12 0 L 17 4"
               fill="#000000"
-              stroke="var(--acid, #C8F52E)"
+              stroke="var(--acid, #E4462A)"
               strokeWidth="0.8"
               initial={{ opacity: 0, scale: 0 }}
               animate={{
@@ -288,7 +288,7 @@ export default function Cursor() {
             <motion.path
               d="M 22 8 L 24 1 L 26 7"
               fill="#000000"
-              stroke="var(--acid, #C8F52E)"
+              stroke="var(--acid, #E4462A)"
               strokeWidth="0.8"
               initial={{ opacity: 0, scale: 0 }}
               animate={{
@@ -316,8 +316,8 @@ export default function Cursor() {
                 fontSize: "0.65rem",
                 letterSpacing: "0.08em",
                 background: "#000000",
-                color: "var(--acid, #C8F52E)",
-                border: "1.5px solid var(--acid, #C8F52E)",
+                color: "var(--acid, #E4462A)",
+                border: "1.5px solid var(--acid, #E4462A)",
                 padding: "2px 6px",
                 whiteSpace: "nowrap",
                 zIndex: 10001,

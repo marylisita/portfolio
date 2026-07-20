@@ -130,7 +130,7 @@ function TimelineCard({ item, index }: { item: Milestone; index: number }) {
         flexDirection: "column",
         gap: "1.2rem",
         height: "440px",
-        boxShadow: "8px 8px 0px var(--acid, #C8F52E)",
+        boxShadow: "8px 8px 0px var(--acid, #E4462A)",
         top: 0,
         left: 0,
         transition: "top 0.15s ease, left 0.15s ease, box-shadow 0.15s ease",
@@ -138,7 +138,7 @@ function TimelineCard({ item, index }: { item: Milestone; index: number }) {
       whileHover={{
         top: 8,
         left: 8,
-        boxShadow: "0px 0px 0px var(--acid, #C8F52E)",
+        boxShadow: "0px 0px 0px var(--acid, #E4462A)",
       }}
     >
       {/* Pixel disintegration cover */}
@@ -149,7 +149,7 @@ function TimelineCard({ item, index }: { item: Milestone; index: number }) {
           style={{
             fontFamily: "var(--font-mono), monospace",
             fontSize: "0.74rem",
-            color: "var(--acid, #C8F52E)",
+            color: "var(--acid, #E4462A)",
             letterSpacing: "0.1em",
             fontWeight: 700,
           }}
@@ -178,7 +178,7 @@ function TimelineCard({ item, index }: { item: Milestone; index: number }) {
           margin: "0.5rem auto",
           padding: "0.6rem",
           background: "#111111",
-          border: "1px dashed rgba(242,241,236,0.3)",
+          border: "1px dashed rgba(28,27,24,0.3)",
           width: "100%",
           textAlign: "center",
           whiteSpace: "pre-wrap",

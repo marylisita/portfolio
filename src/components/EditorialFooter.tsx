@@ -72,8 +72,8 @@ const styles = `
     text-transform: lowercase;
   }
   .ef__num, .ef__arrow {
-    font-family: var(--font-pixel); font-size: .95rem;
-    text-transform: lowercase; letter-spacing: .04em;
+    font-family: var(--font-body); font-size: .8rem;
+    text-transform: lowercase; letter-spacing: .08em;
   }
   .ef__bottom {
     display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem;

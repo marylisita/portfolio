@@ -35,7 +35,7 @@ export default function MagazineProject() {
             color: "var(--ink)",
             lineHeight: 1.7,
             padding: "20px",
-            border: "1px dashed rgba(242,241,236,.4)",
+            border: "1px dashed rgba(28,27,24,.4)",
             maxWidth: "760px",
           }}
         >
@@ -61,7 +61,7 @@ export default function MagazineProject() {
             whileInView={{ opacity: 1, rotate: 0, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 1, type: "spring", stiffness: 50 }}
-            style={{ width: "84%", margin: "0 auto", border: "1px solid rgba(242,241,236,.3)", backgroundColor: "#fff", display: "flex", boxShadow: "26px 26px 0 rgba(200,245,46,.12)" }}
+            style={{ width: "84%", margin: "0 auto", border: "1px solid rgba(28,27,24,.3)", backgroundColor: "#fff", display: "flex", boxShadow: "26px 26px 0 rgba(var(--site-accent-rgb),.12)" }}
           >
             <LiquidImage src="/img/helvetica/1.png" alt="Cover Spread" fill={false} />
           </motion.div>
@@ -95,7 +95,7 @@ export default function MagazineProject() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            style={{ border: "1px solid rgba(242,241,236,.3)", backgroundColor: "#fff", boxShadow: "-15px 15px 0 #FF3300", display: "flex", transform: "rotate(-1deg)" }}
+            style={{ border: "1px solid rgba(28,27,24,.3)", backgroundColor: "#fff", boxShadow: "-15px 15px 0 #FF3300", display: "flex", transform: "rotate(-1deg)" }}
           >
             <LiquidImage src="/img/helvetica/2.png" alt="Spread 2" fill={false} />
           </motion.div>
@@ -104,7 +104,7 @@ export default function MagazineProject() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            style={{ border: "1px solid rgba(242,241,236,.3)", backgroundColor: "#fff", boxShadow: "15px 15px 0 var(--acid)", display: "flex", marginTop: "80px", transform: "rotate(2deg)" }}
+            style={{ border: "1px solid rgba(28,27,24,.3)", backgroundColor: "#fff", boxShadow: "15px 15px 0 var(--acid)", display: "flex", marginTop: "80px", transform: "rotate(2deg)" }}
           >
             <LiquidImage src="/img/helvetica/3.png" alt="Spread 3" fill={false} />
           </motion.div>
@@ -115,7 +115,7 @@ export default function MagazineProject() {
           whileInView={{ opacity: 1, scale: 1, filter: "grayscale(0%)" }}
           viewport={{ once: true }}
           transition={{ duration: 1.2 }}
-          style={{ width: "100%", border: "1px solid rgba(242,241,236,.3)", backgroundColor: "#fff", display: "flex" }}
+          style={{ width: "100%", border: "1px solid rgba(28,27,24,.3)", backgroundColor: "#fff", display: "flex" }}
         >
           <LiquidImage src="/img/helvetica/4.png" alt="Spread 4" fill={false} />
         </motion.div>
@@ -128,7 +128,7 @@ export default function MagazineProject() {
               whileInView={{ opacity: 1, y: 0, rotate: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: i * 0.15 }}
-              style={{ border: "1px solid rgba(242,241,236,.3)", backgroundColor: "#fff", display: "flex", boxShadow: "8px 8px 0 rgba(200,245,46,.18)" }}
+              style={{ border: "1px solid rgba(28,27,24,.3)", backgroundColor: "#fff", display: "flex", boxShadow: "8px 8px 0 rgba(var(--site-accent-rgb),.18)" }}
             >
               <LiquidImage src={`/img/helvetica/${img}`} alt={`Spread ${i + 5}`} fill={false} />
             </motion.div>
@@ -141,7 +141,7 @@ export default function MagazineProject() {
             whileInView={{ opacity: 1, x: 0, rotate: -4 }}
             viewport={{ once: true }}
             transition={{ duration: 1 }}
-            style={{ width: "82%", maxWidth: "900px", border: "1px solid rgba(242,241,236,.3)", backgroundColor: "#fff", display: "flex", boxShadow: "0 20px 40px rgba(0,0,0,.5)" }}
+            style={{ width: "82%", maxWidth: "900px", border: "1px solid rgba(28,27,24,.3)", backgroundColor: "#fff", display: "flex", boxShadow: "0 20px 40px rgba(28,27,24,.16)" }}
           >
             <LiquidImage src="/img/helvetica/8.png" alt="Spread 8" fill={false} />
           </motion.div>
@@ -150,7 +150,7 @@ export default function MagazineProject() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 1, delay: 0.2 }}
-            style={{ width: "88%", maxWidth: "1000px", border: "1px solid rgba(242,241,236,.3)", backgroundColor: "#fff", display: "flex", boxShadow: "0 20px 40px rgba(0,0,0,.5)" }}
+            style={{ width: "88%", maxWidth: "1000px", border: "1px solid rgba(28,27,24,.3)", backgroundColor: "#fff", display: "flex", boxShadow: "0 20px 40px rgba(28,27,24,.16)" }}
           >
             <LiquidImage src="/img/helvetica/9.jpg" alt="Spread 9" fill={false} />
           </motion.div>
@@ -159,7 +159,7 @@ export default function MagazineProject() {
             whileInView={{ opacity: 1, x: 0, rotate: 5 }}
             viewport={{ once: true }}
             transition={{ duration: 1, delay: 0.4 }}
-            style={{ width: "78%", maxWidth: "800px", border: "1px solid rgba(242,241,236,.3)", backgroundColor: "#fff", display: "flex", boxShadow: "0 20px 40px rgba(0,0,0,.6)" }}
+            style={{ width: "78%", maxWidth: "800px", border: "1px solid rgba(28,27,24,.3)", backgroundColor: "#fff", display: "flex", boxShadow: "0 20px 40px rgba(28,27,24,.20)" }}
           >
             <LiquidImage src="/img/helvetica/10.jpg" alt="Spread 10" fill={false} />
           </motion.div>
