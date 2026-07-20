@@ -108,6 +108,17 @@ const dictionaries = {
     about_cat_creative: "Tecnologia Criativa",
     about_tool_gen_ai: "IA Generativa",
 
+    // Trajectory Timeline
+    trajectory_title: "trajetória / zine",
+    nano_title: "pesquisa acadêmica em arte & tecnologia",
+    nano_desc: "UFRJ, Núcleo de Arte e Novos Organismos. Investigando a fusão entre corpos físicos, arte interativa e instalações imersivas.",
+    laid_title: "design de interação & interfaces",
+    laid_desc: "UFRJ, Laboratório de Arte, Imagem e Design. Criando pontes visuais onde a rigidez técnica encontra a estética contemporânea.",
+    academy_title: "desenvolvimento ios & design ux/ui",
+    academy_desc: "PUC-Rio, Instituto ECOA. Protótipos de alta fidelidade, branding, pesquisa de ecossistema, design de interfaces e design de comunicação.",
+    kuronami_title: "novas mídias & estética de vigilância",
+    kuronami_desc: "Marca pessoal de criação artística. Desenvolvimento criativo, modelagem 3D (Blender), inteligência artificial generativa e arte digital.",
+
     // Capabilities
     cap_title: "Minhas Capacidades",
     cap_sub: "Equilibrando estética experimental e usabilidade refinada para criar marcas e experiências digitais memoráveis.",
@@ -328,6 +339,17 @@ const dictionaries = {
     about_cat_web: "Web & Code",
     about_cat_creative: "Creative Technology",
     about_tool_gen_ai: "Generative AI",
+
+    // Trajectory Timeline
+    trajectory_title: "trajectory / zine",
+    nano_title: "academic research in art & technology",
+    nano_desc: "UFRJ, Nucleus of Art and New Organisms. Investigating the fusion between physical bodies, interactive art, and immersive installations.",
+    laid_title: "interaction design & interfaces",
+    laid_desc: "UFRJ, Art, Image, and Design Laboratory. Creating visual bridges where technical rigor meets contemporary aesthetics.",
+    academy_title: "ios development & ux/ui design",
+    academy_desc: "PUC-Rio, ECOA Institute. High-fidelity prototypes, branding, ecosystem research, interface design, and communication design.",
+    kuronami_title: "new media & surveillance aesthetics",
+    kuronami_desc: "Personal brand for artistic creation. Creative development, 3D modeling (Blender), generative artificial intelligence, and digital art.",
 
     // Capabilities
     cap_title: "My Capabilities",

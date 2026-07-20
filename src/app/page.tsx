@@ -9,6 +9,7 @@ import { GATO_FRAMES, GAROTA_FRAMES, GATO_PRETO_FRAMES } from "@/components/asci
 import EditorialFooter from "@/components/EditorialFooter";
 import LangToggle from "@/components/LangToggle";
 import { useT } from "@/i18n/LanguageContext";
+import HorizontalTimeline from "@/components/HorizontalTimeline";
 
 /* ==========================================================
    Landing — direção de arte editorial ("reset visual").
@@ -114,6 +115,40 @@ const rmStyles = `
     .rm-sec { padding: 4rem 1.25rem; }
     .rm-label { margin-bottom: 2rem; }
   }
+
+  /* --- cards brutas (Readymag / Brutalist style) --- */
+  .rm .hero-card {
+    background: #000000 !important;
+    color: var(--ink) !important;
+    border: 3px solid var(--ink) !important;
+    border-radius: 0px !important;
+    box-shadow: 8px 8px 0px var(--acid) !important;
+    position: relative;
+    top: 0;
+    left: 0;
+    transition: top 0.15s ease, left 0.15s ease, box-shadow 0.15s ease !important;
+  }
+  .rm .hero-card:hover {
+    top: 8px !important;
+    left: 8px !important;
+    box-shadow: 0px 0px 0px var(--acid) !important;
+  }
+  .rm .hero-card__icon {
+    border-radius: 0px !important;
+    border: 2px solid var(--ink) !important;
+    background: #111 !important;
+    color: var(--acid) !important;
+  }
+  .rm .hero-card__icon svg {
+    stroke: var(--ink) !important;
+  }
+  .rm .hero-card__desc {
+    color: var(--ink) !important;
+    opacity: 0.85;
+  }
+  .rm .hero-card__arrow {
+    display: none !important;
+  }
 `;
 
 export default function Home() {
@@ -198,6 +233,49 @@ export default function Home() {
       <span className="rm-corner rm-corner--l">mary l. ✳</span>
       <span className="rm-corner rm-corner--r"><LangToggle /></span>
 
+      {/* Lombadas de Revista (Magazine Spines) nas Bordas da Tela */}
+      <div
+        className="hidden lg:block"
+        style={{
+          position: "absolute",
+          left: "1.5rem",
+          top: "140vh",
+          transform: "rotate(-90deg)",
+          transformOrigin: "left top",
+          fontFamily: "var(--font-mono), monospace",
+          fontSize: "0.65rem",
+          textTransform: "lowercase",
+          letterSpacing: "0.22em",
+          color: "rgba(242,241,236,0.18)",
+          pointerEvents: "none",
+          whiteSpace: "nowrap",
+          zIndex: 10,
+        }}
+      >
+        surveillance & code // interactive visual systems
+      </div>
+
+      <div
+        className="hidden lg:block"
+        style={{
+          position: "absolute",
+          right: "1.5rem",
+          top: "220vh",
+          transform: "rotate(90deg)",
+          transformOrigin: "right top",
+          fontFamily: "var(--font-mono), monospace",
+          fontSize: "0.65rem",
+          textTransform: "lowercase",
+          letterSpacing: "0.22em",
+          color: "rgba(242,241,236,0.18)",
+          pointerEvents: "none",
+          whiteSpace: "nowrap",
+          zIndex: 10,
+        }}
+      >
+        art & tech research zine // edition 2026
+      </div>
+
       <main>
         <PlaygroundHero
           lines={[t("hero_title_1"), t("hero_title_highlight")]}
@@ -279,6 +357,8 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        <HorizontalTimeline />
       </main>
 
       <div id="contact">

@@ -91,6 +91,7 @@ export default function EditorialIndex({ items }: { items: IndexItem[] }) {
             key={item.href}
             href={item.href}
             className="ei-row hover-trigger"
+            data-cursor-label={`[ cctv: ${item.href.split("/").pop()} ]`}
             onMouseEnter={(e) => {
               // Posiciona a imagem já sob o cursor antes de aparecer, evitando o "voo" inicial.
               mx.jump(e.clientX - PREVIEW_W / 2);
