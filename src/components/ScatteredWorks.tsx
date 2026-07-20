@@ -13,24 +13,27 @@ import type { IndexItem } from "./EditorialIndex";
  * scroll NATIVO (ela odeia scroll travado). No mobile vira coluna simples.
  */
 
-// Posições à mão pra dar ritmo de colagem (não é grid). Regra que aprendi
-// vendo o print: peças verticalmente próximas NÃO podem dividir faixa de X,
-// senão a legenda de uma cai por cima da outra.
+// Posições à mão pra dar ritmo de colagem (não é grid). Duas regras:
+// 1. `ratio` = proporção REAL do arquivo (altura/largura) — nada de recorte
+//    forçado; é o que dá variedade natural (o banner do Pilotis é 0.32, o
+//    GenLab é 2:1). Se trocar uma capa, medir a imagem e atualizar aqui.
+// 2. peças próximas na vertical NÃO podem dividir faixa de X, senão a legenda
+//    de uma cai em cima da outra (aprendido vendo o print).
 const SPOTS = [
-  { left: "3%",  top: "0vh",   w: "clamp(200px, 24vw, 340px)", ratio: 1.25, rot: -2 },
-  { left: "60%", top: "8vh",   w: "clamp(170px, 20vw, 280px)", ratio: 1.4,  rot: 3 },
-  { left: "30%", top: "56vh",  w: "clamp(220px, 28vw, 400px)", ratio: 0.62, rot: 1 },
-  { left: "72%", top: "82vh",  w: "clamp(150px, 17vw, 250px)", ratio: 1.15, rot: -4 },
-  { left: "4%",  top: "116vh", w: "clamp(180px, 22vw, 320px)", ratio: 0.75, rot: 2 },
-  { left: "45%", top: "146vh", w: "clamp(210px, 26vw, 380px)", ratio: 1.1,  rot: -1 },
-  { left: "9%",  top: "194vh", w: "clamp(190px, 23vw, 340px)", ratio: 0.7,  rot: 4 },
+  { left: "4%",  top: "0vh",   w: "clamp(220px, 30vw, 460px)", ratio: 0.562, rot: -2 }, // isadora 1920x1080
+  { left: "62%", top: "14vh",  w: "clamp(180px, 22vw, 320px)", ratio: 0.667, rot: 3 },  // helvetica 948x632
+  { left: "22%", top: "44vh",  w: "clamp(240px, 34vw, 520px)", ratio: 0.498, rot: 1 },  // genlab 1743x868
+  { left: "68%", top: "68vh",  w: "clamp(170px, 21vw, 300px)", ratio: 0.562, rot: -4 }, // ebat 2400x1350
+  { left: "5%",  top: "92vh",  w: "clamp(200px, 26vw, 380px)", ratio: 0.643, rot: 2 },  // graduation 1401x901
+  { left: "40%", top: "122vh", w: "clamp(260px, 38vw, 560px)", ratio: 0.319, rot: -1 }, // pilotis 1600x511
+  { left: "10%", top: "152vh", w: "clamp(190px, 24vw, 350px)", ratio: 0.667, rot: 4 },  // chinario 1600x1068
 ];
 
 const styles = `
   .sw {
     position: relative;
-    /* altura do canvas: última peça (194vh) + sua altura + legenda */
-    height: 236vh;
+    /* altura do canvas: última peça (152vh) + sua altura + legenda */
+    height: 190vh;
     margin: 0 auto;
     max-width: 1500px;
   }
@@ -80,7 +83,7 @@ export default function ScatteredWorks({ items }: { items: IndexItem[] }) {
               whileInView={{ opacity: 1, y: 0, rotate: s.rot }}
               viewport={{ once: true, margin: "-40px" }}
               transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-              whileHover={{ scale: 1.03, rotate: 0 }}
+              whileHover={{ scale: 1.02, rotate: 0 }}
             >
               <Link href={item.href} className="sw__item hover-trigger" style={{ position: "static", display: "block" }}>
                 <div className="sw__frame" style={{ aspectRatio: String(1 / s.ratio) }}>

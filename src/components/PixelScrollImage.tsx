@@ -2,29 +2,39 @@
 import { useEffect, useRef } from "react";
 
 /**
- * Imagem que NASCE NÍTIDA e vai se desfazendo em pixels conforme sobe na tela
- * (referência: barbianaliu.com — pedido dela: "começa nítida e depois os pixels
- * vão se formando").
+ * A imagem é DESCOBERTA em pixels conforme o scroll desce: os blocos vão
+ * aparecendo aos poucos (cada um com seu limiar) até montar a foto, e no
+ * fim o mosaico afina até a imagem nítida. Pedido dela:
+ * "ir aparecendo um projeto enquanto o scroll desce, tipo descobrindo ele em pixels".
  *
- * Mapeamento: enquanto o elemento está abaixo do centro da viewport → nítido.
- * Depois que passa do centro rumo ao topo → o mosaico cresce progressivamente.
- * É puramente reativo ao scroll: nada trava, nada prende a página.
+ * No hover o mosaico volta a engrossar (a foto "se desmonta" em pixels).
+ * Tudo reativo ao scroll — nada prende ou trava a página.
  */
+
+// hash determinístico: mesmo bloco sempre com o mesmo limiar (não pisca a cada render)
+function thresholdOf(i: number) {
+  const x = Math.sin(i * 12.9898) * 43758.5453;
+  return x - Math.floor(x);
+}
+
+const COLS = 22;         // resolução da grade de descoberta (blocos na largura)
+const SHARP_COLS = 160;  // a partir daqui já vale desenhar a imagem real
+const REVEAL_END = 0.72; // até aqui os blocos aparecem; depois o mosaico afina
+
 export default function PixelScrollImage({
   src,
   alt = "",
-  maxBlock = 26,
   className,
   style,
 }: {
   src: string;
   alt?: string;
-  maxBlock?: number;
   className?: string;
   style?: React.CSSProperties;
 }) {
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const hoverRef = useRef(0);
 
   useEffect(() => {
     const wrap = wrapRef.current;
@@ -36,9 +46,9 @@ export default function PixelScrollImage({
     const img = new Image();
     img.src = src;
 
-    let lastBlock = -1;
-    let raf = 0;
     let ready = false;
+    let raf = 0;
+    let lastKey = "";
 
     const sizeCanvas = () => {
       const r = wrap.getBoundingClientRect();
@@ -46,18 +56,27 @@ export default function PixelScrollImage({
       const dpr = Math.min(2, window.devicePixelRatio || 1);
       canvas.width = Math.round(r.width * dpr);
       canvas.height = Math.round(r.height * dpr);
-      lastBlock = -1;
+      lastKey = "";
     };
 
-    const draw = (block: number) => {
-      if (!ready || !canvas.width) return;
-      const b = Math.max(1, Math.round(block));
-      if (b === lastBlock) return;
-      lastBlock = b;
+    // desenha a imagem inteira num tamanho reduzido e devolve esse mini-canvas
+    const off = document.createElement("canvas");
+    const offCtx = off.getContext("2d");
+
+    const draw = (p: number, hover: number) => {
+      if (!ready || !canvas.width || !offCtx) return;
+      // quantiza pra não redesenhar à toa
+      const key = `${Math.round(p * 40)}|${Math.round(hover * 10)}`;
+      if (key === lastKey) return;
+      lastKey = key;
 
       const W = canvas.width;
       const H = canvas.height;
-      // recorte proporcional (object-fit: cover)
+      const aspect = H / W;
+      const cols = COLS;
+      const rows = Math.max(1, Math.round(cols * aspect));
+
+      // recorte proporcional (cover)
       const scale = Math.max(W / img.naturalWidth, H / img.naturalHeight);
       const sw = W / scale;
       const sh = H / scale;
@@ -65,54 +84,102 @@ export default function PixelScrollImage({
       const sy = (img.naturalHeight - sh) / 2;
 
       ctx.clearRect(0, 0, W, H);
-      if (b <= 1) {
+
+      const revealP = Math.min(1, p / REVEAL_END);
+      const sharpP = Math.max(0, (p - REVEAL_END) / (1 - REVEAL_END));
+
+      // `coarse` = QUANTOS blocos cabem na largura. Mais blocos = mais nítido.
+      // Descoberta: fica em COLS. Depois vai subindo até resolver na imagem real.
+      const coarseBase = revealP < 1 ? cols : cols + (SHARP_COLS - cols) * sharpP;
+      // hover derruba o número de blocos → a foto se desmonta em pixels
+      const coarse = Math.max(4, Math.round(coarseBase * (1 - hover * 0.78)));
+
+      if (revealP >= 1 && coarse >= SHARP_COLS * 0.9) {
         ctx.imageSmoothingEnabled = true;
         ctx.drawImage(img, sx, sy, sw, sh, 0, 0, W, H);
         return;
       }
-      const cw = Math.max(1, Math.round(W / b));
-      const ch = Math.max(1, Math.round(H / b));
-      ctx.imageSmoothingEnabled = true;
-      ctx.drawImage(img, sx, sy, sw, sh, 0, 0, cw, ch);
+
+      // versão reduzida da imagem (1 pixel por bloco do mosaico atual)
+      off.width = Math.max(1, coarse);
+      off.height = Math.max(1, Math.round(coarse * aspect));
+      offCtx.imageSmoothingEnabled = true;
+      offCtx.clearRect(0, 0, off.width, off.height);
+      offCtx.drawImage(img, sx, sy, sw, sh, 0, 0, off.width, off.height);
+
       ctx.imageSmoothingEnabled = false;
-      ctx.drawImage(canvas, 0, 0, cw, ch, 0, 0, W, H);
+      if (revealP >= 1) {
+        // todos os blocos já apareceram: desenha o mosaico inteiro
+        ctx.drawImage(off, 0, 0, off.width, off.height, 0, 0, W, H);
+        return;
+      }
+
+      // fase 1: descoberta — só os blocos cujo limiar já foi alcançado
+      const bw = W / cols;
+      const bh = H / rows;
+      const ow = off.width / cols;
+      const oh = off.height / rows;
+      for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
+          if (thresholdOf(y * cols + x) > revealP) continue;
+          ctx.drawImage(
+            off,
+            x * ow, y * oh, Math.max(1, ow), Math.max(1, oh),
+            Math.floor(x * bw), Math.floor(y * bh), Math.ceil(bw), Math.ceil(bh)
+          );
+        }
+      }
+    };
+
+    const progress = () => {
+      const r = wrap.getBoundingClientRect();
+      const vh = window.innerHeight;
+      // 0 quando o topo ainda está na borda de baixo; 1 quando subiu ~65% da tela
+      return Math.min(1, Math.max(0, (vh - r.top) / (vh * 0.65)));
     };
 
     const update = () => {
       raf = 0;
-      const r = wrap.getBoundingClientRect();
-      const vh = window.innerHeight;
-      const center = r.top + r.height / 2;
-      // 1 quando o centro do elemento está no meio da tela; 0 quando saiu por cima
-      const p = 1 - Math.min(1, Math.max(0, center / (vh * 0.5)));
-      draw(1 + p * (maxBlock - 1));
+      draw(progress(), hoverRef.current);
     };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
 
-    const onScroll = () => {
-      if (!raf) raf = requestAnimationFrame(update);
+    // hover: engrossa o mosaico com uma animaçãozinha
+    let hoverRaf = 0;
+    const animHover = (target: number) => {
+      cancelAnimationFrame(hoverRaf);
+      const step = () => {
+        const d = target - hoverRef.current;
+        hoverRef.current += d * 0.18;
+        if (Math.abs(d) < 0.01) hoverRef.current = target;
+        draw(progress(), hoverRef.current);
+        if (hoverRef.current !== target) hoverRaf = requestAnimationFrame(step);
+      };
+      hoverRaf = requestAnimationFrame(step);
     };
+    const onEnter = () => animHover(1);
+    const onLeave = () => animHover(0);
+    wrap.addEventListener("mouseenter", onEnter);
+    wrap.addEventListener("mouseleave", onLeave);
 
-    const start = () => {
-      ready = true;
-      sizeCanvas();
-      update();
-    };
-
+    const start = () => { ready = true; sizeCanvas(); update(); };
     if (img.complete && img.naturalWidth) start();
     else img.onload = start;
 
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", () => { sizeCanvas(); update(); });
     const ro = new ResizeObserver(() => { sizeCanvas(); update(); });
     ro.observe(wrap);
 
     return () => {
       window.removeEventListener("scroll", onScroll);
+      wrap.removeEventListener("mouseenter", onEnter);
+      wrap.removeEventListener("mouseleave", onLeave);
       ro.disconnect();
-      if (raf) cancelAnimationFrame(raf);
+      cancelAnimationFrame(raf);
+      cancelAnimationFrame(hoverRaf);
       img.onload = null;
     };
-  }, [src, maxBlock]);
+  }, [src]);
 
   return (
     <div ref={wrapRef} className={className} style={{ position: "relative", ...style }}>
