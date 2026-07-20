@@ -53,7 +53,8 @@ const styles = `
   .sm__cluster {
     position: fixed;
     right: 1.2rem;
-    bottom: 1.2rem;
+    /* acima do botão flutuante de voltar ao topo, que ficava por cima */
+    bottom: 5.5rem;
     z-index: 900;
     display: flex;
     flex-direction: column;
@@ -68,6 +69,19 @@ const styles = `
   }
   @media (max-width: 720px) {
     .sm__tag { font-size: .68rem; padding: .4rem .65rem; }
+    /* em tela estreita o molhinho vertical tapava as legendas dos projetos:
+       vira uma fita horizontal no rodapé, à esquerda do botão de topo */
+    .sm__cluster {
+      flex-direction: row;
+      align-items: center;
+      left: .75rem;
+      right: 4.8rem;
+      bottom: 1rem;
+      gap: .35rem;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+    }
+    .sm__cluster .sm__tag { font-size: .62rem; padding: .32rem .5rem; }
   }
 `;
 

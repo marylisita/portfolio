@@ -87,11 +87,13 @@ const styles = `
   .ph__title {
     font-family: var(--font-grotesk);
     font-weight: 700;
-    font-size: clamp(2.6rem, 11.5vw, 11rem);
-    line-height: .88;
+    /* limitado por ALTURA de viewport também: com 11.5vw puro o título
+       estourava a tela em 1440x900 e cortava a última linha */
+    font-size: clamp(2.2rem, min(8.5vw, 12vh), 7.5rem);
+    line-height: .9;
     letter-spacing: -0.045em;
     text-transform: lowercase;
-    margin: 3rem 0;
+    margin: clamp(1.2rem, 4vh, 3rem) 0;
     position: relative;
     z-index: 1;
     pointer-events: none;

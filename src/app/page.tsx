@@ -1,7 +1,8 @@
 "use client";
-import { motion, useScroll, useSpring, useTransform, useVelocity } from "framer-motion";
+import { motion } from "framer-motion";
 import PlaygroundHero from "@/components/PlaygroundHero";
-import EditorialIndex, { type IndexItem } from "@/components/EditorialIndex";
+import ScatteredWorks from "@/components/ScatteredWorks";
+import { useProjects } from "@/components/useProjects";
 import Marquee from "@/components/Marquee";
 import AsciiAnim from "@/components/AsciiAnim";
 import ScatterMenu, { type MenuItem } from "@/components/ScatterMenu";
@@ -154,66 +155,8 @@ const rmStyles = `
 export default function Home() {
   const { t } = useT();
 
-  // o índice inclina levemente com a velocidade do scroll — reage ao fluxo,
-  // nunca o interrompe (ela odeia scroll travado).
-  const { scrollY } = useScroll();
-  const vel = useVelocity(scrollY);
-  const skewRaw = useTransform(vel, [-1400, 1400], [-2, 2], { clamp: true });
-  const skew = useSpring(skewRaw, { stiffness: 220, damping: 38, mass: 0.6 });
-
-  const flat = (s: string) => s.replace(/\n/g, " ");
-
-  const projects: IndexItem[] = [
-    {
-      num: "01",
-      title: "isadora ruppert press kit",
-      tags: `${t("p01_tag1")} / ${t("p01_tag2")}`,
-      href: "/work/isadora",
-      img: "/img/ISADORA CAPA-THUMBNAIL.webp",
-    },
-    {
-      num: "02",
-      title: flat(t("p02_title")),
-      tags: `${t("p02_tag1")} / ${t("p02_tag2")}`,
-      href: "/work/magazine",
-      img: "/img/helvetica/9.jpg",
-    },
-    {
-      num: "03",
-      title: "genlab",
-      tags: `${t("p03_tag1")} / ${t("p03_tag2")}`,
-      href: "/work/genlab",
-      img: "/img/genlab.png",
-    },
-    {
-      num: "04",
-      title: flat(t("p04_title")),
-      tags: `${t("p04_tag1")} / ${t("p04_tag2")}`,
-      href: "/work/ebat",
-      img: "/img/ebat/manual-capa.jpg",
-    },
-    {
-      num: "05",
-      title: "apple academy: graduation",
-      tags: t("p05_tags").replace(", ", " / "),
-      href: "/work/graduation",
-      img: "/img/graduation/7.jpg",
-    },
-    {
-      num: "06",
-      title: "devs no pilotis",
-      tags: t("p06_tags").replace(", ", " / "),
-      href: "/work/pilotis",
-      img: "/img/pilotis/1.jpg",
-    },
-    {
-      num: "07",
-      title: "china–rio: pontes para inovação",
-      tags: t("p07_tags").replace(", ", " / "),
-      href: "/work/chinario",
-      img: "/img/chinario/1.jpg",
-    },
-  ];
+  // lista única de projetos (mesma fonte da página /work)
+  const projects = useProjects();
 
   const marquee = [
     t("p04_tag1"), t("p01_tag1"), t("about_cat_web"),
@@ -266,9 +209,8 @@ export default function Home() {
             <span>{t("selected_work")}</span>
             <span>{projects.length.toString().padStart(2, "0")} —</span>
           </div>
-          <motion.div style={{ skewY: skew, transformOrigin: "center" }}>
-            <EditorialIndex items={projects} />
-          </motion.div>
+          {/* projetos jogados no canvas (t-i-n-y) — capas nascem nítidas e viram pixel no scroll */}
+          <ScatteredWorks items={projects} />
         </section>
 
         {/* Sobre */}
