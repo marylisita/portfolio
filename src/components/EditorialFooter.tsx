@@ -1,6 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import { useT } from "@/i18n/LanguageContext";
+import { PUTTI } from "./asciiOrnamentos";
 
 /**
  * Rodapé da landing na identidade nova (escuro + lime + linhas pixeladas).
@@ -9,12 +10,24 @@ import { useT } from "@/i18n/LanguageContext";
  */
 const styles = `
   .ef {
-    padding: 6rem 2rem 2rem;
+    padding: 0 2rem 2rem;
     color: var(--ink);
-    background-image: repeating-linear-gradient(90deg, var(--ink) 0 6px, transparent 6px 12px);
-    background-size: 100% 2px;
-    background-position: top left;
-    background-repeat: no-repeat;
+  }
+  /* os dois putti escorados na balaustrada: a balaustrada É a divisória
+     que separa a página do rodapé (referência: Madona Sistina, Rafael) */
+  .ef__putti {
+    display: block;
+    width: 100%;
+    margin: 0 0 3.5rem;
+    font-family: var(--font-mono);
+    /* dimensionado pra largura da tela: 118 colunas de ~0.6em cada */
+    font-size: clamp(3px, 1.34vw, 20px);
+    line-height: 1.02;
+    white-space: pre;
+    overflow: hidden;
+    color: var(--ink);
+    opacity: .8;
+    user-select: none;
   }
   .ef__label {
     font-family: var(--font-body); font-size: .8rem;
@@ -101,6 +114,17 @@ export default function EditorialFooter() {
   return (
     <footer className="ef">
       <style>{styles}</style>
+
+      <motion.pre
+        className="ef__putti"
+        aria-hidden="true"
+        initial={{ opacity: 0, y: 18 }}
+        whileInView={{ opacity: 0.8, y: 0 }}
+        viewport={{ once: true, margin: "-40px" }}
+        transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+      >
+        {PUTTI}
+      </motion.pre>
 
       <span className="ef__label">{t("rm_footer_label")}</span>
 

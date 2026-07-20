@@ -4,7 +4,7 @@ import Link from "next/link";
 import PixelScrollImage from "./PixelScrollImage";
 import PixelScrollText from "./PixelScrollText";
 import AsciiAnim from "./AsciiAnim";
-import { QUERUBIM, ASAS, SPARKLE, ROSA, CORACAO } from "./asciiOrnamentos";
+import { BEIJO, ASAS, SPARKLE, ROSA, CORACAO } from "./asciiOrnamentos";
 import type { IndexItem } from "./EditorialIndex";
 
 /**
@@ -127,8 +127,8 @@ export default function ScatteredWorks({ items, bgWord }: { items: IndexItem[]; 
           className="sw__deco" style={{ left: "58%", top: "1vh" }} />
         <AsciiAnim frames={[ROSA]} fontSize={8} opacity={0.4} color="var(--ink)"
           className="sw__deco" style={{ left: "8%", top: "53vh" }} />
-        <AsciiAnim frames={[QUERUBIM]} fontSize={10} opacity={0.52} color="var(--ink)"
-          className="sw__deco" style={{ left: "4%", top: "148vh" }} />
+        <AsciiAnim frames={[BEIJO]} fontSize={8} opacity={0.55} color="var(--ink)"
+          className="sw__deco" style={{ left: "5%", top: "147vh" }} />
         <AsciiAnim frames={[ASAS]} fontSize={10} opacity={0.42} color="var(--acid)"
           className="sw__deco" style={{ left: "68%", top: "181vh" }} />
         <AsciiAnim frames={[CORACAO]} fontSize={10} opacity={0.4} color="var(--ink)"
