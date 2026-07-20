@@ -25,23 +25,26 @@ const styles = `
     z-index: 10;
     display: inline-block;
     font-family: var(--font-mono);
-    font-size: .74rem;
+    font-size: .8rem;
+    font-weight: 700;
     text-transform: lowercase;
     letter-spacing: .08em;
-    background: #000000;
-    color: #ffffff;
-    border: 1.5px solid var(--acid);
-    padding: .45rem .8rem;
+    background: var(--acid);
+    color: #000000;
+    border: 3px solid #000000;
+    box-shadow: 6px 6px 0px #000000;
+    padding: .5rem .9rem;
     text-decoration: none;
     clip-path: ${PIXEL_CLIP};
     cursor: pointer;
     animation: sm-float 5s ease-in-out infinite;
-    transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
   }
   .sm__tag:hover {
-    background: var(--acid);
-    color: #000000;
+    background: #000000;
+    color: var(--acid);
     border-color: var(--acid);
+    box-shadow: 0px 0px 0px #000000;
   }
   @keyframes sm-float {
     0%, 100% { transform: translateY(0); }
