@@ -22,24 +22,30 @@ export type MenuItem = {
 const styles = `
   .sm__tag {
     position: absolute;
-    z-index: 3;
+    z-index: 10;
     display: inline-block;
     font-family: var(--font-mono);
     font-size: .74rem;
     text-transform: lowercase;
     letter-spacing: .08em;
-    background: var(--acid);
-    color: #111;
+    background: #000000;
+    color: #ffffff;
+    border: 1.5px solid var(--acid);
     padding: .45rem .8rem;
     text-decoration: none;
     clip-path: ${PIXEL_CLIP};
     cursor: pointer;
     animation: sm-float 5s ease-in-out infinite;
+    transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
   }
-  .sm__tag:hover { background: var(--ink); }
+  .sm__tag:hover {
+    background: var(--acid);
+    color: #000000;
+    border-color: var(--acid);
+  }
   @keyframes sm-float {
-    0%, 100% { margin-top: 0; }
-    50% { margin-top: -7px; }
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-7px); }
   }
   .sm__cluster {
     position: fixed;
