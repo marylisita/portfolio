@@ -97,11 +97,15 @@ export function PageTransitionProvider({ children }: { children: React.ReactNode
     minHeight: "100vh",
     backgroundColor: "var(--surface)",
     opacity: isExit ? 0 : 1,
-    transform: isExit ? "scale(0.985)" : "scale(1)",
+    // IMPORTANTE: fora da transição o transform precisa ser "none" (e não "scale(1)").
+    // Qualquer transform != none — e também will-change: transform — faz este wrapper
+    // virar o containing block dos descendentes position:fixed, quebrando a nav,
+    // o cursor de estrelinhas e o botão de voltar ao topo ao rolar a página.
+    transform: isExit ? "scale(0.985)" : "none",
     transition: isExit
       ? `opacity ${EXIT}ms cubic-bezier(0.4, 0, 1, 1), transform ${EXIT}ms cubic-bezier(0.4, 0, 1, 1)`
       : `opacity ${ENTER}ms cubic-bezier(0, 0, 0.2, 1), transform ${ENTER}ms cubic-bezier(0, 0, 0.2, 1)`,
-    willChange: "opacity, transform",
+    willChange: isExit ? "opacity, transform" : "auto",
     transformOrigin: "center top",
   };
 

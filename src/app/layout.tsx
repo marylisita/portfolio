@@ -43,8 +43,11 @@ export default function RootLayout({
       <body className="antialiased">
         <LanguageProvider>
           <SmoothScroll>
+            {/* Cursor fica FORA do PageTransitionProvider de propósito: o wrapper de
+                transição aplica transform durante a saída, o que quebraria o
+                position:fixed do canvas. Aqui ele também não some no fade da troca de página. */}
+            <Cursor />
             <PageTransitionProvider>
-              <Cursor />
               {children}
               <FloatingBackToTop />
             </PageTransitionProvider>
