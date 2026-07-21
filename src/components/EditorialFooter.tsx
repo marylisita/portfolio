@@ -50,41 +50,49 @@ const styles = `
     user-select: none;
     margin: 0 0 -0.4rem;
   }
+  /* fio fino duplo, como regra de frontispício — o bloco pixelado brigava
+     com a delicadeza da voluta que está encostada nele */
   .ef__linha {
     width: 100%;
-    height: 3px;
-    background-image: repeating-linear-gradient(90deg, var(--ink) 0 6px, transparent 6px 12px);
+    border-top: 1px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+    height: 4px;
+    opacity: .55;
   }
   .ef__credito {
     font-family: var(--font-body);
-    font-size: .68rem;
-    letter-spacing: .1em;
-    text-transform: lowercase;
-    opacity: .45;
-    margin-top: .7rem;
+    font-size: .62rem;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    opacity: .4;
+    margin-top: .9rem;
   }
   .ef__label {
-    font-family: var(--font-body); font-size: .8rem;
-    text-transform: lowercase; letter-spacing: .12em;
-    margin-bottom: 2.5rem; display: block;
+    font-family: var(--font-head); font-style: italic;
+    font-size: 1.15rem; letter-spacing: .04em;
+    margin-bottom: 1.2rem; display: block;
+    text-align: center;
+    opacity: .75;
   }
   .ef__talk {
-    font-family: var(--font-grotesk);
-    font-weight: 700;
-    font-size: clamp(2.4rem, 8vw, 7rem);
-    line-height: .92;
-    letter-spacing: -0.04em;
-    text-transform: lowercase;
-    margin: 0 0 1rem;
+    font-family: var(--font-head);
+    font-weight: 400;
+    font-size: clamp(2.6rem, 8.5vw, 7.5rem);
+    line-height: .95;
+    letter-spacing: -0.015em;
+    margin: 0 0 1.4rem;
+    text-align: center;
   }
   .ef__mail {
-    font-family: var(--font-head);
-    font-style: italic;
-    font-size: clamp(1.2rem, 3vw, 2.2rem);
+    font-family: var(--font-body);
+    font-size: clamp(.85rem, 1.3vw, 1rem);
+    letter-spacing: .16em;
+    text-transform: uppercase;
     color: var(--acid);
     text-decoration: none;
-    display: inline-block;
-    margin-bottom: 4rem;
+    display: block;
+    text-align: center;
+    margin-bottom: 4.5rem;
   }
   .ef__mail:hover { text-decoration: underline; }
   .ef__row {
@@ -92,42 +100,32 @@ const styles = `
     grid-template-columns: 4.5rem 1fr auto;
     align-items: baseline;
     gap: 1.5rem;
-    padding: 1.2rem 0;
-    background-image: repeating-linear-gradient(90deg, var(--ink) 0 6px, transparent 6px 12px);
-    background-size: 100% 2px;
-    background-position: top left;
-    background-repeat: no-repeat;
+    padding: 1.3rem 0;
+    border-top: 1px solid rgba(28,27,24,.28);
     text-decoration: none;
     color: var(--ink);
     transition: color .3s ease, padding-left .45s cubic-bezier(.16,1,.3,1);
   }
   .ef__row:hover { color: var(--acid); padding-left: 1.2rem; }
-  .ef__row:last-of-type {
-    background-image:
-      repeating-linear-gradient(90deg, var(--ink) 0 6px, transparent 6px 12px),
-      repeating-linear-gradient(90deg, var(--ink) 0 6px, transparent 6px 12px);
-    background-size: 100% 2px, 100% 2px;
-    background-position: top left, bottom left;
-    background-repeat: no-repeat, no-repeat;
-  }
+  .ef__row:last-of-type { border-bottom: 1px solid rgba(28,27,24,.28); }
   .ef__name {
-    font-family: var(--font-grotesk);
-    font-weight: 700;
-    font-size: clamp(1.6rem, 5vw, 3.6rem);
-    line-height: .95;
-    letter-spacing: -0.035em;
-    text-transform: lowercase;
+    font-family: var(--font-head);
+    font-weight: 400;
+    font-size: clamp(1.5rem, 4.4vw, 3.2rem);
+    line-height: 1;
+    letter-spacing: -0.01em;
   }
   .ef__num, .ef__arrow {
-    font-family: var(--font-body); font-size: .8rem;
-    text-transform: lowercase; letter-spacing: .08em;
+    font-family: var(--font-body); font-size: .7rem;
+    text-transform: uppercase; letter-spacing: .16em; opacity: .6;
   }
   .ef__bottom {
     display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
     padding-top: 1.4rem; margin-top: 4rem;
-    font-family: var(--font-body); font-size: .76rem;
-    text-transform: lowercase; letter-spacing: .06em;
-    opacity: .65;
+    border-top: 1px solid rgba(28,27,24,.2);
+    font-family: var(--font-body); font-size: .68rem;
+    text-transform: uppercase; letter-spacing: .16em;
+    opacity: .5;
   }
   @media (max-width: 720px) {
     .ef { padding: 4rem 1.25rem 1.5rem; }
