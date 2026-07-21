@@ -58,7 +58,7 @@ const styles = `
   }
   .ef__talk {
     font-family: var(--font-head);
-    font-weight: 400;
+    font-weight: 700;
     font-size: clamp(2.6rem, 8.5vw, 7.5rem);
     line-height: .95;
     letter-spacing: -0.015em;
@@ -123,6 +123,7 @@ export default function EditorialFooter() {
     { num: "02", name: "linkedin", href: "https://www.linkedin.com/in/maria-lisita/" },
     { num: "03", name: "whatsapp", href: "https://wa.me/5521936180477" },
     { num: "04", name: t("footer_cv").toLowerCase(), href: "/Curriculo_Maria_Isabel_Lisita.pdf" },
+    { num: "05", name: "lattes", href: "/Curriculo_Lattes_Maria_Isabel_Lisita.pdf" },
   ];
 
   return (

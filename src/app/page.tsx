@@ -1,5 +1,4 @@
 "use client";
-import { motion } from "framer-motion";
 import PlaygroundHero from "@/components/PlaygroundHero";
 import ScatteredWorks from "@/components/ScatteredWorks";
 import { useProjects } from "@/components/useProjects";
@@ -10,7 +9,6 @@ import { GATO_FRAMES, GATO_PRETO_FRAMES } from "@/components/asciiArt";
 import EditorialFooter from "@/components/EditorialFooter";
 import LangToggle from "@/components/LangToggle";
 import { useT } from "@/i18n/LanguageContext";
-import HorizontalTimeline from "@/components/HorizontalTimeline";
 
 /* ==========================================================
    Landing — direção de arte editorial ("reset visual").
@@ -83,6 +81,16 @@ const rmStyles = `
     max-width: 20ch;
   }
   .rm-em { font-family: var(--font-head); font-style: italic; text-transform: none; letter-spacing: -0.01em; }
+  .rm-about-copy { display: flex; flex-direction: column; gap: 2.5rem; }
+  .rm-colophon-meta { border-top: 1px solid rgba(28,27,24,.38); }
+  .rm-colophon-row {
+    display: grid; grid-template-columns: minmax(6.5rem, .45fr) 1fr; gap: 1rem;
+    padding: .75rem 0; border-bottom: 1px solid rgba(28,27,24,.22);
+    font-family: var(--font-body); font-size: .72rem;
+    letter-spacing: .08em; text-transform: lowercase;
+  }
+  .rm-colophon-row span:first-child { opacity: .5; }
+  .rm-colophon-row span:last-child { font-family: var(--font-head); font-size: 1rem; letter-spacing: 0; }
 
   /* --- tabela de ferramentas --- */
   .rm-about { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
@@ -153,7 +161,7 @@ const rmStyles = `
 `;
 
 export default function Home() {
-  const { t } = useT();
+  const { t, lang } = useT();
 
   // lista única de projetos (mesma fonte da página /work)
   const projects = useProjects();
@@ -169,11 +177,25 @@ export default function Home() {
     { cat: t("about_cat_creative"), list: `TouchDesigner · Blender · ${t("about_tool_gen_ai")}` },
   ];
 
+  const colophon = lang === "pt"
+    ? [
+        ["edição", "portfólio 2026"],
+        ["base", "Rio de Janeiro, Brasil"],
+        ["serviços", "identidade visual · direção de arte · web design"],
+        ["status", "disponível para projetos e colaborações"],
+      ]
+    : [
+        ["edition", "portfolio 2026"],
+        ["based in", "Rio de Janeiro, Brazil"],
+        ["services", "visual identity · art direction · web design"],
+        ["status", "available for projects and collaborations"],
+      ];
+
   return (
     <div className="rm">
       <style>{rmStyles}</style>
 
-      <span className="rm-corner rm-corner--l">mary l. ✳</span>
+      <span className="rm-corner rm-corner--l">mary l. <span className="text-star" aria-hidden="true">✳︎</span></span>
       <span className="rm-corner rm-corner--r"><LangToggle /></span>
 
       <main>
@@ -183,13 +205,12 @@ export default function Home() {
           sub={t("hero_sub_1")}
           subHighlight={t("hero_sub_highlight")}
           scrollLabel={t("rm_scroll")}
-          welcome={t("rm_welcome")}
         >
           <ScatterMenu
             items={[
-              { label: t("nav_work").toLowerCase(), href: "/work", left: "18%", top: "26%", rotate: -6 },
-              { label: t("rm_menu_about"), href: "#about", left: "64%", top: "62%", rotate: 4 },
-              { label: t("rm_menu_contact"), href: "#contact", left: "32%", top: "74%", rotate: -3 },
+              { label: t("nav_work").toLowerCase(), href: "/work", left: "72%", top: "40%", rotate: 2, priority: "primary" },
+              { label: t("rm_menu_about"), href: "#about", left: "78%", top: "61%", rotate: -2, priority: "secondary" },
+              { label: t("rm_menu_contact"), href: "#contact", left: "66%", top: "73%", rotate: 1, priority: "tertiary" },
             ] satisfies MenuItem[]}
           />
         </PlaygroundHero>
@@ -227,9 +248,19 @@ export default function Home() {
             <span>{t("rm_tools_label")}</span>
           </div>
           <div className="rm-about">
-            <h2 className="rm-statement">
-              {t("about_text")}
-            </h2>
+            <div className="rm-about-copy">
+              <h2 className="rm-statement">
+                {t("about_text")}
+              </h2>
+              <div className="rm-colophon-meta">
+                {colophon.map(([label, value]) => (
+                  <div className="rm-colophon-row" key={label}>
+                    <span>{label}</span>
+                    <span>{value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
             <div className="rm-tools">
               {tools.map((g) => (
                 <div className="rm-tool-row" key={g.cat}>

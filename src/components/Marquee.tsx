@@ -6,7 +6,7 @@ const styles = `
     border-top: 1px solid var(--ink);
     border-bottom: 1px solid var(--ink);
     background: var(--acid);
-    color: #111111;
+    color: var(--paper);
     padding: .75rem 0;
   }
   .mq__track {
@@ -16,10 +16,10 @@ const styles = `
   }
   .mq:hover .mq__track { animation-play-state: paused; }
   .mq__item {
-    font-family: var(--font-grotesk);
+    font-family: var(--font-subtitle), monospace;
     font-size: clamp(1.1rem, 2.4vw, 2rem);
-    font-weight: 700;
-    letter-spacing: -0.02em;
+    font-weight: var(--offbit-weight-active);
+    letter-spacing: var(--offbit-letter-spacing);
     text-transform: lowercase;
     padding-right: 2.5rem;
     white-space: nowrap;
@@ -42,7 +42,7 @@ export default function Marquee({ items }: { items: string[] }) {
         <div className="mq__track">
           {[...items, ...items].map((it, i) => (
             <span className="mq__item" key={i}>
-              {it} <span style={{ opacity: 0.5 }}>✳</span>
+              {it} <span className="text-star" style={{ opacity: 0.5 }}>✳︎</span>
             </span>
           ))}
         </div>

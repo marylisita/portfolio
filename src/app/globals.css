@@ -4,11 +4,23 @@
    PALETA DO SITE — trocar AQUI muda o site todo
    ========================================== */
 :root {
+    --font-subtitle: var(--font-offbit), monospace;
+    --offbit-condense: 1;
+    --offbit-weight: 700;
+    --offbit-weight-active: 700;
+    --offbit-letter-spacing: normal;
+    --duration-instant: 100ms;
+    --duration-fast: 200ms;
+    --duration-normal: 300ms;
+    --duration-slow: 500ms;
+    --ease-default: cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --ease-out: cubic-bezier(0, 0, 0.2, 1);
     --site-paper:  #EDE7DA;  /* bege quente, levemente acinzentado */
     --site-ink:    #1C1B18;  /* cinza bem escuro (não é preto puro) */
-    --site-accent: #E4462A;  /* tomate/vermelhão — o destaque */
-    --site-accent-rgb: 228, 70, 42;
-    /* tintas quentes de fundo (antes eram roxo/azul) */
+    --site-accent: #1C1B18;  /* agora usa o preto da fonte como destaque, elegante e editorial */
+    --site-accent-rgb: 28, 27, 24;
+    /* tintas quentes de fundo */
     --site-tint-a: #F6F1E6;
     --site-tint-b: #E6DCCB;
     --site-tint-c: #F1E7D6;
@@ -54,6 +66,13 @@ body {
 a { color:inherit; text-decoration:none; }
 button { border:none; background:none; }
 img { max-width:100%; display:block; }
+
+/* Força símbolos decorativos a permanecerem tipográficos, nunca emoji colorido. */
+.text-star {
+    font-family: Arial, "Helvetica Neue", sans-serif;
+    font-variant-emoji: text;
+    color: currentColor;
+}
 .wrap { width:100%; max-width:1160px; margin:0 auto; padding:0 32px; }
 
 /* ==========================================
@@ -494,4 +513,13 @@ img { max-width:100%; display:block; }
     .footer__inner { flex-direction:column; gap:.5rem; text-align:center; }
     .capabilities__tags { gap:.6rem; }
     .cap-tag { font-size:.78rem; padding:.5rem 1rem; }
+}
+
+/* Títulos dos cards em /work — escopo separado para não disputar com edições do card. */
+.wk-page h2 {
+    font-family: var(--font-subtitle) !important;
+    font-weight: var(--offbit-weight) !important;
+    letter-spacing: var(--offbit-letter-spacing) !important;
+    scale: var(--offbit-condense) 1;
+    transform-origin: left center;
 }

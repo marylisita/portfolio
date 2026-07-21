@@ -1,14 +1,10 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import AsciiAnim from "./AsciiAnim";
-import Typewriter from "./Typewriter";
 import {
   GATO_FRAMES,
   GATO_PRETO_FRAMES,
-  FLOR,
-  ESTRELA,
-  CORACAO,
 } from "./asciiArt";
 
 /* canto em degrau de 8px — recorte "pixel" nas molduras */
@@ -76,12 +72,6 @@ const styles = `
     position: relative;
     z-index: 1;
   }
-  .ph__welcome {
-    position: relative;
-    z-index: 1;
-    margin-top: 1.1rem;
-    min-height: 1.2em;
-  }
   .ph__title {
     font-family: var(--font-grotesk);
     font-weight: 700;
@@ -139,14 +129,7 @@ const styles = `
     letter-spacing: .08em;
     white-space: nowrap;
     pointer-events: none;
-  }
-  .ph__word {
-    font-family: var(--font-head);
-    font-style: italic;
-    font-size: clamp(1.3rem, 2.6vw, 2.2rem);
-    color: var(--acid);
-    white-space: nowrap;
-    pointer-events: none;
+    opacity: .62;
   }
 
   @media (max-width: 720px) {
@@ -155,9 +138,24 @@ const styles = `
     .ph__title { margin: 2rem 0; }
     .ph__foot { grid-template-columns: 1fr; gap: 1.25rem; }
     .ph__sticker--desk { display: none; }
+    .ph__sticker { cursor: default; }
+  }
+  @supports (animation-timeline: scroll()) {
+    @media (max-width: 720px) {
+      .ph__sticker:not(.ph__sticker--desk) {
+        animation: ph-mobile-drift linear both;
+        animation-timeline: scroll(root block);
+        animation-range: 0% 18%;
+      }
+      @keyframes ph-mobile-drift {
+        from { translate: 0 0; }
+        to { translate: 0 18px; }
+      }
+    }
   }
   @media (prefers-reduced-motion: reduce) {
     .ph__line > span { transform: none !important; }
+    .ph__sticker { animation: none; translate: none; }
   }
 `;
 
@@ -184,7 +182,6 @@ export default function PlaygroundHero({
   sub,
   subHighlight,
   scrollLabel,
-  welcome,
   children,
 }: {
   lines: string[];
@@ -192,27 +189,35 @@ export default function PlaygroundHero({
   sub: string;
   subHighlight: string;
   scrollLabel: string;
-  welcome: string;
   children?: React.ReactNode;
 }) {
   const bounds = useRef<HTMLElement>(null);
+  const reduceMotion = useReducedMotion();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 720px)");
+    const syncViewport = () => setIsMobile(media.matches);
+
+    syncViewport();
+    media.addEventListener("change", syncViewport);
+    return () => media.removeEventListener("change", syncViewport);
+  }, []);
+
+  const canDrag = !reduceMotion && !isMobile;
 
   // só desenhos ASCII (pedido dela) + relógio e palavrinhas — nada de capas de trabalho
   const stickers: Sticker[] = [
     {
       key: "ascii-gata", left: "6%", top: "14%", rotate: -2,
-      el: <AsciiAnim frames={GATO_FRAMES} interval={180} fontSize={6} color="var(--acid)" opacity={0.9} />,
+      el: <AsciiAnim frames={GATO_FRAMES} interval={180} fontSize={6} color="var(--acid)" opacity={0.56} />,
     },
     {
       key: "gato-preto-ascii", left: "20%", top: "62%", rotate: -4, deskOnly: true,
-      el: <AsciiAnim frames={GATO_PRETO_FRAMES} interval={300} fontSize={5} color="var(--acid)" opacity={0.6} />,
+      el: <AsciiAnim frames={GATO_PRETO_FRAMES} interval={300} fontSize={5} color="var(--acid)" opacity={0.38} />,
     },
-    { key: "flor", left: "48%", top: "66%", rotate: -6, el: <AsciiAnim frames={FLOR} fontSize={8} color="var(--acid)" opacity={0.8} /> },
-    { key: "estrela", left: "36%", top: "22%", rotate: 10, deskOnly: true, el: <AsciiAnim frames={ESTRELA} fontSize={8} opacity={0.7} /> },
-    { key: "coracao", left: "60%", top: "34%", rotate: -8, deskOnly: true, el: <AsciiAnim frames={CORACAO} fontSize={7} color="var(--acid)" opacity={0.75} /> },
     // texto
     { key: "rio", left: "12%", top: "40%", rotate: -12, deskOnly: true, el: <span className="ph__note">( rio de janeiro )</span> },
-    { key: "arte", left: "44%", top: "30%", rotate: 6, el: <span className="ph__word">arte & tecnologia ✳</span> },
     { key: "clock", left: "76%", top: "38%", rotate: 4, el: <LiveClock /> },
   ];
 
@@ -226,9 +231,6 @@ export default function PlaygroundHero({
           <span>portfólio — 2026</span>
           <span>{location}</span>
         </div>
-        <div className="ph__welcome">
-          <Typewriter text={welcome} />
-        </div>
       </div>
 
       {/* adesivos — arrastáveis dentro do hero */}
@@ -237,15 +239,15 @@ export default function PlaygroundHero({
           key={s.key}
           className={`ph__sticker${s.deskOnly ? " ph__sticker--desk" : ""}`}
           style={{ left: s.left, top: s.top }}
-          initial={{ opacity: 0, scale: 0.6, rotate: s.rotate }}
+          initial={reduceMotion ? false : { opacity: 0, scale: 0.6, rotate: s.rotate }}
           animate={{ opacity: 1, scale: 1, rotate: s.rotate }}
-          transition={{ delay: 0.9 + i * 0.07, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          drag
+          transition={{ delay: reduceMotion ? 0 : 0.9 + i * 0.07, duration: reduceMotion ? 0 : 0.5, ease: [0.16, 1, 0.3, 1] }}
+          drag={canDrag}
           dragConstraints={bounds}
           dragElastic={0.12}
           dragMomentum
-          whileHover={{ scale: 1.06 }}
-          whileDrag={{ scale: 1.12, rotate: 0, zIndex: 30 }}
+          whileHover={canDrag ? { scale: 1.06 } : undefined}
+          whileDrag={canDrag ? { scale: 1.12, rotate: 0, zIndex: 30 } : undefined}
         >
           {s.el}
         </motion.div>
@@ -253,6 +255,7 @@ export default function PlaygroundHero({
 
       {/* menu espalhado (ScatterMenu) e afins */}
       {children}
+
 
       <h1 className="ph__title">
         {lines.map((l, i) => (
@@ -262,7 +265,7 @@ export default function PlaygroundHero({
               style={{ display: "block" }}
               variants={lineAnim}
               custom={i}
-              initial="hidden"
+              initial={reduceMotion ? false : "hidden"}
               animate="show"
             >
               {l}
@@ -273,9 +276,9 @@ export default function PlaygroundHero({
 
       <motion.div
         className="ph__foot"
-        initial={{ opacity: 0 }}
+        initial={reduceMotion ? false : { opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.75, duration: 0.7 }}
+        transition={{ delay: reduceMotion ? 0 : 0.75, duration: reduceMotion ? 0 : 0.7 }}
       >
         <span className="ph__scroll">{scrollLabel}</span>
         <p className="ph__sub">

@@ -1,14 +1,14 @@
 "use client";
+import { useReducedMotion } from "framer-motion";
 import { useEffect, useRef } from "react";
 
 /**
- * A imagem é DESCOBERTA em pixels conforme o scroll desce: os blocos vão
- * aparecendo aos poucos (cada um com seu limiar) até montar a foto, e no
- * fim o mosaico afina até a imagem nítida. Pedido dela:
- * "ir aparecendo um projeto enquanto o scroll desce, tipo descobrindo ele em pixels".
+ * A imagem é descoberta em pixels ao se aproximar por qualquer direção. Os
+ * blocos aparecem, afinam perto do centro e se desfazem novamente quando a
+ * capa se afasta, tanto ao subir quanto ao descer.
  *
- * No hover o mosaico volta a engrossar (a foto "se desmonta" em pixels).
- * Tudo reativo ao scroll — nada prende ou trava a página.
+ * No hover a imagem se completa e fica nítida temporariamente. Ao sair, ela
+ * retorna exatamente ao estágio do mosaico determinado pelo scroll.
  */
 
 // hash determinístico: mesmo bloco sempre com o mesmo limiar (não pisca a cada render)
@@ -36,6 +36,7 @@ export default function PixelScrollImage({
   className?: string;
   style?: React.CSSProperties;
 }) {
+  const reduceMotion = useReducedMotion();
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const hoverRef = useRef(0);
@@ -44,6 +45,7 @@ export default function PixelScrollImage({
     const wrap = wrapRef.current;
     const canvas = canvasRef.current;
     if (!wrap || !canvas) return;
+    const hoverTarget = wrap.closest<HTMLElement>(".sw__item, .wk-card") ?? wrap;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
@@ -51,6 +53,7 @@ export default function PixelScrollImage({
     img.src = src;
 
     let ready = false;
+    let isNearViewport = false;
     let raf = 0;
     let lastKey = "";
 
@@ -96,14 +99,16 @@ export default function PixelScrollImage({
 
       const revealP = Math.min(1, p / REVEAL_END);
       const sharpP = Math.max(0, (p - REVEAL_END) / (1 - REVEAL_END));
+      const hoverP = Math.min(1, Math.max(0, hover));
+      const visibleP = revealP + (1 - revealP) * hoverP;
 
       // `coarse` = QUANTOS blocos cabem na largura. Mais blocos = mais nítido.
       // Descoberta: fica em COLS. Depois vai subindo até resolver na imagem real.
       const coarseBase = revealP < 1 ? cols : cols + (SHARP_COLS - cols) * sharpP;
-      // hover derruba o número de blocos → a foto se desmonta em pixels
-      const coarse = Math.max(4, Math.round(coarseBase * (1 - hover * 0.78)));
+      // hover completa os blocos ausentes e afina o mosaico até a foto real
+      const coarse = Math.round(coarseBase + (SHARP_COLS - coarseBase) * hoverP);
 
-      if (revealP >= 1 && coarse >= SHARP_COLS * 0.9) {
+      if (visibleP >= 0.995 && coarse >= SHARP_COLS * 0.9) {
         ctx.imageSmoothingEnabled = true;
         ctx.drawImage(img, sx, sy, sw, sh, 0, 0, W, H);
         return;
@@ -117,7 +122,7 @@ export default function PixelScrollImage({
       offCtx.drawImage(img, sx, sy, sw, sh, 0, 0, off.width, off.height);
 
       ctx.imageSmoothingEnabled = false;
-      if (revealP >= 1) {
+      if (visibleP >= 1) {
         // todos os blocos já apareceram: desenha o mosaico inteiro
         ctx.drawImage(off, 0, 0, off.width, off.height, 0, 0, W, H);
         return;
@@ -130,7 +135,7 @@ export default function PixelScrollImage({
       const oh = off.height / rows;
       for (let y = 0; y < rows; y++) {
         for (let x = 0; x < cols; x++) {
-          if (thresholdOf(y * cols + x) > revealP) continue;
+          if (thresholdOf(y * cols + x) > visibleP) continue;
           ctx.drawImage(
             off,
             x * ow, y * oh, Math.max(1, ow), Math.max(1, oh),
@@ -143,20 +148,36 @@ export default function PixelScrollImage({
     const progress = () => {
       const r = wrap.getBoundingClientRect();
       const vh = window.innerHeight;
-      // 0 quando o topo ainda está na borda de baixo; 1 quando subiu ~65% da tela
-      return Math.min(1, Math.max(0, (vh - r.top) / (vh * 0.65)));
+      // A distância às duas bordas torna o scrub reversível em qualquer direção.
+      const clamp = (value: number) => Math.min(1, Math.max(0, value));
+      const revealZone = vh * 0.58;
+      const fromBottom = clamp((vh - r.top) / revealZone);
+      const fromTop = clamp(r.bottom / revealZone);
+      const proximity = Math.min(fromBottom, fromTop);
+
+      // Em movimento reduzido, evita a montagem gradual e entrega a capa pronta.
+      if (reduceMotion) return r.top < vh && r.bottom > 0 ? 1 : 0;
+      return proximity;
     };
 
     const update = () => {
       raf = 0;
       draw(progress(), hoverRef.current);
     };
-    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
+    const onScroll = () => {
+      if (!isNearViewport || raf) return;
+      raf = requestAnimationFrame(update);
+    };
 
-    // hover: engrossa o mosaico com uma animaçãozinha
+    // hover: revela e afina o mosaico; ao sair, volta ao progresso do scroll
     let hoverRaf = 0;
     const animHover = (target: number) => {
       cancelAnimationFrame(hoverRaf);
+      if (reduceMotion) {
+        hoverRef.current = target;
+        draw(progress(), hoverRef.current);
+        return;
+      }
       const step = () => {
         const d = target - hoverRef.current;
         hoverRef.current += d * 0.18;
@@ -168,33 +189,62 @@ export default function PixelScrollImage({
     };
     const onEnter = () => animHover(1);
     const onLeave = () => animHover(0);
-    wrap.addEventListener("mouseenter", onEnter);
-    wrap.addEventListener("mouseleave", onLeave);
+    hoverTarget.addEventListener("mouseenter", onEnter);
+    hoverTarget.addEventListener("mouseleave", onLeave);
+    hoverTarget.addEventListener("focusin", onEnter);
+    hoverTarget.addEventListener("focusout", onLeave);
 
     const start = () => {
       ready = true;
       // a proporção real do arquivo assume — impossível esticar ou cortar
       wrap.style.aspectRatio = `${img.naturalWidth} / ${img.naturalHeight}`;
-      sizeCanvas();
-      update();
+      if (isNearViewport) {
+        sizeCanvas();
+        update();
+      }
     };
     if (img.complete && img.naturalWidth) start();
     else img.onload = start;
 
     window.addEventListener("scroll", onScroll, { passive: true });
-    const ro = new ResizeObserver(() => { sizeCanvas(); update(); });
+    const ro = new ResizeObserver(() => {
+      lastKey = "";
+      if (!isNearViewport) return;
+      sizeCanvas();
+      update();
+    });
     ro.observe(wrap);
+
+    // Evita redimensionar e redesenhar todos os canvases da mesa a cada scroll.
+    // Só a capa visível (e as imediatamente próximas) ocupa CPU/GPU.
+    const visibilityObserver = new IntersectionObserver(
+      ([entry]) => {
+        isNearViewport = entry.isIntersecting;
+        if (isNearViewport) {
+          sizeCanvas();
+          update();
+          return;
+        }
+        cancelAnimationFrame(raf);
+        raf = 0;
+      },
+      { rootMargin: "70% 0px", threshold: 0 },
+    );
+    visibilityObserver.observe(wrap);
 
     return () => {
       window.removeEventListener("scroll", onScroll);
-      wrap.removeEventListener("mouseenter", onEnter);
-      wrap.removeEventListener("mouseleave", onLeave);
+      hoverTarget.removeEventListener("mouseenter", onEnter);
+      hoverTarget.removeEventListener("mouseleave", onLeave);
+      hoverTarget.removeEventListener("focusin", onEnter);
+      hoverTarget.removeEventListener("focusout", onLeave);
       ro.disconnect();
+      visibilityObserver.disconnect();
       cancelAnimationFrame(raf);
       cancelAnimationFrame(hoverRaf);
       img.onload = null;
     };
-  }, [src]);
+  }, [src, reduceMotion]);
 
   return (
     <div

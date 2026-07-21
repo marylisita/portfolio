@@ -1,5 +1,5 @@
 "use client";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
 /**
  * Ornamento em arte braille (as que ela escolheu). Separado do AsciiAnim porque
@@ -29,14 +29,16 @@ export default function BrailleDeco({
   className?: string;
   style?: React.CSSProperties;
 }) {
+  const reduceMotion = useReducedMotion();
+
   return (
     <motion.pre
       aria-hidden="true"
       className={className}
-      initial={{ opacity: 0, y: 26 }}
+      initial={reduceMotion ? false : { opacity: 0, y: 26 }}
       whileInView={{ opacity, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
-      transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: reduceMotion ? 0 : 1.2, ease: [0.16, 1, 0.3, 1] }}
       style={{
         fontFamily: "var(--font-braille), monospace",
         fontSize,
