@@ -145,14 +145,20 @@ export default function FutureWheel() {
                 transition={{ duration: 0.5, delay: 0.35 + j * 0.025, ease: [0.16, 1, 0.3, 1] }}
                 style={{ transformOrigin: `${p.x}px ${p.y}px` }}
               >
+                {/* Os quatro nós de "o que não fecha" eram marcados a tomate.
+                    Com a paleta de duas cores (--acid virou o próprio preto do
+                    texto) cor não distingue mais nada: quem marca é o CONTORNO.
+                    Crítico = aro cheio e grosso sobre fundo claro; os demais
+                    ficam com fio finíssimo. */}
                 <circle cx={p.x} cy={p.y} r={R_NO_2}
-                  fill={critico ? "var(--acid)" : "var(--site-tint-b)"}
-                  fillOpacity={critico ? 0.16 : 1}
-                  stroke={critico ? "var(--acid)" : "var(--ink)"}
-                  strokeOpacity={critico ? 0.9 : 0.25}
-                  strokeWidth={critico ? 1.6 : 1} />
+                  fill={critico ? "var(--ink)" : "var(--site-tint-b)"}
+                  fillOpacity={critico ? 0.09 : 1}
+                  stroke="var(--ink)"
+                  strokeOpacity={critico ? 1 : 0.22}
+                  strokeWidth={critico ? 2.4 : 1} />
                 <text x={p.x} y={p.y - ((linhas.length - 1) * LINHA_2) / 2} textAnchor="middle"
-                  fontSize={FONTE_2} fill={critico ? "var(--acid)" : "var(--ink)"}>
+                  fontSize={FONTE_2} fill="var(--ink)"
+                  fontWeight={critico ? 600 : 400}>
                   {linhas.map((l, k) => (
                     <tspan key={k} x={p.x} dy={k === 0 ? FONTE_2 * 0.35 : LINHA_2}>{l}</tspan>
                   ))}
@@ -209,7 +215,7 @@ export default function FutureWheel() {
           <span className="fw__dot" style={{ background: "var(--site-tint-b)", border: "1px solid rgba(28,27,24,.35)" }} /> {t("holo_wheel_legend_2")}
         </span>
         <span className="fw__key">
-          <span className="fw__dot" style={{ background: "rgba(228,70,42,.2)", border: "1.5px solid var(--acid)" }} /> {t("holo_gap_title")}
+          <span className="fw__dot" style={{ background: "rgba(28,27,24,.09)", border: "2px solid var(--ink)" }} /> {t("holo_gap_title")}
         </span>
       </div>
     </div>

@@ -69,7 +69,7 @@ function ProjectCard({ num, title, tags, href, img, desc, ratio }: ProjectCardPr
           style={{
             fontFamily: "var(--font-mono), monospace",
             fontSize: "0.8rem",
-            color: "var(--acid, #E4462A)",
+            color: "var(--acid)",
             fontWeight: 700,
           }}
         >
@@ -191,6 +191,9 @@ export default function Work() {
     if (href.endsWith("graduation")) return t("grad_desc_2");
     if (href.endsWith("pilotis")) return t("pilotis_desc_2");
     if (href.endsWith("chinario")) return t("chinario_desc_1");
+    // hologlam e vegcoz entraram depois e ficavam sem texto nenhum no card
+    if (href.endsWith("hologlam")) return t("holo_question");
+    if (href.endsWith("vegcoz")) return t("vegcoz_desc_1");
     return "";
   };
 
@@ -264,7 +267,7 @@ export default function Work() {
       transition: background var(--duration-fast) var(--ease-default), color var(--duration-fast) var(--ease-default);
     }
     .wk-back-btn:hover {
-      background: var(--acid, #E4462A);
+      background: var(--acid);
       color: var(--paper);
     }
     .wk-toc {
