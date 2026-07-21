@@ -3,8 +3,8 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import PixelScrollImage from "./PixelScrollImage";
 import PixelScrollText from "./PixelScrollText";
-import AsciiAnim from "./AsciiAnim";
-import { BEIJO, ASAS, SPARKLE, ROSA, CORACAO } from "./asciiOrnamentos";
+import BrailleDeco from "./BrailleDeco";
+import { DRAGAO, QUIMERA, ESTRELA, COELHOS } from "./brailleArt";
 import type { IndexItem } from "./EditorialIndex";
 
 /**
@@ -78,10 +78,16 @@ const styles = `
   @media (prefers-reduced-motion: reduce) {
     .sw__bg, .sw__bg--a, .sw__bg--b { animation: none; }
   }
-  /* desenhos ASCII grandes (glifos da fonte de emoji dela) ocupando os vazios */
+  /* desenhos ASCII grandes ocupando os vazios */
   .sw__deco { position: absolute; z-index: 0; pointer-events: none; }
   @media (max-width: 860px) {
     .sw__deco { display: none; }
+  }
+  /* faixa do dragão: fluxo normal, centralizado, longe de todo mundo */
+  .sw__final {
+    display: flex;
+    justify-content: center;
+    padding: 7rem 1.25rem 1rem;
   }
 
   .sw__frame {
@@ -120,19 +126,22 @@ export default function ScatteredWorks({ items, bgWord }: { items: IndexItem[]; 
       <div className="sw">
         <PixelScrollText className="sw__bg sw__bg--a" text={bgWord} fontSize={420} color="var(--ink)" />
 
-        {/* Ornamentos ASCII (querubim/angelcore) nos vazios entre as peças.
-            Desenhados à mão como silhueta em contorno grosso e convertidos.
-            Se mexer em SPOTS, remedir as folgas. */}
-        <AsciiAnim frames={[SPARKLE]} fontSize={9} opacity={0.4} color="var(--acid)"
-          className="sw__deco" style={{ left: "58%", top: "1vh" }} />
-        <AsciiAnim frames={[ROSA]} fontSize={8} opacity={0.4} color="var(--ink)"
-          className="sw__deco" style={{ left: "8%", top: "53vh" }} />
-        <AsciiAnim frames={[BEIJO]} fontSize={9} opacity={0.8} color="var(--ink)"
-          className="sw__deco" style={{ left: "4%", top: "145vh" }} />
-        <AsciiAnim frames={[ASAS]} fontSize={10} opacity={0.42} color="var(--acid)"
-          className="sw__deco" style={{ left: "68%", top: "181vh" }} />
-        <AsciiAnim frames={[CORACAO]} fontSize={10} opacity={0.4} color="var(--ink)"
-          className="sw__deco" style={{ left: "10%", top: "220vh" }} />
+        {/* Ornamentos nos vazios entre as peças — as artes que ela escolheu.
+            Saíram: coração e asas (pedido dela), sparkle e rosa (colidiam com as
+            peças em viewport baixa) e o beijo (já é o frontispício do rodapé, em
+            tamanho maior — estava duplicado na mesma página).
+
+            POSIÇÕES MEDIDAS NO PIOR CASO, 1440x700: é lá que os vãos encolhem,
+            porque a peça tem altura em px (clamp de vw) mas o `top` é em vh.
+            Conferir a 700 E a 900 antes de mexer. Vãos livres a 1440x700:
+              coluna direita (x>1160): 0-182, 525-896, 1321-1470
+              coluna esquerda (x<250): 427-756, 1037-1260, 1581-1785 */}
+        <BrailleDeco art={COELHOS} fontSize={9} opacity={0.5} color="var(--ink)"
+          className="sw__deco" style={{ left: "4%", top: "88vh" }} />
+        <BrailleDeco art={ESTRELA} fontSize={8} opacity={0.5} color="var(--ink)"
+          className="sw__deco" style={{ left: "86%", top: "80vh" }} />
+        <BrailleDeco art={QUIMERA} fontSize={8} opacity={0.5} color="var(--acid)"
+          className="sw__deco" style={{ left: "2%", top: "150vh" }} />
         <PixelScrollText className="sw__bg sw__bg--b" text={bgWord} fontSize={330} color="var(--acid)" />
         {items.map((item, i) => {
           const s = SPOTS[i % SPOTS.length];
@@ -162,6 +171,15 @@ export default function ScatteredWorks({ items, bgWord }: { items: IndexItem[]; 
             </motion.div>
           );
         })}
+      </div>
+
+      {/* O dragão fecha a seção numa faixa PRÓPRIA, em fluxo normal — não é
+          ornamento absoluto como os outros. Ele tem 70x52 células e não cabe em
+          vão nenhum da colagem: as peças têm altura em px e as posições em vh,
+          então em tela baixa os vãos encolhem e ele colidiria. Aqui, por
+          construção, não colide com nada. */}
+      <div className="sw__final">
+        <BrailleDeco art={DRAGAO} fontSize="clamp(3px, 0.62vw, 9px)" opacity={0.5} color="var(--ink)" />
       </div>
     </>
   );

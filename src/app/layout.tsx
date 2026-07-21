@@ -45,6 +45,16 @@ const emojiFont = localFont({
   display: "swap",
 });
 
+/* Só os 256 glifos do bloco braille (U+2800–U+28FF), tirados do DejaVu Sans:
+   1,2 kB. NENHUMA outra fonte do site tem esses glifos — sem isso a arte dos
+   ornamentos vira quadradinho de tofu fora do Windows. `display: block` porque
+   um fallback aqui não degrada, destrói o desenho. */
+const braille = localFont({
+  src: "./fonts/BrailleMono.woff2",
+  variable: "--font-braille",
+  display: "block",
+});
+
 export const metadata: Metadata = {
   title: "Mary Lisita | Portfolio",
   description: "Designer multidisciplinar. Projetos em Design Gráfico, Web Design, UX/UI e Programação Criativa.",
@@ -56,7 +66,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${poppins.variable} ${instrument.variable} ${spaceMono.variable} ${seratonin.variable} ${pixelPoiiz.variable} ${emojiFont.variable}`}>
+    <html lang="en" className={`${poppins.variable} ${instrument.variable} ${spaceMono.variable} ${seratonin.variable} ${pixelPoiiz.variable} ${emojiFont.variable} ${braille.variable}`}>
       <head>
         <link rel="stylesheet" href="https://cdn.cursors-4u.net/cursors/animated/red-cat-a526d80e-32.css" />
       </head>
