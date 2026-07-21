@@ -5,9 +5,7 @@ import AsciiAnim from "./AsciiAnim";
 import Typewriter from "./Typewriter";
 import {
   GATO_FRAMES,
-  GAROTA_FRAMES,
   GATO_PRETO_FRAMES,
-  BORBOLETA_FRAMES,
   FLOR,
   ESTRELA,
   CORACAO,
@@ -204,14 +202,6 @@ export default function PlaygroundHero({
     {
       key: "ascii-gata", left: "6%", top: "14%", rotate: -2,
       el: <AsciiAnim frames={GATO_FRAMES} interval={180} fontSize={6} color="var(--acid)" opacity={0.9} />,
-    },
-    {
-      key: "borboleta", left: "74%", top: "12%", rotate: 6,
-      el: <AsciiAnim frames={BORBOLETA_FRAMES} interval={340} fontSize={7} opacity={0.85} />,
-    },
-    {
-      key: "garota-ascii", left: "82%", top: "52%", rotate: 3, deskOnly: true,
-      el: <AsciiAnim frames={GAROTA_FRAMES} interval={240} fontSize={5} opacity={0.7} />,
     },
     {
       key: "gato-preto-ascii", left: "20%", top: "62%", rotate: -4, deskOnly: true,

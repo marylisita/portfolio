@@ -6,7 +6,7 @@ import { useProjects } from "@/components/useProjects";
 import Marquee from "@/components/Marquee";
 import AsciiAnim from "@/components/AsciiAnim";
 import ScatterMenu, { type MenuItem } from "@/components/ScatterMenu";
-import { GATO_FRAMES, GAROTA_FRAMES, GATO_PRETO_FRAMES } from "@/components/asciiArt";
+import { GATO_FRAMES, GATO_PRETO_FRAMES } from "@/components/asciiArt";
 import EditorialFooter from "@/components/EditorialFooter";
 import LangToggle from "@/components/LangToggle";
 import { useT } from "@/i18n/LanguageContext";
@@ -215,14 +215,6 @@ export default function Home() {
 
         {/* Sobre */}
         <section id="about" className="rm-sec px-line" style={{ backgroundPosition: "top left", position: "relative" }}>
-          <AsciiAnim
-            frames={GAROTA_FRAMES}
-            interval={260}
-            fontSize={6}
-            color="var(--acid)"
-            opacity={0.35}
-            style={{ position: "absolute", right: "5%", bottom: "1rem" }}
-          />
           <AsciiAnim
             frames={GATO_PRETO_FRAMES}
             interval={300}

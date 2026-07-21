@@ -1,7 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import { useT } from "@/i18n/LanguageContext";
-import { BEIJO_GRANDE, CANTO } from "./asciiOrnamentos";
+import { BEIJO_GRANDE } from "./asciiOrnamentos";
 
 /**
  * Rodapé da landing na identidade nova (escuro + lime + linhas pixeladas).
@@ -21,24 +21,6 @@ const styles = `
     flex-direction: column;
     align-items: center;
     margin-bottom: 3.5rem;
-  }
-  /* volutas de canto ladeando a obra — a da direita é a mesma, espelhada */
-  .ef__canto {
-    position: absolute;
-    top: 0;
-    font-family: var(--font-mono);
-    font-size: clamp(2.5px, 0.5vw, 7px);
-    line-height: 1.05;
-    white-space: pre;
-    color: var(--ink);
-    opacity: .5;
-    pointer-events: none;
-    user-select: none;
-  }
-  .ef__canto--e { left: 0; }
-  .ef__canto--d { right: 0; transform: scaleX(-1); }
-  @media (max-width: 900px) {
-    .ef__canto { display: none; }
   }
   .ef__obra {
     font-family: var(--font-mono);
@@ -148,8 +130,6 @@ export default function EditorialFooter() {
       <style>{styles}</style>
 
       <div className="ef__divisa">
-        <pre className="ef__canto ef__canto--e" aria-hidden="true">{CANTO}</pre>
-        <pre className="ef__canto ef__canto--d" aria-hidden="true">{CANTO}</pre>
         <motion.pre
           className="ef__obra"
           aria-hidden="true"
