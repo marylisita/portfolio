@@ -5,6 +5,7 @@ import { useProjects } from "@/components/useProjects";
 import Marquee from "@/components/Marquee";
 import AsciiAnim from "@/components/AsciiAnim";
 import BootIntro from "@/components/BootIntro";
+import IdleBanner from "@/components/IdleBanner";
 import ScatterMenu, { type MenuItem } from "@/components/ScatterMenu";
 import { GATO_FRAMES, GATO_PRETO_FRAMES } from "@/components/asciiArt";
 import EditorialFooter from "@/components/EditorialFooter";
@@ -59,8 +60,45 @@ const rmStyles = `
     font-size: .78rem; text-transform: lowercase; letter-spacing: .1em;
     color: var(--ink);
   }
-  .rm-corner--l { left: 1.4rem; }
-  .rm-corner--r { right: 1.4rem; display: flex; align-items: center; gap: .8rem; }
+  .rm-corner--l { left: 1.4rem; display: flex; flex-direction: column; gap: .12rem; line-height: 1.1; }
+  .rm-mark { font-weight: 600; letter-spacing: .06em; }
+  .rm-mark__sub { font-size: .62rem; letter-spacing: .08em; opacity: .5; }
+  .rm-corner--r { right: 1.4rem; display: flex; align-items: center; gap: 1rem; }
+  .rm-status {
+    display: inline-flex; align-items: center; gap: .42rem;
+    font-size: .68rem; letter-spacing: .06em; opacity: .82; white-space: nowrap;
+  }
+  .rm-status__dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--ink);
+    animation: rm-pulse 2.4s ease-out infinite;
+  }
+  @keyframes rm-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(28,27,24,.35); }
+    70% { box-shadow: 0 0 0 6px rgba(28,27,24,0); }
+    100% { box-shadow: 0 0 0 0 rgba(28,27,24,0); }
+  }
+  .rm-nav { display: inline-flex; align-items: center; gap: .7rem; }
+  .rm-nav a {
+    color: var(--ink); text-decoration: none; opacity: .7;
+    font-size: .72rem; letter-spacing: .04em;
+    transition: opacity .2s ease;
+  }
+  .rm-nav a:hover, .rm-nav a:focus-visible { opacity: 1; text-decoration: underline; text-underline-offset: 3px; }
+  /* banner ASCII grande e faint no hero — muda quando o mouse pausa (IdleBanner) */
+  .rm-idle {
+    position: absolute;
+    top: 8%; left: 50%; transform: translateX(-50%);
+    z-index: 0; margin: 0; pointer-events: none; user-select: none;
+    font-family: var(--font-mono); line-height: 1.05; white-space: pre;
+    font-size: clamp(11px, 2.8vw, 28px); color: var(--ink); opacity: .06;
+    text-align: center;
+  }
+  @media (prefers-reduced-motion: reduce) { .rm-status__dot { animation: none; } }
+  @media (max-width: 860px) {
+    .rm-status, .rm-nav, .rm-mark__sub { display: none; }
+    .rm-idle { opacity: .05; font-size: 10px; top: 6%; }
+  }
 
   /* --- seções --- */
   .rm-sec { padding: 6rem 2rem; }
@@ -197,8 +235,26 @@ export default function Home() {
       <style>{rmStyles}</style>
       <BootIntro />
 
-      <span className="rm-corner rm-corner--l">mary l. <span className="text-star" aria-hidden="true">✳︎</span></span>
-      <span className="rm-corner rm-corner--r"><LangToggle /></span>
+      <span className="rm-corner rm-corner--l">
+        <span className="rm-mark">
+          <span className="text-star" aria-hidden="true">✳︎</span> mary lisita
+        </span>
+        <span className="rm-mark__sub">
+          {lang === "pt" ? "designer & tecnóloga criativa" : "designer & creative technologist"}
+        </span>
+      </span>
+      <span className="rm-corner rm-corner--r">
+        <span className="rm-status">
+          <span className="rm-status__dot" aria-hidden="true" />
+          {lang === "pt" ? "disponível p/ projetos" : "available for work"}
+        </span>
+        <nav className="rm-nav" aria-label={lang === "pt" ? "navegação" : "navigation"}>
+          <a href="/work">{t("nav_work").toLowerCase()}</a>
+          <a href="#about" onClick={(e) => { e.preventDefault(); document.querySelector("#about")?.scrollIntoView({ behavior: "smooth" }); }}>{t("rm_menu_about")}</a>
+          <a href="#contact" onClick={(e) => { e.preventDefault(); document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" }); }}>{t("rm_menu_contact")}</a>
+        </nav>
+        <LangToggle />
+      </span>
 
       <main>
         <PlaygroundHero
@@ -208,6 +264,7 @@ export default function Home() {
           subHighlight={t("hero_sub_highlight")}
           scrollLabel={t("rm_scroll")}
         >
+          <IdleBanner />
           <ScatterMenu
             items={[
               { label: t("nav_work").toLowerCase(), href: "/work", left: "72%", top: "40%", rotate: 2, priority: "primary" },

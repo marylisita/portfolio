@@ -257,44 +257,6 @@ const styles = `
     mix-blend-mode: overlay;
     opacity: .62;
   }
-  /* fita washi lime prendendo o print no topo */
-  .sw__tape {
-    position: absolute;
-    z-index: 6;
-    top: -10px;
-    left: 50%;
-    width: clamp(72px, 24%, 122px);
-    height: 26px;
-    transform: translateX(-50%) rotate(-3deg);
-    background: linear-gradient(180deg, rgba(44,42,37,.52), rgba(28,27,24,.44));
-    border: 1px solid rgba(18,17,14,.4);
-    box-shadow: 0 2px 6px rgba(0,0,0,.28);
-    pointer-events: none;
-  }
-  .sw__tape::before,
-  .sw__tape::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 6px;
-    background: repeating-linear-gradient(90deg, transparent 0 2px, rgba(255,255,255,.2) 2px 3px);
-  }
-  .sw__tape::before { left: 0; }
-  .sw__tape::after { right: 0; }
-  /* variar a posição/inclinação da fita pra não ficar tudo no mesmo lugar */
-  .sw__item[data-sw-project="1"] .sw__tape,
-  .sw__item[data-sw-project="4"] .sw__tape,
-  .sw__item[data-sw-project="7"] .sw__tape {
-    left: 32%;
-    transform: translateX(-50%) rotate(4deg);
-  }
-  .sw__item[data-sw-project="2"] .sw__tape,
-  .sw__item[data-sw-project="5"] .sw__tape,
-  .sw__item[data-sw-project="8"] .sw__tape {
-    left: 70%;
-    transform: translateX(-50%) rotate(-5deg);
-  }
   .sw__item[data-sw-project]:hover::before,
   .sw__item[data-sw-project]:focus-within::before {
     transform: translate(4px, 4px);
@@ -439,7 +401,6 @@ const styles = `
       padding: clamp(7px, 1vw, 11px);
       box-shadow: inset 0 0 0 1px rgba(255,255,255,.22);
     }
-    .sw[data-view="desk"] .sw__tape { display: none; }
     .sw[data-view="desk"] .sw__deco,
     .sw[data-view="desk"] .sw__bg { display: none; }
   }
@@ -627,8 +588,6 @@ export default function ScatteredWorks({ items, bgWord }: { items: IndexItem[]; 
               onBlur={() => setDesktopActive(null)}
             >
               <Link href={item.href} className="sw__link hover-trigger">
-                {/* fita washi prendendo o print (escondida na vista "mesa") */}
-                <span className="sw__tape" aria-hidden="true" />
                 {/* sem aspect-ratio fixo aqui: quem manda é a proporção real
                     do arquivo, definida pelo próprio PixelScrollImage */}
                 <div className="sw__frame">

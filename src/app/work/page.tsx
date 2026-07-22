@@ -20,18 +20,6 @@ interface ProjectCardProps {
   ratio: number;
 }
 
-const WORK_GLOWS = [
-  "rgba(232, 175, 56, .34)",
-  "rgba(83, 128, 199, .31)",
-  "rgba(217, 70, 69, .31)",
-  "rgba(175, 48, 228, .3)",
-  "rgba(111, 170, 103, .3)",
-  "rgba(222, 114, 65, .28)",
-  "rgba(202, 28, 58, .3)",
-  "rgba(38, 157, 141, .28)",
-  "rgba(76, 105, 186, .28)",
-];
-
 function ProjectCard({ num, title, tags, href, img, desc, ratio }: ProjectCardProps) {
   const { t } = useT();
 
@@ -41,7 +29,6 @@ function ProjectCard({ num, title, tags, href, img, desc, ratio }: ProjectCardPr
       className="wk-card"
       data-wk-num={num}
       style={{
-        "--wk-glow": WORK_GLOWS[(Number(num) - 1 + WORK_GLOWS.length) % WORK_GLOWS.length],
         display: "flex",
         flexDirection: "column",
         gap: "1.5rem",
@@ -160,7 +147,7 @@ function ProjectCard({ num, title, tags, href, img, desc, ratio }: ProjectCardPr
 }
 
 export default function Work() {
-  const { t } = useT();
+  const { t, lang } = useT();
   const projects = useProjects();
   const [activeProject, setActiveProject] = useState(projects[0]?.num ?? "01");
 
@@ -225,12 +212,26 @@ export default function Work() {
     }
     .wk-corner {
       position: fixed; top: 1rem; z-index: 1000;
-      font-family: var(--font-mono);
-      font-size: .7rem; text-transform: lowercase; letter-spacing: .14em;
+      font-family: var(--font-body);
+      font-size: .78rem; text-transform: lowercase; letter-spacing: .1em;
       color: var(--ink);
     }
-    .wk-corner--l { left: 1.4rem; }
-    .wk-corner--r { right: 1.4rem; display: flex; align-items: center; gap: .8rem; }
+    .wk-corner--l { left: 1.4rem; display: flex; flex-direction: column; gap: .12rem; line-height: 1.1; }
+    .wk-mark { font-weight: 600; letter-spacing: .06em; color: inherit; text-decoration: none; }
+    .wk-mark__sub { font-size: .62rem; letter-spacing: .08em; opacity: .5; }
+    .wk-corner--r { right: 1.4rem; display: flex; align-items: center; gap: 1rem; }
+    .wk-status { display: inline-flex; align-items: center; gap: .42rem; font-size: .68rem; letter-spacing: .06em; opacity: .82; white-space: nowrap; }
+    .wk-status__dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ink); animation: wk-pulse 2.4s ease-out infinite; }
+    @keyframes wk-pulse {
+      0% { box-shadow: 0 0 0 0 rgba(28,27,24,.35); }
+      70% { box-shadow: 0 0 0 6px rgba(28,27,24,0); }
+      100% { box-shadow: 0 0 0 0 rgba(28,27,24,0); }
+    }
+    .wk-nav { display: inline-flex; align-items: center; gap: .7rem; }
+    .wk-nav a { color: var(--ink); text-decoration: none; opacity: .7; font-size: .72rem; letter-spacing: .04em; transition: opacity .2s ease; }
+    .wk-nav a:hover, .wk-nav a:focus-visible { opacity: 1; text-decoration: underline; text-underline-offset: 3px; }
+    @media (prefers-reduced-motion: reduce) { .wk-status__dot { animation: none; } }
+    @media (max-width: 860px) { .wk-status, .wk-nav, .wk-mark__sub { display: none; } }
     .wk-ornament {
       position: absolute; z-index: 1; pointer-events: none;
       mix-blend-mode: multiply;
@@ -317,17 +318,6 @@ export default function Work() {
     }
     .wk-toc__link[data-active="true"] .wk-toc__num { color: var(--acid); }
     .wk-card { position: relative; isolation: isolate; scroll-margin-top: 8rem; }
-    .wk-card::before {
-      content: "";
-      position: absolute;
-      z-index: -2;
-      inset: -8rem -10vw;
-      pointer-events: none;
-      background: radial-gradient(closest-side, var(--wk-glow) 0%, transparent 72%);
-      opacity: .12;
-      transform: scale(.78);
-      transition: opacity var(--duration-slow) var(--ease-default), transform var(--duration-slow) var(--ease-out);
-    }
     .wk-card::after {
       content: attr(data-wk-num);
       position: absolute;
@@ -347,40 +337,23 @@ export default function Work() {
       transform-origin: right top;
       transition: opacity var(--duration-normal) var(--ease-default), translate var(--duration-slow) var(--ease-out);
     }
-    .wk-card:hover::before,
-    .wk-card:focus-within::before { opacity: .82; transform: scale(1); }
     .wk-card:hover::after,
     .wk-card:focus-within::after { opacity: .075; translate: -1.5vw 1rem; }
     .wk-cover {
       position: relative;
-      overflow: visible !important;
+      overflow: hidden;
       color: inherit;
       text-decoration: none;
+      border: 1px solid rgba(28,27,24,.14);
       transition: transform var(--duration-slow) var(--ease-out), box-shadow var(--duration-slow) var(--ease-out);
     }
-    .wk-cover:focus-visible { outline: 3px solid var(--acid); outline-offset: 7px; }
-    .wk-cover::before {
-      content: "";
-      position: absolute; inset: 0; z-index: -1;
-      transform: translate(12px, 12px);
-      background: var(--site-tint-b);
-      border: 1px solid rgba(28,27,24,.18);
-      transition: transform var(--duration-slow) var(--ease-out);
-    }
+    .wk-cover:focus-visible { outline: 3px solid var(--ink); outline-offset: 7px; }
     .wk-cover > * { overflow: hidden; }
     .wk-card:hover .wk-cover,
     .wk-card:focus-within .wk-cover {
-      transform: translate(-3px, -3px) rotate(-.15deg);
-      box-shadow: -5px 0 0 rgba(229,70,42,.54), 5px 0 0 rgba(81,92,196,.38);
-      animation: wk-print-register var(--duration-fast) steps(3, end) 1;
+      transform: translate(-3px, -4px);
+      box-shadow: 0 16px 30px rgba(0,0,0,.16);
     }
-    @keyframes wk-print-register {
-      0% { box-shadow: -11px 0 0 rgba(229,70,42,.7), 11px 0 0 rgba(81,92,196,.55); }
-      55% { box-shadow: 4px 0 0 rgba(229,70,42,.58), -4px 0 0 rgba(81,92,196,.48); }
-      100% { box-shadow: -5px 0 0 rgba(229,70,42,.54), 5px 0 0 rgba(81,92,196,.38); }
-    }
-    .wk-card:hover .wk-cover::before,
-    .wk-card:focus-within .wk-cover::before { transform: translate(5px, 5px); }
     @media (max-width: 1000px) {
       .wk-toc { position: relative; top: auto; grid-template-columns: repeat(3, minmax(0, 1fr)); }
     }
@@ -392,8 +365,6 @@ export default function Work() {
       .wk-card__head { grid-template-columns: 2.5rem minmax(0, 1fr) !important; gap: .75rem !important; }
       .wk-card__title { min-width: 0; overflow-wrap: anywhere; }
       .wk-card__tags { grid-column: 1 / -1; text-align: left !important; line-height: 1.45; }
-      .wk-cover::before { transform: translate(7px, 8px); }
-      .wk-card::before { inset: -5rem -18vw; opacity: .38; transform: scale(.92); }
       .wk-card::after { opacity: .045; font-size: clamp(9rem, 55vw, 17rem); top: 1.1rem; }
       .wk-back-btn { min-height: 44px; display: inline-flex; align-items: center; }
       .wk-ornament--corner { top: 5rem; left: 1.4rem; }
@@ -414,7 +385,7 @@ export default function Work() {
       }
     }
     @media (prefers-reduced-motion: reduce) {
-      .wk-cover, .wk-cover::before, .wk-card::before, .wk-card::after { transition: none; }
+      .wk-cover, .wk-card::after { transition: none; }
       .wk-card__title, .wk-toc__num { transition: none; }
       .wk-card { animation: none; opacity: 1; filter: none; }
       .wk-ornament { animation: none; translate: none; }
@@ -445,14 +416,25 @@ export default function Work() {
         className="wk-ornament wk-ornament--left"
       />
 
-      {/* Navigation corners */}
+      {/* Header — mesmo do landing (marca + status + nav + idioma) */}
       <span className="wk-corner wk-corner--l">
-        mary l. <span className="text-star" aria-hidden="true">✳︎</span>
+        <Link href="/" className="wk-mark hover-trigger">
+          <span className="text-star" aria-hidden="true">✳︎</span> mary lisita
+        </Link>
+        <span className="wk-mark__sub">
+          {lang === "pt" ? "designer & tecnóloga criativa" : "designer & creative technologist"}
+        </span>
       </span>
       <span className="wk-corner wk-corner--r">
-        <Link href="/" className="wk-back-btn hover-trigger">
-          [ {t("pj_home").toLowerCase()} ]
-        </Link>
+        <span className="wk-status">
+          <span className="wk-status__dot" aria-hidden="true" />
+          {lang === "pt" ? "disponível p/ projetos" : "available for work"}
+        </span>
+        <nav className="wk-nav" aria-label={lang === "pt" ? "navegação" : "navigation"}>
+          <Link href="/">{t("pj_home").toLowerCase()}</Link>
+          <Link href="/#about">{t("rm_menu_about")}</Link>
+          <Link href="/#contact">{t("rm_menu_contact")}</Link>
+        </nav>
         <LangToggle />
       </span>
 
