@@ -31,23 +31,27 @@ const SPOTS = [
   { left: "62%", top: "30rem",  w: "clamp(224px, 38.4vw, 576px)", ratio: 0.667, rot: 3 },  // helvetica 948x632
   { left: "30%", top: "73rem",  w: "clamp(320px, 52vw, 780px)", ratio: 0.498, rot: 1 },  // genlab 1743x868
   { left: "2%",  top: "109rem", w: "clamp(300px, 38.4vw, 564px)", ratio: 0.562, rot: -4 }, // ebat 2400x1350
-  { left: "52%", top: "135rem", w: "clamp(280px, 40vw, 600px)", ratio: 0.643, rot: 2 },  // graduation 1401x901
+  { left: "52%", top: "135rem", w: "clamp(280px, 40vw, 600px)", ratio: 0.494, rot: 2 },  // graduation animacao.webp 1000x494
   { left: "6%",  top: "185rem", w: "clamp(340px, 58vw, 880px)", ratio: 0.319, rot: -1 }, // pilotis 1600x511
   { left: "66%", top: "218rem", w: "clamp(250px, 30vw, 460px)", ratio: 0.667, rot: 4 },  // chinario 1600x1068
   { left: "8%",  top: "257rem", w: "clamp(320px, 54vw, 820px)", ratio: 0.424, rot: -2 }, // hologlam 1710x725
   { left: "56%", top: "296rem", w: "clamp(280px, 42vw, 640px)", ratio: 0.625, rot: 3 },  // vegcoz 1600x1000
 ];
 
+// Uma cor por projeto, DERIVADA da capa real (tom característico, clampado pra
+// faixa média de brilho pra aparecer no fundo bege). Aparece como glow atrás do
+// card ativo, posicionado no próprio card (ver --sw-glow-x/y). Trocou uma capa?
+// re-amostra o tom dela e atualiza aqui. Ordem = índice do projeto (useProjects).
 const PROJECT_GLOWS = [
-  "rgba(198, 154, 116, .24)",
-  "rgba(115, 117, 153, .22)",
-  "rgba(145, 86, 121, .2)",
-  "rgba(145, 76, 180, .22)",
-  "rgba(221, 154, 91, .2)",
-  "rgba(113, 142, 101, .2)",
-  "rgba(190, 35, 61, .18)",
-  "rgba(74, 115, 149, .2)",
-  "rgba(97, 151, 98, .2)",
+  "rgba(140, 99, 63, .22)",   // isadora — marrom quente vintage
+  "rgba(172, 171, 171, .22)", // magazine — editorial p&b, cinza
+  "rgba(198, 190, 195, .22)", // genlab — claro/pastel
+  "rgba(180, 156, 198, .22)", // ebat — lilás da identidade
+  "rgba(140, 42, 126, .22)",  // graduation — magenta/roxo da capa animada
+  "rgba(82, 140, 131, .22)",  // pilotis — verde-água
+  "rgba(186, 56, 86, .22)",   // chinario — vermelho china-rio
+  "rgba(62, 95, 140, .22)",   // hologlam — azul
+  "rgba(159, 159, 97, .22)",  // vegcoz — verde-oliva
 ];
 
 const MOTION_ENTER = 0.9;
@@ -55,7 +59,7 @@ const MOTION_EASE_OUT = [0.16, 1, 0.3, 1] as const;
 
 const styles = `
   .sw {
-    --sw-paper-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='paper'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paper)' opacity='.27'/%3E%3C/svg%3E");
+    --sw-paper-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='paper'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paper)' opacity='.46'/%3E%3C/svg%3E");
     --duration-ambient-a: 80s;
     --duration-ambient-b: 95s;
     position: relative;
@@ -71,7 +75,7 @@ const styles = `
     inset: -10rem -8vw;
     z-index: -1;
     pointer-events: none;
-    background: radial-gradient(circle at 50% 48%, var(--sw-glow, transparent), transparent 58%);
+    background: radial-gradient(46rem 46rem at var(--sw-glow-x, 50%) var(--sw-glow-y, 48%), var(--sw-glow, transparent), transparent 72%);
     opacity: var(--sw-glow-opacity, 0);
     transition: opacity var(--duration-slow) var(--ease-default), background var(--duration-slow) var(--ease-default);
   }
@@ -101,28 +105,7 @@ const styles = `
   .sw__mode button:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
   .sw__item { position: absolute; z-index: 1; text-decoration: none; color: var(--ink); }
   .sw__item[data-sw-project] {
-    --sw-layer: rgba(230, 220, 203, .72);
-    --sw-layer-x: 12px;
-    --sw-layer-y: 12px;
     isolation: isolate;
-  }
-  .sw__item[data-sw-project]::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    background-color: var(--sw-layer);
-    background-image:
-      var(--sw-paper-grain),
-      linear-gradient(118deg, rgba(255,255,255,.18), transparent 42%, rgba(28,27,24,.08));
-    background-size: 160px 160px, 100% 100%;
-    background-blend-mode: multiply, soft-light;
-    border: 1px solid rgba(28, 27, 24, .18);
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,.08), inset 0 0 22px rgba(28,27,24,.035);
-    clip-path: polygon(0 8px, 8px 8px, 8px 0, calc(100% - 8px) 0, calc(100% - 8px) 8px, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 8px calc(100% - 8px), 0 calc(100% - 8px));
-    transform: translate(var(--sw-layer-x), var(--sw-layer-y));
-    transition: transform var(--duration-slow) var(--ease-out), opacity var(--duration-normal) var(--ease-default);
   }
   .sw__item[data-sw-project]::after {
     content: attr(data-sw-num);
@@ -147,15 +130,6 @@ const styles = `
     opacity: .065;
     scale: 1.04 1;
   }
-  .sw__item[data-sw-project="0"] { --sw-layer: rgba(246, 241, 230, .9); --sw-layer-x: -10px; --sw-layer-y: 12px; }
-  .sw__item[data-sw-project="1"] { --sw-layer: rgba(219, 214, 228, .74); --sw-layer-x: 14px; --sw-layer-y: -9px; }
-  .sw__item[data-sw-project="2"] { --sw-layer: rgba(230, 220, 203, .82); --sw-layer-x: -14px; --sw-layer-y: 14px; }
-  .sw__item[data-sw-project="3"] { --sw-layer: rgba(216, 207, 228, .72); --sw-layer-x: 12px; --sw-layer-y: 13px; }
-  .sw__item[data-sw-project="4"] { --sw-layer: rgba(239, 224, 204, .78); --sw-layer-x: -12px; --sw-layer-y: -10px; }
-  .sw__item[data-sw-project="5"] { --sw-layer: rgba(222, 228, 214, .76); --sw-layer-x: 16px; --sw-layer-y: 11px; }
-  .sw__item[data-sw-project="6"] { --sw-layer: rgba(230, 220, 203, .8); --sw-layer-x: -11px; --sw-layer-y: 14px; }
-  .sw__item[data-sw-project="7"] { --sw-layer: rgba(214, 222, 226, .76); --sw-layer-x: 13px; --sw-layer-y: -10px; }
-  .sw__item[data-sw-project="8"] { --sw-layer: rgba(237, 218, 203, .76); --sw-layer-x: -13px; --sw-layer-y: 12px; }
   .sw__link {
     position: relative;
     z-index: 1;
@@ -247,22 +221,79 @@ const styles = `
   }
   .sw__divider { flex: 0 0 auto; max-width: 100%; }
 
+  /* moldura = um PRINT de papel: margem de papel granulado ao redor da foto,
+     sombra PROJETADA de verdade (não o offset chapado), cantos retos de foto.
+     A foto vive dentro de .sw__photo com grão por cima — dá a textura tátil. */
   .sw__frame {
     position: relative;
-    overflow: hidden;
-    background: var(--site-tint-b);
-    clip-path: polygon(0 8px, 8px 8px, 8px 0, calc(100% - 8px) 0, calc(100% - 8px) 8px, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 8px calc(100% - 8px), 0 calc(100% - 8px));
+    overflow: visible;
+    padding: clamp(9px, 1.3vw, 15px);
+    padding-bottom: clamp(12px, 1.7vw, 20px);
+    border-radius: 2px;
+    background-color: rgba(237, 231, 218, .97);
+    background-image:
+      var(--sw-paper-grain),
+      linear-gradient(122deg, rgba(255,255,255,.42), transparent 44%, rgba(28,27,24,.1));
+    background-size: 160px 160px, 100% 100%;
+    background-blend-mode: multiply, soft-light;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.3), inset 0 0 26px rgba(28,27,24,.05);
+    filter: drop-shadow(0 8px 14px rgba(0,0,0,.22)) drop-shadow(0 2px 3px rgba(0,0,0,.14));
     transition: transform var(--duration-slow) var(--ease-out), filter var(--duration-slow) var(--ease-default), box-shadow var(--duration-slow) var(--ease-out);
   }
-  .sw__frame::after {
+  .sw__photo {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    border: 1px solid rgba(28, 27, 24, .18);
+  }
+  .sw__photo::after {
     content: "";
     position: absolute;
     inset: 0;
     z-index: 2;
     pointer-events: none;
-    border: 1px solid rgba(28, 27, 24, .2);
-    background: linear-gradient(145deg, rgba(255,255,255,.08), transparent 38%, rgba(28,27,24,.06));
-    mix-blend-mode: multiply;
+    background: var(--sw-paper-grain), radial-gradient(125% 125% at 50% 0%, transparent 60%, rgba(20,19,16,.16));
+    background-size: 150px 150px, 100% 100%;
+    mix-blend-mode: overlay;
+    opacity: .62;
+  }
+  /* fita washi lime prendendo o print no topo */
+  .sw__tape {
+    position: absolute;
+    z-index: 6;
+    top: -10px;
+    left: 50%;
+    width: clamp(72px, 24%, 122px);
+    height: 26px;
+    transform: translateX(-50%) rotate(-3deg);
+    background: linear-gradient(180deg, rgba(44,42,37,.52), rgba(28,27,24,.44));
+    border: 1px solid rgba(18,17,14,.4);
+    box-shadow: 0 2px 6px rgba(0,0,0,.28);
+    pointer-events: none;
+  }
+  .sw__tape::before,
+  .sw__tape::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+    background: repeating-linear-gradient(90deg, transparent 0 2px, rgba(255,255,255,.2) 2px 3px);
+  }
+  .sw__tape::before { left: 0; }
+  .sw__tape::after { right: 0; }
+  /* variar a posição/inclinação da fita pra não ficar tudo no mesmo lugar */
+  .sw__item[data-sw-project="1"] .sw__tape,
+  .sw__item[data-sw-project="4"] .sw__tape,
+  .sw__item[data-sw-project="7"] .sw__tape {
+    left: 32%;
+    transform: translateX(-50%) rotate(4deg);
+  }
+  .sw__item[data-sw-project="2"] .sw__tape,
+  .sw__item[data-sw-project="5"] .sw__tape,
+  .sw__item[data-sw-project="8"] .sw__tape {
+    left: 70%;
+    transform: translateX(-50%) rotate(-5deg);
   }
   .sw__item[data-sw-project]:hover::before,
   .sw__item[data-sw-project]:focus-within::before {
@@ -281,15 +312,9 @@ const styles = `
   }
   .sw__item[data-sw-project]:hover .sw__frame,
   .sw__item[data-sw-project]:focus-within .sw__frame {
-    transform: translate(-3px, -3px);
-    filter: saturate(1.04) contrast(1.025);
-    box-shadow: -5px 0 0 rgba(229, 70, 42, .56), 5px 0 0 rgba(81, 92, 196, .4);
-    animation: sw-print-register var(--duration-fast) steps(3, end) 1;
-  }
-  @keyframes sw-print-register {
-    0% { box-shadow: -10px 0 0 rgba(229,70,42,.7), 10px 0 0 rgba(81,92,196,.55); }
-    55% { box-shadow: 4px 0 0 rgba(229,70,42,.58), -4px 0 0 rgba(81,92,196,.48); }
-    100% { box-shadow: -5px 0 0 rgba(229,70,42,.56), 5px 0 0 rgba(81,92,196,.4); }
+    transform: translate(-3px, -4px);
+    filter: saturate(1.02) contrast(1.02) drop-shadow(0 16px 22px rgba(0,0,0,.3)) drop-shadow(0 3px 5px rgba(0,0,0,.2));
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.3);
   }
   .sw__cap {
     position: relative;
@@ -310,7 +335,7 @@ const styles = `
     background-size: 130px 130px, 100% 100%;
     background-blend-mode: multiply, soft-light;
     border: 1px solid rgba(28, 27, 24, .22);
-    box-shadow: 3px 3px 0 var(--sw-layer), inset 0 0 0 1px rgba(255,255,255,.14);
+    box-shadow: 0 5px 12px rgba(20,19,16,.16), inset 0 0 0 1px rgba(255,255,255,.14);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     text-transform: lowercase;
@@ -321,7 +346,7 @@ const styles = `
   .sw__item:focus-within .sw__cap {
     color: var(--acid);
     background-color: rgba(246, 241, 230, .96);
-    box-shadow: 5px 5px 0 var(--sw-layer), inset 0 0 0 1px rgba(255,255,255,.18);
+    box-shadow: 0 8px 16px rgba(20,19,16,.2), inset 0 0 0 1px rgba(255,255,255,.18);
   }
   .sw__item[data-sw-project="0"] .sw__cap,
   .sw__item[data-sw-project="3"] .sw__cap,
@@ -336,8 +361,8 @@ const styles = `
   /* PixelPoiiz NAO e usada: alem de nao ter acentos, o zero dela e desenhado
      parecendo um simbolo (01 saia como "@1"). Fica carregada mas sem uso. */
   .sw__num {
-    grid-row: 1 / span 2;
-    align-self: center;
+    grid-row: 1;
+    align-self: end;
     font-family: var(--font-subtitle);
     font-weight: var(--offbit-weight);
     font-size: clamp(1.65rem, 3vw, 2.8rem);
@@ -410,6 +435,11 @@ const styles = `
     .sw[data-view="desk"] .sw__link {
       filter: none !important;
     }
+    .sw[data-view="desk"] .sw__frame {
+      padding: clamp(7px, 1vw, 11px);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.22);
+    }
+    .sw[data-view="desk"] .sw__tape { display: none; }
     .sw[data-view="desk"] .sw__deco,
     .sw[data-view="desk"] .sw__bg { display: none; }
   }
@@ -470,7 +500,19 @@ export default function ScatteredWorks({ items, bgWord }: { items: IndexItem[]; 
   const [mobileActive, setMobileActive] = useState<number | null>(null);
   const [desktopActive, setDesktopActive] = useState<number | null>(null);
   const [viewMode, setViewMode] = useState<"collage" | "desk">("collage");
+  const [glowPos, setGlowPos] = useState<{ x: number; y: number } | null>(null);
   const activeIndex = desktopActive ?? mobileActive;
+
+  // posiciona o glow no CENTRO do card ativo (relativo ao canvas .sw), pra ele
+  // acender perto de qualquer card — não mais fixo no meio da colagem.
+  const glowFrom = (el: HTMLElement | null) => {
+    const canvas = canvasRef.current;
+    if (!canvas || !el) return;
+    setGlowPos({
+      x: ((el.offsetLeft + el.offsetWidth / 2) / (canvas.offsetWidth || 1)) * 100,
+      y: ((el.offsetTop + el.offsetHeight / 2) / (canvas.offsetHeight || 1)) * 100,
+    });
+  };
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -493,6 +535,7 @@ export default function ScatteredWorks({ items, bgWord }: { items: IndexItem[]; 
 
           const value = (centered.target as HTMLElement).dataset.swProject;
           setMobileActive(value == null ? null : Number(value));
+          if (value != null) glowFrom(centered.target as HTMLElement);
         },
         { rootMargin: "-42% 0px -42% 0px", threshold: 0 },
       );
@@ -528,6 +571,8 @@ export default function ScatteredWorks({ items, bgWord }: { items: IndexItem[]; 
         style={{
           "--sw-glow": activeIndex == null ? "transparent" : PROJECT_GLOWS[activeIndex % PROJECT_GLOWS.length],
           "--sw-glow-opacity": activeIndex == null ? 0 : 1,
+          "--sw-glow-x": glowPos ? `${glowPos.x}%` : "50%",
+          "--sw-glow-y": glowPos ? `${glowPos.y}%` : "48%",
         } as React.CSSProperties}
       >
         <PixelScrollText className="sw__bg sw__bg--a" text={bgWord} fontSize={420} color="var(--ink)" />
@@ -576,21 +621,26 @@ export default function ScatteredWorks({ items, bgWord }: { items: IndexItem[]; 
               viewport={{ once: true, margin: "-40px" }}
               transition={{ duration: reduceMotion ? 0 : MOTION_ENTER, ease: MOTION_EASE_OUT }}
               whileHover={reduceMotion ? undefined : { scale: 1.02, rotate: 0 }}
-              onMouseEnter={() => setDesktopActive(i)}
+              onMouseEnter={(e) => { setDesktopActive(i); glowFrom(e.currentTarget); }}
               onMouseLeave={() => setDesktopActive(null)}
-              onFocus={() => setDesktopActive(i)}
+              onFocus={(e) => { setDesktopActive(i); glowFrom(e.currentTarget); }}
               onBlur={() => setDesktopActive(null)}
             >
               <Link href={item.href} className="sw__link hover-trigger">
+                {/* fita washi prendendo o print (escondida na vista "mesa") */}
+                <span className="sw__tape" aria-hidden="true" />
                 {/* sem aspect-ratio fixo aqui: quem manda é a proporção real
                     do arquivo, definida pelo próprio PixelScrollImage */}
                 <div className="sw__frame">
-                  <PixelScrollImage src={item.img} alt={item.title} ratio={s.ratio} style={{ width: "100%" }} />
+                  <div className="sw__photo">
+                    <PixelScrollImage src={item.img} alt={item.title} ratio={s.ratio} style={{ width: "100%" }} />
+                  </div>
                 </div>
+                {/* só número + título na home: as categorias (cliente/faculdade
+                    /etc.) vivem na página de cada trabalho, não aqui */}
                 <span className="sw__cap">
                   <span className="sw__num">{item.num}</span>
                   <span className="sw__title">{item.title}</span>
-                  <span className="sw__tags">{item.tags}</span>
                 </span>
               </Link>
             </motion.div>

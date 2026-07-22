@@ -18,17 +18,20 @@ type InkDot = {
   vy: number;
 };
 
-const Y2K_INKS = [
-  { color: "#ff2aa7", glow: "#ff2aa7" },
-  { color: "#ff55bd", glow: "#ff55bd" },
-  { color: "#ff8fd8", glow: "#ff55bd" },
-  { color: "#cbb7ff", glow: "#cbb7ff" },
-  { color: "#e0ceff", glow: "#cbb7ff" },
-  { color: "#ffffff", glow: "#ff8fd8" },
-  { color: "#ffffff", glow: "#cbb7ff" },
-  { color: "#09080d", glow: "#cbb7ff" },
+/* Paleta monocromática, casada com a identidade atual (bege + tinta escura).
+ * Antes era o neon Y2K rosa/lilás da id velha — era ele que dava o "brilho
+ * artificial". Agora: tinta escura dominante + cinzas quentes + faísca de creme
+ * ocasional, e o glow é translúcido e baixo (sombra de tinta, não neon). */
+const INKS = [
+  { color: "#1c1b18", glow: "rgba(28,27,24,.30)" },
+  { color: "#1c1b18", glow: "rgba(28,27,24,.24)" },
+  { color: "#3a372f", glow: "rgba(28,27,24,.20)" },
+  { color: "#5b564a", glow: "rgba(28,27,24,.16)" },
+  { color: "#f6f1e6", glow: "rgba(255,255,255,.34)" },
+  { color: "#ffffff", glow: "rgba(255,255,255,.40)" },
 ] as const;
-const SYMBOLS = ["✦", "♡", "⋆", "<3", "+", "×", "∞", "≈", "≠", "∑", "√", "π", "∴", "⊹"];
+/* só as fofinhas — saíram as matemáticas (∑ √ π ≠ ∞ ×) que pareciam terminal */
+const SYMBOLS = ["✦", "✧", "⋆", "✳", "·", "°", "♡", "⊹", "+"];
 const MOTION_FAST = 0.2;
 const MOTION_EASE_STANDARD = [0, 0, 0.2, 1] as const;
 
@@ -83,10 +86,10 @@ export default function Cursor() {
         ctx.save();
         ctx.translate(dot.x, dot.y);
         ctx.rotate(dot.rotation);
-        ctx.globalAlpha = Math.min(1, progress * 1.35) * 0.82;
+        ctx.globalAlpha = Math.min(1, progress * 1.35) * 0.7;
         ctx.fillStyle = dot.color;
         ctx.shadowColor = dot.glow;
-        ctx.shadowBlur = 11 * progress;
+        ctx.shadowBlur = 4 * progress;
         ctx.font = `700 ${Math.max(7, dot.size * (0.72 + progress * 0.28))}px monospace`;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
@@ -132,7 +135,7 @@ export default function Cursor() {
         for (let index = 0; index < steps; index += 1) {
           const t = steps === 1 ? 1 : index / (steps - 1);
           const maxLife = 34 + Math.random() * 18;
-          const ink = Y2K_INKS[Math.floor(Math.random() * Y2K_INKS.length)];
+          const ink = INKS[Math.floor(Math.random() * INKS.length)];
           dots.current.push({
             x: lastPos.current.x + dx * t + (Math.random() - 0.5) * 3,
             y: lastPos.current.y + dy * t + (Math.random() - 0.5) * 3,

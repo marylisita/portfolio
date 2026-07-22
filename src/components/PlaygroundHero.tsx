@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import AsciiAnim from "./AsciiAnim";
+import { useT } from "@/i18n/LanguageContext";
 import {
   GATO_FRAMES,
   GATO_PRETO_FRAMES,
@@ -14,14 +15,33 @@ export const PIXEL_CLIP =
 /* linha "pixelada": blocos de 6px em vez de fio contínuo */
 const PIXEL_LINE = "repeating-linear-gradient(90deg, var(--ink) 0 6px, transparent 6px 12px)";
 
+/** Saudação que muda com a hora real E o idioma do site (pedido dela:
+ *  brincalhona, sem emoji). Calculada no tick (client-only), então não
+ *  dá mismatch de hidratação. */
+function greetingFor(hour: number, lang: "pt" | "en") {
+  if (lang === "pt") {
+    if (hour < 6) return "ainda acordada?";
+    if (hour < 12) return "bom dia, sol";
+    if (hour < 18) return "boa tarde";
+    return "modo noturno on";
+  }
+  if (hour < 6) return "still up?";
+  if (hour < 12) return "morning, sunshine";
+  if (hour < 18) return "good afternoon";
+  return "night mode on";
+}
+
 /** Relógio ao vivo (referência: barbianaliu.com — "Mon 01:39:03 AM"). */
 function LiveClock() {
+  const { lang } = useT();
   const [now, setNow] = useState("");
+  const [greet, setGreet] = useState("");
   useEffect(() => {
-    const tick = () =>
+    const tick = () => {
+      const d = new Date();
       setNow(
-        new Date()
-          .toLocaleString("pt-BR", {
+        d
+          .toLocaleString(lang === "pt" ? "pt-BR" : "en-US", {
             weekday: "short",
             hour: "2-digit",
             minute: "2-digit",
@@ -29,13 +49,18 @@ function LiveClock() {
           })
           .replace(",", "")
       );
+      setGreet(greetingFor(d.getHours(), lang));
+    };
     tick();
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
-  }, []);
+  }, [lang]);
   return (
-    <span className="ph__note" style={{ color: "var(--acid)" }} suppressHydrationWarning>
-      {now || "…"}
+    <span className="ph__clock" suppressHydrationWarning>
+      <span className="ph__greet">{greet || "…"}</span>
+      <span className="ph__note" style={{ color: "var(--acid)" }}>
+        {now || "…"}
+      </span>
     </span>
   );
 }
@@ -131,6 +156,16 @@ const styles = `
     pointer-events: none;
     opacity: .62;
   }
+  .ph__clock { display: inline-flex; flex-direction: column; gap: .15rem; }
+  .ph__greet {
+    font-family: var(--font-hand);
+    font-size: 1.1rem;
+    line-height: 1;
+    letter-spacing: .01em;
+    color: var(--ink);
+    white-space: nowrap;
+    pointer-events: none;
+  }
 
   @media (max-width: 720px) {
     .ph { padding: 5.5rem 1.25rem 1.5rem; }
@@ -218,7 +253,7 @@ export default function PlaygroundHero({
     },
     // texto
     { key: "rio", left: "12%", top: "40%", rotate: -12, deskOnly: true, el: <span className="ph__note">( rio de janeiro )</span> },
-    { key: "clock", left: "76%", top: "38%", rotate: 4, el: <LiveClock /> },
+    { key: "clock", left: "74%", top: "24%", rotate: 4, el: <LiveClock /> },
   ];
 
   return (

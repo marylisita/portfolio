@@ -4,6 +4,7 @@ import ScatteredWorks from "@/components/ScatteredWorks";
 import { useProjects } from "@/components/useProjects";
 import Marquee from "@/components/Marquee";
 import AsciiAnim from "@/components/AsciiAnim";
+import BootIntro from "@/components/BootIntro";
 import ScatterMenu, { type MenuItem } from "@/components/ScatterMenu";
 import { GATO_FRAMES, GATO_PRETO_FRAMES } from "@/components/asciiArt";
 import EditorialFooter from "@/components/EditorialFooter";
@@ -194,6 +195,7 @@ export default function Home() {
   return (
     <div className="rm">
       <style>{rmStyles}</style>
+      <BootIntro />
 
       <span className="rm-corner rm-corner--l">mary l. <span className="text-star" aria-hidden="true">✳︎</span></span>
       <span className="rm-corner rm-corner--r"><LangToggle /></span>

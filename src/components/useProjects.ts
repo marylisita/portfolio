@@ -45,8 +45,8 @@ export function useProjects(): IndexItem[] {
       title: "apple academy: graduation",
       tags: `${t("cat_collab")} / ` + t("p05_tags").replace(", ", " / "),
       href: "/work/graduation",
-      ratio: 0.643,
-      img: "/img/graduation/7.jpg",
+      ratio: 0.494,
+      img: "/img/graduation/animacao.webp",
     },
     {
       num: "06",
