@@ -11,16 +11,21 @@ export default function LangToggle() {
       className="lang-toggle hover-trigger"
       style={{
         fontFamily: "var(--font-mono)",
-        fontSize: "0.7rem",
+        fontSize: "var(--type-micro)",
         letterSpacing: "1px",
         textTransform: "uppercase",
-        padding: "5px 10px",
+        minWidth: "var(--tap-min)",
+        minHeight: "var(--tap-min)",
+        display: "inline-grid",
+        placeItems: "center",
+        padding: ".55rem .75rem",
         border: "1px solid currentColor",
         borderRadius: "var(--r-pill, 99px)",
-        background: "transparent",
+        background: "color-mix(in srgb, var(--paper) 90%, transparent)",
+        boxShadow: "2px 2px 0 color-mix(in srgb, currentColor 14%, transparent)",
         color: "inherit",
         cursor: "pointer",
-        transition: "opacity 0.2s",
+        transition: "opacity 0.2s, transform 0.2s, box-shadow 0.2s",
       }}
     >
       {lang === "pt" ? "EN" : "PT"}

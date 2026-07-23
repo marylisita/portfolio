@@ -4,7 +4,7 @@ import type { IndexItem } from "./EditorialIndex";
 
 /** Lista única de projetos — usada pela landing e pela página /work. */
 export function useProjects(): IndexItem[] {
-  const { t } = useT();
+  const { t, lang } = useT();
   const flat = (s: string) => s.replace(/\n/g, " ");
 
   return [
@@ -79,6 +79,16 @@ export function useProjects(): IndexItem[] {
       href: "/work/vegcoz",
       ratio: 0.708, // capa.png 1400x991 (recorte dela, 2026-07-23 — termina nas telas, sem o "Sobre o projeto" cortado)
       img: "/img/vegcoz/capa.png",
+    },
+    {
+      num: "10",
+      title: "ondularis",
+      tags: `${t("cat_collab")} / ${
+        lang === "pt" ? "arte, ciência e tecnologia / exposição" : "art, science & technology / exhibition"
+      }`,
+      href: "/work/ondularis",
+      ratio: 0.8,
+      img: "/img/ondularis/capa.webp",
     },
   ];
 }

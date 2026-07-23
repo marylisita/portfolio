@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import Image from "next/image";
 
 /**
  * Menu criativo (referência: os rótulos soltos do barbianaliu.com, na NOSSA
@@ -17,6 +18,7 @@ export type MenuItem = {
   top: string;
   rotate: number;
   priority: "primary" | "secondary" | "tertiary";
+  previews?: { src: string; alt: string }[];
 };
 
 const styles = `
@@ -25,41 +27,109 @@ const styles = `
     z-index: 10;
     display: inline-block;
     font-family: var(--font-body);
-    font-size: .78rem;
+    font-size: .95rem;
     font-weight: 600;
     text-transform: lowercase;
-    letter-spacing: .04em;
-    /* bloco sólido chapado, sem borda nem sombra (referência barbianaliu) */
+    letter-spacing: .05em;
     background: var(--ink);
     color: var(--paper);
-    padding: .42rem .8rem;
+    border: 1px solid var(--ink);
+    padding: .55rem 1.15rem;
     text-decoration: none;
     cursor: pointer;
-    animation: sm-float 5s ease-in-out infinite;
-    transition: background var(--duration-fast) var(--ease-default), color var(--duration-fast) var(--ease-default), box-shadow var(--duration-fast) var(--ease-out);
+    white-space: nowrap;
+    box-shadow: 4px 4px 0 color-mix(in srgb, var(--ink) 18%, transparent);
+    transition:
+      background var(--duration-fast) var(--ease-default),
+      color var(--duration-fast) var(--ease-default),
+      box-shadow var(--duration-fast) var(--ease-out),
+      translate var(--duration-fast) var(--ease-out);
   }
   .sm__tag:hover {
-    background: var(--acid);
+    background: var(--ink);
     color: var(--paper);
+    translate: -2px -2px;
+    box-shadow: 7px 7px 0 color-mix(in srgb, var(--ink) 20%, transparent);
+  }
+  .sm__tag:active {
+    translate: 3px 3px;
+    box-shadow: 1px 1px 0 color-mix(in srgb, var(--ink) 12%, transparent);
   }
   .sm__tag:focus-visible {
     outline: 2px solid var(--ink);
-    outline-offset: 5px;
+    outline-offset: 6px;
+  }
+  .sm__label {
+    display: inline-flex;
+    align-items: center;
+    gap: .42rem;
+  }
+  .sm__label::before,
+  .sm__label::after {
+    content: "╳";
+    font-family: var(--font-mono), monospace;
+    font-size: .48em;
+    font-weight: 400;
+    opacity: .56;
   }
   .sm__tag[data-priority="primary"] {
     font-family: var(--font-subtitle), monospace;
-    font-size: .9rem;
+    font-size: 1.18rem;
     font-weight: var(--offbit-weight-active);
     letter-spacing: var(--offbit-letter-spacing);
-    padding: .58rem 1rem;
-    box-shadow: 0 0 0 7px rgba(237,231,218,.76), 5px 5px 0 rgba(28,27,24,.14);
+    padding: .75rem 1.45rem;
+    box-shadow:
+      0 0 0 8px color-mix(in srgb, var(--paper) 86%, transparent),
+      7px 7px 0 color-mix(in srgb, var(--ink) 20%, transparent);
   }
   .sm__tag[data-priority="primary"]::after { content: " ↘"; }
-  .sm__tag[data-priority="secondary"] { opacity: .92; }
-  .sm__tag[data-priority="tertiary"] { opacity: .78; }
-  @keyframes sm-float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-7px); }
+  .sm__portal {
+    position: absolute;
+    top: calc(100% + .8rem);
+    right: 0;
+    width: min(22rem, 52vw);
+    height: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3px;
+    padding: 0;
+    overflow: hidden;
+    opacity: 0;
+    background: var(--paper);
+    box-shadow: 7px 8px 0 color-mix(in srgb, var(--ink) 15%, transparent);
+    transform: scaleY(.15);
+    transform-origin: top;
+    transition: height .42s cubic-bezier(.16,1,.3,1), opacity .25s ease, transform .42s cubic-bezier(.16,1,.3,1), padding .42s cubic-bezier(.16,1,.3,1);
+  }
+  .sm__portal-frame {
+    position: relative;
+    min-width: 0;
+    overflow: hidden;
+    filter: grayscale(1) contrast(1.08);
+  }
+  .sm__portal-frame img { object-fit: cover; }
+  .sm__tag[data-priority="primary"]:hover .sm__portal,
+  .sm__tag[data-priority="primary"]:focus-visible .sm__portal {
+    height: 7rem;
+    padding: 4px;
+    opacity: 1;
+    transform: scaleY(1);
+  }
+  .sm__tag[data-priority="secondary"] {
+    font-size: 1.02rem;
+    padding: .62rem 1.25rem;
+    opacity: .95;
+    box-shadow:
+      0 0 0 5px color-mix(in srgb, var(--paper) 70%, transparent),
+      5px 5px 0 color-mix(in srgb, var(--ink) 16%, transparent);
+  }
+  .sm__tag[data-priority="tertiary"] {
+    font-size: .95rem;
+    padding: .58rem 1.18rem;
+    opacity: .88;
+    box-shadow:
+      0 0 0 4px color-mix(in srgb, var(--paper) 62%, transparent),
+      4px 4px 0 color-mix(in srgb, var(--ink) 13%, transparent);
   }
   .sm__cluster {
     position: fixed;
@@ -75,32 +145,42 @@ const styles = `
   .sm__cluster .sm__tag {
     position: static;
     animation: none;
-    font-size: .68rem;
-    padding: .38rem .7rem;
+    min-height: var(--tap-min);
+    display: inline-flex;
+    align-items: center;
+    font-size: var(--type-micro);
+    padding: .58rem .75rem;
   }
   .sm__cluster .sm__tag[data-priority="primary"] {
     order: -1;
-    font-size: .72rem;
-    box-shadow: 0 0 0 4px rgba(237,231,218,.72), 3px 3px 0 rgba(28,27,24,.12);
+    font-size: var(--type-micro);
+    box-shadow:
+      0 0 0 4px color-mix(in srgb, var(--paper) 74%, transparent),
+      3px 3px 0 color-mix(in srgb, var(--ink) 14%, transparent);
   }
+  .sm__cluster .sm__portal { display: none; }
   @media (max-width: 720px) {
-    .sm__tag { font-size: .68rem; padding: .4rem .65rem; }
+    .sm__tag { font-size: var(--type-label); padding: .55rem .7rem; }
     /* em tela estreita o molhinho vertical tapava as legendas dos projetos:
        vira uma fita horizontal no rodapé, à esquerda do botão de topo */
     .sm__cluster {
       flex-direction: row;
       align-items: center;
-      left: .6rem;
-      right: 4.6rem;
-      bottom: 1rem;
+      left: .5rem;
+      right: .5rem;
+      bottom: 7.2rem;
       gap: .28rem;
       /* uma linha só: quebrando em duas ele tapava a legenda dos projetos */
       flex-wrap: nowrap;
-      justify-content: flex-start;
+      justify-content: center;
+      overflow-x: auto;
+      scrollbar-width: none;
     }
+    .sm__cluster::-webkit-scrollbar { display: none; }
     .sm__cluster .sm__tag {
-      font-size: .56rem;
-      padding: .3rem .42rem;
+      flex: 0 0 auto;
+      font-size: var(--type-micro);
+      padding: .52rem .62rem;
       letter-spacing: .04em;
     }
     /* No mobile, a navegação é uma trilha visual estável abaixo do título.
@@ -112,28 +192,32 @@ const styles = `
       animation: none !important;
     }
     .sm__tag--hero[data-priority="primary"] {
-      left: 52% !important; top: 66% !important;
+      left: 48% !important; top: 64% !important;
       opacity: 1 !important; transform: rotate(2deg) !important;
-      font-size: .82rem;
+      font-size: .92rem;
     }
     .sm__tag--hero[data-priority="secondary"] {
-      left: 64% !important; top: 74% !important;
-      opacity: .92 !important; transform: rotate(-2deg) !important;
+      left: 9% !important; top: 76% !important;
+      opacity: .95 !important; transform: rotate(-2deg) !important;
+      font-size: .88rem;
     }
     .sm__tag--hero[data-priority="tertiary"] {
-      left: 38% !important; top: 82% !important;
-      opacity: .78 !important; transform: rotate(1deg) !important;
+      left: 55% !important; top: 81% !important;
+      opacity: .88 !important; transform: rotate(1deg) !important;
+      font-size: .84rem;
     }
     .sm__cluster .sm__tag[data-priority="primary"]::after { content: ""; }
+    .sm__portal { display: none; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .sm__tag { animation: none; transition: none; }
+    .sm__tag { transition: none; }
   }
 `;
 
 function go(e: React.MouseEvent, href: string) {
   if (href.startsWith("#")) {
     e.preventDefault();
+    if (href === "#about") window.dispatchEvent(new Event("studio:reveal-about"));
     document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
   }
   // rotas ("/experiments") seguem o fluxo normal (transição do Curtains)
@@ -142,6 +226,7 @@ function go(e: React.MouseEvent, href: string) {
 export default function ScatterMenu({ items }: { items: MenuItem[] }) {
   const reduceMotion = useReducedMotion();
   const [pinned, setPinned] = useState(false);
+  const [footerVisible, setFooterVisible] = useState(false);
 
   // além do hero (~1 tela), o menu vira molhinho fixo no canto
   useEffect(() => {
@@ -149,6 +234,17 @@ export default function ScatterMenu({ items }: { items: MenuItem[] }) {
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    const footer = document.querySelector("#contact");
+    if (!footer) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setFooterVisible(entry.isIntersecting),
+      { threshold: .02 },
+    );
+    observer.observe(footer);
+    return () => observer.disconnect();
   }, []);
 
   return (
@@ -163,7 +259,7 @@ export default function ScatterMenu({ items }: { items: MenuItem[] }) {
           data-priority={it.priority}
           href={it.href}
           onClick={(e) => go(e, it.href)}
-          style={{ left: it.left, top: it.top, animationDelay: `${i * 0.7}s` }}
+          style={{ left: it.left, top: it.top }}
           initial={reduceMotion ? false : { opacity: 0, scale: 0.5, rotate: it.rotate }}
           animate={{
             opacity: pinned ? 0 : it.priority === "primary" ? 1 : it.priority === "secondary" ? 0.92 : 0.78,
@@ -171,15 +267,23 @@ export default function ScatterMenu({ items }: { items: MenuItem[] }) {
             rotate: it.rotate,
           }}
           transition={{ delay: reduceMotion || pinned ? 0 : 1.3 + i * 0.12, duration: reduceMotion ? 0 : 0.45, ease: [0.16, 1, 0.3, 1] }}
-          whileHover={reduceMotion ? undefined : { scale: it.priority === "primary" ? 1.06 : 1.1, rotate: 0 }}
         >
-          [ {it.label} ]
+          <span className="sm__label">[ {it.label} ]</span>
+          {it.previews?.length ? (
+            <span className="sm__portal" aria-hidden="true">
+              {it.previews.slice(0, 3).map((preview) => (
+                <span className="sm__portal-frame" key={preview.src}>
+                  <Image src={preview.src} alt="" fill sizes="120px" />
+                </span>
+              ))}
+            </span>
+          ) : null}
         </motion.a>
       ))}
 
       {/* molhinho fixo no canto depois que o hero sai de cena */}
       <AnimatePresence>
-        {pinned && (
+        {pinned && !footerVisible && (
           <motion.div
             className="sm__cluster"
             initial={reduceMotion ? false : { opacity: 0, x: 40 }}
@@ -201,9 +305,8 @@ export default function ScatterMenu({ items }: { items: MenuItem[] }) {
                   rotate: i % 2 ? 2 : -2,
                 }}
                 transition={{ delay: reduceMotion ? 0 : i * 0.06 }}
-                whileHover={reduceMotion ? undefined : { scale: 1.08, rotate: 0 }}
               >
-                [ {it.label} ]
+                <span className="sm__label">[ {it.label} ]</span>
               </motion.a>
             ))}
           </motion.div>

@@ -4,25 +4,27 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import EditorialFooter from "./EditorialFooter";
-import LangToggle from "./LangToggle";
+import AsciiDivider from "./AsciiDivider";
+import SiteHeader from "./SiteHeader";
 import BrailleDeco from "./BrailleDeco";
 import { COELHOS, ESTRELA, QUIMERA } from "./brailleArt";
 import { ANJOS, ESFERA, ORNAMENTAL } from "./brailleEditorial";
 import { EDGE_RIGHT, FILLER_COLUMN, FILLER_GROUP } from "./foundBrailleArt";
 import { useProjects } from "./useProjects";
 import { useT } from "@/i18n/LanguageContext";
-import type { CSSProperties } from "react";
+import { useEffect, useRef, type CSSProperties } from "react";
 
 const PROJECT_GLOWS = [
-  "rgba(232, 175, 56, .3)",
-  "rgba(83, 128, 199, .28)",
-  "rgba(217, 70, 69, .28)",
-  "rgba(175, 48, 228, .27)",
-  "rgba(111, 170, 103, .27)",
-  "rgba(222, 114, 65, .26)",
+  "rgba(199, 155, 57, .26)",
+  "rgba(89, 118, 163, .25)",
+  "rgba(139, 207, 73, .26)",
+  "rgba(175, 48, 228, .25)",
+  "rgba(249, 76, 47, .25)",
+  "rgba(0, 168, 173, .25)",
   "rgba(202, 28, 58, .28)",
-  "rgba(38, 157, 141, .26)",
-  "rgba(76, 105, 186, .26)",
+  "rgba(164, 84, 226, .26)",
+  "rgba(79, 127, 58, .25)",
+  "rgba(22, 151, 166, .3)",
 ];
 const MOTION_SLOW = 0.5;
 const MOTION_EASE_OUT = [0.16, 1, 0.3, 1] as const;
@@ -49,11 +51,13 @@ const styles = `
     --surface: transparent;
     --border: 1px solid rgba(28,27,24,.35);
     background:
-      radial-gradient(900px 680px at 86% 5%, var(--pj-glow) 0%, transparent 68%),
-      radial-gradient(1100px 700px at 18% -5%, var(--site-tint-a) 0%, transparent 60%),
-      radial-gradient(900px 600px at 100% 30%, var(--site-tint-b) 0%, transparent 55%),
-      radial-gradient(1000px 800px at 50% 105%, var(--site-tint-c) 0%, transparent 55%),
+      radial-gradient(
+        76rem 58rem at var(--pj-light-pos, 78% 10%),
+        var(--pj-glow) 0%,
+        transparent 70%
+      ),
       var(--paper);
+    background-attachment: fixed;
     color: var(--ink);
     overflow-x: hidden;
     position: relative;
@@ -66,7 +70,7 @@ const styles = `
     opacity: .07;
     mix-blend-mode: multiply;
   }
-  .pj ::selection { background: var(--acid); color: #111; }
+  .pj *::selection { background: #843f3a; color: #fff8ec; }
   .pj-progress {
     position: fixed; top: 0; left: 0; z-index: 1200;
     width: 100%; height: 3px;
@@ -100,13 +104,13 @@ const styles = `
   }
 
   .pj-corner {
-    position: fixed; top: 1rem; z-index: 1000;
+    position: fixed; top: clamp(1.4rem, 3.2vh, 2.4rem); z-index: 1000;
     font-family: var(--font-body);
     font-size: .78rem; text-transform: lowercase; letter-spacing: .1em;
     color: var(--ink); text-decoration: none;
   }
-  .pj-corner--l { left: 1.4rem; }
-  .pj-corner--r { right: 1.4rem; display: flex; align-items: center; gap: .8rem; }
+  .pj-corner--l { left: clamp(1.5rem, 5vw, 5.5rem); }
+  .pj-corner--r { right: clamp(1.5rem, 5vw, 5.5rem); display: flex; align-items: center; gap: .8rem; }
 
   .pj-cluster {
     /* acima do botão flutuante de voltar ao topo, que cobria a etiqueta do meio */
@@ -122,32 +126,50 @@ const styles = `
       overflow-x: auto; scrollbar-width: none;
     }
     .pj-cluster::-webkit-scrollbar { display: none; }
-    .pj-tag { font-size: .58rem; padding: .3rem .45rem; }
+    .pj-tag { padding: .55rem .72rem; }
   }
   .pj-tag {
-    font-family: var(--font-body); font-size: .76rem;
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap-min);
+    font-family: var(--font-body); font-size: var(--type-label);
     text-transform: lowercase; letter-spacing: .08em;
     background: var(--ink); color: var(--paper);
-    padding: .38rem .72rem; text-decoration: none;
-    transition: background var(--duration-fast) var(--ease-default);
+    padding: .58rem .82rem; text-decoration: none;
+    box-shadow: 3px 3px 0 color-mix(in srgb, var(--ink) 16%, transparent);
+    transition:
+      background var(--duration-fast) var(--ease-default),
+      translate var(--duration-fast) var(--ease-out),
+      box-shadow var(--duration-fast) var(--ease-out);
   }
-  .pj-tag:hover { background: var(--acid); }
+  .pj-tag:hover {
+    background: var(--acid);
+    translate: 1px 1px;
+    box-shadow: 1px 1px 0 color-mix(in srgb, var(--ink) 16%, transparent);
+  }
 
   .pj-head {
-    max-width: 1100px; margin: 0 auto;
-    padding: 7.5rem 2rem 4.5rem;
+    max-width: var(--project-shell-max); margin: 0 auto;
+    padding: clamp(7.5rem, 11vh, 9.5rem) var(--project-gutter) 4.5rem;
     position: relative; z-index: 10;
   }
   .pj-kicker {
     display: flex; justify-content: space-between; gap: 1rem;
-    padding-bottom: .75rem; margin-bottom: 2.4rem;
-    border-bottom: 1px solid rgba(28,27,24,.45);
+    padding-bottom: .35rem; margin-bottom: 0;
     font-family: var(--font-subtitle), monospace;
     font-weight: var(--offbit-weight);
-    font-size: clamp(.52rem, .8vw, .68rem);
+    font-size: var(--type-micro);
     line-height: 1.35; letter-spacing: var(--offbit-letter-spacing);
     text-transform: lowercase;
   }
+  .pj-rule {
+    color: var(--ink);
+    opacity: .58;
+  }
+  .pj-rule--head { margin: 0 0 2.4rem; }
+  .pj-rule--meta { margin: .6rem 0 1.15rem; }
+  .pj-rule--meta:last-child { margin: 1.15rem 0 0; }
+  .pj-rule--turn { margin: -.85rem 0 1.6rem; }
   .pj-folio {
     position: absolute; z-index: -1;
     right: 1.2rem; top: 3.6rem;
@@ -171,50 +193,91 @@ const styles = `
     font-size: clamp(3.2rem, 9vw, 8.5rem);
     line-height: .82; letter-spacing: -0.045em;
     text-transform: lowercase;
-    max-width: 11ch; margin: 0 0 1.8rem;
+    max-width: min(100%, var(--measure-project-title));
+    margin: 0 0 1.8rem;
+    text-wrap: balance;
   }
   .pj-desc {
     font-family: var(--font-body);
-    font-size: clamp(1rem, 1.6vw, 1.25rem);
+    font-size: clamp(1.08rem, 1.7vw, 1.34rem);
     color: var(--gray-600);
-    max-width: 800px; line-height: 1.6;
+    max-width: min(100%, var(--measure-project-copy));
+    line-height: 1.62;
+    text-wrap: pretty;
   }
   .pj-desc .pj-em { font-family: var(--font-head); font-style: italic; color: var(--acid); }
   .pj-meta {
+    margin-top: 2.6rem;
+  }
+  .pj-meta__grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 20px;
-    margin-top: 2.6rem;
-    padding: 1.6rem 0;
-    background-image:
-      repeating-linear-gradient(90deg, var(--ink) 0 6px, transparent 6px 12px),
-      repeating-linear-gradient(90deg, var(--ink) 0 6px, transparent 6px 12px);
-    background-size: 100% 2px, 100% 2px;
-    background-position: top left, bottom left;
-    background-repeat: no-repeat, no-repeat;
+    gap: clamp(1rem, 2.2vw, 1.6rem);
   }
   .pj-meta__label {
-    font-family: var(--font-body); font-size: .76rem;
+    font-family: var(--font-body); font-size: var(--type-micro);
     text-transform: lowercase; letter-spacing: .1em;
-    color: var(--gray-400); margin-bottom: 6px;
+    color: var(--gray-600); margin-bottom: .55rem;
   }
-  .pj-meta__value { font-family: var(--font-body); font-size: .95rem; color: var(--ink); }
+  .pj-meta__value {
+    font-family: var(--font-body);
+    font-size: var(--type-body);
+    line-height: 1.5;
+    color: var(--ink);
+  }
   .pj-notes {
-    display: flex; flex-wrap: wrap; gap: .55rem;
+    display: flex; flex-wrap: wrap; gap: .75rem;
     width: 100%; max-width: 100%; min-width: 0;
-    margin-top: 1.2rem; padding-left: .45rem;
+    margin-top: 1.35rem;
   }
   .pj-meta__card {
     --meta-r: -.55deg;
     position: relative;
     min-width: 0;
-    padding: 1rem 1.05rem 1.1rem;
-    border: 1px solid rgba(28,27,24,.22);
-    background-color: rgba(246,241,230,.82);
-    background-image: linear-gradient(120deg, rgba(255,255,255,.4), transparent 62%);
-    box-shadow: 4px 4px 0 var(--pj-glow);
+    padding: 1.45rem 1.35rem 1.3rem;
+    border: 1px solid var(--paper-edge);
+    background-color: var(--paper-sheet);
+    background-image:
+      repeating-linear-gradient(0deg, transparent 0 3px, rgba(28,27,24,.025) 3px 4px),
+      url("/img/paper-noise.png"),
+      linear-gradient(120deg, rgba(255,255,255,.3), transparent 62%);
+    background-size: 100% 100%, 150px 150px, 100% 100%;
+    box-shadow:
+      3px 4px 0 var(--paper-shadow),
+      inset 0 0 0 1px rgba(255,255,255,.17);
     transform: rotate(var(--meta-r));
-    transition: transform var(--duration-normal) var(--ease-out), box-shadow var(--duration-normal) var(--ease-default), background-color var(--duration-normal) var(--ease-default);
+    transition:
+      transform var(--duration-normal) var(--ease-out),
+      box-shadow var(--duration-normal) var(--ease-default),
+      background-color var(--duration-normal) var(--ease-default);
+  }
+  .pj-meta__card::before {
+    content: "";
+    position: absolute;
+    z-index: 2;
+    top: -.32rem;
+    left: clamp(1.2rem, 25%, 3.2rem);
+    width: 3.6rem;
+    height: .72rem;
+    border: 1px solid rgba(28,27,24,.1);
+    background:
+      repeating-linear-gradient(90deg, transparent 0 4px, rgba(28,27,24,.025) 4px 5px),
+      var(--paper-tape);
+    rotate: -2deg;
+    pointer-events: none;
+  }
+  .pj-meta__card::after {
+    content: "";
+    position: absolute;
+    right: .22rem;
+    bottom: .22rem;
+    width: 1rem;
+    height: 1rem;
+    border-top: 1px solid rgba(28,27,24,.2);
+    border-left: 1px solid rgba(28,27,24,.2);
+    background: color-mix(in srgb, var(--paper-sheet) 84%, var(--pj-glow));
+    clip-path: polygon(100% 0, 0 100%, 100% 100%);
+    pointer-events: none;
   }
   .pj-meta__card:nth-child(2n) { --meta-r: .7deg; }
   .pj-meta__card:nth-child(3n) { --meta-r: -1deg; }
@@ -222,32 +285,53 @@ const styles = `
   .pj-meta__card:focus-visible {
     z-index: 2;
     outline: none;
-    transform: translateY(-5px) rotate(0deg);
+    transform: translate(-2px, -2px) rotate(0deg);
     background-color: rgba(250,247,239,.96);
-    box-shadow: 7px 8px 0 var(--pj-glow), 0 0 0 1px rgba(28,27,24,.12);
+    box-shadow:
+      6px 7px 0 var(--paper-shadow),
+      0 0 0 1px rgba(28,27,24,.1);
   }
   .pj-note {
     --note-r: -.4deg;
-    display: inline-flex; align-items: center; min-height: 2rem;
-    padding: .42rem .72rem;
-    border: 1px solid rgba(28,27,24,.28);
-    background-color: rgba(246,241,230,.86);
-    background-image: linear-gradient(115deg, rgba(255,255,255,.35), transparent 55%);
-    box-shadow: 3px 3px 0 rgba(28,27,24,.09);
+    position: relative;
+    display: inline-flex; align-items: center;
+    min-height: var(--tap-min);
+    padding: .68rem .9rem .68rem 1.65rem;
+    border: 1px solid var(--paper-edge);
+    background-color: var(--paper-sheet);
+    background-image:
+      repeating-linear-gradient(0deg, transparent 0 3px, rgba(28,27,24,.025) 3px 4px),
+      url("/img/paper-noise.png");
+    background-size: 100% 100%, 130px 130px;
+    box-shadow: 3px 3px 0 var(--paper-shadow);
     font-family: var(--font-subtitle), monospace;
     font-weight: var(--offbit-weight);
-    font-size: clamp(.5rem, .7vw, .62rem);
+    font-size: var(--type-label);
+    line-height: 1.25;
     letter-spacing: var(--offbit-letter-spacing); text-transform: lowercase;
     max-width: 100%; overflow-wrap: anywhere;
     transform: rotate(var(--note-r));
     transition: transform var(--duration-normal) var(--ease-out), box-shadow var(--duration-normal) var(--ease-default), background-color var(--duration-normal) var(--ease-default);
   }
+  .pj-note::before {
+    content: "";
+    position: absolute;
+    left: .62rem;
+    top: 50%;
+    width: .38rem;
+    height: .38rem;
+    translate: 0 -50%;
+    border: 1px solid rgba(28,27,24,.4);
+    border-radius: 50%;
+    background: var(--paper);
+    box-shadow: inset 1px 1px 1px rgba(28,27,24,.12);
+  }
   .pj-note:nth-child(2n) { --note-r: 1deg; }
   .pj-note:nth-child(3n) { --note-r: -1.2deg; }
   .pj-note:hover {
-    transform: translateY(-4px) rotate(0deg);
+    transform: translate(-2px, -2px) rotate(0deg);
     background-color: rgba(250,247,239,.97);
-    box-shadow: 5px 6px 0 var(--pj-glow);
+    box-shadow: 5px 5px 0 var(--paper-shadow);
   }
   .pj-kicker > span,
   .pj-folio,
@@ -289,23 +373,22 @@ const styles = `
     border: 1px solid rgba(28,27,24,.2);
     font-family: var(--font-subtitle), monospace;
     font-weight: var(--offbit-weight);
-    font-size: .5rem; line-height: 1;
+    font-size: var(--type-micro); line-height: 1;
     letter-spacing: var(--offbit-letter-spacing); text-transform: lowercase;
     pointer-events: none;
   }
   .pj-main > section:nth-child(even)::before { left: auto; right: .65rem; transform: rotate(1deg); }
 
   .pj-turn {
-    max-width: 1300px; margin: 2rem auto 7rem; padding: 0 2rem;
+    max-width: var(--project-content-max); margin: 2rem auto 7rem; padding: 0 var(--project-gutter);
     position: relative; z-index: 10;
   }
   .pj-turn__heading {
     display: flex; justify-content: space-between; gap: 1rem;
-    margin-bottom: 1.3rem; padding-bottom: .7rem;
-    border-bottom: 1px solid rgba(28,27,24,.35);
+    margin-bottom: 1rem; padding-bottom: 0;
     font-family: var(--font-subtitle), monospace;
     font-weight: var(--offbit-weight);
-    font-size: .58rem; letter-spacing: var(--offbit-letter-spacing);
+    font-size: var(--type-micro); letter-spacing: var(--offbit-letter-spacing);
     text-transform: lowercase;
   }
   .pj-turn__grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(1.2rem, 4vw, 4rem); }
@@ -349,16 +432,21 @@ const styles = `
     font-weight: var(--offbit-weight-active);
   }
   .pj-turn__title { font-family: var(--font-head); font-size: clamp(1.6rem, 3.4vw, 3.4rem); line-height: .9; }
-  .pj-turn__dir { font-family: var(--font-body); font-size: .66rem; letter-spacing: .14em; text-transform: uppercase; }
+  .pj-turn__dir {
+    font-family: var(--font-body);
+    font-size: var(--type-micro);
+    letter-spacing: .12em;
+    text-transform: uppercase;
+  }
 
   @media (max-width: 720px) {
     .pj-head { width: 100%; max-width: 100%; min-width: 0; padding: 5.5rem 1.25rem 2.5rem; }
     .pj-head > :not(.pj-folio) { width: calc(100vw - 2.5rem); max-width: calc(100vw - 2.5rem); min-width: 0; }
     .pj-folio { top: 4.1rem; right: .7rem; }
-    .pj-title { max-width: 12ch; }
+    .pj-title { max-width: min(100%, 16ch); }
     .pj-desc { max-width: 100%; overflow-wrap: anywhere; }
-    .pj-meta { grid-template-columns: 1fr; gap: 1rem; width: 100%; }
-    .pj-meta > div { min-width: 0; }
+    .pj-meta__grid { grid-template-columns: 1fr; gap: 1rem; width: 100%; }
+    .pj-meta__grid > div { min-width: 0; }
     .pj-notes { padding-left: 0; }
     .pj-tag { min-height: 44px; display: inline-flex; align-items: center; flex: 0 0 auto; }
     .pj-turn { padding: 0 1.25rem; margin-bottom: 4rem; }
@@ -400,6 +488,7 @@ export default function ProjectShell({
   const pathname = usePathname();
   const projects = useProjects();
   const reduceMotion = useReducedMotion();
+  const shellRef = useRef<HTMLDivElement>(null);
   const currentIndex = projects.findIndex((project) => project.href === pathname);
   const current = currentIndex >= 0 ? projects[currentIndex] : null;
   const neighbours = currentIndex >= 0
@@ -432,8 +521,57 @@ export default function ProjectShell({
     ? "clamp(2.5px, .36vw, 5.2px)"
     : "clamp(3px, .42vw, 6px)";
 
+  useEffect(() => {
+    const shell = shellRef.current;
+    if (!shell || reduceMotion || window.matchMedia("(pointer: coarse)").matches) return;
+
+    let targetX = 0.78;
+    let targetY = 0.1;
+    let currentX = targetX;
+    let currentY = targetY;
+    let frame = 0;
+    let moving = false;
+    let lastPaint = 0;
+
+    const renderLight = (time: number) => {
+      if (time - lastPaint < 32) {
+        frame = requestAnimationFrame(renderLight);
+        return;
+      }
+      lastPaint = time;
+      currentX += (targetX - currentX) * 0.16;
+      currentY += (targetY - currentY) * 0.16;
+      shell.style.setProperty(
+        "--pj-light-pos",
+        `${(currentX * 100).toFixed(2)}% ${(currentY * 100).toFixed(2)}%`,
+      );
+
+      if (Math.abs(targetX - currentX) > 0.001 || Math.abs(targetY - currentY) > 0.001) {
+        frame = requestAnimationFrame(renderLight);
+      } else {
+        moving = false;
+      }
+    };
+
+    const moveLight = (event: PointerEvent) => {
+      targetX = Math.min(1, Math.max(0, event.clientX / window.innerWidth));
+      targetY = Math.min(1, Math.max(0, event.clientY / window.innerHeight));
+      if (!moving) {
+        moving = true;
+        frame = requestAnimationFrame(renderLight);
+      }
+    };
+
+    window.addEventListener("pointermove", moveLight, { passive: true });
+    return () => {
+      window.removeEventListener("pointermove", moveLight);
+      cancelAnimationFrame(frame);
+    };
+  }, [reduceMotion]);
+
   return (
     <div
+      ref={shellRef}
       className="pj"
       style={{ "--pj-glow": PROJECT_GLOWS[(currentIndex >= 0 ? currentIndex : 0) % PROJECT_GLOWS.length] } as CSSProperties}
     >
@@ -447,8 +585,8 @@ export default function ProjectShell({
         style={{ transformOrigin: `${ornamentSide} center` }}
       />
 
-      <Link href="/" className="pj-corner pj-corner--l hover-trigger">mary l. <span className="text-star" aria-hidden="true">✳︎</span></Link>
-      <span className="pj-corner pj-corner--r"><LangToggle /></span>
+      {/* header canônico — o mesmo de todas as páginas (pedido dela 2026-07-23) */}
+      <SiteHeader />
 
       {/* molhinho de navegação fixo */}
       <nav className="pj-cluster" aria-label="menu">
@@ -469,18 +607,23 @@ export default function ProjectShell({
             <span>{current?.num ?? "—"} / {projects.length.toString().padStart(2, "0")}</span>
             <span>{archiveLabel}</span>
           </div>
+          <AsciiDivider className="pj-rule pj-rule--head" />
           <h1 className="pj-title">{title}</h1>
           <p className="pj-desc">{desc}</p>
         </motion.div>
 
         {meta.length > 0 && (
           <div className="pj-meta">
-            {meta.map((m) => (
-              <div className="pj-meta__card" tabIndex={0} key={m.label}>
-                <div className="pj-meta__label">{m.label}</div>
-                <div className="pj-meta__value">{m.value}</div>
-              </div>
-            ))}
+            <AsciiDivider className="pj-rule pj-rule--meta" />
+            <div className="pj-meta__grid">
+              {meta.map((m) => (
+                <div className="pj-meta__card" tabIndex={0} key={m.label}>
+                  <div className="pj-meta__label">{m.label}</div>
+                  <div className="pj-meta__value">{m.value}</div>
+                </div>
+              ))}
+            </div>
+            <AsciiDivider className="pj-rule pj-rule--meta" />
           </div>
         )}
 
@@ -500,6 +643,7 @@ export default function ProjectShell({
             <span>{turnLabel}</span>
             <span>{current?.num} / {projects.length.toString().padStart(2, "0")}</span>
           </div>
+          <AsciiDivider className="pj-rule pj-rule--turn" />
           <div className="pj-turn__grid">
             {neighbours.map((project, index) => (
               <Link className="pj-turn__card hover-trigger" href={project.href} key={project.href}>

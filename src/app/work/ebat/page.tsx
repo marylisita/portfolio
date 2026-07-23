@@ -1,30 +1,35 @@
 "use client";
-import { motion } from "framer-motion";
+
 import FlipBook from "@/components/FlipBook";
-import MacWindow from "@/components/MacWindow";
 import ProjectShell from "@/components/ProjectShell";
+import {
+  CaseCanvas,
+  CaseFigure,
+  CasePanel,
+  CaseSection,
+} from "@/components/CaseStudyKit";
 import { useT } from "@/i18n/LanguageContext";
 
-const ebatStyles = `
-  .ebat-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: center; }
-  .ebat-social-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
-  .ebat-posts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 32px; margin-top: 56px; }
-  @media (max-width: 768px) {
-    .ebat-two-col, .ebat-social-grid { grid-template-columns: 1fr; }
-  }
-`;
+const MANUAL = Array.from({ length: 22 }, (_, index) => `ebat/manual/${index + 1}.jpg`);
+const CAROUSEL_ONE = Array.from({ length: 7 }, (_, index) => `ebat/carrossel/${index + 1}.jpg`);
+const CAROUSEL_TWO = Array.from({ length: 4 }, (_, index) => `ebat/carrossel 2/${index + 1}.jpg`);
+
+const SPIW = [
+  { src: "/img/ebat/mockup outer.png", alt: "SPIW outer page mockup" },
+  { src: "/img/ebat/mockup inner.png", alt: "SPIW inner page mockup" },
+  { src: "/img/ebat/Outer Page.png", alt: "SPIW outer page" },
+  { src: "/img/ebat/Inner Page.png", alt: "SPIW inner page" },
+] as const;
+
+const POSTS = [
+  { src: "/img/ebat/post.jpg", label: "post_convite.jpg" },
+  { src: "/img/ebat/artes instagram/livro.png", label: "post_livro.png" },
+  { src: "/img/ebat/artes instagram/modulo1.png", label: "post_modulo01.png" },
+] as const;
 
 export default function EbatProject() {
-  const { t } = useT();
-  const carousel1 = Array.from({ length: 7 }).map((_, i) => `ebat/carrossel/${i + 1}.jpg`);
-  const carousel2 = Array.from({ length: 4 }).map((_, i) => `ebat/carrossel 2/${i + 1}.jpg`);
-  const manual = Array.from({ length: 22 }).map((_, i) => `ebat/manual/${i + 1}.jpg`);
-
-  const singlePosts = [
-    { src: "ebat/post.jpg", file: "post_convite.jpg", rotate: -1.5 },
-    { src: "ebat/artes instagram/livro.png", file: "post_livro.png", rotate: 1 },
-    { src: "ebat/artes instagram/modulo1.png", file: "post_modulo01.png", rotate: -0.5 },
-  ];
+  const { t, lang } = useT();
+  const pt = lang !== "en";
 
   return (
     <ProjectShell
@@ -40,116 +45,113 @@ export default function EbatProject() {
         { label: t("ebat_meta_year"), value: "2026" },
       ]}
     >
-      <style>{ebatStyles}</style>
-
-      {/* Manual de Marca */}
-      <section style={{ maxWidth: "1100px", margin: "0 auto", padding: "0 2rem 5rem", textAlign: "center" }}>
-        <h2 className="pj-h2">{t("ebat_manual_title")}</h2>
-        <p className="pj-sub" style={{ marginBottom: "2.5rem" }}>{t("ebat_manual_desc")}</p>
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+      <CaseCanvas variant="ebat">
+        <CaseSection
+          label={pt ? "01 / identidade como caderno" : "01 / identity as a workbook"}
+          title={t("ebat_manual_title")}
+          intro={t("ebat_manual_desc")}
         >
-          <FlipBook images={manual} aspectRatio="56.25%" />
-        </motion.div>
-      </section>
+          <CaseFigure
+            src="/img/ebat/capa-ebat.png"
+            width={1280}
+            height={720}
+            alt={pt ? "Capa do sistema visual da EBAT" : "EBAT visual system cover"}
+            caption={pt ? "abertura do manual" : "brand manual opening"}
+            index="caderno 01"
+            priority
+            tilt={-0.4}
+            sizes="(max-width: 1260px) 92vw, 1180px"
+          />
+          <div style={{ marginTop: "clamp(2rem, 5vw, 4rem)" }}>
+            <CasePanel label={pt ? "manual de marca · folheável" : "brand manual · browsable"}>
+              <FlipBook images={MANUAL} aspectRatio="56.25%" />
+            </CasePanel>
+          </div>
+        </CaseSection>
 
-      {/* Campanha SPIW */}
-      <section style={{ maxWidth: "1300px", margin: "0 auto", padding: "0 2rem 5rem" }}>
-        <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
-          <h2 className="pj-h2">{t("ebat_spiw_title")}</h2>
-          <p className="pj-sub">{t("ebat_spiw_desc")}</p>
-        </div>
-
-        <div style={{ display: "flex", flexDirection: "column", gap: "36px" }}>
-          <div className="ebat-two-col">
-            {["mockup outer.png", "mockup inner.png"].map((f, i) => (
-              <motion.div
-                key={f}
-                className="pj-frame"
-                initial={{ y: 46, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.15 }}
-              >
-                <img src={`/img/ebat/${f}`} alt={f} style={{ width: "100%", display: "block" }} />
-              </motion.div>
+        <CaseSection
+          ink
+          label={pt ? "02 / campanha editorial" : "02 / editorial campaign"}
+          title={t("ebat_spiw_title")}
+          intro={t("ebat_spiw_desc")}
+        >
+          <div className="tc-grid tc-grid--two tc-grid--offset">
+            {SPIW.slice(0, 2).map((image, index) => (
+              <CaseFigure
+                key={image.src}
+                src={image.src}
+                width={2000}
+                height={1414}
+                alt={image.alt}
+                caption={pt ? "mockup impresso" : "printed mockup"}
+                index={`lâmina 0${index + 2}`}
+                tilt={index === 0 ? -0.65 : 0.65}
+              />
             ))}
           </div>
-          <div className="ebat-two-col">
-            {["Outer Page.png", "Inner Page.png"].map((f, i) => (
-              <motion.div
-                key={f}
-                className="pj-frame"
-                initial={{ y: 46, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.15 }}
-              >
-                <img src={`/img/ebat/${f}`} alt={f} style={{ width: "100%", display: "block" }} />
-              </motion.div>
+          <div className="tc-grid tc-grid--two" style={{ marginTop: "clamp(2rem, 5vw, 4rem)" }}>
+            {SPIW.slice(2).map((image, index) => (
+              <CaseFigure
+                key={image.src}
+                src={image.src}
+                width={2000}
+                height={1414}
+                alt={image.alt}
+                caption={pt ? "arquivo aberto" : "flat artwork"}
+                index={`lâmina 0${index + 4}`}
+                tilt={index === 0 ? 0.35 : -0.35}
+              />
             ))}
           </div>
+          <div style={{ marginTop: "clamp(2rem, 5vw, 4rem)" }}>
+            <CasePanel label="spiw_recap.mp4">
+              <video
+                src="/img/ebat/video-ebat.mp4"
+                controls
+                muted
+                loop
+                playsInline
+                preload="metadata"
+                style={{ width: "100%", display: "block" }}
+              />
+            </CasePanel>
+          </div>
+        </CaseSection>
 
-          <motion.div
-            initial={{ y: 46, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            viewport={{ once: true }}
-            style={{ maxWidth: "900px", margin: "0 auto", width: "100%" }}
-          >
-            <MacWindow filename="spiw_recap.mp4">
-              <video src="/img/ebat/video-ebat.mp4" controls autoPlay muted loop style={{ width: "100%", display: "block" }} />
-            </MacWindow>
-          </motion.div>
-        </div>
-      </section>
+        <CaseSection
+          label={pt ? "03 / comunicação em circulação" : "03 / communication in circulation"}
+          title={t("ebat_social_title")}
+          intro={
+            pt
+              ? "Os carrosséis são tratados como pequenos cadernos editoriais. As peças avulsas aparecem abaixo como impressos presos à mesma mesa."
+              : "Carousels are treated as small editorial booklets. Individual posts sit below like prints pinned to the same table."
+          }
+        >
+          <div className="tc-grid tc-grid--two tc-grid--offset">
+            <CasePanel label={pt ? "carrossel · boas-vindas" : "carousel · welcome"}>
+              <FlipBook images={CAROUSEL_ONE} aspectRatio="125%" />
+            </CasePanel>
+            <CasePanel label={pt ? "carrossel · módulos" : "carousel · modules"}>
+              <FlipBook images={CAROUSEL_TWO} aspectRatio="125%" />
+            </CasePanel>
+          </div>
 
-      {/* Redes Sociais — janelinhas Mac espalhadas (ideia dela) */}
-      <section style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 2rem 6rem" }}>
-        <div style={{ textAlign: "center", marginBottom: "3rem" }}>
-          <h2 className="pj-h2">{t("ebat_social_title")}</h2>
-        </div>
-
-        <div className="ebat-social-grid">
-          <motion.div
-            initial={{ y: 50, opacity: 0, rotate: -3 }}
-            whileInView={{ y: 0, opacity: 1, rotate: -1.5 }}
-            viewport={{ once: true }}
-          >
-            <MacWindow filename="carrossel_bemvindes(1).jpg">
-              <FlipBook images={carousel1} aspectRatio="125%" />
-            </MacWindow>
-          </motion.div>
-
-          <motion.div
-            initial={{ y: 50, opacity: 0, rotate: 3 }}
-            whileInView={{ y: 0, opacity: 1, rotate: 1.5 }}
-            viewport={{ once: true }}
-            style={{ marginTop: "48px" }}
-          >
-            <MacWindow filename="carrossel_modulos_final_FINAL.jpg">
-              <FlipBook images={carousel2} aspectRatio="125%" />
-            </MacWindow>
-          </motion.div>
-        </div>
-
-        <div className="ebat-posts-grid">
-          {singlePosts.map((p, index) => (
-            <motion.div
-              key={p.src}
-              initial={{ y: 34, opacity: 0, rotate: p.rotate * 3 }}
-              whileInView={{ y: 0, opacity: 1, rotate: p.rotate }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.12 }}
-            >
-              <MacWindow filename={p.file}>
-                <img src={`/img/${p.src}`} alt={p.file} style={{ width: "100%", display: "block" }} />
-              </MacWindow>
-            </motion.div>
-          ))}
-        </div>
-      </section>
+          <div className="tc-grid tc-grid--three tc-grid--offset" style={{ marginTop: "clamp(3rem, 7vw, 6rem)" }}>
+            {POSTS.map((post, index) => (
+              <CaseFigure
+                key={post.src}
+                src={post.src}
+                width={1080}
+                height={1350}
+                alt={post.label}
+                caption={post.label}
+                index={`post 0${index + 1}`}
+                tilt={[-0.8, 0.65, -0.35][index]}
+              />
+            ))}
+          </div>
+        </CaseSection>
+      </CaseCanvas>
     </ProjectShell>
   );
 }

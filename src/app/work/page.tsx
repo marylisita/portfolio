@@ -52,7 +52,7 @@ function ProjectCard({ num, title, tags, href, img, desc, ratio }: ProjectCardPr
           className="wk-card__num"
           style={{
             fontFamily: "var(--font-mono), monospace",
-            fontSize: "0.8rem",
+            fontSize: "var(--type-micro)",
             color: "var(--acid)",
             fontWeight: 700,
           }}
@@ -77,7 +77,7 @@ function ProjectCard({ num, title, tags, href, img, desc, ratio }: ProjectCardPr
           className="wk-card__tags"
           style={{
             fontFamily: "var(--font-mono), monospace",
-            fontSize: "0.68rem",
+            fontSize: "var(--type-micro)",
             textTransform: "uppercase",
             letterSpacing: "0.1em",
             textAlign: "right",
@@ -85,24 +85,19 @@ function ProjectCard({ num, title, tags, href, img, desc, ratio }: ProjectCardPr
         >
           {tags}
         </span>
-        <AsciiDivider
-          braille
-          pattern="⠂⠄⠄⠂⠁⠁⠂ "
-          size=".6rem"
-          opacity={0.5}
-          style={{ gridColumn: "1 / -1", marginTop: ".25rem" }}
-        />
+        <AsciiDivider opacity={0.5} style={{ gridColumn: "1 / -1", marginTop: ".25rem" }} />
       </div>
 
       {/* Project Description */}
       <p
         style={{
           fontFamily: "var(--font-body), sans-serif",
-          fontSize: "0.92rem",
+          fontSize: "var(--type-body)",
           lineHeight: "1.7",
           opacity: 0.8,
-          maxWidth: "750px",
+          maxWidth: "var(--measure-project-copy)",
           margin: 0,
+          textWrap: "pretty",
         }}
       >
         {desc}
@@ -124,9 +119,11 @@ function ProjectCard({ num, title, tags, href, img, desc, ratio }: ProjectCardPr
           href={href}
           className="hover-trigger"
           style={{
-            display: "inline-block",
+            display: "inline-flex",
+            alignItems: "center",
+            minHeight: "var(--tap-min)",
             fontFamily: "var(--font-subtitle), monospace",
-            fontSize: "0.78rem",
+            fontSize: "var(--type-label)",
             fontWeight: "var(--offbit-weight-active)",
             letterSpacing: "var(--offbit-letter-spacing)",
             background: "var(--ink)",
@@ -185,6 +182,11 @@ export default function Work() {
     // hologlam e vegcoz entraram depois e ficavam sem texto nenhum no card
     if (href.endsWith("hologlam")) return t("holo_question");
     if (href.endsWith("vegcoz")) return t("vegcoz_desc_1");
+    if (href.endsWith("ondularis")) {
+      return lang === "pt"
+        ? "Exposição imersiva do coletivo Endosymbiosis na intersecção entre arte, ciência e tecnologia."
+        : "An immersive exhibition by the Endosymbiosis collective at the intersection of art, science and technology.";
+    }
     return "";
   };
 
@@ -215,16 +217,16 @@ export default function Work() {
       mix-blend-mode: multiply;
     }
     .wk-corner {
-      position: fixed; top: 1rem; z-index: 1000;
+      position: fixed; top: clamp(1.4rem, 3.2vh, 2.4rem); z-index: 1000;
       font-family: var(--font-body);
-      font-size: .78rem; text-transform: lowercase; letter-spacing: .1em;
+      font-size: var(--type-micro); text-transform: lowercase; letter-spacing: .1em;
       color: var(--ink);
     }
-    .wk-corner--l { left: 1.4rem; display: flex; flex-direction: column; gap: .12rem; line-height: 1.1; }
+    .wk-corner--l { left: clamp(1.5rem, 5vw, 5.5rem); display: flex; flex-direction: column; gap: .12rem; line-height: 1.1; }
     .wk-mark { font-family: var(--font-pixelscript); font-weight: 400; font-size: 2.3rem; letter-spacing: .02em; line-height: 1; text-transform: none; color: inherit; text-decoration: none; }
-    .wk-mark__sub { font-size: .62rem; letter-spacing: .08em; opacity: .5; }
-    .wk-corner--r { right: 1.4rem; display: flex; align-items: center; gap: 1rem; }
-    .wk-status { display: inline-flex; align-items: center; gap: .42rem; font-size: .68rem; letter-spacing: .06em; opacity: .82; white-space: nowrap; }
+    .wk-mark__sub { font-size: var(--type-micro); letter-spacing: .08em; opacity: .62; }
+    .wk-corner--r { right: clamp(1.5rem, 5vw, 5.5rem); display: flex; align-items: center; gap: 1rem; }
+    .wk-status { display: inline-flex; align-items: center; gap: .42rem; font-size: var(--type-micro); letter-spacing: .06em; opacity: .82; white-space: nowrap; }
     .wk-status__dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ink); animation: wk-pulse 2.4s ease-out infinite; }
     @keyframes wk-pulse {
       0% { box-shadow: 0 0 0 0 rgba(28,27,24,.35); }
@@ -232,7 +234,7 @@ export default function Work() {
       100% { box-shadow: 0 0 0 0 rgba(28,27,24,0); }
     }
     .wk-nav { display: inline-flex; align-items: center; gap: .7rem; }
-    .wk-nav a { color: var(--ink); text-decoration: none; opacity: .7; font-size: .72rem; letter-spacing: .04em; transition: opacity .2s ease; }
+    .wk-nav a { color: var(--ink); text-decoration: none; opacity: .7; font-size: var(--type-micro); letter-spacing: .04em; transition: opacity .2s ease; }
     .wk-nav a:hover, .wk-nav a:focus-visible { opacity: 1; text-decoration: underline; text-underline-offset: 3px; }
     @media (prefers-reduced-motion: reduce) { .wk-status__dot { animation: none; } }
     @media (max-width: 860px) { .wk-status, .wk-nav, .wk-mark__sub { display: none; } }
@@ -262,7 +264,7 @@ export default function Work() {
     }
     .wk-back-btn {
       font-family: var(--font-mono);
-      font-size: .68rem;
+      font-size: var(--type-label);
       text-transform: lowercase;
       letter-spacing: .08em;
       background: var(--ink);
@@ -279,11 +281,14 @@ export default function Work() {
       position: sticky; top: 3.5rem; z-index: 30;
       display: grid; grid-template-columns: repeat(5, minmax(0, 1fr));
       margin: -2rem 0 5rem;
-      border-top: 1px solid rgba(28,27,24,.3);
-      border-bottom: 1px solid rgba(28,27,24,.3);
-      background: rgba(237,231,218,.88);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--paper-edge);
+      background-color: var(--paper-sheet);
+      background-image:
+        repeating-linear-gradient(0deg, transparent 0 3px, rgba(28,27,24,.025) 3px 4px),
+        url("/img/paper-noise.png");
+      background-size: 100% 100%, 140px 140px;
+      box-shadow: 4px 5px 0 var(--paper-shadow);
+      rotate: -.08deg;
     }
     .wk-toc__link {
       display: grid; grid-template-columns: auto 1fr; align-items: baseline; gap: .55rem;
@@ -303,7 +308,7 @@ export default function Work() {
     .wk-toc__num {
       font-family: var(--font-subtitle), monospace;
       font-weight: var(--offbit-weight);
-      font-size: .56rem; letter-spacing: var(--offbit-letter-spacing);
+      font-size: var(--type-micro); letter-spacing: var(--offbit-letter-spacing);
       scale: var(--offbit-condense) 1; transform-origin: left center;
     }
     .wk-card__title,
@@ -317,8 +322,57 @@ export default function Work() {
       font-weight: var(--offbit-weight-active) !important;
     }
     .wk-toc__title {
-      font-family: var(--font-head); font-size: .92rem;
+      font-family: var(--font-head); font-size: var(--type-body);
       line-height: .9; text-transform: lowercase;
+    }
+    .wk-cover {
+      position: relative;
+      padding: clamp(.35rem, .8vw, .55rem);
+      border: 1px solid var(--paper-edge);
+      background-color: var(--paper-sheet) !important;
+      background-image:
+        repeating-linear-gradient(0deg, transparent 0 3px, rgba(28,27,24,.025) 3px 4px),
+        url("/img/paper-noise.png");
+      background-size: 100% 100%, 150px 150px;
+      box-shadow: 8px 9px 0 var(--paper-shadow);
+      rotate: -.12deg;
+      transition: translate var(--duration-normal) var(--ease-out), rotate var(--duration-normal) var(--ease-out), box-shadow var(--duration-normal) var(--ease-default);
+    }
+    .wk-cover::before {
+      content: "";
+      position: absolute;
+      z-index: 4;
+      top: .2rem;
+      left: 50%;
+      width: clamp(3.5rem, 9vw, 6rem);
+      height: .72rem;
+      translate: -50% 0;
+      rotate: -1.5deg;
+      border: 1px solid rgba(28,27,24,.1);
+      background: var(--paper-tape);
+      pointer-events: none;
+    }
+    .wk-cover::after {
+      content: "";
+      position: absolute;
+      z-index: 4;
+      right: .4rem;
+      bottom: .4rem;
+      width: 1rem;
+      height: 1rem;
+      border-top: 1px solid var(--paper-edge);
+      border-left: 1px solid var(--paper-edge);
+      background: color-mix(in srgb, var(--paper-sheet) 82%, var(--site-tint-b));
+      clip-path: polygon(100% 0, 0 100%, 100% 100%);
+      pointer-events: none;
+    }
+    .wk-cover:hover,
+    .wk-cover:focus-visible {
+      z-index: 2;
+      outline: none;
+      translate: 0 -4px;
+      rotate: 0deg;
+      box-shadow: 12px 13px 0 var(--paper-shadow);
     }
     .wk-toc__link[data-active="true"] .wk-toc__num { color: var(--acid); }
     .wk-card { position: relative; isolation: isolate; scroll-margin-top: 8rem; }
@@ -344,19 +398,17 @@ export default function Work() {
     .wk-card:hover::after,
     .wk-card:focus-within::after { opacity: .075; translate: -1.5vw 1rem; }
     .wk-cover {
-      position: relative;
       overflow: hidden;
       color: inherit;
       text-decoration: none;
-      border: 1px solid rgba(28,27,24,.14);
-      transition: transform var(--duration-slow) var(--ease-out), box-shadow var(--duration-slow) var(--ease-out);
     }
     .wk-cover:focus-visible { outline: 3px solid var(--ink); outline-offset: 7px; }
     .wk-cover > * { overflow: hidden; }
     .wk-card:hover .wk-cover,
     .wk-card:focus-within .wk-cover {
-      transform: translate(-3px, -4px);
-      box-shadow: 0 16px 30px rgba(0,0,0,.16);
+      translate: 0 -4px;
+      rotate: 0deg;
+      box-shadow: 12px 13px 0 var(--paper-shadow);
     }
     @media (max-width: 1000px) {
       .wk-toc { position: relative; top: auto; grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -393,7 +445,13 @@ export default function Work() {
       .wk-card__title, .wk-toc__num { transition: none; }
       .wk-card { animation: none; opacity: 1; filter: none; }
       .wk-ornament { animation: none; translate: none; }
-      .wk-card:hover .wk-cover, .wk-card:focus-within .wk-cover { transform: none; box-shadow: none; animation: none; }
+      .wk-card:hover .wk-cover,
+      .wk-card:focus-within .wk-cover {
+        translate: 0;
+        rotate: -.12deg;
+        box-shadow: 8px 9px 0 var(--paper-shadow);
+        animation: none;
+      }
     }
   `;
 
@@ -442,12 +500,12 @@ export default function Work() {
         <LangToggle />
       </span>
 
-      <main style={{ padding: "8rem 2rem 4rem", maxWidth: "1100px", margin: "0 auto", position: "relative", zIndex: 10 }}>
+      <main style={{ padding: "clamp(7.5rem, 11vh, 9.5rem) var(--project-gutter) 4rem", maxWidth: "var(--project-shell-max)", margin: "0 auto", position: "relative", zIndex: 10 }}>
         {/* Title row */}
         <div
           style={{
             fontFamily: "var(--font-mono), monospace",
-            fontSize: "0.7rem",
+            fontSize: "var(--type-micro)",
             textTransform: "uppercase",
             letterSpacing: "0.16em",
             display: "flex",
@@ -458,7 +516,7 @@ export default function Work() {
           <span>{t("work_page_title")}</span>
           <span>{projects.length.toString().padStart(2, "0")} —</span>
         </div>
-        <AsciiDivider braille pattern="⠂⠄⠄⠂⠁⠁⠂ " size=".64rem" opacity={0.55} style={{ marginBottom: "4rem" }} />
+        <AsciiDivider opacity={0.55} style={{ marginBottom: "4rem" }} />
 
         <nav className="wk-toc" aria-label={t("work_page_title")}>
           {projects.map((project) => (

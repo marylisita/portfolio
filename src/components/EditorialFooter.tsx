@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import AsciiDivider from "./AsciiDivider";
 import { useT } from "@/i18n/LanguageContext";
 import { BEIJO_GRANDE } from "./asciiOrnamentos";
+import { useCreativeStudio } from "./CreativeStudio";
 
 /**
  * Rodapé da landing na identidade nova (escuro + lime + linhas pixeladas).
@@ -11,7 +12,7 @@ import { BEIJO_GRANDE } from "./asciiOrnamentos";
  */
 const styles = `
   .ef {
-    padding: 0 2rem 2rem;
+    padding: 0 3.8rem 2rem;
     color: var(--ink);
   }
   /* O Primeiro Beijo (Bouguereau) preside a divisória antes do rodapé:
@@ -44,7 +45,7 @@ const styles = `
   }
   .ef__credito {
     font-family: var(--font-body);
-    font-size: .62rem;
+    font-size: var(--type-micro);
     letter-spacing: .2em;
     text-transform: uppercase;
     opacity: .4;
@@ -58,9 +59,6 @@ const styles = `
     opacity: .75;
   }
   .ef__talk {
-    /* OffBit DotBold (a pixel do site — pedido dela: "no final prefiro a de
-       pixel, sem ser a de caligrafia"). Obs: a PixelPoiiz foi removida do
-       projeto; se ela quiser essa, precisa reenviar o .ttf. */
     font-family: var(--font-subtitle), monospace;
     font-weight: var(--offbit-weight);
     font-size: clamp(2.4rem, 7.8vw, 6.8rem);
@@ -70,7 +68,6 @@ const styles = `
     text-align: center;
   }
   .ef__mail {
-    /* email na CALIGRAFIA (Pixelscript), maior, destacado — pedido dela */
     font-family: var(--font-pixelscript);
     font-size: clamp(1.35rem, 2.6vw, 2.2rem);
     letter-spacing: .02em;
@@ -88,13 +85,11 @@ const styles = `
     align-items: baseline;
     gap: 1.5rem;
     padding: 1.3rem 0;
-    border-top: 1px solid rgba(28,27,24,.28);
     text-decoration: none;
     color: var(--ink);
     transition: color .3s ease, padding-left .45s cubic-bezier(.16,1,.3,1);
   }
   .ef__row:hover { color: var(--acid); padding-left: 1.2rem; }
-  .ef__row:last-of-type { border-bottom: 1px solid rgba(28,27,24,.28); }
   .ef__name {
     font-family: var(--font-head);
     font-weight: 400;
@@ -103,25 +98,72 @@ const styles = `
     letter-spacing: -0.01em;
   }
   .ef__num, .ef__arrow {
-    font-family: var(--font-body); font-size: .7rem;
+    font-family: var(--font-body); font-size: var(--type-micro);
     text-transform: uppercase; letter-spacing: .16em; opacity: .6;
+  }
+  .ef__knot {
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+    margin-top: 4rem;
+    color: var(--ink);
+    opacity: .5;
+    font-family: var(--font-mono), monospace;
+    font-size: var(--type-micro);
+    white-space: nowrap;
+  }
+  .ef__knot::before {
+    content: "------------------------";
+    width: clamp(2rem, 8vw, 7rem);
+    overflow: hidden;
+    font-family: var(--font-mono), monospace;
+    white-space: nowrap;
+  }
+  .ef__knot::after {
+    content: "--------------------------------------------------------------------------------";
+    flex: 1;
+    overflow: hidden;
+    font-family: var(--font-mono), monospace;
+    white-space: nowrap;
+    opacity: .38;
+  }
+  .ef__knot-mark {
+    display: inline-block;
+    rotate: -2deg;
+    letter-spacing: -.04em;
   }
   .ef__bottom {
     display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
-    padding-top: 1.4rem; margin-top: 4rem;
-    border-top: 1px solid rgba(28,27,24,.2);
-    font-family: var(--font-body); font-size: .68rem;
+    padding-top: 1rem;
+    font-family: var(--font-body); font-size: var(--type-micro);
     text-transform: uppercase; letter-spacing: .16em;
     opacity: .5;
   }
+  .ef__sound {
+    display: inline-grid;
+    place-items: center;
+    min-width: 3rem;
+    min-height: var(--tap-min);
+    padding: .5rem .65rem;
+    color: var(--ink);
+    border: 1px solid color-mix(in srgb, var(--ink) 34%, transparent);
+    font-family: var(--font-mono), monospace;
+    font-size: var(--type-micro);
+    font-variant-emoji: text;
+    cursor: pointer;
+  }
+  .ef__sound:hover,
+  .ef__sound[aria-pressed="true"] { color: var(--paper); background: var(--ink); opacity: 1; }
+  .ef__sound:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
   @media (max-width: 720px) {
-    .ef { padding: 4rem 1.25rem 1.5rem; }
+    .ef { padding: 4rem 1.8rem 1.5rem; }
     .ef__row { grid-template-columns: 2.5rem 1fr auto; gap: .8rem; }
   }
 `;
 
 export default function EditorialFooter() {
   const { t } = useT();
+  const { studioActive, soundEnabled, toggleSound, playSound } = useCreativeStudio();
 
   const socials = [
     { num: "01", name: "behance", href: "https://www.behance.net/marylisita" },
@@ -146,11 +188,8 @@ export default function EditorialFooter() {
         >
           {BEIJO_GRANDE}
         </motion.pre>
-        {/* céu de estrelinhas embaixo dos ANJINHOS do beijo (pedido dela —
-            "os anjinhos" = os querubins do Bouguereau!) */}
+        {/* céu de estrelinhas embaixo dos ANJINHOS do beijo (mantidos) */}
         <AsciiDivider pattern=".・。.・゜✭・.・✫・゜・。" size=".85rem" opacity={0.5} style={{ width: "100%" }} />
-        {/* sem crédito de propósito (pedido dela): quem visita tem que
-            descobrir sozinho que obra é essa */}
       </div>
 
       <span className="ef__label">{t("rm_footer_label")}</span>
@@ -171,22 +210,42 @@ export default function EditorialFooter() {
 
       <div>
         {socials.map((s) => (
-          <a
-            key={s.name}
-            className="ef__row hover-trigger"
-            href={s.href}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <span className="ef__num">{s.num}</span>
-            <span className="ef__name">{s.name}</span>
-            <span className="ef__arrow">↗</span>
-          </a>
+          <div key={s.name}>
+            <AsciiDivider opacity={0.42} />
+            <a
+              className="ef__row hover-trigger"
+              href={s.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              onPointerEnter={() => playSound("hover")}
+            >
+              <span className="ef__num">{s.num}</span>
+              <span className="ef__name">{s.name}</span>
+              <span className="ef__arrow">↗</span>
+            </a>
+          </div>
         ))}
+        <AsciiDivider opacity={0.42} />
       </div>
 
+      <div className="ef__knot" aria-hidden="true">
+        <span className="ef__knot-mark">⠂⠄⠂────╳⌁</span>
+      </div>
+
+      <AsciiDivider opacity={0.42} style={{ marginTop: ".4rem" }} />
       <div className="ef__bottom">
         <span>mary lisita © {new Date().getFullYear()}</span>
+        {studioActive ? (
+          <button
+            type="button"
+            className="ef__sound hover-trigger"
+            aria-label={soundEnabled ? "Desativar sons" : "Ativar sons"}
+            aria-pressed={soundEnabled}
+            onClick={toggleSound}
+          >
+            [ {soundEnabled ? "♪" : "∅"} ]
+          </button>
+        ) : null}
         <span>{t("rm_footer_made")}</span>
       </div>
     </footer>

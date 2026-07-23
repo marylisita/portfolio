@@ -1,8 +1,9 @@
-@import "tailwindcss";
 /* PF Pixelscript (caligrafia pixelada, escolha dela) — servida pelo Adobe Fonts
    (web project dela); o visitante NÃO precisa ter a fonte. Se a assinatura
    Adobe expirar, cai no fallback definido em --font-pixelscript. */
 @import url("https://use.typekit.net/knv7rew.css");
+@import "tailwindcss";
+
 
 /* ==========================================
    PALETA DO SITE — trocar AQUI muda o site todo
@@ -29,6 +30,29 @@
     --site-tint-a: #F6F1E6;
     --site-tint-b: #E6DCCB;
     --site-tint-c: #F1E7D6;
+    --selection-bg: #843f3a;
+    --selection-fg: #fff8ec;
+    /* Escala mínima compartilhada: nenhum metadado funcional volta a 8–10px. */
+    --type-micro: clamp(.78rem, .74rem + .14vw, .9rem);
+    --type-label: clamp(.875rem, .83rem + .18vw, 1rem);
+    --type-body: clamp(1rem, .96rem + .18vw, 1.125rem);
+    --type-body-lg: clamp(1.08rem, 1rem + .28vw, 1.28rem);
+    --type-ascii-rule: clamp(.78rem, .73rem + .18vw, .92rem);
+    --tap-min: 44px;
+    /* Medidas editoriais comuns a todos os cases. */
+    --project-shell-max: 1440px;
+    --project-content-max: 1320px;
+    --project-compact-max: 1120px;
+    --project-gutter: clamp(1.25rem, 4vw, 4rem);
+    --measure-project-title: 18ch;
+    --measure-section-title: 20ch;
+    --measure-project-copy: 76ch;
+    --measure-copy: 68ch;
+    /* Matéria tátil comum a fichas, etiquetas e cartões. */
+    --paper-sheet: rgba(246, 241, 230, .94);
+    --paper-edge: rgba(28, 27, 24, .28);
+    --paper-shadow: rgba(28, 27, 24, .13);
+    --paper-tape: rgba(231, 216, 185, .72);
 }
 
 
@@ -57,7 +81,7 @@
     --r-sm: 14px; --r-md: 20px; --r-lg: 28px; --r-xl: 40px; --r-pill: 100px;
 }
 
-::selection { background:var(--green); color:var(--fg); }
+*::selection { background: #843f3a; color: #fff8ec; }
 html { scroll-behavior:smooth; }
 
 body {

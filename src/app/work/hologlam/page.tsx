@@ -1,7 +1,10 @@
 "use client";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import ProjectShell from "@/components/ProjectShell";
 import FutureWheel from "@/components/FutureWheel";
+import { CaseCanvas } from "@/components/CaseStudyKit";
+import AsciiDivider from "@/components/AsciiDivider";
 import { useT } from "@/i18n/LanguageContext";
 
 /**
@@ -31,12 +34,18 @@ const reveal = () => ({
   transition: { duration: 0.75, ease: [0.16, 1, 0.3, 1] as const },
 });
 
+const MODELS = [
+  { n: 1, width: 468, height: 670 },
+  { n: 2, width: 410, height: 670 },
+  { n: 3, width: 484, height: 670 },
+] as const;
+
 const styles = `
-  .hg-sec { max-width: 1100px; margin: 0 auto; padding: 0 2rem 5.5rem; }
+  .hg-sec { max-width: var(--project-content-max); margin: 0 auto; padding: 0 var(--project-gutter) 5.5rem; position: relative; }
   .hg-kicker {
-    font-family: var(--font-body); font-size: .68rem;
+    font-family: var(--font-body); font-size: var(--type-micro);
     text-transform: uppercase; letter-spacing: .2em;
-    color: var(--acid); margin: 0 0 .9rem;
+    color: var(--tc-accent); margin: 0 0 .9rem;
   }
   .hg-h2 {
     font-family: var(--font-head); font-weight: 400;
@@ -44,8 +53,9 @@ const styles = `
     letter-spacing: -.015em; margin: 0 0 1.6rem;
   }
   .hg-p {
-    font-family: var(--font-body); font-size: .96rem; line-height: 1.75;
-    opacity: .82; max-width: 62ch; margin: 0 0 1.1rem;
+    font-family: var(--font-body); font-size: clamp(1.04rem, 1.45vw, 1.16rem); line-height: 1.7;
+    opacity: .82; max-width: var(--measure-copy); margin: 0 0 1.1rem;
+    text-wrap: pretty;
   }
   .hg-p--forte { opacity: 1; font-weight: 500; }
 
@@ -53,44 +63,75 @@ const styles = `
   .hg-quest {
     font-family: var(--font-head); font-weight: 400;
     font-size: clamp(1.7rem, 5.2vw, 4rem); line-height: 1.08;
-    letter-spacing: -.02em; max-width: 20ch; margin: 0;
+    letter-spacing: -.02em; max-width: var(--measure-section-title); margin: 0;
+    text-wrap: balance;
   }
-  .hg-quest em { font-style: italic; color: var(--acid); }
-  .hg-rule { border: 0; border-top: 1px solid rgba(28,27,24,.28); margin: 0 0 2.4rem; }
-
+  .hg-quest em { font-style: italic; color: var(--tc-accent); }
+  .hg-rule { margin: 0 0 2.4rem; color: currentColor; opacity: .5; }
+  .hg-opening,
+  .hg-critical {
+    max-width: var(--project-content-max);
+    width: calc(100% - 2rem);
+    margin-bottom: 5.5rem;
+    padding: clamp(3rem, 7vw, 6rem) clamp(1.25rem, 4vw, 3.5rem);
+    color: #f6eefc;
+    border: 1px dashed rgba(198, 133, 255, .42);
+    background:
+      radial-gradient(
+        58rem 42rem at var(--pj-light-pos, 72% 20%),
+        rgba(166, 90, 232, .3) 0%,
+        transparent 72%
+      ),
+      var(--tc-deep);
+    background-attachment: fixed;
+    box-shadow: 11px 12px 0 var(--tc-accent-soft);
+  }
   /* método: 4 fases */
   .hg-fases { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; }
+  .hg-fase {
+    position: relative;
+    padding: 1.35rem 1.2rem 1.25rem;
+    border: 1px solid var(--paper-edge);
+    background-color: var(--paper-sheet);
+    background-image:
+      repeating-linear-gradient(0deg, transparent 0 3px, rgba(28,27,24,.025) 3px 4px),
+      url("/img/paper-noise.png");
+    background-size: 100% 100%, 140px 140px;
+    box-shadow: 3px 4px 0 var(--paper-shadow);
+    rotate: -.25deg;
+  }
+  .hg-fase:nth-child(even) { rotate: .35deg; }
   .hg-fase__n {
-    font-family: var(--font-mono); font-size: .7rem;
-    letter-spacing: .16em; color: var(--acid); display: block; margin-bottom: .7rem;
+    font-family: var(--font-mono); font-size: var(--type-micro);
+    letter-spacing: .16em; color: var(--tc-accent); display: block; margin-bottom: .7rem;
   }
   .hg-fase__t {
     font-family: var(--font-head); font-size: clamp(1.1rem, 2.2vw, 1.6rem);
     margin: 0 0 .6rem; line-height: 1.1;
   }
-  .hg-fase__d { font-family: var(--font-body); font-size: .84rem; line-height: 1.6; opacity: .72; margin: 0; }
+  .hg-fase__d { font-family: var(--font-body); font-size: var(--type-body); line-height: 1.62; opacity: .82; margin: 0; }
 
   /* STEEP: a letra é a âncora */
   .hg-steep { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.6rem; }
   .hg-steep__l {
     font-family: var(--font-head); font-size: clamp(2.4rem, 5vw, 4.4rem);
-    line-height: 1; color: var(--acid); display: block; margin-bottom: .3rem;
+    line-height: 1; color: var(--tc-accent); display: block; margin-bottom: .3rem;
   }
   .hg-steep__t {
-    font-family: var(--font-body); font-size: .72rem; font-weight: 600;
+    font-family: var(--font-body); font-size: var(--type-micro); font-weight: 600;
     text-transform: uppercase; letter-spacing: .14em; margin: 0 0 .7rem;
     padding-bottom: .6rem; border-bottom: 1px solid rgba(28,27,24,.25);
   }
-  .hg-steep__d { font-family: var(--font-body); font-size: .8rem; line-height: 1.6; opacity: .72; margin: 0; }
+  .hg-steep__d { font-family: var(--font-body); font-size: var(--type-body); line-height: 1.62; opacity: .82; margin: 0; }
 
   /* o que não fecha */
   .hg-gaps { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2.6rem 3rem; margin-bottom: 3rem; }
   .hg-gap__t {
     font-family: var(--font-head); font-size: clamp(1.2rem, 2.6vw, 1.9rem);
     margin: 0 0 .7rem; line-height: 1.12;
-    padding-left: 1rem; border-left: 2px solid var(--acid);
+    padding-left: 1rem; border-left: 2px solid var(--tc-accent);
   }
-  .hg-gap__d { font-family: var(--font-body); font-size: .9rem; line-height: 1.7; opacity: .78; margin: 0; padding-left: 1rem; }
+  .hg-gap__d { font-family: var(--font-body); font-size: var(--type-body); line-height: 1.68; opacity: .86; margin: 0; padding-left: 1rem; }
   .hg-close {
     font-family: var(--font-head); font-style: italic;
     font-size: clamp(1.1rem, 2.4vw, 1.7rem); line-height: 1.35;
@@ -100,14 +141,29 @@ const styles = `
   /* imagens */
   .hg-trio { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; }
   .hg-img { width: 100%; display: block; }
-  .hg-fig { overflow: hidden; background: var(--site-tint-b); }
+  .hg-fig {
+    overflow: hidden;
+    padding: .45rem;
+    border: 1px solid rgba(28,27,24,.26);
+    background: var(--tc-paper);
+    box-shadow: 7px 8px 0 var(--tc-accent-soft);
+    transition: translate var(--duration-normal) var(--ease-out), box-shadow var(--duration-normal) var(--ease-out);
+  }
+  .hg-fig:hover { translate: 0 -5px; box-shadow: 11px 13px 0 var(--tc-accent-soft); }
   .hg-dupla { display: grid; grid-template-columns: 1.15fr .85fr; gap: 3rem; align-items: center; }
   /* telas de app: viraram mockups de celular em prancha 16:9 (recorte dela,
      2026-07-23) — em 190px ficavam ilegíveis, então agora é grade de 2 colunas */
   .hg-apps { display: grid; grid-template-columns: 1fr 1fr; gap: 1.6rem; }
-  .hg-apps img { width: 100%; display: block; }
+  .hg-apps img {
+    width: 100%;
+    display: block;
+    padding: .45rem;
+    border: 1px dashed rgba(28,27,24,.28);
+    background: var(--tc-paper);
+    box-shadow: 7px 8px 0 var(--tc-accent-soft);
+  }
   .hg-cap {
-    font-family: var(--font-mono); font-size: .66rem;
+    font-family: var(--font-mono); font-size: var(--type-micro);
     text-transform: uppercase; letter-spacing: .12em; opacity: .5;
     margin: .8rem 0 0;
   }
@@ -167,13 +223,14 @@ export default function HoloGlamProject() {
         { label: t("holo_meta_role"), value: t("holo_meta_role_val") },
       ]}
     >
+      <CaseCanvas variant="hologlam">
       <style>{styles}</style>
 
       {/* a pergunta — antes de qualquer imagem */}
-      <section className="hg-sec">
+      <section className="hg-sec hg-opening">
         <motion.div {...reveal()}>
           <p className="hg-kicker">{t("holo_question_kicker")}</p>
-          <hr className="hg-rule" />
+          <AsciiDivider className="hg-rule" />
           <p className="hg-quest">{t("holo_question")}</p>
         </motion.div>
       </section>
@@ -181,14 +238,21 @@ export default function HoloGlamProject() {
       {/* os três looks */}
       <section className="hg-sec">
         <div className="hg-trio">
-          {[1, 2, 3].map((n, i) => (
-            <motion.figure key={n} className="hg-fig" style={{ margin: 0 }}
+          {MODELS.map((model, i) => (
+            <motion.figure key={model.n} className="hg-fig" style={{ margin: 0 }}
               initial={{ opacity: 0, y: 34 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.8, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
             >
-              <img className="hg-img" src={`/img/hologlam/modelo-${n}.webp`} alt={`HoloGlam — look ${n}`} />
+              <Image
+                className="hg-img"
+                src={`/img/hologlam/modelo-${model.n}.webp`}
+                width={model.width}
+                height={model.height}
+                sizes="(max-width: 900px) 100vw, 33vw"
+                alt={`HoloGlam — look ${model.n}`}
+              />
             </motion.figure>
           ))}
         </div>
@@ -201,7 +265,7 @@ export default function HoloGlamProject() {
           <h2 className="hg-h2">{t("holo_method_title")}</h2>
           <div className="hg-fases">
             {fases.map((f) => (
-              <div key={f.n}>
+              <div className="hg-fase" key={f.n}>
                 <span className="hg-fase__n">{f.n}</span>
                 <h3 className="hg-fase__t">{f.t}</h3>
                 <p className="hg-fase__d">{f.d}</p>
@@ -265,7 +329,14 @@ export default function HoloGlamProject() {
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
           >
-            <img className="hg-img" src="/img/hologlam/portal.webp" alt="HoloGlam — projeção holográfica" />
+            <Image
+              className="hg-img"
+              src="/img/hologlam/portal.webp"
+              width={1600}
+              height={900}
+              sizes="(max-width: 900px) 100vw, 45vw"
+              alt="HoloGlam — projeção holográfica"
+            />
           </motion.figure>
         </div>
       </section>
@@ -277,14 +348,26 @@ export default function HoloGlamProject() {
           <p className="hg-p">{t("holo_app_1")}</p>
           <p className="hg-p" style={{ marginBottom: "2.2rem" }}>{t("holo_app_2")}</p>
           <div className="hg-apps">
-            <img src={`/img/hologlam/app-${suf}.webp`} alt="HoloGlam — app" />
-            <img src={`/img/hologlam/comunidade-${suf}.webp`} alt="HoloGlam — comunidade" />
+            <Image
+              src={`/img/hologlam/app-${suf}.webp`}
+              width={1600}
+              height={900}
+              sizes="(max-width: 560px) 100vw, 50vw"
+              alt="HoloGlam — app"
+            />
+            <Image
+              src={`/img/hologlam/comunidade-${suf}.webp`}
+              width={1600}
+              height={900}
+              sizes="(max-width: 560px) 100vw, 50vw"
+              alt="HoloGlam — comunidade"
+            />
           </div>
         </motion.div>
       </section>
 
       {/* o que não fecha — o coração da página */}
-      <section className="hg-sec">
+      <section className="hg-sec hg-critical">
         <motion.div {...reveal()}>
           <p className="hg-kicker">{t("holo_gap_kicker")}</p>
           <h2 className="hg-h2">{t("holo_gap_title")}</h2>
@@ -324,6 +407,7 @@ export default function HoloGlamProject() {
           <div className="pj-meta__value">Maria Isabel Lisita · Maria Luiza Costa</div>
         </div>
       </section>
+      </CaseCanvas>
     </ProjectShell>
   );
 }

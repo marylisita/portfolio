@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { animate as animateValue, motion, useMotionValue, useReducedMotion } from "framer-motion";
 import AsciiAnim from "./AsciiAnim";
 import AsciiDivider from "./AsciiDivider";
 import ScrambleText from "./ScrambleText";
@@ -9,13 +9,11 @@ import {
   GATO_FRAMES,
   GATO_PRETO_FRAMES,
 } from "./asciiArt";
+import { StampCanvas, useCreativeStudio } from "./CreativeStudio";
 
 /* canto em degrau de 8px — recorte "pixel" nas molduras */
 export const PIXEL_CLIP =
   "polygon(0 8px, 8px 8px, 8px 0, calc(100% - 8px) 0, calc(100% - 8px) 8px, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 8px calc(100% - 8px), 0 calc(100% - 8px))";
-
-/* linha "pixelada": blocos de 6px em vez de fio contínuo */
-const PIXEL_LINE = "repeating-linear-gradient(90deg, var(--ink) 0 6px, transparent 6px 12px)";
 
 /** Saudação que muda com a hora real E o idioma do site (pedido dela:
  *  brincalhona, sem emoji). Calculada no tick (client-only), então não
@@ -23,14 +21,14 @@ const PIXEL_LINE = "repeating-linear-gradient(90deg, var(--ink) 0 6px, transpare
 function greetingFor(hour: number, lang: "pt" | "en") {
   if (lang === "pt") {
     if (hour < 6) return "ainda acordada?";
-    if (hour < 12) return "bom dia, sol";
-    if (hour < 18) return "boa tarde";
-    return "modo noturno on";
+    if (hour < 10) return "cedo demais para tanta tipografia";
+    if (hour < 18) return "horário comercial, aparentemente";
+    return "a luz ficou acesa";
   }
   if (hour < 6) return "still up?";
-  if (hour < 12) return "morning, sunshine";
-  if (hour < 18) return "good afternoon";
-  return "night mode on";
+  if (hour < 10) return "too early for this much typography";
+  if (hour < 18) return "business hours, apparently";
+  return "the light stayed on";
 }
 
 /** Relógio ao vivo (referência: barbianaliu.com — "Mon 01:39:03 AM"). */
@@ -76,7 +74,7 @@ const styles = `
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 7rem 2rem 2rem;
+    padding: 8.5rem 5.5rem 2.5rem;
     overflow: hidden;
   }
   .ph__meta {
@@ -84,7 +82,7 @@ const styles = `
     justify-content: space-between;
     gap: 1rem;
     font-family: var(--font-body);
-    font-size: .78rem;
+    font-size: var(--type-micro);
     text-transform: lowercase;
     letter-spacing: .12em;
     padding-bottom: .55rem;
@@ -92,21 +90,14 @@ const styles = `
     z-index: 1;
   }
   .ph__title {
-    /* PF Pixelscript (Adobe) como display do hero — mesma vibe da Seratonin
-       do "trabalhos", mas COM acentos (a Seratonin não tem: o ê caía no
-       fallback). Regras de script: peso 400 só, tracking ZERO (negativo
-       quebra as ligações), entrelinha folgada pros ascendentes. */
+    /* PF Pixelscript (Adobe) como display do hero — escala equilibrada com respiro */
     font-family: var(--font-pixelscript);
     font-weight: 400;
-    /* limitado por ALTURA de viewport também: com 11.5vw puro o título
-       estourava a tela em 1440x900 e cortava a última linha — e a entrelinha
-       maior do script come mais altura, por isso o teto caiu pra 10.2vh */
-    font-size: clamp(2rem, min(8vw, 10.2vh), 7rem);
-    line-height: 1.04;
+    font-size: clamp(2rem, min(7.5vw, 9.5vh), 6.5rem);
+    line-height: 1.05;
     letter-spacing: 0;
-    /* sem lowercase forçado: a capitular da Pixelscript é linda (pedido dela) */
     text-transform: none;
-    margin: clamp(1rem, 3.2vh, 2.4rem) 0;
+    margin: clamp(1.2rem, 3.8vh, 2.8rem) 0;
     position: relative;
     z-index: 1;
     pointer-events: none;
@@ -114,7 +105,7 @@ const styles = `
   /* padding+margin negativa: expande a CAIXA DE CLIP (máscara da entrada) sem
      mudar o ritmo — senão o floreio da capitular da Pixelscript sai cortado */
   .ph__line { overflow: hidden; display: block; padding: .18em .12em .12em .08em; margin: -.18em -.12em -.12em -.08em; }
-  .ph__line--acid { color: var(--acid); }
+  .ph__line--acid { color: var(--hero-highlight, var(--acid)); }
   .ph__foot {
     display: grid;
     grid-template-columns: 1fr minmax(280px, 34%);
@@ -147,7 +138,7 @@ const styles = `
   .ph__sticker:active { cursor: grabbing; }
   .ph__note {
     font-family: var(--font-body);
-    font-size: .78rem;
+    font-size: var(--type-micro);
     text-transform: lowercase;
     letter-spacing: .08em;
     white-space: nowrap;
@@ -164,31 +155,38 @@ const styles = `
     white-space: nowrap;
     pointer-events: none;
   }
-
   @media (max-width: 720px) {
-    .ph { padding: 5.5rem 1.25rem 1.5rem; }
+    .ph {
+      min-height: max(100svh, 54rem);
+      padding: 7rem 1.25rem 1.5rem;
+    }
     .ph__meta span:nth-child(2) { display: none; }
-    .ph__title { margin: 2rem 0; }
+    .ph__title {
+      font-size: clamp(2rem, 10.6vw, 2.75rem);
+      line-height: 1.08;
+      margin: 7.5rem 0 10rem;
+    }
     .ph__foot { grid-template-columns: 1fr; gap: 1.25rem; }
     .ph__sticker--desk { display: none; }
     .ph__sticker { cursor: default; }
-  }
-  @supports (animation-timeline: scroll()) {
-    @media (max-width: 720px) {
-      .ph__sticker:not(.ph__sticker--desk) {
-        animation: ph-mobile-drift linear both;
-        animation-timeline: scroll(root block);
-        animation-range: 0% 18%;
-      }
-      @keyframes ph-mobile-drift {
-        from { translate: 0 0; }
-        to { translate: 0 18px; }
-      }
+    .ph__sticker--ascii-gata {
+      left: 4% !important;
+      top: 14% !important;
+      max-width: 45vw;
+      overflow: hidden;
     }
+    .ph__sticker--clock {
+      left: auto !important;
+      right: 1.25rem;
+      top: 23% !important;
+      text-align: right;
+    }
+    .ph__greet { font-size: 1rem; }
+    .ph__note { font-size: var(--type-micro); }
   }
   @media (prefers-reduced-motion: reduce) {
     .ph__line > span { transform: none !important; }
-    .ph__sticker { animation: none; translate: none; }
+    .ph__sticker { translate: none; }
   }
 `;
 
@@ -209,6 +207,82 @@ type Sticker = {
   el: React.ReactNode;
 };
 
+function DraggableSticker({
+  sticker,
+  index,
+  bounds,
+  canDrag,
+  reduceMotion,
+  resetToken,
+  onMoved,
+  onSound,
+}: {
+  sticker: Sticker;
+  index: number;
+  bounds: React.RefObject<HTMLElement | null>;
+  canDrag: boolean;
+  reduceMotion: boolean;
+  resetToken: number;
+  onMoved: () => void;
+  onSound: () => void;
+}) {
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const previousReset = useRef(resetToken);
+
+  useEffect(() => {
+    if (previousReset.current === resetToken) return;
+    previousReset.current = resetToken;
+    const xAnimation = animateValue(x, 0, {
+      type: "spring",
+      stiffness: 155,
+      damping: 18,
+      mass: .85,
+    });
+    const yAnimation = animateValue(y, 0, {
+      type: "spring",
+      stiffness: 155,
+      damping: 18,
+      mass: .85,
+    });
+    return () => {
+      xAnimation.stop();
+      yAnimation.stop();
+    };
+  }, [resetToken, x, y]);
+
+  return (
+    <motion.div
+      className={`ph__sticker ph__sticker--${sticker.key}${sticker.deskOnly ? " ph__sticker--desk" : ""}`}
+      style={{ left: sticker.left, top: sticker.top, x, y }}
+      initial={reduceMotion ? false : { opacity: 0, scale: 0.6, rotate: sticker.rotate }}
+      animate={{ opacity: 1, scale: 1, rotate: sticker.rotate }}
+      transition={{ delay: reduceMotion ? 0 : 0.9 + index * 0.07, duration: reduceMotion ? 0 : 0.5, ease: [0.16, 1, 0.3, 1] }}
+      drag={canDrag}
+      dragConstraints={bounds}
+      dragElastic={0.12}
+      dragMomentum
+      onDragStart={onSound}
+      onDragEnd={() => {
+        onMoved();
+        onSound();
+      }}
+      whileHover={canDrag ? {
+        scale: 1.045,
+        filter: "drop-shadow(0 5px 4px rgba(20,19,16,.18))",
+      } : undefined}
+      whileDrag={canDrag ? {
+        scale: 1.1,
+        rotate: 0,
+        zIndex: 30,
+        filter: "drop-shadow(0 14px 9px rgba(20,19,16,.26))",
+      } : undefined}
+    >
+      {sticker.el}
+    </motion.div>
+  );
+}
+
 export default function PlaygroundHero({
   lines,
   location,
@@ -227,6 +301,12 @@ export default function PlaygroundHero({
   const bounds = useRef<HTMLElement>(null);
   const reduceMotion = useReducedMotion();
   const [isMobile, setIsMobile] = useState(false);
+  const {
+    stampMode,
+    resetToken,
+    markMoved,
+    playSound,
+  } = useCreativeStudio();
 
   useEffect(() => {
     const media = window.matchMedia("(max-width: 720px)");
@@ -243,11 +323,11 @@ export default function PlaygroundHero({
   const stickers: Sticker[] = [
     {
       key: "ascii-gata", left: "6%", top: "14%", rotate: -2,
-      el: <AsciiAnim frames={GATO_FRAMES} interval={180} fontSize={6} color="var(--acid)" opacity={0.56} />,
+      el: <AsciiAnim frames={GATO_FRAMES} interaction="characters" interval={180} fontSize={6} color="var(--acid)" opacity={0.56} />,
     },
     {
       key: "gato-preto-ascii", left: "20%", top: "62%", rotate: -4, deskOnly: true,
-      el: <AsciiAnim frames={GATO_PRETO_FRAMES} interval={300} fontSize={5} color="var(--acid)" opacity={0.38} />,
+      el: <AsciiAnim frames={GATO_PRETO_FRAMES} interaction="characters" interval={300} fontSize={5} color="var(--acid)" opacity={0.38} />,
     },
     // texto
     { key: "rio", left: "12%", top: "40%", rotate: -12, deskOnly: true, el: <span className="ph__note">( rio de janeiro )</span> },
@@ -255,37 +335,46 @@ export default function PlaygroundHero({
   ];
 
   return (
-    <section className="ph" ref={bounds}>
+    <section className="ph" ref={bounds} data-stamp-active={stampMode ? "true" : "false"}>
       <style>{styles}</style>
+      <StampCanvas />
+      <span
+        style={{
+          position: "absolute",
+          width: 1,
+          height: 1,
+          padding: 0,
+          margin: -1,
+          overflow: "hidden",
+          clip: "rect(0, 0, 0, 0)",
+          whiteSpace: "nowrap",
+          border: 0,
+        }}
+      >
+        {scrollLabel}
+      </span>
 
       <div>
-        {/* sem o nome aqui: já está no wordmark do header (ela: "tem dois
-            maria isabel lisita, tira o de baixo") */}
+        {/* sem o nome aqui: já está no wordmark do header */}
         <div className="ph__meta">
-          <span>portfólio — 2026</span>
-          <span>{location}</span>
+          <span><ScrambleText text={location} /></span>
         </div>
-        <AsciiDivider pattern="⠂⠄⠄⠂⠁⠁⠂ " braille size=".64rem" opacity={0.55} style={{ position: "relative", zIndex: 1 }} />
+        <AsciiDivider opacity={0.55} style={{ position: "relative", zIndex: 1 }} />
       </div>
 
       {/* adesivos — arrastáveis dentro do hero */}
       {stickers.map((s, i) => (
-        <motion.div
+        <DraggableSticker
           key={s.key}
-          className={`ph__sticker${s.deskOnly ? " ph__sticker--desk" : ""}`}
-          style={{ left: s.left, top: s.top }}
-          initial={reduceMotion ? false : { opacity: 0, scale: 0.6, rotate: s.rotate }}
-          animate={{ opacity: 1, scale: 1, rotate: s.rotate }}
-          transition={{ delay: reduceMotion ? 0 : 0.9 + i * 0.07, duration: reduceMotion ? 0 : 0.5, ease: [0.16, 1, 0.3, 1] }}
-          drag={canDrag}
-          dragConstraints={bounds}
-          dragElastic={0.12}
-          dragMomentum
-          whileHover={canDrag ? { scale: 1.06 } : undefined}
-          whileDrag={canDrag ? { scale: 1.12, rotate: 0, zIndex: 30 } : undefined}
-        >
-          {s.el}
-        </motion.div>
+          sticker={s}
+          index={i}
+          bounds={bounds}
+          canDrag={canDrag}
+          reduceMotion={Boolean(reduceMotion)}
+          resetToken={resetToken}
+          onMoved={markMoved}
+          onSound={() => playSound("drag")}
+        />
       ))}
 
       {/* menu espalhado (ScatterMenu) e afins */}
@@ -315,15 +404,14 @@ export default function PlaygroundHero({
         animate={{ opacity: 1 }}
         transition={{ delay: reduceMotion ? 0 : 0.75, duration: reduceMotion ? 0 : 0.7 }}
       >
-        {/* divisor fofo (escolha dela) no lugar da linha tracejada */}
+        {/* divisor fofo no lugar da linha tracejada */}
         <AsciiDivider
           repeat={false}
           pattern="₊✧˚﹕︶︶︶﹕૮₍ ⸝⸝´ ꒳ `⸝⸝ ₎ა﹕︶︶︶﹕˚✧₊"
           size=".82rem"
           opacity={0.62}
-          style={{ gridColumn: "1 / -1", marginBottom: ".4rem" }}
+          style={{ width: "100%", marginBottom: ".4rem" }}
         />
-        <span className="ph__scroll">{scrollLabel}</span>
         <p className="ph__sub">
           {sub} <span className="ph__em">{subHighlight}</span>
         </p>

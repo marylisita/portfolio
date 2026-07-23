@@ -1,6 +1,9 @@
 "use client";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import ProjectShell from "@/components/ProjectShell";
+import { CaseCanvas } from "@/components/CaseStudyKit";
+import AsciiDivider from "@/components/AsciiDivider";
 import { useT } from "@/i18n/LanguageContext";
 
 /**
@@ -31,42 +34,72 @@ const reveal = (d = 0) => ({
 });
 
 const ETAPAS = [
-  { id: "questionario", n: "01", t: "vz_s1", d: "vz_s1_d", span: "side" },
-  { id: "benchmarking", n: "02", t: "vz_s2", d: "vz_s2_d", span: "side" },
-  { id: "cardsorting", n: "03", t: "vz_s3", d: "vz_s3_d", span: "wide" },
-  { id: "jornada", n: "04", t: "vz_s4", d: "vz_s4_d", span: "full" },
-  { id: "arquitetura", n: "05", t: "vz_s5", d: "vz_s5_d", span: "wide" },
-  { id: "personas", n: "06", t: "vz_s6", d: "vz_s6_d", span: "side" },
-  { id: "wireframes", n: "07", t: "vz_s7", d: "vz_s7_d", span: "full" },
-  { id: "identidade", n: "08", t: "vz_s8", d: "vz_s8_d", span: "wide" },
-  { id: "telas", n: "09", t: "vz_s9", d: "vz_s9_d", span: "side" },
+  { id: "questionario", n: "01", t: "vz_s1", d: "vz_s1_d", span: "side", width: 1920, height: 4420 },
+  { id: "benchmarking", n: "02", t: "vz_s2", d: "vz_s2_d", span: "side", width: 1920, height: 3521 },
+  { id: "cardsorting", n: "03", t: "vz_s3", d: "vz_s3_d", span: "wide", width: 1742, height: 854 },
+  { id: "jornada", n: "04", t: "vz_s4", d: "vz_s4_d", span: "full", width: 1920, height: 1380 },
+  { id: "arquitetura", n: "05", t: "vz_s5", d: "vz_s5_d", span: "wide", width: 1740, height: 1075 },
+  { id: "personas", n: "06", t: "vz_s6", d: "vz_s6_d", span: "side", width: 1920, height: 2945 },
+  { id: "wireframes", n: "07", t: "vz_s7", d: "vz_s7_d", span: "full", width: 1920, height: 2181 },
+  { id: "identidade", n: "08", t: "vz_s8", d: "vz_s8_d", span: "wide", width: 1885, height: 854 },
+  { id: "telas", n: "09", t: "vz_s9", d: "vz_s9_d", span: "side", width: 1889, height: 4851 },
 ] as const;
 
 const styles = `
-  .vz { --gut: clamp(1.25rem, 4vw, 3rem); }
-  .vz-sec { max-width: 1180px; margin: 0 auto; padding: 0 var(--gut) 5rem; }
+  .vz { --gut: var(--project-gutter); }
+  .vz-sec { max-width: var(--project-content-max); margin: 0 auto; padding: 0 var(--gut) 5rem; }
+  .vz-opening {
+    max-width: var(--project-content-max);
+    width: calc(100% - 2rem);
+    margin-bottom: 5rem;
+    padding: clamp(3rem, 7vw, 6rem) clamp(1.25rem, 4vw, 3.5rem);
+    color: #f3f6e8;
+    border: 1px dashed rgba(146, 188, 111, .48);
+    background:
+      radial-gradient(
+        56rem 40rem at var(--pj-light-pos, 72% 18%),
+        rgba(112, 158, 82, .32) 0%,
+        transparent 72%
+      ),
+      var(--tc-deep);
+    background-attachment: fixed;
+    box-shadow: 11px 12px 0 var(--tc-accent-soft);
+  }
 
   .vz-lead {
     font-family: var(--font-head); font-weight: 400;
     font-size: clamp(1.4rem, 3.4vw, 2.5rem); line-height: 1.25;
-    max-width: 26ch; margin: 0;
+    max-width: var(--measure-section-title); margin: 0;
+    text-wrap: balance;
   }
   .vz-kicker {
-    font-family: var(--font-subtitle, var(--font-mono)); font-size: .68rem;
+    font-family: var(--font-subtitle, var(--font-mono)); font-size: var(--type-micro);
     text-transform: uppercase; letter-spacing: .2em; opacity: .55;
     margin: 0 0 .9rem;
   }
-  .vz-rule { border: 0; border-top: 1px solid rgba(28,27,24,.24); margin: 0 0 2.2rem; }
+  .vz-rule { margin: 0 0 2.2rem; color: currentColor; opacity: .5; }
 
   /* as tres fases */
   .vz-fases { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.2rem; }
-  .vz-fase { border-top: 2px solid var(--ink); padding-top: .9rem; }
+  .vz-fase {
+    position: relative;
+    padding: 1.35rem 1.2rem 1.3rem;
+    border: 1px solid var(--paper-edge);
+    background-color: var(--paper-sheet);
+    background-image:
+      repeating-linear-gradient(0deg, transparent 0 3px, rgba(28,27,24,.025) 3px 4px),
+      url("/img/paper-noise.png");
+    background-size: 100% 100%, 140px 140px;
+    box-shadow: 3px 4px 0 var(--paper-shadow);
+    rotate: -.25deg;
+  }
+  .vz-fase:nth-child(even) { rotate: .35deg; }
   .vz-fase__n {
     font-family: var(--font-subtitle, var(--font-mono));
-    font-size: .7rem; letter-spacing: .18em; opacity: .5; display: block; margin-bottom: .5rem;
+    font-size: var(--type-micro); letter-spacing: .14em; opacity: .62; display: block; margin-bottom: .5rem;
   }
   .vz-fase__t { font-family: var(--font-head); font-size: clamp(1.2rem, 2.4vw, 1.7rem); margin: 0 0 .4rem; line-height: 1.1; }
-  .vz-fase__d { font-family: var(--font-body); font-size: .84rem; line-height: 1.6; opacity: .7; margin: 0; }
+  .vz-fase__d { font-family: var(--font-body); font-size: var(--type-body); line-height: 1.62; opacity: .82; margin: 0; }
 
   /* etapa */
   .vz-etapa { margin-bottom: 5.5rem; }
@@ -74,7 +107,7 @@ const styles = `
   .vz-etapa__n {
     font-family: var(--font-subtitle, var(--font-mono));
     font-size: clamp(1.6rem, 4vw, 2.8rem); line-height: 1;
-    opacity: .22; letter-spacing: -.02em;
+    color: var(--tc-accent); opacity: .72; letter-spacing: -.02em;
   }
   .vz-etapa__t {
     font-family: var(--font-head); font-weight: 400;
@@ -82,10 +115,20 @@ const styles = `
     letter-spacing: -.015em; margin: 0;
   }
   .vz-etapa__d {
-    font-family: var(--font-body); font-size: .95rem; line-height: 1.75;
-    opacity: .8; max-width: 58ch; margin: 0 0 1.8rem;
+    font-family: var(--font-body); font-size: clamp(1.04rem, 1.4vw, 1.15rem); line-height: 1.7;
+    opacity: .8; max-width: var(--measure-copy); margin: 0 0 1.8rem;
+    text-wrap: pretty;
   }
-  .vz-fig { margin: 0; overflow: hidden; background: var(--site-tint-a); }
+  .vz-fig {
+    margin: 0;
+    overflow: hidden;
+    padding: clamp(.35rem, .8vw, .55rem);
+    border: 1px solid rgba(28,27,24,.26);
+    background: var(--tc-paper);
+    box-shadow: 8px 9px 0 var(--tc-accent-soft);
+    transition: translate var(--duration-normal) var(--ease-out), box-shadow var(--duration-normal) var(--ease-out);
+  }
+  .vz-fig:hover { translate: 0 -5px; box-shadow: 12px 14px 0 var(--tc-accent-soft); }
   .vz-fig img { width: 100%; display: block; }
 
   /* lado a lado: o texto gruda no topo enquanto a imagem alta rola */
@@ -102,7 +145,18 @@ const styles = `
   .vz-etapa--side:nth-of-type(even) .vz-etapa__corpo > * { direction: ltr; }
 
   /* blocos de sintese intercalados entre as etapas */
-  .vz-bloco { margin: -2.5rem 0 5.5rem; padding: 2.2rem 0 0; border-top: 1px solid rgba(28,27,24,.22); }
+  .vz-bloco {
+    margin: -2.5rem 0 5.5rem;
+    padding: 2.2rem;
+    border: 1px solid var(--paper-edge);
+    background-color: var(--paper-sheet);
+    background-image:
+      repeating-linear-gradient(0deg, transparent 0 3px, rgba(28,27,24,.025) 3px 4px),
+      url("/img/paper-noise.png");
+    background-size: 100% 100%, 140px 140px;
+    box-shadow: 4px 5px 0 var(--paper-shadow);
+    rotate: -.2deg;
+  }
   .vz-bloco--forte { border-top-width: 2px; border-top-color: var(--ink); }
   .vz-bloco__t {
     font-family: var(--font-head); font-weight: 400;
@@ -122,7 +176,7 @@ const styles = `
     margin: 0 0 .6rem; line-height: 1.15;
     padding-left: .9rem; border-left: 2px solid var(--ink);
   }
-  .vz-r__d { font-family: var(--font-body); font-size: .88rem; line-height: 1.7; opacity: .78; margin: 0; padding-left: .9rem; }
+  .vz-r__d { font-family: var(--font-body); font-size: var(--type-body); line-height: 1.68; opacity: .86; margin: 0; padding-left: .9rem; }
   .vz-close {
     font-family: var(--font-head); font-style: italic;
     font-size: clamp(1.05rem, 2.2vw, 1.6rem); line-height: 1.35;
@@ -173,13 +227,14 @@ export default function VegCozProject() {
         { label: t("vegcoz_meta_role"), value: t("vegcoz_meta_role_val") },
       ]}
     >
+      <CaseCanvas variant="vegcoz">
       <div className="vz">
         <style>{styles}</style>
 
         {/* abertura */}
-        <section className="vz-sec">
+        <section className="vz-sec vz-opening">
           <motion.div {...reveal()}>
-            <hr className="vz-rule" />
+            <AsciiDivider className="vz-rule" />
             <p className="vz-lead">{t("vz_lead")}</p>
           </motion.div>
         </section>
@@ -187,7 +242,14 @@ export default function VegCozProject() {
         {/* capa */}
         <section className="vz-sec">
           <motion.figure className="vz-fig" {...reveal()}>
-            <img src="/img/vegcoz/capa.png" alt="VegCoz" />
+            <Image
+              src="/img/vegcoz/capa.png"
+              width={1400}
+              height={991}
+              sizes="(max-width: 1180px) 92vw, 1120px"
+              alt="VegCoz"
+              priority
+            />
           </motion.figure>
         </section>
 
@@ -223,7 +285,13 @@ export default function VegCozProject() {
                     <p className="vz-etapa__d">{t(e.d)}</p>
                   </div>
                   <figure className="vz-fig">
-                    <img src={`/img/vegcoz/${e.id}.webp`} alt={t(e.t)} loading="lazy" />
+                    <Image
+                      src={`/img/vegcoz/${e.id}.webp`}
+                      width={e.width}
+                      height={e.height}
+                      sizes="(max-width: 900px) 92vw, 62vw"
+                      alt={t(e.t)}
+                    />
                   </figure>
                 </div>
               </motion.article>
@@ -281,6 +349,7 @@ export default function VegCozProject() {
           </div>
         </section>
       </div>
+      </CaseCanvas>
     </ProjectShell>
   );
 }

@@ -1,13 +1,30 @@
 "use client";
-import { motion } from "framer-motion";
-import LiquidImage from "@/components/LiquidImage";
+
 import ProjectShell from "@/components/ProjectShell";
+import {
+  CaseCanvas,
+  CaseFigure,
+  CasePanel,
+  CaseSection,
+} from "@/components/CaseStudyKit";
 import { useT } from "@/i18n/LanguageContext";
 
-export default function MagazineProject() {
-  const { t } = useT();
+const SPREADS = [
+  { src: "/img/helvetica/1.png", width: 1124, height: 632 },
+  { src: "/img/helvetica/2.png", width: 1124, height: 632 },
+  { src: "/img/helvetica/3.png", width: 1124, height: 632 },
+  { src: "/img/helvetica/4.png", width: 1124, height: 632 },
+  { src: "/img/helvetica/5.png", width: 1124, height: 632 },
+  { src: "/img/helvetica/6.png", width: 1124, height: 632 },
+  { src: "/img/helvetica/7.png", width: 893, height: 632 },
+  { src: "/img/helvetica/8.png", width: 893, height: 632 },
+  { src: "/img/helvetica/9.jpg", width: 948, height: 632 },
+  { src: "/img/helvetica/10.jpg", width: 948, height: 632 },
+] as const;
 
-  const collage = ["5.png", "6.png", "7.png"];
+export default function MagazineProject() {
+  const { t, lang } = useT();
+  const pt = lang !== "en";
 
   return (
     <ProjectShell
@@ -23,148 +40,123 @@ export default function MagazineProject() {
         { label: t("ebat_meta_year"), value: "2025" },
       ]}
     >
-      {/* nota de processo */}
-      <section style={{ maxWidth: "1100px", margin: "0 auto", padding: "0 2rem 4rem" }}>
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          style={{
-            fontFamily: "var(--font-mono)",
-            fontSize: ".85rem",
-            color: "var(--ink)",
-            lineHeight: 1.7,
-            padding: "20px",
-            border: "1px dashed rgba(28,27,24,.4)",
-            maxWidth: "760px",
-          }}
+      <CaseCanvas variant="magazine">
+        <CaseSection
+          label={pt ? "01 / revista como objeto" : "01 / magazine as object"}
+          title={pt ? "tipografia que ocupa espaço" : "typography taking up space"}
+          intro={
+            pt
+              ? "As páginas deixam de ser imagens alinhadas e passam a se comportar como provas de impressão sobre uma mesa: giradas, sobrepostas e com marcas de manuseio."
+              : "Pages stop behaving like aligned images and become print proofs on a table: rotated, layered and marked by handling."
+          }
         >
-          {t("magazine_p3")}
-        </motion.p>
-      </section>
+          <CaseFigure
+            {...SPREADS[0]}
+            alt={pt ? "Capa da revista experimental de tipografia" : "Cover of the experimental typography magazine"}
+            caption={pt ? "abertura · david carson" : "opening · david carson"}
+            index="prova 01"
+            priority
+            tilt={-0.5}
+            sizes="(max-width: 1260px) 92vw, 1180px"
+          />
+          <div style={{ marginTop: "clamp(2rem, 5vw, 4rem)" }}>
+            <CasePanel label={pt ? "nota de processo" : "process note"}>
+              <p className="tc-copy" style={{ margin: 0 }}>{t("magazine_p3")}</p>
+            </CasePanel>
+          </div>
+        </CaseSection>
 
-      {/* spreads da revista — as folhas brancas saltam no fundo escuro */}
-      <section
-        style={{
-          maxWidth: "1300px",
-          margin: "0 auto",
-          padding: "0 2rem 6rem",
-          display: "flex",
-          flexDirection: "column",
-          gap: "100px",
-          position: "relative",
-        }}
-      >
-        <div style={{ position: "relative" }}>
-          <motion.div
-            initial={{ opacity: 0, rotate: -2, y: 40 }}
-            whileInView={{ opacity: 1, rotate: 0, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 1, type: "spring", stiffness: 50 }}
-            style={{ width: "84%", margin: "0 auto", border: "1px solid rgba(28,27,24,.3)", backgroundColor: "#fff", display: "flex", boxShadow: "26px 26px 0 rgba(var(--site-accent-rgb),.12)" }}
-          >
-            <LiquidImage src="/img/helvetica/1.png" alt="Cover Spread" fill={false} />
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1, delay: 0.5 }}
-            style={{
-              position: "absolute",
-              top: "20%",
-              right: "2%",
-              fontFamily: "var(--font-grotesk)",
-              fontSize: "3.4rem",
-              fontWeight: 800,
-              color: "transparent",
-              WebkitTextStroke: "2px var(--acid)",
-              transform: "rotate(90deg)",
-              transformOrigin: "right bottom",
-              pointerEvents: "none",
-            }}
-          >
-            DAVID CARSON
-          </motion.div>
-        </div>
-
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "60px" }}>
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            style={{ border: "1px solid rgba(28,27,24,.3)", backgroundColor: "#fff", boxShadow: "-15px 15px 0 #FF3300", display: "flex", transform: "rotate(-1deg)" }}
-          >
-            <LiquidImage src="/img/helvetica/2.png" alt="Spread 2" fill={false} />
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            style={{ border: "1px solid rgba(28,27,24,.3)", backgroundColor: "#fff", boxShadow: "15px 15px 0 var(--acid)", display: "flex", marginTop: "80px", transform: "rotate(2deg)" }}
-          >
-            <LiquidImage src="/img/helvetica/3.png" alt="Spread 3" fill={false} />
-          </motion.div>
-        </div>
-
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95, filter: "grayscale(100%)" }}
-          whileInView={{ opacity: 1, scale: 1, filter: "grayscale(0%)" }}
-          viewport={{ once: true }}
-          transition={{ duration: 1.2 }}
-          style={{ width: "100%", border: "1px solid rgba(28,27,24,.3)", backgroundColor: "#fff", display: "flex" }}
+        <CaseSection
+          ink
+          label={pt ? "02 / tensão editorial" : "02 / editorial tension"}
+          title={pt ? "ordem suficiente para sustentar o ruído" : "enough order to hold the noise"}
+          intro={
+            pt
+              ? "A composição alterna respiro e colisão. O contraste não vem de um efeito digital genérico, mas do modo como as folhas se aproximam e se afastam."
+              : "The composition alternates breathing room and collision. Contrast comes not from a generic digital effect, but from the way sheets move closer and farther apart."
+          }
         >
-          <LiquidImage src="/img/helvetica/4.png" alt="Spread 4" fill={false} />
-        </motion.div>
+          <div className="tc-grid tc-grid--two tc-grid--offset">
+            {SPREADS.slice(1, 3).map((spread, index) => (
+              <CaseFigure
+                key={spread.src}
+                {...spread}
+                alt={pt ? "Diagramação experimental da revista" : "Experimental magazine layout"}
+                caption={pt ? "abertura tipográfica" : "typographic spread"}
+                index={`prova 0${index + 2}`}
+                tilt={index === 0 ? -1 : 1}
+              />
+            ))}
+          </div>
+        </CaseSection>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "20px" }}>
-          {collage.map((img, i) => (
-            <motion.div
-              key={img}
-              initial={{ opacity: 0, y: 50, rotate: i % 2 === 0 ? -3 : 3 }}
-              whileInView={{ opacity: 1, y: 0, rotate: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: i * 0.15 }}
-              style={{ border: "1px solid rgba(28,27,24,.3)", backgroundColor: "#fff", display: "flex", boxShadow: "8px 8px 0 rgba(var(--site-accent-rgb),.18)" }}
-            >
-              <LiquidImage src={`/img/helvetica/${img}`} alt={`Spread ${i + 5}`} fill={false} />
-            </motion.div>
-          ))}
-        </div>
+        <CaseSection compact>
+          <CaseFigure
+            {...SPREADS[3]}
+            alt={pt ? "Página dupla da revista experimental" : "Experimental magazine double-page spread"}
+            caption={pt ? "página dupla" : "double-page spread"}
+            index="prova 04"
+            tilt={0.35}
+            sizes="(max-width: 1050px) 92vw, 980px"
+          />
+        </CaseSection>
 
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "90px", width: "100%" }}>
-          <motion.div
-            initial={{ opacity: 0, x: -100, rotate: -10 }}
-            whileInView={{ opacity: 1, x: 0, rotate: -4 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1 }}
-            style={{ width: "82%", maxWidth: "900px", border: "1px solid rgba(28,27,24,.3)", backgroundColor: "#fff", display: "flex", boxShadow: "0 20px 40px rgba(28,27,24,.16)" }}
-          >
-            <LiquidImage src="/img/helvetica/8.png" alt="Spread 8" fill={false} />
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 100 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1, delay: 0.2 }}
-            style={{ width: "88%", maxWidth: "1000px", border: "1px solid rgba(28,27,24,.3)", backgroundColor: "#fff", display: "flex", boxShadow: "0 20px 40px rgba(28,27,24,.16)" }}
-          >
-            <LiquidImage src="/img/helvetica/9.jpg" alt="Spread 9" fill={false} />
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, x: 100, rotate: 10 }}
-            whileInView={{ opacity: 1, x: 0, rotate: 5 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1, delay: 0.4 }}
-            style={{ width: "78%", maxWidth: "800px", border: "1px solid rgba(28,27,24,.3)", backgroundColor: "#fff", display: "flex", boxShadow: "0 20px 40px rgba(28,27,24,.20)" }}
-          >
-            <LiquidImage src="/img/helvetica/10.jpg" alt="Spread 10" fill={false} />
-          </motion.div>
-        </div>
-      </section>
+        <CaseSection
+          label={pt ? "03 / recortes" : "03 / fragments"}
+          title={pt ? "três vozes na mesma bancada" : "three voices on one workbench"}
+          intro={
+            pt
+              ? "Os recortes menores formam uma grade irregular, como referências separadas durante o processo de edição."
+              : "Smaller fragments form an irregular grid, like references separated during the editing process."
+          }
+        >
+          <div className="tc-grid tc-grid--three tc-grid--offset">
+            {SPREADS.slice(4, 7).map((spread, index) => (
+              <CaseFigure
+                key={spread.src}
+                {...spread}
+                alt={pt ? "Recorte editorial da revista" : "Editorial magazine fragment"}
+                caption={pt ? "recorte editorial" : "editorial fragment"}
+                index={`prova 0${index + 5}`}
+                tilt={[-1, 0.7, -0.4][index]}
+              />
+            ))}
+          </div>
+        </CaseSection>
+
+        <CaseSection
+          ink
+          label={pt ? "04 / sequência final" : "04 / final sequence"}
+          title={pt ? "o ritmo fecha sem se acalmar" : "the rhythm closes without calming down"}
+          intro={
+            pt
+              ? "As últimas provas preservam a instabilidade da publicação, mas ganham uma hierarquia clara de leitura."
+              : "The final proofs preserve the publication’s instability while gaining a clear reading hierarchy."
+          }
+        >
+          <div className="tc-grid tc-grid--asym">
+            <CaseFigure
+              {...SPREADS[7]}
+              alt={pt ? "Prova editorial oito" : "Editorial proof eight"}
+              caption={pt ? "prova de impressão" : "print proof"}
+              index="prova 08"
+              tilt={-0.75}
+            />
+            <div className="tc-grid tc-grid--stack">
+              {SPREADS.slice(8).map((spread, index) => (
+                <CaseFigure
+                  key={spread.src}
+                  {...spread}
+                  alt={pt ? "Prova editorial final" : "Final editorial proof"}
+                  caption={pt ? "encerramento" : "closing"}
+                  index={`prova ${String(index + 9).padStart(2, "0")}`}
+                  tilt={index === 0 ? 0.65 : -0.35}
+                />
+              ))}
+            </div>
+          </div>
+        </CaseSection>
+      </CaseCanvas>
     </ProjectShell>
   );
 }

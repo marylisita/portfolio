@@ -1,35 +1,42 @@
 "use client";
-import { motion } from "framer-motion";
+
 import FlipBook from "@/components/FlipBook";
 import ProjectShell from "@/components/ProjectShell";
+import {
+  CaseCanvas,
+  CaseFigure,
+  CasePanel,
+  CaseSection,
+} from "@/components/CaseStudyKit";
 import { useT } from "@/i18n/LanguageContext";
 
+const LANDSCAPE = [
+  "ISADORA CAPA-THUMBNAIL.webp",
+  "Isadora 2.webp",
+  "Isadora 3.webp",
+  "Isadora 4.webp",
+  "Isadora 5.webp",
+  "Isadora 6.webp",
+  "ISADORA8.webp",
+  "ISADORA 9.webp",
+  "ISADORA 10.webp",
+];
+
+const VERTICAL = [
+  "isadora_vertical/Prancheta 1.webp",
+  "isadora_vertical/Prancheta 2.webp",
+  "isadora_vertical/Prancheta 3.webp",
+  "isadora_vertical/Prancheta 4.webp",
+  "isadora_vertical/Prancheta 5.webp",
+  "isadora_vertical/Prancheta 7.webp",
+  "isadora_vertical/Prancheta 9.webp",
+  "isadora_vertical/Prancheta 10.webp",
+  "isadora_vertical/Prancheta 11.webp",
+];
+
 export default function IsadoraProject() {
-  const { t } = useT();
-
-  const images = [
-    "ISADORA CAPA-THUMBNAIL.webp",
-    "Isadora 2.webp",
-    "Isadora 3.webp",
-    "Isadora 4.webp",
-    "Isadora 5.webp",
-    "Isadora 6.webp",
-    "ISADORA8.webp",
-    "ISADORA 9.webp",
-    "ISADORA 10.webp",
-  ];
-
-  const verticalImages = [
-    "isadora_vertical/Prancheta 1.webp",
-    "isadora_vertical/Prancheta 2.webp",
-    "isadora_vertical/Prancheta 3.webp",
-    "isadora_vertical/Prancheta 4.webp",
-    "isadora_vertical/Prancheta 5.webp",
-    "isadora_vertical/Prancheta 7.webp",
-    "isadora_vertical/Prancheta 9.webp",
-    "isadora_vertical/Prancheta 10.webp",
-    "isadora_vertical/Prancheta 11.webp",
-  ];
+  const { t, lang } = useT();
+  const pt = lang !== "en";
 
   return (
     <ProjectShell
@@ -46,19 +53,62 @@ export default function IsadoraProject() {
         { label: t("isadora_meta_year"), value: "2026" },
       ]}
     >
-      <section style={{ maxWidth: "1300px", margin: "0 auto", padding: "0 2rem 5rem" }}>
-        <motion.div initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-          <FlipBook images={images} />
-        </motion.div>
-      </section>
+      <CaseCanvas variant="isadora">
+        <CaseSection
+          label={pt ? "01 / presença editorial" : "01 / editorial presence"}
+          title={pt ? "um retrato que se desdobra" : "a portrait that unfolds"}
+          intro={
+            pt
+              ? "O press kit é apresentado como um objeto editorial, não como um carrossel de telas. Preto, branco e respiro preservam a presença da artista."
+              : "The press kit is presented as an editorial object rather than a screen carousel. Black, white and generous space preserve the artist’s presence."
+          }
+        >
+          <CaseFigure
+            src="/img/ISADORA CAPA-THUMBNAIL.webp"
+            width={1920}
+            height={1080}
+            alt={pt ? "Capa do press kit de Isadora Ruppert" : "Isadora Ruppert press kit cover"}
+            caption={pt ? "capa do dossiê" : "press dossier cover"}
+            index="caderno 01"
+            priority
+            tilt={-0.45}
+            sizes="(max-width: 1260px) 92vw, 1180px"
+          />
+        </CaseSection>
 
-      <section style={{ maxWidth: "950px", margin: "0 auto", padding: "0 2rem 6rem", textAlign: "center" }}>
-        <h2 className="pj-h2">{t("isadora_vertical_title")}</h2>
-        <p className="pj-sub" style={{ marginBottom: "2.5rem" }}>{t("isadora_vertical_sub")}</p>
-        <motion.div initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-          <FlipBook images={verticalImages} aspectRatio="141.4%" />
-        </motion.div>
-      </section>
+        <CaseSection
+          ink
+          label={pt ? "02 / caderno horizontal" : "02 / landscape folio"}
+          title={pt ? "folhear para conhecer" : "browse to discover"}
+          intro={
+            pt
+              ? "As páginas vivem dentro de uma pasta escura, como material enviado para imprensa, curadoria e produção."
+              : "The pages live inside a dark folder, like material sent to press, curators and production teams."
+          }
+        >
+          <CasePanel label={pt ? "arraste ou use as setas" : "drag or use the arrows"}>
+            <FlipBook images={LANDSCAPE} />
+          </CasePanel>
+        </CaseSection>
+
+        <CaseSection
+          compact
+          label={pt ? "03 / formato vertical" : "03 / portrait format"}
+          title={t("isadora_vertical_title")}
+          intro={t("isadora_vertical_sub")}
+        >
+          <CasePanel label={pt ? "versão para leitura vertical" : "portrait reading version"}>
+            <FlipBook images={VERTICAL} aspectRatio="141.4%" />
+          </CasePanel>
+        </CaseSection>
+
+        <CaseSection compact>
+          <p className="tc-manifest">
+            {pt ? "imagem, trajetória & " : "image, trajectory & "}
+            <em>{pt ? "presença." : "presence."}</em>
+          </p>
+        </CaseSection>
+      </CaseCanvas>
     </ProjectShell>
   );
 }

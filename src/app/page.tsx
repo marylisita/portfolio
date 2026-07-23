@@ -1,5 +1,5 @@
 "use client";
-import { Fragment } from "react";
+import { useEffect, useState } from "react";
 import PlaygroundHero from "@/components/PlaygroundHero";
 import ScatteredWorks from "@/components/ScatteredWorks";
 import { useProjects } from "@/components/useProjects";
@@ -13,6 +13,15 @@ import { GATO_FRAMES } from "@/components/asciiArt";
 import EditorialFooter from "@/components/EditorialFooter";
 import LangToggle from "@/components/LangToggle";
 import { useT } from "@/i18n/LanguageContext";
+import {
+  CreativeStudioControls,
+  CreativeStudioProvider,
+  useCreativeStudio,
+} from "@/components/CreativeStudio";
+import SkillConstellation from "@/components/SkillConstellation";
+import ScrambleText from "@/components/ScrambleText";
+
+const STITCH_DIVIDER = "------  ";
 
 /* ==========================================================
    Landing — direção de arte editorial ("reset visual").
@@ -26,6 +35,7 @@ const rmStyles = `
     --ink: var(--site-ink);
     --paper: var(--site-paper);
     --acid: var(--site-accent);
+    --hero-highlight: #9c554f;
     --font-grotesk: Arial, "Helvetica Neue", Helvetica, sans-serif;
     /* degradê profundo: roxo/azul da id EBAT respirando por baixo do preto */
     background:
@@ -36,7 +46,39 @@ const rmStyles = `
     color: var(--ink);
     overflow-x: hidden;
     position: relative;
+    transition: background-color .65s ease, color .65s ease;
   }
+  .rm[data-paper="cyanotype"] {
+    --site-paper: #12344d;
+    --site-ink: #c8eff2;
+    --site-accent: #8edbe5;
+    --site-tint-a: #173e59;
+    --site-tint-b: #0c263d;
+    --site-tint-c: #1a4961;
+    --site-accent-rgb: 142, 219, 229;
+    --hero-highlight: #e38b82;
+  }
+  .rm[data-paper="vellum"] {
+    --site-paper: #e6e9e6;
+    --site-ink: #242725;
+    --site-accent: #55605b;
+    --site-tint-a: #f4f6f3;
+    --site-tint-b: #d4dad6;
+    --site-tint-c: #edf0ed;
+    --site-accent-rgb: 85, 96, 91;
+    --hero-highlight: #914d48;
+  }
+  .rm[data-paper="cyanotype"]::after {
+    opacity: .11;
+    mix-blend-mode: screen;
+  }
+  .rm[data-paper="vellum"]::after { opacity: .045; }
+  .rm .rm-idle {
+    color: color-mix(in srgb, var(--ink) 17%, transparent);
+  }
+  .rm .sw__deco { opacity: .78 !important; }
+  .rm .rm-thread { opacity: .36; }
+  .rm .ph__sticker { filter: contrast(1.12); }
   /* grão de filme por cima de tudo (feTurbulence), sem capturar cliques */
   .rm::after {
     content: "";
@@ -48,7 +90,7 @@ const rmStyles = `
     opacity: .07;
     mix-blend-mode: multiply;
   }
-  .rm ::selection { background: var(--acid); color: #111; }
+  .rm *::selection { background: #843f3a; color: #fff8ec; }
   .px-line {
     background-image: repeating-linear-gradient(90deg, var(--ink) 0 6px, transparent 6px 12px);
     background-size: 100% 2px;
@@ -57,19 +99,38 @@ const rmStyles = `
 
   /* --- sem navbar tradicional: só marcas mínimas nos cantos --- */
   .rm-corner {
-    position: fixed; top: 1rem; z-index: 1000;
+    position: fixed; top: 2.2rem; z-index: 1000;
     font-family: var(--font-body);
     font-size: .78rem; text-transform: lowercase; letter-spacing: .1em;
     color: var(--ink);
+    isolation: isolate;
+    transition: opacity .32s ease, translate .42s cubic-bezier(.16,1,.3,1);
   }
-  .rm-corner--l { left: 1.4rem; display: flex; flex-direction: column; gap: .12rem; line-height: 1.1; }
+  .rm-corner::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: -.45rem -.7rem;
+    background: color-mix(in srgb, var(--paper) 82%, transparent);
+    box-shadow: 0 0 14px 9px color-mix(in srgb, var(--paper) 72%, transparent);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    opacity: .74;
+    pointer-events: none;
+  }
+  .rm[data-contact-visible="true"] .rm-corner {
+    opacity: 0;
+    translate: 0 -1rem;
+    pointer-events: none;
+  }
+  .rm-corner--l { left: 5.5rem; display: flex; flex-direction: column; gap: .12rem; line-height: 1.1; }
   /* wordmark na PF Pixelscript (Adobe) — caligrafia pixelada COM acentos */
   .rm-mark { font-family: var(--font-pixelscript); font-weight: 400; font-size: 2.3rem; letter-spacing: .02em; line-height: 1; text-transform: none; }
-  .rm-mark__sub { font-size: .62rem; letter-spacing: .08em; opacity: .5; }
-  .rm-corner--r { right: 1.4rem; display: flex; align-items: center; gap: 1rem; }
+  .rm-mark__sub { font-size: var(--type-micro); letter-spacing: .08em; opacity: .75; color: var(--ink); }
+  .rm-corner--r { right: 5.5rem; display: flex; align-items: center; gap: 1rem; }
   .rm-status {
     display: inline-flex; align-items: center; gap: .42rem;
-    font-size: .68rem; letter-spacing: .06em; opacity: .82; white-space: nowrap;
+    font-size: var(--type-micro); letter-spacing: .06em; opacity: .88; white-space: nowrap;
   }
   .rm-status__dot {
     width: 7px; height: 7px; border-radius: 50%;
@@ -84,29 +145,126 @@ const rmStyles = `
   .rm-nav { display: inline-flex; align-items: center; gap: .7rem; }
   .rm-nav a {
     color: var(--ink); text-decoration: none; opacity: .7;
-    font-size: .72rem; letter-spacing: .04em;
+    font-size: var(--type-micro); letter-spacing: .04em;
     transition: opacity .2s ease;
   }
   .rm-nav a:hover, .rm-nav a:focus-visible { opacity: 1; text-decoration: underline; text-underline-offset: 3px; }
+  .rm a:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 4px;
+  }
   /* banner ASCII grande e faint no hero — muda quando o mouse pausa (IdleBanner) */
   .rm-idle {
     position: absolute;
     top: 8%; left: 50%; transform: translateX(-50%);
-    z-index: 0; margin: 0; pointer-events: none; user-select: none;
+    z-index: 0; margin: 0; pointer-events: auto; user-select: none;
     font-family: var(--font-mono); line-height: 1.05; white-space: pre;
-    font-size: clamp(11px, 2.8vw, 28px); color: var(--ink); opacity: .06;
+    font-size: clamp(11px, 2.8vw, 28px);
+    color: color-mix(in srgb, var(--ink) 7%, transparent);
     text-align: center;
   }
-  @media (prefers-reduced-motion: reduce) { .rm-status__dot { animation: none; } }
+  .rm-idle__char {
+    display: inline-block;
+    min-width: 1ch;
+    min-height: 1em;
+    text-align: center;
+    color: inherit;
+    transition: scale .18s cubic-bezier(.16,1,.3,1);
+  }
+  .rm-idle__char[data-active="true"] {
+    scale: 1.18;
+  }
+  .rm-thread {
+    position: absolute;
+    z-index: 2;
+    top: 100svh;
+    left: .85rem;
+    width: 4.1rem;
+    height: calc(100% - 100svh - 22rem);
+    color: var(--ink);
+    opacity: .24;
+    pointer-events: none;
+    transition: opacity .55s ease;
+  }
+  .rm-thread svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .rm-thread__holes { opacity: .34; }
+  .rm-thread__line {
+    opacity: .76;
+    filter: drop-shadow(1px 0 0 color-mix(in srgb, var(--paper) 86%, transparent));
+  }
+  /* Lombada Costurada na borda da página — encadernação em zine artesanal */
+  .rm-spine {
+    position: fixed;
+    top: 0; bottom: 0; left: 1.8rem;
+    width: 1px;
+    z-index: 80;
+    pointer-events: none;
+    user-select: none;
+    opacity: .28;
+    background-image: repeating-linear-gradient(180deg, var(--ink) 0 5px, transparent 5px 12px);
+  }
+  .rm-thread__knot {
+    position: absolute;
+    left: 50%;
+    translate: -50% -50%;
+    display: grid;
+    place-items: center;
+    width: 1.05rem;
+    height: 1.05rem;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1px solid color-mix(in srgb, var(--ink) 20%, transparent);
+    font-family: var(--font-mono), monospace;
+    font-size: .62rem;
+    line-height: 1;
+    box-shadow: 2px 2px 0 color-mix(in srgb, var(--ink) 8%, transparent);
+  }
+  .rm-guide {
+    position: absolute;
+    z-index: 4;
+    font-family: var(--font-mono), monospace;
+    font-size: 1.15rem;
+    color: var(--ink);
+    opacity: .46;
+    animation: rm-guide 9s ease-in-out infinite;
+  }
+  @keyframes rm-guide {
+    0%, 100% { rotate: 0deg; scale: 1; }
+    50% { rotate: 70deg; scale: 1.14; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .rm-status__dot { animation: none; }
+    .rm-idle__char { transition: none; }
+  }
   @media (max-width: 860px) {
     .rm-status, .rm-nav, .rm-mark__sub { display: none; }
-    .rm-idle { opacity: .05; font-size: 10px; top: 6%; }
+    .rm-idle {
+      color: color-mix(in srgb, var(--ink) 6%, transparent);
+      font-size: 10px;
+      top: 6%;
+    }
+    .rm-corner { top: 1.25rem; }
+    .rm-corner--l { left: 1.25rem; max-width: calc(100vw - 6rem); }
+    .rm-corner--r { right: 1.25rem; }
+    .rm-mark { display: block; font-size: clamp(1.55rem, 8vw, 2rem); line-height: .92; }
+    .rm-thread {
+      left: -.2rem;
+      width: 1.9rem;
+      opacity: .15;
+    }
+    .rm-thread__knot { width: .78rem; height: .78rem; font-size: .45rem; }
   }
 
   /* --- seções --- */
-  .rm-sec { padding: 6rem 2rem; }
+  .rm-sec { padding: 6rem 5.5rem; scroll-margin-top: 6.5rem; }
   .rm-label {
-    font-family: var(--font-body); font-size: .8rem;
+    font-family: var(--font-body); font-size: var(--type-micro);
     text-transform: lowercase; letter-spacing: .12em;
     display: flex; justify-content: space-between;
     padding-bottom: .55rem; margin-bottom: 0;
@@ -121,15 +279,7 @@ const rmStyles = `
     max-width: 20ch;
   }
   .rm-em { font-family: var(--font-head); font-style: italic; text-transform: none; letter-spacing: -0.01em; }
-  .rm-about-copy { display: flex; flex-direction: column; gap: 2.5rem; }
-  .rm-colophon-row {
-    display: grid; grid-template-columns: minmax(6.5rem, .45fr) 1fr; gap: 1rem;
-    padding: .6rem 0;
-    font-family: var(--font-body); font-size: .72rem;
-    letter-spacing: .08em; text-transform: lowercase;
-  }
-  .rm-colophon-row span:first-child { opacity: .5; }
-  .rm-colophon-row span:last-child { font-family: var(--font-head); font-size: 1rem; letter-spacing: 0; }
+  .rm-about-copy { display: flex; flex-direction: column; }
 
   /* --- tabela de ferramentas --- */
   /* minmax(0,1fr) + min-width:0: sem isso os divisores ASCII (texto nowrap
@@ -140,17 +290,15 @@ const rmStyles = `
   .rm-tool-row {
     display: grid; grid-template-columns: 40% 1fr; gap: 1.5rem;
     padding: .85rem 0;
-    font-family: var(--font-body); font-size: .82rem;
+    font-family: var(--font-body); font-size: var(--type-label);
     text-transform: lowercase; letter-spacing: .06em;
   }
-  .rm-tool-row span:last-child { font-family: var(--font-body); text-transform: none; letter-spacing: 0; font-size: .85rem; }
+  .rm-tool-row span:last-child { font-family: var(--font-body); text-transform: none; letter-spacing: 0; font-size: var(--type-body); }
 
   @media (max-width: 900px) {
     .rm-about { grid-template-columns: 1fr; gap: 2.5rem; }
   }
   @media (max-width: 720px) {
-    .rm-nav { padding: .75rem 1.25rem; gap: .75rem; }
-    .rm-nav__links { gap: 1rem; }
     .rm-sec { padding: 4rem 1.25rem; }
     .rm-label { margin-bottom: 2rem; }
   }
@@ -191,7 +339,28 @@ const rmStyles = `
 `;
 
 export default function Home() {
+  return (
+    <CreativeStudioProvider>
+      <HomeContent />
+    </CreativeStudioProvider>
+  );
+}
+
+function HomeContent() {
   const { t, lang } = useT();
+  const { paper } = useCreativeStudio();
+  const [contactVisible, setContactVisible] = useState(false);
+
+  useEffect(() => {
+    const contact = document.querySelector("#contact");
+    if (!contact) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setContactVisible(entry.isIntersecting),
+      { threshold: .02 },
+    );
+    observer.observe(contact);
+    return () => observer.disconnect();
+  }, []);
 
   // lista única de projetos (mesma fonte da página /work)
   const projects = useProjects();
@@ -201,48 +370,89 @@ export default function Home() {
     t("p03_tag2"), t("p01_tag2"), t("p04_tag2"), t("p03_tag1"),
   ];
 
-  const tools = [
-    { cat: t("about_cat_visual"), list: "Figma · Illustrator · Photoshop · After Effects · InDesign" },
-    { cat: t("about_cat_web"), list: "HTML/CSS · WordPress · Framer · desenvolvimento assistido por IA" },
-    { cat: t("about_cat_creative"), list: `TouchDesigner · Blender · ${t("about_tool_gen_ai")}` },
-  ];
-
-  const colophon = lang === "pt"
+  const constellation = lang === "pt"
     ? [
-        ["edição", "portfólio 2026"],
-        ["base", "Rio de Janeiro, Brasil"],
-        ["serviços", "identidade visual · direção de arte · web design"],
-        ["status", "disponível para projetos e colaborações"],
+        { label: "identidade", detail: "sistemas visuais, marcas e direção de arte" },
+        { label: "web", detail: "interfaces responsivas, protótipos e experiências digitais" },
+        { label: "direção", detail: "conceito, linguagem visual e coerência entre meios" },
+        { label: "estratégia", detail: "pesquisa, arquitetura e decisões de comunicação" },
+        { label: "movimento", detail: "animação, ritmo, interação e imagem em transformação" },
+        { label: "tecnologia", detail: "código criativo, IA generativa e experimentação" },
       ]
     : [
-        ["edition", "portfolio 2026"],
-        ["based in", "Rio de Janeiro, Brazil"],
-        ["services", "visual identity · art direction · web design"],
-        ["status", "available for projects and collaborations"],
+        { label: "identity", detail: "visual systems, brands and art direction" },
+        { label: "web", detail: "responsive interfaces, prototypes and digital experiences" },
+        { label: "direction", detail: "concept, visual language and cross-media consistency" },
+        { label: "strategy", detail: "research, architecture and communication decisions" },
+        { label: "motion", detail: "animation, rhythm, interaction and transforming images" },
+        { label: "technology", detail: "creative coding, generative AI and experimentation" },
       ];
 
   return (
-    <div className="rm">
+    <div
+      className="rm"
+      data-paper={paper}
+      data-contact-visible={contactVisible ? "true" : "false"}
+    >
       <style>{rmStyles}</style>
       <BootIntro />
+      <CreativeStudioControls />
+      <div className="rm-spine" aria-hidden="true" />
+
+      <div className="rm-thread" aria-hidden="true">
+        <svg viewBox="0 0 24 100" preserveAspectRatio="none">
+          <path
+            className="rm-thread__holes"
+            d="M12 0 L12 100"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeDasharray=".14 1.5"
+            vectorEffect="non-scaling-stroke"
+          />
+          <path
+            className="rm-thread__line"
+            d="M12 0 C7 6 17 11 12 18 C7 25 17 31 12 39 C7 47 17 54 12 62 C7 70 17 76 12 84 C8 91 15 96 12 100"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth=".85"
+            strokeDasharray=".82 .62"
+            vectorEffect="non-scaling-stroke"
+          />
+        </svg>
+        <span className="rm-thread__knot" style={{ top: "18%" }}>╳</span>
+        <span className="rm-thread__knot" style={{ top: "62%" }}>╳</span>
+        <span className="rm-thread__knot" style={{ top: "84%" }}>╳</span>
+      </div>
 
       <span className="rm-corner rm-corner--l">
         <span className="rm-mark">
-          <span className="text-star" aria-hidden="true">✳︎</span> Maria Isabel Lisita
+          <span className="text-star" aria-hidden="true">✳︎</span>{" "}
+          <ScrambleText text="Maria Isabel Lisita" />
         </span>
         <span className="rm-mark__sub">
-          {lang === "pt" ? "designer & tecnóloga criativa" : "designer & creative technologist"}
+          <ScrambleText
+            text={lang === "pt" ? "designer & tecnóloga criativa" : "designer & creative technologist"}
+          />
         </span>
       </span>
       <span className="rm-corner rm-corner--r">
         <span className="rm-status">
           <span className="rm-status__dot" aria-hidden="true" />
-          {lang === "pt" ? "disponível p/ projetos" : "available for work"}
+          <ScrambleText
+            text={lang === "pt" ? "disponível p/ projetos — 2026" : "available for work — 2026"}
+          />
         </span>
         <nav className="rm-nav" aria-label={lang === "pt" ? "navegação" : "navigation"}>
-          <a href="/work">{t("nav_work").toLowerCase()}</a>
-          <a href="#about" onClick={(e) => { e.preventDefault(); document.querySelector("#about")?.scrollIntoView({ behavior: "smooth" }); }}>{t("rm_menu_about")}</a>
-          <a href="#contact" onClick={(e) => { e.preventDefault(); document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" }); }}>{t("rm_menu_contact")}</a>
+          <a href="/work"><ScrambleText text={t("nav_work").toLowerCase()} /></a>
+          <a href="#about" onClick={(e) => {
+            e.preventDefault();
+            window.dispatchEvent(new Event("studio:reveal-about"));
+            document.querySelector("#about")?.scrollIntoView({ behavior: "smooth" });
+          }}><ScrambleText text={t("rm_menu_about")} /></a>
+          <a href="#contact" onClick={(e) => { e.preventDefault(); document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" }); }}>
+            <ScrambleText text={t("rm_menu_contact")} />
+          </a>
         </nav>
         <LangToggle />
       </span>
@@ -258,9 +468,17 @@ export default function Home() {
           <IdleBanner />
           <ScatterMenu
             items={[
-              { label: t("nav_work").toLowerCase(), href: "/work", left: "72%", top: "40%", rotate: 2, priority: "primary" },
-              { label: t("rm_menu_about"), href: "#about", left: "78%", top: "61%", rotate: -2, priority: "secondary" },
-              { label: t("rm_menu_contact"), href: "#contact", left: "66%", top: "73%", rotate: 1, priority: "tertiary" },
+              {
+                label: lang === "pt" ? "ver projetos" : "view work",
+                href: "/work",
+                left: "74%",
+                top: "20%",
+                rotate: 3,
+                priority: "primary",
+                previews: projects.slice(0, 3).map((project) => ({ src: project.img, alt: project.title })),
+              },
+              { label: t("rm_menu_about"), href: "#about", left: "6%", top: "70%", rotate: -3, priority: "secondary" },
+              { label: t("rm_menu_contact"), href: "#contact", left: "72%", top: "78%", rotate: 2, priority: "tertiary" },
             ] satisfies MenuItem[]}
           />
         </PlaygroundHero>
@@ -269,6 +487,7 @@ export default function Home() {
 
         {/* Índice de trabalhos — imagem persegue o cursor com tratamento CFTV */}
         <section id="work" className="rm-sec" style={{ position: "relative" }}>
+          <span className="rm-guide" aria-hidden="true" style={{ left: "51%", top: "3.4rem" }}>✳︎</span>
           <AsciiAnim
             frames={GATO_FRAMES}
             interval={220}
@@ -280,57 +499,38 @@ export default function Home() {
             <span>{t("selected_work")}</span>
             <span>{projects.length.toString().padStart(2, "0")} —</span>
           </div>
-          <AsciiDivider className="rm-divider" pattern="• . ݁₊ ⊹ . ݁꒰ঌ·✦·໒꒱ ݁ . ⊹ ₊ ݁. •" size=".68rem" opacity={0.5} />
+          <AsciiDivider className="rm-divider" pattern={STITCH_DIVIDER} fullWidth opacity={0.52} />
           {/* projetos jogados no canvas (t-i-n-y) — capas nascem nítidas e viram pixel no scroll */}
           <ScatteredWorks items={projects} bgWord={`${t("nav_work").toLowerCase()}!`} />
         </section>
 
         {/* Sobre */}
         <section id="about" className="rm-sec" style={{ position: "relative" }}>
+          <span className="rm-guide" aria-hidden="true" style={{ right: "7%", top: "4.5rem", animationDelay: "-3s" }}>✳︎</span>
           <div className="rm-label">
             <span>{t("about_title")}</span>
             <span>{t("rm_tools_label")}</span>
           </div>
-          <AsciiDivider className="rm-divider" pattern="︶꒷꒦︶" size=".68rem" opacity={0.5} />
+          <AsciiDivider className="rm-divider" pattern={STITCH_DIVIDER} fullWidth opacity={0.52} />
           <div className="rm-about">
             <div className="rm-about-copy">
               <h2 className="rm-statement">
                 {t("about_text")}
               </h2>
-              <div className="rm-colophon-meta">
-                {colophon.map(([label, value]) => (
-                  <Fragment key={label}>
-                    <AsciiDivider pattern="· ˚ ⊹ ˚ " size=".5rem" opacity={0.42} />
-                    <div className="rm-colophon-row">
-                      <span>{label}</span>
-                      <span>{value}</span>
-                    </div>
-                  </Fragment>
-                ))}
-                <AsciiDivider pattern="· ˚ ⊹ ˚ " size=".5rem" opacity={0.42} />
-              </div>
             </div>
             <div className="rm-tools">
-              {tools.map((g) => (
-                <Fragment key={g.cat}>
-                  <AsciiDivider pattern="· ˚ ⊹ ˚ " size=".5rem" opacity={0.42} />
-                  <div className="rm-tool-row">
-                    <span>{g.cat}</span>
-                    <span>{g.list}</span>
-                  </div>
-                </Fragment>
-              ))}
-              <AsciiDivider pattern="· ˚ ⊹ ˚ " size=".5rem" opacity={0.42} />
+              <SkillConstellation nodes={constellation} />
+              <AsciiDivider opacity={0.45} />
               <div className="rm-tool-row">
                 <span>{t("about_nano_sub")}</span>
                 <span>NANO — UFRJ</span>
               </div>
-              <AsciiDivider pattern="· ˚ ⊹ ˚ " size=".5rem" opacity={0.42} />
+              <AsciiDivider opacity={0.45} />
               <div className="rm-tool-row">
                 <span>{t("about_laid_sub")}</span>
                 <span>LAID — UFRJ</span>
               </div>
-              <AsciiDivider pattern="· ˚ ⊹ ˚ " size=".5rem" opacity={0.42} />
+              <AsciiDivider opacity={0.45} />
             </div>
           </div>
         </section>

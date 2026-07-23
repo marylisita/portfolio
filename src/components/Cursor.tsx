@@ -70,7 +70,10 @@ export default function Cursor() {
       ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
       ctx.globalCompositeOperation = "source-over";
 
-      for (let index = dots.current.length - 1; index >= 0; index -= 1) {
+      const totalDots = dots.current.length;
+      const useShadow = totalDots <= 30;
+
+      for (let index = totalDots - 1; index >= 0; index -= 1) {
         const dot = dots.current[index];
         dot.x += dot.vx;
         dot.y += dot.vy;
@@ -88,8 +91,10 @@ export default function Cursor() {
         ctx.rotate(dot.rotation);
         ctx.globalAlpha = Math.min(1, progress * 1.35) * 0.7;
         ctx.fillStyle = dot.color;
-        ctx.shadowColor = dot.glow;
-        ctx.shadowBlur = 4 * progress;
+        if (useShadow) {
+          ctx.shadowColor = dot.glow;
+          ctx.shadowBlur = 3 * progress;
+        }
         ctx.font = `700 ${Math.max(7, dot.size * (0.72 + progress * 0.28))}px monospace`;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
@@ -178,6 +183,8 @@ export default function Cursor() {
       <style>{`
         @media (pointer: fine) {
           html, body, a, button, .hover-trigger { cursor: none !important; }
+          html[data-stamp-mode="true"] [data-ink-cursor] { display: none !important; }
+          html[data-stamp-mode="true"] [data-ink-trail] { opacity: .12; }
         }
         @media (pointer: coarse) {
           [data-ink-cursor], [data-ink-trail] { display: none !important; }
@@ -195,17 +202,28 @@ export default function Cursor() {
         style={{ position: "fixed", left: 0, top: 0, x: cursorX, y: cursorY, pointerEvents: "none", zIndex: 10000 }}
       >
         <motion.span
-          animate={{ width: hovered ? 28 : 13, height: hovered ? 28 : 13, x: hovered ? -14 : -6.5, y: hovered ? -14 : -6.5 }}
+          animate={{
+            x: -7,
+            y: -10,
+            scale: hovered ? 1.18 : 1,
+            rotate: hovered ? -8 : 0,
+          }}
           transition={{ duration: MOTION_FAST, ease: MOTION_EASE_STANDARD }}
           style={{
             position: "absolute",
             display: "block",
-            border: "1px solid var(--site-ink)",
-            borderRadius: "50%",
-            background: hovered ? "rgba(237,231,218,.2)" : "var(--site-ink)",
-            mixBlendMode: "multiply",
+            color: "var(--site-ink)",
+            fontFamily: "\"Segoe UI Symbol\", var(--font-mono), monospace",
+            fontSize: hovered ? "1rem" : ".9rem",
+            fontWeight: 700,
+            lineHeight: 1,
+            whiteSpace: "nowrap",
+            fontVariantEmoji: "text",
+            textShadow: "0 1px 0 var(--site-paper)",
           }}
-        />
+        >
+          {hovered ? (cursorLabel ? "" : "↗") : "✳︎"}
+        </motion.span>
         <AnimatePresence>
           {cursorLabel && (
             <motion.span
@@ -218,11 +236,12 @@ export default function Cursor() {
                 top: 12,
                 left: 0,
                 padding: ".28rem .5rem",
-                border: "1px solid rgba(28,27,24,.35)",
-                background: "rgba(237,231,218,.92)",
+                borderBottom: "1px solid color-mix(in srgb, var(--site-ink) 42%, transparent)",
+                background: "color-mix(in srgb, var(--site-paper) 88%, transparent)",
                 color: "var(--site-ink)",
-                fontFamily: "var(--font-head)",
-                fontSize: ".78rem",
+                fontFamily: "var(--font-mono), monospace",
+                fontSize: ".68rem",
+                letterSpacing: ".08em",
                 whiteSpace: "nowrap",
               }}
             >

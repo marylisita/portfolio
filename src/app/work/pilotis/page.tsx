@@ -1,24 +1,26 @@
 "use client";
-import { motion } from "framer-motion";
+
 import ProjectShell from "@/components/ProjectShell";
+import {
+  CaseCanvas,
+  CaseCredits,
+  CaseFigure,
+  CaseSection,
+} from "@/components/CaseStudyKit";
 import { useT } from "@/i18n/LanguageContext";
 
-const tagStyle: React.CSSProperties = {
-  fontFamily: "var(--font-mono)",
-  fontSize: ".78rem",
-  textTransform: "lowercase",
-  letterSpacing: ".08em",
-  background: "var(--acid)",
-  color: "#111",
-  padding: ".55rem 1rem",
-  textDecoration: "none",
-  clipPath:
-    "polygon(0 8px, 8px 8px, 8px 0, calc(100% - 8px) 0, calc(100% - 8px) 8px, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 8px calc(100% - 8px), 0 calc(100% - 8px))",
-};
+const GALLERY = [
+  { src: "/img/pilotis/1.jpg", width: 1600, height: 511 },
+  { src: "/img/pilotis/2.jpg", width: 1600, height: 2573 },
+  { src: "/img/pilotis/3.jpg", width: 1600, height: 949 },
+  { src: "/img/pilotis/4.jpg", width: 1600, height: 566 },
+  { src: "/img/pilotis/5.jpg", width: 1600, height: 1190 },
+  { src: "/img/pilotis/6.jpg", width: 1600, height: 900 },
+  { src: "/img/pilotis/7.jpg", width: 1600, height: 1118 },
+  { src: "/img/pilotis/8.jpg", width: 1600, height: 136 },
+] as const;
 
-const GALLERY = [1, 2, 3, 4, 5, 6, 7, 8];
-
-const CREDITS = [
+const CREDIT_NAMES = [
   { key: "pilotis_cred_design", names: "Vinícius de Moura · Stella Bandeira · Matheus Petermann" },
   { key: "pilotis_cred_comms", names: "Carolina Mello · Raphaela Ortega" },
   { key: "pilotis_cred_social", names: "Stella Bandeira · Matheus Petermann · Maria Isabel Lisita" },
@@ -28,7 +30,8 @@ const CREDITS = [
 ] as const;
 
 export default function PilotisProject() {
-  const { t } = useT();
+  const { t, lang } = useT();
+  const pt = lang !== "en";
 
   return (
     <ProjectShell
@@ -44,58 +47,130 @@ export default function PilotisProject() {
         { label: t("ebat_meta_role"), value: "Social Media" },
       ]}
     >
-      <section style={{ maxWidth: "1100px", margin: "0 auto", padding: "0 2rem 4rem" }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: "44px" }}>
-          {GALLERY.map((n, i) => (
-            <motion.div
-              key={n}
-              className="pj-frame"
-              initial={{ opacity: 0, y: 46, rotate: i % 3 === 1 ? -1.5 : i % 3 === 2 ? 1.5 : 0 }}
-              whileInView={{ opacity: 1, y: 0, rotate: 0 }}
-              viewport={{ once: true, margin: "-60px" }}
-              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            >
-              <img src={`/img/pilotis/${n}.jpg`} alt={`Devs no Pilotis — ${n}`} style={{ width: "100%", display: "block" }} />
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      <section style={{ maxWidth: "1100px", margin: "0 auto", padding: "0 2rem 4rem", textAlign: "center" }}>
-        <a
-          className="hover-trigger"
-          href="https://instituto.ecoa.puc-rio.br/devs-no-pilotis/"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={tagStyle}
+      <CaseCanvas variant="pilotis">
+        <CaseSection
+          label={pt ? "01 / identidade em campo" : "01 / identity in the field"}
+          title={pt ? "tecnologia ocupando o pilotis" : "technology taking over the pilotis"}
+          intro={
+            pt
+              ? "A cobertura visual aproxima programação, realidade virtual e encontro presencial. O sistema gráfico funciona como sinalização: rápido, legível e reconhecível em movimento."
+              : "The visual coverage connects programming, virtual reality and in-person encounters. The graphic system works like signage: fast, legible and recognizable in motion."
+          }
         >
-          [ {t("pilotis_visit")} ↗ ]
-        </a>
-      </section>
+          <CaseFigure
+            {...GALLERY[0]}
+            alt={pt ? "Identidade do evento Devs no Pilotis" : "Devs no Pilotis event identity"}
+            caption={pt ? "assinatura do evento" : "event signature"}
+            index="placa 01"
+            priority
+            sizes="(max-width: 1260px) 92vw, 1180px"
+          />
+        </CaseSection>
 
-      <section style={{ maxWidth: "1100px", margin: "0 auto", padding: "0 2rem 6rem" }}>
-        <h2 className="pj-h2">{t("grad_credits_title")}</h2>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-            gap: "20px",
-            padding: "1.4rem 0",
-            backgroundImage:
-              "repeating-linear-gradient(90deg, var(--ink) 0 6px, transparent 6px 12px), repeating-linear-gradient(90deg, var(--ink) 0 6px, transparent 6px 12px)",
-            backgroundSize: "100% 2px, 100% 2px",
-            backgroundPosition: "top left, bottom left",
-            backgroundRepeat: "no-repeat, no-repeat",
-          }}
+        <CaseSection
+          ink
+          label={pt ? "02 / cobertura" : "02 / coverage"}
+          title={pt ? "um feed com ritmo de evento" : "a feed with event rhythm"}
+          intro={
+            pt
+              ? "A sequência vertical é tratada como uma faixa de cobertura presa à página. Ao lado, a síntese horizontal mostra como a identidade atravessa formatos."
+              : "The vertical sequence becomes a coverage strip pinned to the page. Beside it, the horizontal summary shows how the identity moves across formats."
+          }
         >
-          {CREDITS.map((c) => (
-            <div key={c.key}>
-              <div className="pj-meta__label">{t(c.key)}</div>
-              <div className="pj-meta__value">{c.names}</div>
+          <div className="tc-grid tc-grid--asym-reverse">
+            <CaseFigure
+              {...GALLERY[1]}
+              alt={pt ? "Sequência de publicações do evento Devs no Pilotis" : "Devs no Pilotis social post sequence"}
+              caption={pt ? "cobertura contínua" : "continuous coverage"}
+              index="faixa 02"
+              tilt={-0.45}
+            />
+            <CaseFigure
+              {...GALLERY[2]}
+              alt={pt ? "Peças digitais do evento Devs no Pilotis" : "Devs no Pilotis digital pieces"}
+              caption={pt ? "sistema nas redes" : "social system"}
+              index="folha 03"
+              tilt={0.6}
+            />
+          </div>
+        </CaseSection>
+
+        <CaseSection
+          label={pt ? "03 / sinais do encontro" : "03 / signals of the encounter"}
+          title={pt ? "pessoas primeiro, código depois" : "people first, code second"}
+          intro={
+            pt
+              ? "As imagens do evento mantêm o público no centro. Os sinais gráficos organizam a leitura sem cobrir a experiência registrada."
+              : "Event imagery keeps people at the center. Graphic signals organize the reading without covering the documented experience."
+          }
+        >
+          <div className="tc-grid tc-grid--stack">
+            <CaseFigure
+              {...GALLERY[3]}
+              alt={pt ? "Faixa gráfica do evento Devs no Pilotis" : "Devs no Pilotis graphic strip"}
+              caption={pt ? "faixa de chamada" : "announcement strip"}
+              index="faixa 04"
+              tilt={-0.25}
+              sizes="(max-width: 1260px) 92vw, 1180px"
+            />
+            <div className="tc-grid tc-grid--two tc-grid--offset">
+              {GALLERY.slice(4, 6).map((image, index) => (
+                <CaseFigure
+                  key={image.src}
+                  {...image}
+                  alt={pt ? "Registros e aplicações do Devs no Pilotis" : "Devs no Pilotis records and applications"}
+                  caption={pt ? "registro aplicado" : "applied record"}
+                  index={`folha 0${index + 5}`}
+                  tilt={index === 0 ? -0.65 : 0.65}
+                />
+              ))}
             </div>
-          ))}
-        </div>
-      </section>
+          </div>
+        </CaseSection>
+
+        <CaseSection compact>
+          <CaseFigure
+            {...GALLERY[6]}
+            alt={pt ? "Mosaico final do evento Devs no Pilotis" : "Final Devs no Pilotis event mosaic"}
+            caption={pt ? "arquivo do encontro" : "encounter archive"}
+            index="folha 07"
+            tilt={0.35}
+            sizes="(max-width: 1050px) 92vw, 980px"
+          />
+          <div style={{ marginTop: "clamp(1.4rem, 4vw, 3rem)" }}>
+            <CaseFigure
+              {...GALLERY[7]}
+              alt={pt ? "Assinatura gráfica de encerramento" : "Closing graphic signature"}
+              caption={pt ? "encerramento" : "closing"}
+              index="faixa 08"
+              sizes="(max-width: 1050px) 92vw, 980px"
+            />
+          </div>
+        </CaseSection>
+
+        <CaseSection compact>
+          <a
+            className="tc-action hover-trigger"
+            href="https://instituto.ecoa.puc-rio.br/devs-no-pilotis/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {t("pilotis_visit")} ↗
+          </a>
+        </CaseSection>
+
+        <CaseSection
+          label={pt ? "04 / ficha" : "04 / credits"}
+          title={t("grad_credits_title")}
+        >
+          <CaseCredits
+            items={CREDIT_NAMES.map((credit) => ({
+              label: t(credit.key),
+              value: credit.names,
+            }))}
+          />
+        </CaseSection>
+      </CaseCanvas>
     </ProjectShell>
   );
 }

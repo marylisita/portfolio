@@ -2,7 +2,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import Link from "next/link";
-import AsciiDivider from "./AsciiDivider";
 import PixelScrollImage from "./PixelScrollImage";
 import PixelScrollText from "./PixelScrollText";
 import BrailleDeco from "./BrailleDeco";
@@ -11,6 +10,7 @@ import { ANJOS, ORNAMENTAL, ANJOS_DUO, ESFERA } from "./brailleEditorial";
 import { FILLER_COLUMN, FILLER_GROUP } from "./foundBrailleArt";
 import type { IndexItem } from "./EditorialIndex";
 import { useT } from "@/i18n/LanguageContext";
+import { useCreativeStudio } from "./CreativeStudio";
 
 /**
  * Projetos "jogados" num canvas, estilo t-i-n-y.com (pedido dela): nada de
@@ -32,14 +32,15 @@ import { useT } from "@/i18n/LanguageContext";
 // mantendo a alternância esq/dir da colagem (cara de readymag).
 const SPOTS = [
   { left: "2%",  top: "0rem",   w: "clamp(300px, 46vw, 700px)", ratio: 0.562, rot: -2 }, // isadora 1920x1080
-  { left: "62%", top: "30rem",  w: "clamp(224px, 38.4vw, 576px)", ratio: 0.667, rot: 3 },  // helvetica 948x632
-  { left: "30%", top: "64rem",  w: "clamp(320px, 52vw, 780px)", ratio: 0.498, rot: 1 },  // genlab 1743x868
-  { left: "2%",  top: "98rem",  w: "clamp(300px, 38.4vw, 564px)", ratio: 0.562, rot: -4 }, // ebat 2400x1350
-  { left: "52%", top: "127rem", w: "clamp(280px, 40vw, 600px)", ratio: 0.494, rot: 2 },  // graduation animacao.webp 1000x494
-  { left: "6%",  top: "156rem", w: "clamp(340px, 58vw, 880px)", ratio: 0.319, rot: -1 }, // pilotis 1600x511
-  { left: "66%", top: "184rem", w: "clamp(250px, 30vw, 460px)", ratio: 0.667, rot: 4 },  // chinario 1600x1068
-  { left: "8%",  top: "213rem", w: "clamp(320px, 54vw, 820px)", ratio: 0.562, rot: -2 }, // hologlam trio 1600x900 (recorte dela)
-  { left: "56%", top: "251rem", w: "clamp(280px, 42vw, 640px)", ratio: 0.708, rot: 3 },  // vegcoz capa.png 1400x991 (recorte dela)
+  { left: "62%", top: "28rem",  w: "clamp(224px, 38.4vw, 576px)", ratio: 0.667, rot: 3 },  // helvetica 948x632
+  { left: "30%", top: "59rem",  w: "clamp(320px, 52vw, 780px)", ratio: 0.498, rot: 1 },  // genlab 1743x868
+  { left: "2%",  top: "90rem",  w: "clamp(300px, 38.4vw, 564px)", ratio: 0.562, rot: -4 }, // ebat 2400x1350
+  { left: "52%", top: "116rem", w: "clamp(280px, 40vw, 600px)", ratio: 0.494, rot: 2 },  // graduation animacao.webp 1000x494
+  { left: "6%",  top: "142rem", w: "clamp(340px, 58vw, 880px)", ratio: 0.319, rot: -1 }, // pilotis 1600x511
+  { left: "66%", top: "167rem", w: "clamp(250px, 30vw, 460px)", ratio: 0.667, rot: 4 },  // chinario 1600x1068
+  { left: "8%",  top: "192rem", w: "clamp(320px, 54vw, 820px)", ratio: 0.562, rot: -2 }, // hologlam trio 1600x900 (recorte dela)
+  { left: "56%", top: "226rem", w: "clamp(280px, 42vw, 640px)", ratio: 0.708, rot: 3 },  // vegcoz capa.png 1400x991 (recorte dela)
+  { left: "8%",  top: "258rem", w: "clamp(270px, 35vw, 520px)", ratio: 0.8, rot: -2 },   // ondularis capa 1080x1350
 ];
 
 // Uma cor por projeto, DERIVADA da capa real (tom característico, clampado pra
@@ -56,6 +57,7 @@ const PROJECT_GLOWS = [
   "rgba(186, 56, 86, .22)",   // chinario — vermelho china-rio
   "rgba(62, 95, 140, .22)",   // hologlam — azul
   "rgba(159, 159, 97, .22)",  // vegcoz — verde-oliva
+  "rgba(31, 157, 169, .24)",  // ondularis — ciano bioluminescente
 ];
 
 const MOTION_ENTER = 0.9;
@@ -63,12 +65,12 @@ const MOTION_EASE_OUT = [0.16, 1, 0.3, 1] as const;
 
 const styles = `
   .sw {
-    --sw-paper-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='paper'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paper)' opacity='.46'/%3E%3C/svg%3E");
+    --sw-paper-grain: url("/img/paper-noise.png");
     --duration-ambient-a: 80s;
     --duration-ambient-b: 95s;
     position: relative;
-    /* altura do canvas em rem para ser imune a redimensionamentos verticais de viewport */
-    height: clamp(288rem, calc(272rem + 34vw), 291rem);
+    /* inclui a capa vertical de Ondularis sem encostar no VegCoz */
+    height: clamp(300rem, calc(292rem + 22vw), 310rem);
     margin: 0 auto;
     max-width: 1500px;
     isolation: isolate;
@@ -94,18 +96,26 @@ const styles = `
     padding: 0 2%;
   }
   .sw__mode button {
-    min-height: 38px;
-    padding: .42rem .72rem;
-    border: 1px solid rgba(28,27,24,.35);
-    background: rgba(237,231,218,.75);
+    min-width: var(--tap-min);
+    min-height: var(--tap-min);
+    padding: .55rem .78rem;
+    border: 1px solid var(--paper-edge);
+    background-color: var(--paper-sheet);
+    background-image: var(--sw-paper-grain);
     color: var(--ink);
     font-family: var(--font-body);
-    font-size: .67rem;
+    font-size: var(--type-label);
     letter-spacing: .11em;
     text-transform: lowercase;
-    transition: background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out), transform var(--duration-fast) var(--ease-out);
+    box-shadow: 3px 3px 0 var(--paper-shadow);
+    transition: background-color var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out), transform var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out);
   }
-  .sw__mode button[aria-pressed="true"] { background: var(--ink); color: var(--paper); transform: translateY(-2px); }
+  .sw__mode button[aria-pressed="true"] {
+    background-color: var(--ink);
+    color: var(--paper);
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 var(--paper-shadow);
+  }
   .sw__mode button:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
   .sw__item { position: absolute; z-index: 1; text-decoration: none; color: var(--ink); }
   .sw__item[data-sw-project] {
@@ -218,11 +228,11 @@ const styles = `
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 1.4rem;
+    gap: 1rem;
     width: 100%;
     max-width: 1500px;
     margin: 0 auto;
-    padding: 1.5rem 1.25rem 2.75rem;
+    padding: .5rem 1.25rem .5rem;
     overflow: hidden;
   }
   .sw__divider { flex: 0 0 auto; max-width: 100%; }
@@ -295,7 +305,7 @@ const styles = `
     width: max-content;
     max-width: calc(100% - 1.5rem);
     margin: -.65rem auto 0;
-    padding: .48rem .8rem .52rem;
+    padding: .48rem 1.2rem .52rem;
     background-color: rgba(237, 231, 218, .88);
     background-image:
       var(--sw-paper-grain),
@@ -304,17 +314,38 @@ const styles = `
     background-blend-mode: multiply, soft-light;
     border: 1px solid rgba(28, 27, 24, .22);
     box-shadow: 0 5px 12px rgba(20,19,16,.16), inset 0 0 0 1px rgba(255,255,255,.14);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    /* É uma etiqueta de papel, não uma lâmina de vidro. */
     text-transform: lowercase;
     text-align: center;
-    transition: color var(--duration-normal) var(--ease-default), background-color var(--duration-normal) var(--ease-default), box-shadow var(--duration-normal) var(--ease-default);
+    transition:
+      color var(--duration-normal) var(--ease-default),
+      background-color var(--duration-normal) var(--ease-default),
+      box-shadow var(--duration-normal) var(--ease-default),
+      translate var(--duration-fast) var(--ease-out);
+  }
+  .sw__cap::before,
+  .sw__cap::after {
+    content: "╳";
+    position: absolute;
+    top: 50%;
+    translate: 0 -50%;
+    font-family: var(--font-mono), monospace;
+    font-size: var(--type-micro);
+    line-height: 1;
+    opacity: .42;
+  }
+  .sw__cap::before { left: .38rem; }
+  .sw__cap::after { right: .38rem; }
+  .sw__link:active .sw__cap {
+    translate: 0 2px;
+    box-shadow: 0 2px 5px rgba(20,19,16,.13), inset 0 0 0 1px rgba(255,255,255,.12);
   }
   .sw__item:hover .sw__cap,
   .sw__item:focus-within .sw__cap {
     color: var(--acid);
     background-color: rgba(246, 241, 230, .96);
     box-shadow: 0 8px 16px rgba(20,19,16,.2), inset 0 0 0 1px rgba(255,255,255,.18);
+    translate: 0 -2px;
   }
   /* PixelPoiiz NAO e usada: alem de nao ter acentos, o zero dela e desenhado
      parecendo um simbolo (01 saia como "@1"). Fica carregada mas sem uso. */
@@ -340,11 +371,45 @@ const styles = `
     display: block;
     font-family: var(--font-subtitle);
     font-weight: var(--offbit-weight);
-    font-size: clamp(.48rem, .72vw, .62rem);
+    font-size: var(--type-micro);
     line-height: 1.35;
     letter-spacing: var(--offbit-letter-spacing);
     scale: var(--offbit-condense) 1;
     transform-origin: left center;
+  }
+  .sw__spec {
+    display: block;
+    width: max-content;
+    max-width: 100%;
+    margin: .68rem auto 0;
+    padding: .24rem .48rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--ink) 28%, transparent);
+    font-family: var(--font-mono), monospace;
+    font-size: var(--type-micro);
+    line-height: 1.35;
+    letter-spacing: .07em;
+    text-transform: lowercase;
+    opacity: .58;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: opacity .25s ease, letter-spacing .35s ease;
+  }
+  .sw__spec::before {
+    content: "╳";
+    margin-right: .38rem;
+    font-size: .7em;
+    opacity: .58;
+  }
+  .sw__spec::after {
+    content: "⌁";
+    margin-left: .38rem;
+    opacity: .48;
+  }
+  .sw__item:hover .sw__spec,
+  .sw__item:focus-within .sw__spec {
+    opacity: .9;
+    letter-spacing: .1em;
   }
   .sw__num,
   .sw__tags {
@@ -364,7 +429,7 @@ const styles = `
       height: auto;
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 4.5rem 2.4rem;
+      gap: 2.75rem 1.5rem;
       padding: 1rem 2% 5rem;
     }
     .sw[data-view="desk"] .sw__item {
@@ -401,7 +466,7 @@ const styles = `
 
   @media (max-width: 860px) {
     /* no mobile a colagem vira coluna — legível e sem sobreposição */
-    .sw { height: auto; display: flex; flex-direction: column; gap: 4.25rem; padding: 0 1.25rem; }
+    .sw { height: auto; display: flex; flex-direction: column; gap: 2.5rem; padding: 0 1.25rem; }
     .sw__item { position: static !important; width: calc(100% - .8rem) !important; transform: none !important; }
     .sw__item[data-sw-project="0"],
     .sw__item[data-sw-project="2"],
@@ -450,6 +515,7 @@ const styles = `
 
 export default function ScatteredWorks({ items, bgWord }: { items: IndexItem[]; bgWord: string }) {
   const { lang } = useT();
+  const { playSound } = useCreativeStudio();
   const reduceMotion = useReducedMotion();
   const canvasRef = useRef<HTMLDivElement>(null);
   const [mobileActive, setMobileActive] = useState<number | null>(null);
@@ -511,11 +577,21 @@ export default function ScatteredWorks({ items, bgWord }: { items: IndexItem[]; 
     <>
       <style>{styles}</style>
       <div className="sw__mode" role="group" aria-label={lang === "pt" ? "modo de visualização" : "view mode"}>
-        <button type="button" aria-pressed={viewMode === "collage"} onClick={() => setViewMode("collage")}>
-          {lang === "pt" ? "colagem" : "collage"}
+        <button
+          type="button"
+          aria-label={lang === "pt" ? "colagem" : "collage"}
+          aria-pressed={viewMode === "collage"}
+          onClick={() => { setViewMode("collage"); playSound("paper"); }}
+        >
+          [ ⠿ ]
         </button>
-        <button type="button" aria-pressed={viewMode === "desk"} onClick={() => setViewMode("desk")}>
-          {lang === "pt" ? "mesa" : "desk"}
+        <button
+          type="button"
+          aria-label={lang === "pt" ? "mesa" : "desk"}
+          aria-pressed={viewMode === "desk"}
+          onClick={() => { setViewMode("desk"); playSound("paper"); }}
+        >
+          [ ▦ ]
         </button>
       </div>
       <div
@@ -567,11 +643,9 @@ export default function ScatteredWorks({ items, bgWord }: { items: IndexItem[]; 
         <div className="sw__deco" style={{ position: "absolute", left: "22%", transform: "translateX(-50%)", top: "186rem", zIndex: 0, pointerEvents: "none" }}>
           <BrailleDeco art={DRAGAO} fontSize="clamp(2.6px, 0.35vw, 5px)" opacity={0.22} color="var(--ink)" />
         </div>
-        {/* Centered wide background illustration wrapped in div to prevent transform collision with Framer Motion */}
-        {/* o grandão ("esse q eu tava falando!"): DO LADO do vegcoz, centrado
-            no vão livre à esquerda da fileira dele */}
-        <div className="sw__deco" style={{ position: "absolute", left: "27%", transform: "translateX(-50%)", top: "254rem", zIndex: 0, pointerEvents: "none" }}>
-          <BrailleDeco art={ANJOS} fontSize="clamp(3.5px, 0.55vw, 8.5px)" opacity={0.32} color="var(--ink)" />
+        {/* o grandão (ANJOS): posicionado no vão em branco ao lado/acima do Hologlam, sem colidir com Vegcoz */}
+        <div className="sw__deco" style={{ position: "absolute", left: "26%", transform: "translateX(-50%)", top: "214rem", zIndex: 0, pointerEvents: "none" }}>
+          <BrailleDeco art={ANJOS} fontSize="clamp(3.2px, 0.5vw, 7.5px)" opacity={0.3} color="var(--ink)" />
         </div>
         <PixelScrollText className="sw__bg sw__bg--b" text={bgWord} fontSize={330} color="var(--acid)" />
         {items.map((item, i) => {
@@ -589,12 +663,20 @@ export default function ScatteredWorks({ items, bgWord }: { items: IndexItem[]; 
               viewport={{ once: true, margin: "-40px" }}
               transition={{ duration: reduceMotion ? 0 : MOTION_ENTER, ease: MOTION_EASE_OUT }}
               whileHover={reduceMotion ? undefined : { scale: 1.02, rotate: 0 }}
-              onMouseEnter={(e) => { setDesktopActive(i); glowFrom(e.currentTarget); }}
+              onMouseEnter={(e) => {
+                setDesktopActive(i);
+                glowFrom(e.currentTarget);
+                playSound("hover");
+              }}
               onMouseLeave={() => setDesktopActive(null)}
               onFocus={(e) => { setDesktopActive(i); glowFrom(e.currentTarget); }}
               onBlur={() => setDesktopActive(null)}
             >
-              <Link href={item.href} className="sw__link hover-trigger">
+              <Link
+                href={item.href}
+                className="sw__link hover-trigger"
+                data-cursor-label={`↗ ${item.num}`}
+              >
                 {/* sem aspect-ratio fixo aqui: quem manda é a proporção real
                     do arquivo, definida pelo próprio PixelScrollImage */}
                 <div className="sw__frame">
@@ -607,6 +689,10 @@ export default function ScatteredWorks({ items, bgWord }: { items: IndexItem[]; 
                 <span className="sw__cap">
                   <span className="sw__num">{item.num}</span>
                   <span className="sw__title">{item.title}</span>
+                  <span className="sw__arrow" style={{ opacity: 0.7, fontSize: "0.82em", marginLeft: "0.15rem" }}>↗</span>
+                </span>
+                <span className="sw__spec">
+                  ✳︎ s.{item.num} / {item.tags.split("/").at(-1)?.trim()} / 2026
                 </span>
               </Link>
             </motion.div>

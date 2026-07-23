@@ -1,3 +1,49 @@
+# Devlog: costurar o digital
+
+23 de julho de 2026
+
+Hoje o portfólio deixou de apenas parecer impresso e começou a responder como um objeto. A intenção não era encher a página de efeitos, mas criar pequenas sensações de matéria: tinta que reage, papel que muda, etiquetas que afundam, peças que podem ser movidas e uma linha que atravessa o site como se segurasse suas páginas.
+
+## ASCII como matéria
+
+Os desenhos ASCII do topo agora reagem diretamente à proximidade do mouse. Os caracteres se transformam por alguns instantes e voltam ao desenho original, sempre na mesma cor da arte. Não há parallax, cursor de terminal ou glitch: o movimento se aproxima mais de uma impressão imperfeita sendo tocada.
+
+Quando a página fica parada, o desenho também muda lentamente entre gatos, flores, estrelas e borboletas. Testei frases generativas nesse espaço, mas elas deixavam o fundo explicativo demais. Removi os textos e preservei apenas as figuras.
+
+A mesma lógica chegou à assinatura e aos pequenos elementos do header. Letras e caracteres se reorganizam individualmente no hover, sem deslocar a composição.
+
+## Um pequeno ateliê
+
+Criei um conjunto de ferramentas que trata a página como uma mesa de trabalho. É possível alternar entre papel creme, cianotipia e papel vegetal. Cada opção muda tinta, fundo, contraste e textura como uma técnica de impressão, em vez de funcionar como um dark mode convencional.
+
+O modo de carimbo transforma o ponteiro em uma ferramenta e deixa marcas de tinta sobre o papel. A coleção usa kaomojis e ornamentos Unicode fofos, sem etiquetas escritas. Os carimbos comprimem no contato, deixam um pequeno excesso de tinta e secam sobre a superfície.
+
+Adesivos e cartões continuam arrastáveis. Quando a composição fica bagunçada, o comando de reorganizar devolve as peças às posições originais com movimento de mola. Também existe uma camada opcional de microsons no rodapé, sempre desligada por padrão.
+
+## Costura, acervo e navegação
+
+Uma linha costurada percorre verticalmente a página, com furos, desvios e pequenos nós. Os divisores, etiquetas de projeto e o arremate do rodapé repetem essa linguagem. A costura virou um sistema de continuidade, não apenas um ornamento.
+
+Os projetos ganharam etiquetas de espécime, textura de papel e respostas mais físicas ao hover. O acesso aos trabalhos funciona como um pequeno portal: antes de abrir a galeria, ele revela fragmentos de três projetos.
+
+Na minibio, a lista convencional de competências virou uma constelação interativa. A instrução “toque nas estrelas”, o estado selecionado e o fio até a descrição deixam claro que os pontos podem ser explorados.
+
+## O que saiu
+
+Removi as frases inclinadas espalhadas pelo fundo, o cartão secreto com kaomoji e o retângulo dobrável abaixo da minibio. As três ideias eram interessantes isoladamente, mas juntas competiam com o trabalho e deixavam a seção com aparência de protótipo.
+
+Também existia um “modo estranho” secreto. Gostei do que ele fazia — reforçava o ASCII, a costura, os desenhos e o contraste dos adesivos — mas o botão não comunicava sua função. A solução foi eliminar o controle e transformar esses efeitos na aparência padrão do site.
+
+## Performance e acabamento
+
+A primeira versão da reação ASCII criava dezenas de temporizadores e atualizações a cada caractere tocado. Em movimentos rápidos, isso produzia pequenas travadas. Reescrevi a interação para usar um único ciclo de animação do navegador, sem renderizar novamente o desenho inteiro.
+
+Depois da mudança, uma sequência de 160 eventos de hover foi processada em aproximadamente 8 ms. A interação continua visível, mantém a cor original e termina sem deixar caracteres presos. O site também continua respeitando `prefers-reduced-motion`.
+
+Fechei o dia validando ESLint, TypeScript, a navegação no navegador e a build estática das 12 rotas. A principal conclusão desta etapa foi simples: o aspecto tátil não vem de simular objetos reais em todos os lugares. Ele aparece quando cada resposta visual parece ter peso, atrito e intenção.
+
+---
+
 # Devlog: do terminal à colagem editorial
 
 21 de julho de 2026
