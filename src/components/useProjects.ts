@@ -69,7 +69,7 @@ export function useProjects(): IndexItem[] {
       title: "hologlam: fashion reloaded",
       tags: `${t("cat_college")} / ` + t("p08_tags").replace(", ", " / "),
       href: "/work/hologlam",
-      ratio: 0.424, // trio.webp 1710x725
+      ratio: 0.562, // trio.webp 1600x900 (recorte dela, 2026-07-23)
       img: "/img/hologlam/trio.webp",
     },
     {
@@ -77,7 +77,7 @@ export function useProjects(): IndexItem[] {
       title: "vegcoz",
       tags: `${t("cat_college")} / ` + t("p09_tags").replace(", ", " / "),
       href: "/work/vegcoz",
-      ratio: 0.8, // cropped capa.png ratio
+      ratio: 0.708, // capa.png 1400x991 (recorte dela, 2026-07-23 — termina nas telas, sem o "Sobre o projeto" cortado)
       img: "/img/vegcoz/capa.png",
     },
   ];

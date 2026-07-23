@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import Link from "next/link";
+import AsciiDivider from "./AsciiDivider";
 import PixelScrollImage from "./PixelScrollImage";
 import PixelScrollText from "./PixelScrollText";
 import BrailleDeco from "./BrailleDeco";
@@ -26,16 +27,19 @@ import { useT } from "@/i18n/LanguageContext";
 // não quebra nada, mesmo que o número aqui fique desatualizado.
 // Regra de posicionamento: peças próximas na vertical NÃO podem dividir faixa
 // de X, senão a legenda de uma cai em cima da outra (aprendido vendo o print).
+// Espaçamento COMPRIMIDO e padronizado (pedido dela 2026-07-23: "tão muito
+// separados") — ritmo de ~6-8rem entre o pé de uma peça e o topo da próxima,
+// mantendo a alternância esq/dir da colagem (cara de readymag).
 const SPOTS = [
   { left: "2%",  top: "0rem",   w: "clamp(300px, 46vw, 700px)", ratio: 0.562, rot: -2 }, // isadora 1920x1080
   { left: "62%", top: "30rem",  w: "clamp(224px, 38.4vw, 576px)", ratio: 0.667, rot: 3 },  // helvetica 948x632
-  { left: "30%", top: "73rem",  w: "clamp(320px, 52vw, 780px)", ratio: 0.498, rot: 1 },  // genlab 1743x868
-  { left: "2%",  top: "109rem", w: "clamp(300px, 38.4vw, 564px)", ratio: 0.562, rot: -4 }, // ebat 2400x1350
-  { left: "52%", top: "135rem", w: "clamp(280px, 40vw, 600px)", ratio: 0.494, rot: 2 },  // graduation animacao.webp 1000x494
-  { left: "6%",  top: "185rem", w: "clamp(340px, 58vw, 880px)", ratio: 0.319, rot: -1 }, // pilotis 1600x511
-  { left: "66%", top: "218rem", w: "clamp(250px, 30vw, 460px)", ratio: 0.667, rot: 4 },  // chinario 1600x1068
-  { left: "8%",  top: "257rem", w: "clamp(320px, 54vw, 820px)", ratio: 0.424, rot: -2 }, // hologlam 1710x725
-  { left: "56%", top: "296rem", w: "clamp(280px, 42vw, 640px)", ratio: 0.625, rot: 3 },  // vegcoz 1600x1000
+  { left: "30%", top: "64rem",  w: "clamp(320px, 52vw, 780px)", ratio: 0.498, rot: 1 },  // genlab 1743x868
+  { left: "2%",  top: "98rem",  w: "clamp(300px, 38.4vw, 564px)", ratio: 0.562, rot: -4 }, // ebat 2400x1350
+  { left: "52%", top: "127rem", w: "clamp(280px, 40vw, 600px)", ratio: 0.494, rot: 2 },  // graduation animacao.webp 1000x494
+  { left: "6%",  top: "156rem", w: "clamp(340px, 58vw, 880px)", ratio: 0.319, rot: -1 }, // pilotis 1600x511
+  { left: "66%", top: "184rem", w: "clamp(250px, 30vw, 460px)", ratio: 0.667, rot: 4 },  // chinario 1600x1068
+  { left: "8%",  top: "213rem", w: "clamp(320px, 54vw, 820px)", ratio: 0.562, rot: -2 }, // hologlam trio 1600x900 (recorte dela)
+  { left: "56%", top: "251rem", w: "clamp(280px, 42vw, 640px)", ratio: 0.708, rot: 3 },  // vegcoz capa.png 1400x991 (recorte dela)
 ];
 
 // Uma cor por projeto, DERIVADA da capa real (tom característico, clampado pra
@@ -64,7 +68,7 @@ const styles = `
     --duration-ambient-b: 95s;
     position: relative;
     /* altura do canvas em rem para ser imune a redimensionamentos verticais de viewport */
-    height: clamp(320rem, calc(301rem + 34vw), 336rem);
+    height: clamp(288rem, calc(272rem + 34vw), 291rem);
     margin: 0 auto;
     max-width: 1500px;
     isolation: isolate;
@@ -211,8 +215,10 @@ const styles = `
   /* fecho horizontal: divisória editorial entre trabalhos e rodapé */
   .sw__final {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+    gap: 1.4rem;
     width: 100%;
     max-width: 1500px;
     margin: 0 auto;
@@ -281,11 +287,11 @@ const styles = `
   .sw__cap {
     position: relative;
     z-index: 3;
-    display: grid;
-    grid-template-columns: auto minmax(0, max-content);
-    align-items: end;
-    column-gap: .72rem;
-    row-gap: .18rem;
+    /* centralizada (pedido dela): número + título numa linha só, no centro do card */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .6rem;
     width: max-content;
     max-width: calc(100% - 1.5rem);
     margin: -.65rem auto 0;
@@ -301,7 +307,7 @@ const styles = `
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     text-transform: lowercase;
-    text-align: left;
+    text-align: center;
     transition: color var(--duration-normal) var(--ease-default), background-color var(--duration-normal) var(--ease-default), box-shadow var(--duration-normal) var(--ease-default);
   }
   .sw__item:hover .sw__cap,
@@ -310,21 +316,9 @@ const styles = `
     background-color: rgba(246, 241, 230, .96);
     box-shadow: 0 8px 16px rgba(20,19,16,.2), inset 0 0 0 1px rgba(255,255,255,.18);
   }
-  .sw__item[data-sw-project="0"] .sw__cap,
-  .sw__item[data-sw-project="3"] .sw__cap,
-  .sw__item[data-sw-project="6"] .sw__cap {
-    margin-left: 1rem;
-  }
-  .sw__item[data-sw-project="1"] .sw__cap,
-  .sw__item[data-sw-project="4"] .sw__cap,
-  .sw__item[data-sw-project="8"] .sw__cap {
-    margin-right: 1rem;
-  }
   /* PixelPoiiz NAO e usada: alem de nao ter acentos, o zero dela e desenhado
      parecendo um simbolo (01 saia como "@1"). Fica carregada mas sem uso. */
   .sw__num {
-    grid-row: 1;
-    align-self: end;
     font-family: var(--font-subtitle);
     font-weight: var(--offbit-weight);
     font-size: clamp(1.65rem, 3vw, 2.8rem);
@@ -548,22 +542,35 @@ export default function ScatteredWorks({ items, bgWord }: { items: IndexItem[]; 
             Conferir a 700 E a 900 antes de mexer. Vãos livres a 1440x700:
               coluna direita (x>1160): 0-182, 525-896, 1321-1470
               coluna esquerda (x<250): 427-756, 1037-1260, 1581-1785 */}
+        {/* Reposicionados pro layout COMPRIMIDO (2026-07-23): cards alternam
+            esq/dir, então cada ornamento vive no lado oposto do card da sua
+            faixa — sempre visível ao rolar. Faixas (y em rem): c0 esq 0-27 ·
+            c1 dir 30-57 · c2 centro 64-91 · c3 esq 98-121 · c4 dir 127-149 ·
+            c5 esq 156-177 · c6 dir 184-206 · c7 esq 213-244 · c8 dir 251-282 */}
         <BrailleDeco art={ESFERA} fontSize={10} opacity={0.38} color="var(--ink)"
           className="sw__deco" style={{ left: "62%", top: "3rem" }} />
+        {/* voluta DE VOLTA ao lugar original dela (ela: "volta o outro pro lugar") */}
         <BrailleDeco art={ORNAMENTAL} fontSize={8.5} opacity={0.42} color="var(--ink)"
-          className="sw__deco" style={{ left: "45%", top: "103rem" }} />
+          className="sw__deco" style={{ left: "48%", top: "101rem" }} />
         <BrailleDeco art={COELHOS} fontSize={8.5} opacity={0.45} color="var(--ink)"
-          className="sw__deco" style={{ left: "86%", top: "82rem" }} />
+          className="sw__deco" style={{ left: "87%", top: "68rem" }} />
         <BrailleDeco art={QUIMERA} fontSize={8} opacity={0.5} color="var(--acid)"
-          className="sw__deco" style={{ left: "2%", top: "160rem" }} />
+          className="sw__deco" style={{ left: "2%", top: "130rem" }} />
         <BrailleDeco art={FILLER_GROUP} fontSize="clamp(3.2px, 0.42vw, 6.2px)" opacity={0.2} color="var(--ink)"
-          className="sw__deco" style={{ left: "4%", top: "44rem" }} />
-        <BrailleDeco art={FILLER_COLUMN} fontSize="clamp(3px, 0.4vw, 6px)" opacity={0.24} color="var(--ink)"
-          className="sw__deco" style={{ left: "39%", top: "225rem" }} />
-        <BrailleDeco art={DRAGAO} fontSize="clamp(2.6px, 0.35vw, 5px)" opacity={0.22} color="var(--ink)"
-          className="sw__deco" style={{ left: "37%", top: "284rem" }} />
+          className="sw__deco" style={{ left: "4%", top: "38rem" }} />
+        {/* coluna fina: centralizada VERTICALMENTE com o hologlam (pedido dela);
+            fonte levemente menor + colada na borda pra caber no vão de 8% */}
+        <BrailleDeco art={FILLER_COLUMN} fontSize="clamp(2.4px, 0.33vw, 5px)" opacity={0.24} color="var(--ink)"
+          className="sw__deco" style={{ left: "0.5%", top: "223rem" }} />
+        {/* dragão: centrado na horizontal, no vão entre pilotis e hologlam
+            (china fica à direita dele) — saiu de cima do bg word (pedido dela) */}
+        <div className="sw__deco" style={{ position: "absolute", left: "22%", transform: "translateX(-50%)", top: "186rem", zIndex: 0, pointerEvents: "none" }}>
+          <BrailleDeco art={DRAGAO} fontSize="clamp(2.6px, 0.35vw, 5px)" opacity={0.22} color="var(--ink)" />
+        </div>
         {/* Centered wide background illustration wrapped in div to prevent transform collision with Framer Motion */}
-        <div className="sw__deco" style={{ position: "absolute", left: "50%", transform: "translateX(-50%)", top: "143rem", zIndex: 0, pointerEvents: "none" }}>
+        {/* o grandão ("esse q eu tava falando!"): DO LADO do vegcoz, centrado
+            no vão livre à esquerda da fileira dele */}
+        <div className="sw__deco" style={{ position: "absolute", left: "27%", transform: "translateX(-50%)", top: "254rem", zIndex: 0, pointerEvents: "none" }}>
           <BrailleDeco art={ANJOS} fontSize="clamp(3.5px, 0.55vw, 8.5px)" opacity={0.32} color="var(--ink)" />
         </div>
         <PixelScrollText className="sw__bg sw__bg--b" text={bgWord} fontSize={330} color="var(--acid)" />
@@ -609,10 +616,11 @@ export default function ScatteredWorks({ items, bgWord }: { items: IndexItem[]; 
 
       {/* A dupla horizontal encerra a seção como um filete de impressão. */}
       <div className="sw__final">
+        {/* maior de propósito: é o PONTO FINAL da página (pedido dela) */}
         <BrailleDeco
           art={ANJOS_DUO}
-          fontSize="clamp(1.7px, 0.36vw, 5.2px)"
-          opacity={0.3}
+          fontSize="clamp(2.3px, 0.5vw, 7px)"
+          opacity={0.36}
           color="var(--ink)"
           className="sw__divider"
         />

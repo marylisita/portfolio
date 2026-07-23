@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import PixelScrollImage from "@/components/PixelScrollImage";
+import AsciiDivider from "@/components/AsciiDivider";
 import BrailleDeco from "@/components/BrailleDeco";
 import { EDGE_RIGHT, EDGE_TOP, FILLER_COLUMN } from "@/components/foundBrailleArt";
 import { useT } from "@/i18n/LanguageContext";
@@ -44,11 +45,7 @@ function ProjectCard({ num, title, tags, href, img, desc, ratio }: ProjectCardPr
           gridTemplateColumns: "3rem 1fr auto",
           alignItems: "baseline",
           gap: "1rem",
-          paddingBottom: "0.8rem",
-          backgroundImage: "repeating-linear-gradient(90deg, var(--ink) 0 6px, transparent 6px 12px)",
-          backgroundSize: "100% 2px",
-          backgroundPosition: "bottom left",
-          backgroundRepeat: "no-repeat",
+          paddingBottom: "0.2rem",
         }}
       >
         <span
@@ -88,6 +85,13 @@ function ProjectCard({ num, title, tags, href, img, desc, ratio }: ProjectCardPr
         >
           {tags}
         </span>
+        <AsciiDivider
+          braille
+          pattern="⠂⠄⠄⠂⠁⠁⠂ "
+          size=".6rem"
+          opacity={0.5}
+          style={{ gridColumn: "1 / -1", marginTop: ".25rem" }}
+        />
       </div>
 
       {/* Project Description */}
@@ -217,7 +221,7 @@ export default function Work() {
       color: var(--ink);
     }
     .wk-corner--l { left: 1.4rem; display: flex; flex-direction: column; gap: .12rem; line-height: 1.1; }
-    .wk-mark { font-weight: 600; letter-spacing: .06em; color: inherit; text-decoration: none; }
+    .wk-mark { font-family: var(--font-pixelscript); font-weight: 400; font-size: 2.3rem; letter-spacing: .02em; line-height: 1; text-transform: none; color: inherit; text-decoration: none; }
     .wk-mark__sub { font-size: .62rem; letter-spacing: .08em; opacity: .5; }
     .wk-corner--r { right: 1.4rem; display: flex; align-items: center; gap: 1rem; }
     .wk-status { display: inline-flex; align-items: center; gap: .42rem; font-size: .68rem; letter-spacing: .06em; opacity: .82; white-space: nowrap; }
@@ -419,7 +423,7 @@ export default function Work() {
       {/* Header — mesmo do landing (marca + status + nav + idioma) */}
       <span className="wk-corner wk-corner--l">
         <Link href="/" className="wk-mark hover-trigger">
-          <span className="text-star" aria-hidden="true">✳︎</span> mary lisita
+          <span className="text-star" aria-hidden="true">✳︎</span> Maria Isabel Lisita
         </Link>
         <span className="wk-mark__sub">
           {lang === "pt" ? "designer & tecnóloga criativa" : "designer & creative technologist"}
@@ -448,17 +452,13 @@ export default function Work() {
             letterSpacing: "0.16em",
             display: "flex",
             justifyContent: "space-between",
-            paddingBottom: "0.9rem",
-            marginBottom: "4rem",
-            backgroundImage: "repeating-linear-gradient(90deg, var(--ink) 0 6px, transparent 6px 12px)",
-            backgroundSize: "100% 2px",
-            backgroundPosition: "bottom left",
-            backgroundRepeat: "no-repeat",
+            paddingBottom: "0.55rem",
           }}
         >
           <span>{t("work_page_title")}</span>
           <span>{projects.length.toString().padStart(2, "0")} —</span>
         </div>
+        <AsciiDivider braille pattern="⠂⠄⠄⠂⠁⠁⠂ " size=".64rem" opacity={0.55} style={{ marginBottom: "4rem" }} />
 
         <nav className="wk-toc" aria-label={t("work_page_title")}>
           {projects.map((project) => (

@@ -1,4 +1,5 @@
 "use client";
+import { Fragment } from "react";
 import PlaygroundHero from "@/components/PlaygroundHero";
 import ScatteredWorks from "@/components/ScatteredWorks";
 import { useProjects } from "@/components/useProjects";
@@ -6,8 +7,9 @@ import Marquee from "@/components/Marquee";
 import AsciiAnim from "@/components/AsciiAnim";
 import BootIntro from "@/components/BootIntro";
 import IdleBanner from "@/components/IdleBanner";
+import AsciiDivider from "@/components/AsciiDivider";
 import ScatterMenu, { type MenuItem } from "@/components/ScatterMenu";
-import { GATO_FRAMES, GATO_PRETO_FRAMES } from "@/components/asciiArt";
+import { GATO_FRAMES } from "@/components/asciiArt";
 import EditorialFooter from "@/components/EditorialFooter";
 import LangToggle from "@/components/LangToggle";
 import { useT } from "@/i18n/LanguageContext";
@@ -61,7 +63,8 @@ const rmStyles = `
     color: var(--ink);
   }
   .rm-corner--l { left: 1.4rem; display: flex; flex-direction: column; gap: .12rem; line-height: 1.1; }
-  .rm-mark { font-weight: 600; letter-spacing: .06em; }
+  /* wordmark na PF Pixelscript (Adobe) — caligrafia pixelada COM acentos */
+  .rm-mark { font-family: var(--font-pixelscript); font-weight: 400; font-size: 2.3rem; letter-spacing: .02em; line-height: 1; text-transform: none; }
   .rm-mark__sub { font-size: .62rem; letter-spacing: .08em; opacity: .5; }
   .rm-corner--r { right: 1.4rem; display: flex; align-items: center; gap: 1rem; }
   .rm-status {
@@ -106,12 +109,10 @@ const rmStyles = `
     font-family: var(--font-body); font-size: .8rem;
     text-transform: lowercase; letter-spacing: .12em;
     display: flex; justify-content: space-between;
-    padding-bottom: .9rem; margin-bottom: 3rem;
-    background-image: repeating-linear-gradient(90deg, var(--ink) 0 6px, transparent 6px 12px);
-    background-size: 100% 2px;
-    background-position: bottom left;
-    background-repeat: no-repeat;
+    padding-bottom: .55rem; margin-bottom: 0;
   }
+  /* divisor ASCII fofo abaixo do label (no lugar da linha tracejada) */
+  .rm-divider { margin-bottom: 3rem; }
   .rm-statement {
     font-family: var(--font-grotesk); font-weight: 700;
     font-size: clamp(1.6rem, 4.4vw, 3.6rem);
@@ -121,10 +122,9 @@ const rmStyles = `
   }
   .rm-em { font-family: var(--font-head); font-style: italic; text-transform: none; letter-spacing: -0.01em; }
   .rm-about-copy { display: flex; flex-direction: column; gap: 2.5rem; }
-  .rm-colophon-meta { border-top: 1px solid rgba(28,27,24,.38); }
   .rm-colophon-row {
     display: grid; grid-template-columns: minmax(6.5rem, .45fr) 1fr; gap: 1rem;
-    padding: .75rem 0; border-bottom: 1px solid rgba(28,27,24,.22);
+    padding: .6rem 0;
     font-family: var(--font-body); font-size: .72rem;
     letter-spacing: .08em; text-transform: lowercase;
   }
@@ -132,25 +132,16 @@ const rmStyles = `
   .rm-colophon-row span:last-child { font-family: var(--font-head); font-size: 1rem; letter-spacing: 0; }
 
   /* --- tabela de ferramentas --- */
-  .rm-about { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
-  .rm-tools { display: flex; flex-direction: column; }
+  /* minmax(0,1fr) + min-width:0: sem isso os divisores ASCII (texto nowrap
+     gigante) explodem as colunas no cálculo intrínseco do grid/flex */
+  .rm-about { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 4rem; align-items: start; }
+  .rm-about-copy { min-width: 0; }
+  .rm-tools { display: flex; flex-direction: column; min-width: 0; }
   .rm-tool-row {
     display: grid; grid-template-columns: 40% 1fr; gap: 1.5rem;
-    padding: 1rem 0;
-    background-image: repeating-linear-gradient(90deg, var(--ink) 0 6px, transparent 6px 12px);
-    background-size: 100% 2px;
-    background-position: top left;
-    background-repeat: no-repeat;
+    padding: .85rem 0;
     font-family: var(--font-body); font-size: .82rem;
     text-transform: lowercase; letter-spacing: .06em;
-  }
-  .rm-tool-row:last-child {
-    background-image:
-      repeating-linear-gradient(90deg, var(--ink) 0 6px, transparent 6px 12px),
-      repeating-linear-gradient(90deg, var(--ink) 0 6px, transparent 6px 12px);
-    background-size: 100% 2px, 100% 2px;
-    background-position: top left, bottom left;
-    background-repeat: no-repeat, no-repeat;
   }
   .rm-tool-row span:last-child { font-family: var(--font-body); text-transform: none; letter-spacing: 0; font-size: .85rem; }
 
@@ -237,7 +228,7 @@ export default function Home() {
 
       <span className="rm-corner rm-corner--l">
         <span className="rm-mark">
-          <span className="text-star" aria-hidden="true">✳︎</span> mary lisita
+          <span className="text-star" aria-hidden="true">✳︎</span> Maria Isabel Lisita
         </span>
         <span className="rm-mark__sub">
           {lang === "pt" ? "designer & tecnóloga criativa" : "designer & creative technologist"}
@@ -289,23 +280,18 @@ export default function Home() {
             <span>{t("selected_work")}</span>
             <span>{projects.length.toString().padStart(2, "0")} —</span>
           </div>
+          <AsciiDivider className="rm-divider" pattern="• . ݁₊ ⊹ . ݁꒰ঌ·✦·໒꒱ ݁ . ⊹ ₊ ݁. •" size=".68rem" opacity={0.5} />
           {/* projetos jogados no canvas (t-i-n-y) — capas nascem nítidas e viram pixel no scroll */}
           <ScatteredWorks items={projects} bgWord={`${t("nav_work").toLowerCase()}!`} />
         </section>
 
         {/* Sobre */}
-        <section id="about" className="rm-sec px-line" style={{ backgroundPosition: "top left", position: "relative" }}>
-          <AsciiAnim
-            frames={GATO_PRETO_FRAMES}
-            interval={300}
-            fontSize={6}
-            opacity={0.22}
-            style={{ position: "absolute", left: "44%", top: "-1rem" }}
-          />
+        <section id="about" className="rm-sec" style={{ position: "relative" }}>
           <div className="rm-label">
             <span>{t("about_title")}</span>
             <span>{t("rm_tools_label")}</span>
           </div>
+          <AsciiDivider className="rm-divider" pattern="︶꒷꒦︶" size=".68rem" opacity={0.5} />
           <div className="rm-about">
             <div className="rm-about-copy">
               <h2 className="rm-statement">
@@ -313,28 +299,38 @@ export default function Home() {
               </h2>
               <div className="rm-colophon-meta">
                 {colophon.map(([label, value]) => (
-                  <div className="rm-colophon-row" key={label}>
-                    <span>{label}</span>
-                    <span>{value}</span>
-                  </div>
+                  <Fragment key={label}>
+                    <AsciiDivider pattern="· ˚ ⊹ ˚ " size=".5rem" opacity={0.42} />
+                    <div className="rm-colophon-row">
+                      <span>{label}</span>
+                      <span>{value}</span>
+                    </div>
+                  </Fragment>
                 ))}
+                <AsciiDivider pattern="· ˚ ⊹ ˚ " size=".5rem" opacity={0.42} />
               </div>
             </div>
             <div className="rm-tools">
               {tools.map((g) => (
-                <div className="rm-tool-row" key={g.cat}>
-                  <span>{g.cat}</span>
-                  <span>{g.list}</span>
-                </div>
+                <Fragment key={g.cat}>
+                  <AsciiDivider pattern="· ˚ ⊹ ˚ " size=".5rem" opacity={0.42} />
+                  <div className="rm-tool-row">
+                    <span>{g.cat}</span>
+                    <span>{g.list}</span>
+                  </div>
+                </Fragment>
               ))}
+              <AsciiDivider pattern="· ˚ ⊹ ˚ " size=".5rem" opacity={0.42} />
               <div className="rm-tool-row">
                 <span>{t("about_nano_sub")}</span>
                 <span>NANO — UFRJ</span>
               </div>
+              <AsciiDivider pattern="· ˚ ⊹ ˚ " size=".5rem" opacity={0.42} />
               <div className="rm-tool-row">
                 <span>{t("about_laid_sub")}</span>
                 <span>LAID — UFRJ</span>
               </div>
+              <AsciiDivider pattern="· ˚ ⊹ ˚ " size=".5rem" opacity={0.42} />
             </div>
           </div>
         </section>

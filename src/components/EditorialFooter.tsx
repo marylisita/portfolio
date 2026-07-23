@@ -1,5 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
+import AsciiDivider from "./AsciiDivider";
 import { useT } from "@/i18n/LanguageContext";
 import { BEIJO_GRANDE } from "./asciiOrnamentos";
 
@@ -57,19 +58,23 @@ const styles = `
     opacity: .75;
   }
   .ef__talk {
-    font-family: var(--font-head);
-    font-weight: 700;
-    font-size: clamp(2.6rem, 8.5vw, 7.5rem);
-    line-height: .95;
-    letter-spacing: -0.015em;
-    margin: 0 0 1.4rem;
+    /* OffBit DotBold (a pixel do site — pedido dela: "no final prefiro a de
+       pixel, sem ser a de caligrafia"). Obs: a PixelPoiiz foi removida do
+       projeto; se ela quiser essa, precisa reenviar o .ttf. */
+    font-family: var(--font-subtitle), monospace;
+    font-weight: var(--offbit-weight);
+    font-size: clamp(2.4rem, 7.8vw, 6.8rem);
+    line-height: 1;
+    letter-spacing: .02em;
+    margin: 0 0 1.6rem;
     text-align: center;
   }
   .ef__mail {
-    font-family: var(--font-body);
-    font-size: clamp(.85rem, 1.3vw, 1rem);
-    letter-spacing: .16em;
-    text-transform: uppercase;
+    /* email na CALIGRAFIA (Pixelscript), maior, destacado — pedido dela */
+    font-family: var(--font-pixelscript);
+    font-size: clamp(1.35rem, 2.6vw, 2.2rem);
+    letter-spacing: .02em;
+    text-transform: none;
     color: var(--acid);
     text-decoration: none;
     display: block;
@@ -141,8 +146,11 @@ export default function EditorialFooter() {
         >
           {BEIJO_GRANDE}
         </motion.pre>
-        <div className="ef__linha" />
-        <span className="ef__credito">bouguereau, o primeiro beijo (1890)</span>
+        {/* céu de estrelinhas embaixo dos ANJINHOS do beijo (pedido dela —
+            "os anjinhos" = os querubins do Bouguereau!) */}
+        <AsciiDivider pattern=".・。.・゜✭・.・✫・゜・。" size=".85rem" opacity={0.5} style={{ width: "100%" }} />
+        {/* sem crédito de propósito (pedido dela): quem visita tem que
+            descobrir sozinho que obra é essa */}
       </div>
 
       <span className="ef__label">{t("rm_footer_label")}</span>

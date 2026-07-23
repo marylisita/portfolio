@@ -102,9 +102,10 @@ const styles = `
   .hg-img { width: 100%; display: block; }
   .hg-fig { overflow: hidden; background: var(--site-tint-b); }
   .hg-dupla { display: grid; grid-template-columns: 1.15fr .85fr; gap: 3rem; align-items: center; }
-  /* telas de app pequenas de propósito — ver comentário no topo do arquivo */
-  .hg-apps { display: flex; gap: 1.6rem; align-items: flex-start; flex-wrap: wrap; }
-  .hg-apps img { width: 190px; display: block; }
+  /* telas de app: viraram mockups de celular em prancha 16:9 (recorte dela,
+     2026-07-23) — em 190px ficavam ilegíveis, então agora é grade de 2 colunas */
+  .hg-apps { display: grid; grid-template-columns: 1fr 1fr; gap: 1.6rem; }
+  .hg-apps img { width: 100%; display: block; }
   .hg-cap {
     font-family: var(--font-mono); font-size: .66rem;
     text-transform: uppercase; letter-spacing: .12em; opacity: .5;
@@ -122,7 +123,7 @@ const styles = `
     .hg-sec { padding: 0 1.25rem 4rem; }
     .hg-fases { grid-template-columns: 1fr; }
     .hg-steep { grid-template-columns: 1fr; }
-    .hg-apps img { width: 150px; }
+    .hg-apps { grid-template-columns: 1fr; }
   }
 `;
 
@@ -257,7 +258,8 @@ export default function HoloGlamProject() {
             <p className="hg-p">{t("holo_art_2")}</p>
             <p className="hg-p">{t("holo_art_3")}</p>
           </motion.div>
-          <motion.figure className="hg-fig" style={{ margin: 0, background: "#04070f" }}
+          {/* imagem com fundo transparente (recorte dela) — flutua na página */}
+          <motion.figure className="hg-fig" style={{ margin: 0, background: "transparent" }}
             initial={{ opacity: 0, scale: 0.94 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true, margin: "-60px" }}

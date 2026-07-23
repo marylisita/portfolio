@@ -2,6 +2,8 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import AsciiAnim from "./AsciiAnim";
+import AsciiDivider from "./AsciiDivider";
+import ScrambleText from "./ScrambleText";
 import { useT } from "@/i18n/LanguageContext";
 import {
   GATO_FRAMES,
@@ -75,10 +77,6 @@ const styles = `
     flex-direction: column;
     justify-content: space-between;
     padding: 7rem 2rem 2rem;
-    background-image: ${PIXEL_LINE};
-    background-size: 100% 2px;
-    background-position: bottom left;
-    background-repeat: no-repeat;
     overflow: hidden;
   }
   .ph__meta {
@@ -89,40 +87,40 @@ const styles = `
     font-size: .78rem;
     text-transform: lowercase;
     letter-spacing: .12em;
-    padding-bottom: .9rem;
-    background-image: ${PIXEL_LINE};
-    background-size: 100% 2px;
-    background-position: bottom left;
-    background-repeat: no-repeat;
+    padding-bottom: .55rem;
     position: relative;
     z-index: 1;
   }
   .ph__title {
-    font-family: var(--font-grotesk);
-    font-weight: 700;
+    /* PF Pixelscript (Adobe) como display do hero — mesma vibe da Seratonin
+       do "trabalhos", mas COM acentos (a Seratonin não tem: o ê caía no
+       fallback). Regras de script: peso 400 só, tracking ZERO (negativo
+       quebra as ligações), entrelinha folgada pros ascendentes. */
+    font-family: var(--font-pixelscript);
+    font-weight: 400;
     /* limitado por ALTURA de viewport também: com 11.5vw puro o título
-       estourava a tela em 1440x900 e cortava a última linha */
-    font-size: clamp(2.2rem, min(8.5vw, 12vh), 7.5rem);
-    line-height: .9;
-    letter-spacing: -0.045em;
-    text-transform: lowercase;
-    margin: clamp(1.2rem, 4vh, 3rem) 0;
+       estourava a tela em 1440x900 e cortava a última linha — e a entrelinha
+       maior do script come mais altura, por isso o teto caiu pra 10.2vh */
+    font-size: clamp(2rem, min(8vw, 10.2vh), 7rem);
+    line-height: 1.04;
+    letter-spacing: 0;
+    /* sem lowercase forçado: a capitular da Pixelscript é linda (pedido dela) */
+    text-transform: none;
+    margin: clamp(1rem, 3.2vh, 2.4rem) 0;
     position: relative;
     z-index: 1;
     pointer-events: none;
   }
-  .ph__line { overflow: hidden; display: block; }
+  /* padding+margin negativa: expande a CAIXA DE CLIP (máscara da entrada) sem
+     mudar o ritmo — senão o floreio da capitular da Pixelscript sai cortado */
+  .ph__line { overflow: hidden; display: block; padding: .18em .12em .12em .08em; margin: -.18em -.12em -.12em -.08em; }
   .ph__line--acid { color: var(--acid); }
   .ph__foot {
     display: grid;
     grid-template-columns: 1fr minmax(280px, 34%);
     gap: 2rem;
     align-items: end;
-    padding-top: 1rem;
-    background-image: ${PIXEL_LINE};
-    background-size: 100% 2px;
-    background-position: top left;
-    background-repeat: no-repeat;
+    padding-top: .4rem;
     position: relative;
     z-index: 1;
   }
@@ -261,11 +259,13 @@ export default function PlaygroundHero({
       <style>{styles}</style>
 
       <div>
+        {/* sem o nome aqui: já está no wordmark do header (ela: "tem dois
+            maria isabel lisita, tira o de baixo") */}
         <div className="ph__meta">
-          <span>maria isabel lisita</span>
           <span>portfólio — 2026</span>
           <span>{location}</span>
         </div>
+        <AsciiDivider pattern="⠂⠄⠄⠂⠁⠁⠂ " braille size=".64rem" opacity={0.55} style={{ position: "relative", zIndex: 1 }} />
       </div>
 
       {/* adesivos — arrastáveis dentro do hero */}
@@ -303,7 +303,7 @@ export default function PlaygroundHero({
               initial={reduceMotion ? false : "hidden"}
               animate="show"
             >
-              {l}
+              <ScrambleText text={l} />
             </motion.span>
           </span>
         ))}
@@ -315,6 +315,14 @@ export default function PlaygroundHero({
         animate={{ opacity: 1 }}
         transition={{ delay: reduceMotion ? 0 : 0.75, duration: reduceMotion ? 0 : 0.7 }}
       >
+        {/* divisor fofo (escolha dela) no lugar da linha tracejada */}
+        <AsciiDivider
+          repeat={false}
+          pattern="₊✧˚﹕︶︶︶﹕૮₍ ⸝⸝´ ꒳ `⸝⸝ ₎ა﹕︶︶︶﹕˚✧₊"
+          size=".82rem"
+          opacity={0.62}
+          style={{ gridColumn: "1 / -1", marginBottom: ".4rem" }}
+        />
         <span className="ph__scroll">{scrollLabel}</span>
         <p className="ph__sub">
           {sub} <span className="ph__em">{subHighlight}</span>

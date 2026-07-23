@@ -1,10 +1,15 @@
 @import "tailwindcss";
+/* PF Pixelscript (caligrafia pixelada, escolha dela) — servida pelo Adobe Fonts
+   (web project dela); o visitante NÃO precisa ter a fonte. Se a assinatura
+   Adobe expirar, cai no fallback definido em --font-pixelscript. */
+@import url("https://use.typekit.net/knv7rew.css");
 
 /* ==========================================
    PALETA DO SITE — trocar AQUI muda o site todo
    ========================================== */
 :root {
     --font-subtitle: var(--font-offbit), monospace;
+    --font-pixelscript: "pf-pixelscript", var(--font-hand), var(--font-body), sans-serif;
     --offbit-condense: 1;
     --offbit-weight: 700;
     --offbit-weight-active: 700;
