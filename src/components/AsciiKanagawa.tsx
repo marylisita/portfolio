@@ -2,7 +2,9 @@
 
 import { useEffect, useRef } from "react";
 
-const FRAME_MS = 1000 / 25;
+// 15fps: a onda é fundo/marca d'água a 0.3 de opacidade — 25fps era desperdício.
+// Corta ~40% do trabalho por segundo sem diferença perceptível.
+const FRAME_MS = 1000 / 15;
 
 // Ramp de caracteres delicados (removidos os glifos brutos ░ ▒ ▓ ╳)
 const SITE_GIBBON_RAMP = [
@@ -265,31 +267,53 @@ export default function AsciiKanagawa({
       ctx.textBaseline = "middle";
     }
 
+    // Atlas dos glifos do contorno. fillText por ponto (~1900/quadro) era DE
+    // LONGE o maior custo de runtime do site — 80mil fillText a cada 2s. Pré-
+    // renderiza os 23 glifos UMA vez e usa drawImage (~6x mais barato que
+    // fillText, que rasteriza a fonte a cada chamada). Mesmo visual, fração do custo.
+    let gibbonAtlas: HTMLCanvasElement | null = null;
+    let gibbonAtlasTile = 0;
+    let gibbonAtlasKey = 0;
+    function buildGibbonAtlas(patchSize: number) {
+      const tile = Math.ceil(patchSize * dpr) + 6;
+      const sheet = document.createElement("canvas");
+      sheet.width = tile * SITE_GIBBON_RAMP.length;
+      sheet.height = tile;
+      const c = sheet.getContext("2d");
+      if (!c) return;
+      c.font = `bold ${patchSize * dpr}px "Courier New", monospace`;
+      c.textAlign = "center";
+      c.textBaseline = "middle";
+      c.fillStyle = UNIFIED_COLOR;
+      for (let i = 0; i < SITE_GIBBON_RAMP.length; i += 1) {
+        const ch = SITE_GIBBON_RAMP[i];
+        if (ch && ch !== " ") c.fillText(ch, i * tile + tile / 2, tile / 2);
+      }
+      gibbonAtlas = sheet;
+      gibbonAtlasTile = tile;
+      gibbonAtlasKey = Math.round(patchSize);
+    }
+
     function drawGibbonContourLoop() {
       if (reduceMotion || !contourPoints.length) return;
-
-      ctx.save();
       const patchSize = Math.max(9, (drawWidth / mutationMapWidth) * 1.18);
-      ctx.font = `bold ${patchSize}px "Courier New", monospace`;
-      ctx.globalAlpha = 0.85;
-      ctx.fillStyle = UNIFIED_COLOR;
+      if (!gibbonAtlas || gibbonAtlasKey !== Math.round(patchSize)) buildGibbonAtlas(patchSize);
+      if (!gibbonAtlas) return;
 
+      const tile = gibbonAtlasTile;
+      const half = patchSize / 2;
+      ctx.save();
+      ctx.globalAlpha = 0.85;
       for (let i = 0; i < contourPoints.length; i += 1) {
         const pt = contourPoints[i];
         if (!pt.frameLoop) continue;
-
         const charIdx = Math.round(pt.frameLoop.value);
         pt.frameLoop.inc();
-
-        const char = SITE_GIBBON_RAMP[charIdx % SITE_GIBBON_RAMP.length];
-        if (!char || char === " ") continue;
-
+        const idx = charIdx % SITE_GIBBON_RAMP.length;
         const x = drawX + pt.x * drawWidth;
         const y = drawY + pt.y * drawHeight;
-
-        ctx.fillText(char, x, y);
+        ctx.drawImage(gibbonAtlas, idx * tile, 0, tile, tile, x - half, y - half, patchSize, patchSize);
       }
-
       ctx.restore();
     }
 

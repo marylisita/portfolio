@@ -50,6 +50,7 @@ export default function Marquee({ items }: { items: string[] }) {
     let lastY = window.scrollY;
     let paused = false;
     let raf = 0;
+    let running = false;
 
     const BASE = 0.55; // deriva parada (px/frame)
 
@@ -79,14 +80,24 @@ export default function Marquee({ items }: { items: string[] }) {
       const skew = Math.max(-7, Math.min(7, velocity * 0.11));
       const stretch = 1 + Math.min(0.05, speed * 0.001);
       track.style.transform = `translateX(${-offset}px) skewX(${skew}deg) scaleY(${1 / stretch}) scaleX(${stretch})`;
-      raf = requestAnimationFrame(tick);
+      raf = running ? requestAnimationFrame(tick) : 0;
     };
 
+    const startTick = () => { if (running) return; running = true; raf = requestAnimationFrame(tick); };
+    const stopTick = () => { running = false; cancelAnimationFrame(raf); raf = 0; };
+
+    // pausa o rAF quando a faixa sai da tela (regra da skill: pause off-screen)
+    const io = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) startTick(); else stopTick(); },
+      { rootMargin: "120px" },
+    );
+    if (band) io.observe(band); else startTick();
+
     measure();
-    raf = requestAnimationFrame(tick);
 
     return () => {
-      cancelAnimationFrame(raf);
+      stopTick();
+      io.disconnect();
       window.removeEventListener("scroll", onScroll);
       band?.removeEventListener("mouseenter", onEnter);
       band?.removeEventListener("mouseleave", onLeave);

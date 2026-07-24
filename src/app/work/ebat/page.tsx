@@ -15,8 +15,8 @@ const CAROUSEL_ONE = Array.from({ length: 7 }, (_, index) => `ebat/carrossel/${i
 const CAROUSEL_TWO = Array.from({ length: 4 }, (_, index) => `ebat/carrossel 2/${index + 1}.jpg`);
 
 const SPIW = [
-  { src: "/img/ebat/mockup outer.png", alt: "SPIW outer page mockup" },
-  { src: "/img/ebat/mockup inner.png", alt: "SPIW inner page mockup" },
+  { src: "/img/ebat/mockup outer.webp", alt: "SPIW outer page mockup" },
+  { src: "/img/ebat/mockup inner.webp", alt: "SPIW inner page mockup" },
   { src: "/img/ebat/Outer Page.png", alt: "SPIW outer page" },
   { src: "/img/ebat/Inner Page.png", alt: "SPIW inner page" },
 ] as const;
