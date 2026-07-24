@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useReducedMotion } from "framer-motion";
 
 /**
@@ -106,73 +106,92 @@ function ScrambleTextContent({ text }: { text: string }) {
     timers.current.set(i, charTimers);
   };
 
-  return (
-    <span aria-label={text} style={{ display: "inline", whiteSpace: "pre-wrap" }}>
-      {states.map((st, i) => {
-        const isSpace = st.original === " ";
-        if (isSpace) {
-          return <span key={i}> </span>;
-        }
+  const renderLetter = (st: CharState, i: number) => (
+    <span
+      key={i}
+      aria-hidden="true"
+      onMouseEnter={() => scramble(i)}
+      style={{
+        display: "inline-block",
+        position: "relative",
+        pointerEvents: "auto",
+        whiteSpace: "pre",
+        cursor: "inherit",
+      }}
+    >
+      {/* Mantém a largura e altura EXATAS da letra original */}
+      <span style={{ opacity: st.scrambling ? 0 : 1, display: "inline-block" }}>
+        {st.original}
+      </span>
 
-        return (
-          <span
-            key={i}
-            aria-hidden="true"
-            onMouseEnter={() => scramble(i)}
-            style={{
-              display: "inline-block",
-              position: "relative",
-              pointerEvents: "auto",
-              whiteSpace: "pre",
-              cursor: "inherit",
-            }}
-          >
-            {/* Mantém a largura e altura EXATAS da letra original para impedir qualquer quebra de linha */}
-            <span style={{ opacity: st.scrambling ? 0 : 1, display: "inline-block" }}>
-              {st.original}
+      {/* Matriz 3x3 desenhada em overlay absoluto dentro dos limites da letra */}
+      {st.scrambling && st.grid.length === 9 && (
+        <span
+          style={{
+            position: "absolute",
+            inset: 0,
+            display: "inline-grid",
+            gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+            gap: ".02em .04em",
+            fontSize: ".24em",
+            lineHeight: 1,
+            letterSpacing: 0,
+            alignItems: "center",
+            justifyItems: "center",
+            pointerEvents: "none",
+            overflow: "hidden",
+          }}
+        >
+          {st.grid.map((cell, k) => (
+            <span
+              key={k}
+              style={{
+                display: "inline-block",
+                color: cell.color,
+                transform: `rotate(${cell.rotate}deg) scale(${cell.scale})`,
+                opacity: cell.opacity,
+                transition: "all 80ms ease-out",
+                animation: "miniAsciiPulse 120ms ease-out forwards",
+                textAlign: "center",
+                fontFamily: "var(--font-mono), monospace",
+                textShadow: cell.color !== "#1c1b18" ? `0 0 4px ${cell.color}` : "none",
+              }}
+            >
+              {cell.symbol}
             </span>
+          ))}
+        </span>
+      )}
+    </span>
+  );
 
-            {/* Matriz 3x3 desenhada em overlay absoluto dentro dos limites exatos da letra */}
-            {st.scrambling && st.grid.length === 9 && (
-              <span
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  display: "inline-grid",
-                  gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-                  gap: ".02em .04em",
-                  fontSize: ".24em",
-                  lineHeight: 1,
-                  letterSpacing: 0,
-                  alignItems: "center",
-                  justifyItems: "center",
-                  pointerEvents: "none",
-                  overflow: "hidden",
-                }}
-              >
-                {st.grid.map((cell, k) => (
-                  <span
-                    key={k}
-                    style={{
-                      display: "inline-block",
-                      color: cell.color,
-                      transform: `rotate(${cell.rotate}deg) scale(${cell.scale})`,
-                      opacity: cell.opacity,
-                      transition: "all 80ms ease-out",
-                      animation: "miniAsciiPulse 120ms ease-out forwards",
-                      textAlign: "center",
-                      fontFamily: "var(--font-mono), monospace",
-                      textShadow: cell.color !== "#1c1b18" ? `0 0 4px ${cell.color}` : "none",
-                    }}
-                  >
-                    {cell.symbol}
-                  </span>
-                ))}
-              </span>
-            )}
-          </span>
-        );
-      })}
+  // Agrupa as letras em PALAVRAS: cada letra é um inline-block, então sem
+  // agrupar a linha quebrava no meio da palavra ("vi/suais"). Cada palavra vira
+  // um wrapper nowrap; a quebra de linha só acontece nos ESPAÇOS entre palavras.
+  const tokens: ReactNode[] = [];
+  let word: ReactNode[] = [];
+  const flush = () => {
+    if (!word.length) return;
+    tokens.push(
+      <span key={`w${tokens.length}`} style={{ display: "inline-block", whiteSpace: "nowrap" }}>
+        {word}
+      </span>,
+    );
+    word = [];
+  };
+  states.forEach((st, i) => {
+    if (st.original === " ") {
+      flush();
+      tokens.push(<span key={`s${i}`}> </span>);
+    } else {
+      word.push(renderLetter(st, i));
+    }
+  });
+  flush();
+
+  return (
+    <span aria-label={text} style={{ display: "inline", whiteSpace: "normal" }}>
+      {tokens}
     </span>
   );
 }

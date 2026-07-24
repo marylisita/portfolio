@@ -48,6 +48,10 @@ const styles = `
   @media (prefers-reduced-motion: reduce) { .sh__dot { animation: none; } }
   @media (max-width: 860px) {
     .sh__status, .sh__nav, .sh__sub { display: none; }
+    /* reserva o canto direito pro toggle EN e reduz o wordmark pra não passar
+       por baixo dele (a Pixelscript é larga; sem isso o EN cobria "Isabel") */
+    .sh--l { max-width: calc(100vw - 8rem); }
+    .sh__mark { font-size: clamp(1.15rem, 5.6vw, 1.55rem); line-height: .98; }
   }
 `;
 
