@@ -14,7 +14,7 @@ export function useProjects(): IndexItem[] {
       tags: `${t("cat_freela")} / ${t("p01_tag1")} / ${t("p01_tag2")}`,
       href: "/work/isadora",
       ratio: 0.562,
-      img: "/img/ISADORA CAPA-THUMBNAIL.webp",
+      img: "/img/previews/isadora.webp",
     },
     {
       num: "02",
@@ -22,7 +22,7 @@ export function useProjects(): IndexItem[] {
       tags: `${t("cat_college")} / ${t("p02_tag1")} / ${t("p02_tag2")}`,
       href: "/work/magazine",
       ratio: 0.667,
-      img: "/img/helvetica/9.jpg",
+      img: "/img/previews/magazine.webp",
     },
     {
       num: "03",
@@ -30,7 +30,7 @@ export function useProjects(): IndexItem[] {
       tags: `${t("cat_collab")} / ${t("p03_tag1")} / ${t("p03_tag2")}`,
       href: "/work/genlab",
       ratio: 0.498,
-      img: "/img/genlab.png",
+      img: "/img/previews/genlab.webp",
     },
     {
       num: "04",
@@ -38,7 +38,7 @@ export function useProjects(): IndexItem[] {
       tags: `${t("cat_client")} / ${t("p04_tag1")} / ${t("p04_tag2")}`,
       href: "/work/ebat",
       ratio: 0.562,
-      img: "/img/ebat/capa-ebat.png",
+      img: "/img/previews/ebat.webp",
     },
     {
       num: "05",
@@ -46,7 +46,7 @@ export function useProjects(): IndexItem[] {
       tags: `${t("cat_collab")} / ` + t("p05_tags").replace(", ", " / "),
       href: "/work/graduation",
       ratio: 0.494,
-      img: "/img/graduation/animacao.webp",
+      img: "/img/graduation/animacao-poster.webp",
     },
     {
       num: "06",
@@ -54,7 +54,7 @@ export function useProjects(): IndexItem[] {
       tags: `${t("cat_collab")} / ` + t("p06_tags").replace(", ", " / "),
       href: "/work/pilotis",
       ratio: 0.319,
-      img: "/img/pilotis/1.jpg",
+      img: "/img/previews/pilotis.webp",
     },
     {
       num: "07",
@@ -62,7 +62,7 @@ export function useProjects(): IndexItem[] {
       tags: `${t("cat_client")} / ` + t("p07_tags").replace(", ", " / "),
       href: "/work/chinario",
       ratio: 0.667,
-      img: "/img/chinario/1.jpg",
+      img: "/img/previews/chinario.webp",
     },
     {
       num: "08",
@@ -70,7 +70,7 @@ export function useProjects(): IndexItem[] {
       tags: `${t("cat_college")} / ` + t("p08_tags").replace(", ", " / "),
       href: "/work/hologlam",
       ratio: 0.562, // trio.webp 1600x900 (recorte dela, 2026-07-23)
-      img: "/img/hologlam/trio.webp",
+      img: "/img/previews/hologlam.webp",
     },
     {
       num: "09",
@@ -78,7 +78,7 @@ export function useProjects(): IndexItem[] {
       tags: `${t("cat_college")} / ` + t("p09_tags").replace(", ", " / "),
       href: "/work/vegcoz",
       ratio: 0.708, // capa.png 1400x991 (recorte dela, 2026-07-23 — termina nas telas, sem o "Sobre o projeto" cortado)
-      img: "/img/vegcoz/capa.png",
+      img: "/img/previews/vegcoz.webp",
     },
     {
       num: "10",
@@ -87,8 +87,8 @@ export function useProjects(): IndexItem[] {
         lang === "pt" ? "arte, ciência e tecnologia / exposição" : "art, science & technology / exhibition"
       }`,
       href: "/work/ondularis",
-      ratio: 0.8,
-      img: "/img/ondularis/capa.webp",
+      ratio: 1.25,
+      img: "/img/previews/ondularis.webp",
     },
   ];
 }

@@ -1,14 +1,9 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { animate as animateValue, motion, useMotionValue, useReducedMotion } from "framer-motion";
-import AsciiAnim from "./AsciiAnim";
 import AsciiDivider from "./AsciiDivider";
 import ScrambleText from "./ScrambleText";
 import { useT } from "@/i18n/LanguageContext";
-import {
-  GATO_FRAMES,
-  GATO_PRETO_FRAMES,
-} from "./asciiArt";
 import { StampCanvas, useCreativeStudio } from "./CreativeStudio";
 
 /* canto em degrau de 8px — recorte "pixel" nas molduras */
@@ -94,8 +89,10 @@ const styles = `
     font-family: var(--font-pixelscript);
     font-weight: 400;
     font-size: clamp(2rem, min(7.5vw, 9.5vh), 6.5rem);
-    line-height: 1.05;
-    letter-spacing: 0;
+    line-height: .9;
+    /* tracking levemente negativo — testado que a Pixelscript aguenta -.015em
+       sem quebrar as ligações do script (mais que isso começa a colar demais) */
+    letter-spacing: -.015em;
     text-transform: none;
     margin: clamp(1.2rem, 3.8vh, 2.8rem) 0;
     position: relative;
@@ -108,7 +105,7 @@ const styles = `
   .ph__line--acid { color: var(--hero-highlight, var(--acid)); }
   .ph__foot {
     display: grid;
-    grid-template-columns: 1fr minmax(280px, 34%);
+    grid-template-columns: 1fr;
     gap: 2rem;
     align-items: end;
     padding-top: .4rem;
@@ -119,6 +116,28 @@ const styles = `
     font-family: var(--font-body);
     font-size: clamp(.95rem, 1.3vw, 1.1rem);
     line-height: 1.5;
+  }
+  /* frase no vazio da onda: OffBit, alinhada à esquerda, abaixo do título */
+  .ph__sub--pocket {
+    position: absolute;
+    left: 49%;
+    top: 66%;
+    /* a quebra é forçada no JSX; a largura só evita reflow das duas linhas */
+    max-width: min(42rem, 50vw);
+    text-align: left;
+    text-transform: lowercase;
+    font-family: var(--font-subtitle);
+    line-height: 1.3;
+    z-index: 1;
+    pointer-events: none;
+  }
+  /* abaixo de 1180px o vazio some — volta ao fluxo, empilhado */
+  @media (max-width: 1180px) {
+    .ph__sub--pocket {
+      position: static;
+      max-width: 100%;
+      margin-top: 1.25rem;
+    }
   }
   .ph__scroll {
     font-family: var(--font-hand);
@@ -137,7 +156,7 @@ const styles = `
   }
   .ph__sticker:active { cursor: grabbing; }
   .ph__note {
-    font-family: var(--font-body);
+    font-family: var(--font-subtitle);
     font-size: var(--type-micro);
     text-transform: lowercase;
     letter-spacing: .08em;
@@ -147,10 +166,13 @@ const styles = `
   }
   .ph__clock { display: inline-flex; flex-direction: column; gap: .15rem; }
   .ph__greet {
-    font-family: var(--font-hand);
-    font-size: 1.1rem;
+    /* fonte de pixel (OffBit), não a de caligrafia (pedido dela) */
+    font-family: var(--font-subtitle);
+    font-size: 1.2rem;
+    text-transform: lowercase;
+    font-weight: 400;
     line-height: 1;
-    letter-spacing: .01em;
+    letter-spacing: .02em;
     color: var(--ink);
     white-space: nowrap;
     pointer-events: none;
@@ -169,19 +191,13 @@ const styles = `
     .ph__foot { grid-template-columns: 1fr; gap: 1.25rem; }
     .ph__sticker--desk { display: none; }
     .ph__sticker { cursor: default; }
-    .ph__sticker--ascii-gata {
-      left: 4% !important;
-      top: 14% !important;
-      max-width: 45vw;
-      overflow: hidden;
-    }
     .ph__sticker--clock {
       left: auto !important;
       right: 1.25rem;
       top: 23% !important;
       text-align: right;
     }
-    .ph__greet { font-size: 1rem; }
+    .ph__greet { font-size: 1.2rem; }
     .ph__note { font-size: var(--type-micro); }
   }
   @media (prefers-reduced-motion: reduce) {
@@ -285,14 +301,12 @@ function DraggableSticker({
 
 export default function PlaygroundHero({
   lines,
-  location,
   sub,
   subHighlight,
   scrollLabel,
   children,
 }: {
   lines: string[];
-  location: string;
   sub: string;
   subHighlight: string;
   scrollLabel: string;
@@ -319,19 +333,11 @@ export default function PlaygroundHero({
 
   const canDrag = !reduceMotion && !isMobile;
 
-  // só desenhos ASCII (pedido dela) + relógio e palavrinhas — nada de capas de trabalho
+  // Elementos funcionais do hero; os desenhos ASCII agora vivem só no background.
   const stickers: Sticker[] = [
-    {
-      key: "ascii-gata", left: "6%", top: "14%", rotate: -2,
-      el: <AsciiAnim frames={GATO_FRAMES} interaction="characters" interval={180} fontSize={6} color="var(--acid)" opacity={0.56} />,
-    },
-    {
-      key: "gato-preto-ascii", left: "20%", top: "62%", rotate: -4, deskOnly: true,
-      el: <AsciiAnim frames={GATO_PRETO_FRAMES} interaction="characters" interval={300} fontSize={5} color="var(--acid)" opacity={0.38} />,
-    },
-    // texto
-    { key: "rio", left: "12%", top: "40%", rotate: -12, deskOnly: true, el: <span className="ph__note">( rio de janeiro )</span> },
-    { key: "clock", left: "74%", top: "24%", rotate: 4, el: <LiveClock /> },
+    // aninhado na concavidade da onda (vazio medido: x45-75% / y19-31% = densidade 0):
+    // aproveita o espaço vazio da gravura em vez de flutuar sobre a parte cheia
+    { key: "clock", left: "58%", top: "12%", rotate: 3, el: <LiveClock /> },
   ];
 
   return (
@@ -353,14 +359,6 @@ export default function PlaygroundHero({
       >
         {scrollLabel}
       </span>
-
-      <div>
-        {/* sem o nome aqui: já está no wordmark do header */}
-        <div className="ph__meta">
-          <span><ScrambleText text={location} /></span>
-        </div>
-        <AsciiDivider opacity={0.55} style={{ position: "relative", zIndex: 1 }} />
-      </div>
 
       {/* adesivos — arrastáveis dentro do hero */}
       {stickers.map((s, i) => (
@@ -412,10 +410,27 @@ export default function PlaygroundHero({
           opacity={0.62}
           style={{ width: "100%", marginBottom: ".4rem" }}
         />
-        <p className="ph__sub">
-          {sub} <span className="ph__em">{subHighlight}</span>
-        </p>
       </motion.div>
+
+      {/* frase no espaço em branco da onda (concavidade), alinhada à ESQUERDA
+          e em OffBit — abaixo do título pra não encostar nele */}
+      <p className="ph__sub ph__sub--pocket">
+        {(() => {
+          // quebra forçada após a primeira vírgula ("...visuais,") = 2 linhas
+          // exatas, sem depender de calibragem frágil de largura
+          const i = sub.indexOf(",");
+          if (i === -1) {
+            return <>{sub} <span className="ph__em">{subHighlight}</span></>;
+          }
+          return (
+            <>
+              {sub.slice(0, i + 1)}
+              <br />
+              {sub.slice(i + 1).trim()} <span className="ph__em">{subHighlight}</span>
+            </>
+          );
+        })()}
+      </p>
     </section>
   );
 }

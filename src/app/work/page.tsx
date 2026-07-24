@@ -285,7 +285,7 @@ export default function Work() {
       background-color: var(--paper-sheet);
       background-image:
         repeating-linear-gradient(0deg, transparent 0 3px, rgba(28,27,24,.025) 3px 4px),
-        url("/img/paper-noise.png");
+        url("/img/paper-noise.webp");
       background-size: 100% 100%, 140px 140px;
       box-shadow: 4px 5px 0 var(--paper-shadow);
       rotate: -.08deg;
@@ -332,7 +332,7 @@ export default function Work() {
       background-color: var(--paper-sheet) !important;
       background-image:
         repeating-linear-gradient(0deg, transparent 0 3px, rgba(28,27,24,.025) 3px 4px),
-        url("/img/paper-noise.png");
+        url("/img/paper-noise.webp");
       background-size: 100% 100%, 150px 150px;
       box-shadow: 8px 9px 0 var(--paper-shadow);
       rotate: -.12deg;

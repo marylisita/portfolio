@@ -50,9 +50,9 @@ export default function PixelScrollImage({
     if (!ctx) return;
 
     const img = new Image();
-    img.src = src;
 
     let ready = false;
+    let requested = false;
     let isNearViewport = false;
     let raf = 0;
     let lastKey = "";
@@ -195,6 +195,7 @@ export default function PixelScrollImage({
     hoverTarget.addEventListener("focusout", onLeave);
 
     const start = () => {
+      if (ready) return;
       ready = true;
       // a proporção real do arquivo assume — impossível esticar ou cortar
       wrap.style.aspectRatio = `${img.naturalWidth} / ${img.naturalHeight}`;
@@ -203,8 +204,14 @@ export default function PixelScrollImage({
         update();
       }
     };
-    if (img.complete && img.naturalWidth) start();
-    else img.onload = start;
+
+    const requestImage = () => {
+      if (requested) return;
+      requested = true;
+      img.onload = start;
+      img.src = src;
+      if (img.complete && img.naturalWidth) start();
+    };
 
     window.addEventListener("scroll", onScroll, { passive: true });
     const ro = new ResizeObserver(() => {
@@ -221,6 +228,7 @@ export default function PixelScrollImage({
       ([entry]) => {
         isNearViewport = entry.isIntersecting;
         if (isNearViewport) {
+          requestImage();
           sizeCanvas();
           update();
           return;

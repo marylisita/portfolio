@@ -6,11 +6,12 @@ import { useProjects } from "@/components/useProjects";
 import Marquee from "@/components/Marquee";
 import AsciiAnim from "@/components/AsciiAnim";
 import BootIntro from "@/components/BootIntro";
-import IdleBanner from "@/components/IdleBanner";
+import AsciiKanagawa from "@/components/AsciiKanagawa";
 import AsciiDivider from "@/components/AsciiDivider";
 import ScatterMenu, { type MenuItem } from "@/components/ScatterMenu";
 import { GATO_FRAMES } from "@/components/asciiArt";
 import EditorialFooter from "@/components/EditorialFooter";
+import SiteHeader from "@/components/SiteHeader";
 import LangToggle from "@/components/LangToggle";
 import { useT } from "@/i18n/LanguageContext";
 import {
@@ -153,26 +154,18 @@ const rmStyles = `
     outline: 2px solid var(--ink);
     outline-offset: 4px;
   }
-  /* banner ASCII grande e faint no hero — muda quando o mouse pausa (IdleBanner) */
-  .rm-idle {
+  /* campo de costura — malha de traços ASCII em fluxo, atrás de tudo no hero.
+     A cor e a fonte saem daqui: o AsciiField lê o color/font-family computados
+     do canvas, então os temas de papel continuam mandando na tinta. */
+  .rm-field {
     position: absolute;
-    top: 8%; left: 50%; transform: translateX(-50%);
-    z-index: 0; margin: 0; pointer-events: auto; user-select: none;
-    font-family: var(--font-mono); line-height: 1.05; white-space: pre;
-    font-size: clamp(11px, 2.8vw, 28px);
-    color: color-mix(in srgb, var(--ink) 7%, transparent);
-    text-align: center;
-  }
-  .rm-idle__char {
-    display: inline-block;
-    min-width: 1ch;
-    min-height: 1em;
-    text-align: center;
-    color: inherit;
-    transition: scale .18s cubic-bezier(.16,1,.3,1);
-  }
-  .rm-idle__char[data-active="true"] {
-    scale: 1.18;
+    inset: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    color: var(--ink);
+    font-family: var(--font-mono), monospace;
   }
   .rm-thread {
     position: absolute;
@@ -240,15 +233,9 @@ const rmStyles = `
   }
   @media (prefers-reduced-motion: reduce) {
     .rm-status__dot { animation: none; }
-    .rm-idle__char { transition: none; }
   }
   @media (max-width: 860px) {
     .rm-status, .rm-nav, .rm-mark__sub { display: none; }
-    .rm-idle {
-      color: color-mix(in srgb, var(--ink) 6%, transparent);
-      font-size: 10px;
-      top: 6%;
-    }
     .rm-corner { top: 1.25rem; }
     .rm-corner--l { left: 1.25rem; max-width: calc(100vw - 6rem); }
     .rm-corner--r { right: 1.25rem; }
@@ -425,47 +412,16 @@ function HomeContent() {
         <span className="rm-thread__knot" style={{ top: "84%" }}>╳</span>
       </div>
 
-      <span className="rm-corner rm-corner--l">
-        <span className="rm-mark">
-          <span className="text-star" aria-hidden="true">✳︎</span>{" "}
-          <ScrambleText text="Maria Isabel Lisita" />
-        </span>
-        <span className="rm-mark__sub">
-          <ScrambleText
-            text={lang === "pt" ? "designer & tecnóloga criativa" : "designer & creative technologist"}
-          />
-        </span>
-      </span>
-      <span className="rm-corner rm-corner--r">
-        <span className="rm-status">
-          <span className="rm-status__dot" aria-hidden="true" />
-          <ScrambleText
-            text={lang === "pt" ? "disponível p/ projetos — 2026" : "available for work — 2026"}
-          />
-        </span>
-        <nav className="rm-nav" aria-label={lang === "pt" ? "navegação" : "navigation"}>
-          <a href="/work"><ScrambleText text={t("nav_work").toLowerCase()} /></a>
-          <a href="#about" onClick={(e) => {
-            e.preventDefault();
-            window.dispatchEvent(new Event("studio:reveal-about"));
-            document.querySelector("#about")?.scrollIntoView({ behavior: "smooth" });
-          }}><ScrambleText text={t("rm_menu_about")} /></a>
-          <a href="#contact" onClick={(e) => { e.preventDefault(); document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" }); }}>
-            <ScrambleText text={t("rm_menu_contact")} />
-          </a>
-        </nav>
-        <LangToggle />
-      </span>
+      <SiteHeader />
 
       <main>
         <PlaygroundHero
           lines={[t("hero_title_1"), t("hero_title_highlight")]}
-          location={t("hero_location")}
           sub={t("hero_sub_1")}
           subHighlight={t("hero_sub_highlight")}
           scrollLabel={t("rm_scroll")}
         >
-          <IdleBanner />
+          <AsciiKanagawa className="rm-field" opacity={0.3} />
           <ScatterMenu
             items={[
               {

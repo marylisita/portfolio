@@ -1,9 +1,10 @@
 "use client";
 import { motion } from "framer-motion";
+import Image from "next/image";
 import AsciiDivider from "./AsciiDivider";
 import { useT } from "@/i18n/LanguageContext";
-import { BEIJO_GRANDE } from "./asciiOrnamentos";
 import { useCreativeStudio } from "./CreativeStudio";
+import cupidosBraille from "../../public/img/cupidos-braille-transparent.webp";
 
 /**
  * Rodapé da landing na identidade nova (escuro + lime + linhas pixeladas).
@@ -25,14 +26,20 @@ const styles = `
     margin-bottom: 3.5rem;
   }
   .ef__obra {
-    font-family: var(--font-mono);
-    font-size: clamp(2.5px, 0.62vw, 9px);
-    line-height: 1.04;
-    white-space: pre;
-    color: var(--ink);
-    opacity: .85;
+    position: relative;
+    width: min(88%, 44rem);
+    /* caixa mais baixa que a razão real da imagem (1441/1091): com object cover
+       + ancoragem no topo, os ~10% esmaecidos da base são aparados, então o
+       divisor encosta rente ao corpo dos cupidos em vez de flutuar longe. */
+    aspect-ratio: 1441 / 985;
+    max-width: 100%;
+    overflow: hidden;
     user-select: none;
-    margin: 0 0 -0.4rem;
+    margin: 0 auto -.35rem;
+  }
+  .ef__obra-image {
+    object-fit: cover;
+    object-position: top;
   }
   /* fio fino duplo, como regra de frontispício — o bloco pixelado brigava
      com a delicadeza da voluta que está encostada nele */
@@ -157,6 +164,7 @@ const styles = `
   .ef__sound:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
   @media (max-width: 720px) {
     .ef { padding: 4rem 1.8rem 1.5rem; }
+    .ef__obra { width: 86%; }
     .ef__row { grid-template-columns: 2.5rem 1fr auto; gap: .8rem; }
   }
 `;
@@ -178,16 +186,23 @@ export default function EditorialFooter() {
       <style>{styles}</style>
 
       <div className="ef__divisa">
-        <motion.pre
+        <motion.div
           className="ef__obra"
           aria-hidden="true"
           initial={{ opacity: 0, y: 18 }}
-          whileInView={{ opacity: 0.85, y: 0 }}
+          whileInView={{ opacity: 0.92, y: 0 }}
           viewport={{ once: true, margin: "-40px" }}
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
         >
-          {BEIJO_GRANDE}
-        </motion.pre>
+          <Image
+            className="ef__obra-image"
+            src={cupidosBraille}
+            alt=""
+            fill
+            sizes="(max-width: 720px) 100vw, 72rem"
+            unoptimized
+          />
+        </motion.div>
         {/* céu de estrelinhas embaixo dos ANJINHOS do beijo (mantidos) */}
         <AsciiDivider pattern=".・。.・゜✭・.・✫・゜・。" size=".85rem" opacity={0.5} style={{ width: "100%" }} />
       </div>

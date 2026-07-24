@@ -1,8 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import { useCallback, useId, useRef, useState } from "react";
-import { useT } from "@/i18n/LanguageContext";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 
 export type ConstellationNode = {
   label: string;
@@ -56,8 +55,25 @@ const connections: Array<[number, number]> = [
   [3, 2],
 ];
 
+const ASCII_WEAVE = String.raw`
+⠂  ·  ✦       ⠄        / / /       ⊹       ────       ⠁
+   ⠿      ·       ⋆             ⠂       +       ⠄
+─ ─ ─ ─       ⠁     ╳       ⠈       · · ·       ✧
+      ⠂    /       ⊹       ⠿             ───
+⠄       ⋆      ·        ⠁      / /       ✦       ⠂
+  · ·       ⠿       ╳          ⠄       ─ ─ ─
+✧       ⠁        /       ·          ⊹          ⠂
+   ⠄        ────      ⋆       ⠿        ·        ╳
+⠂      +        ⠁          / / /       ✦       ⠄
+   ·        ⊹        ─ ─ ─       ⠂         ✧
+`;
+
 const allConnectionIndexes = connections.map((_, index) => index);
-const stitchDuration = 0.46;
+const CRAWLER_GLYPHS = ["⠂", "✦", "·", "⠄"] as const;
+const STITCH_GLYPHS = ["⠂", "·", "✦", "⠄", "×", "·", "⠁", "⋆"] as const;
+/* Três tokens --duration-slow: passagem dos símbolos + tempo para o rastro assentar. */
+const stitchDuration = 1.5;
+const stitchTravelEnd = 0.82;
 
 const styles = `
   .sc {
@@ -67,7 +83,7 @@ const styles = `
     isolation: isolate;
     background:
       radial-gradient(circle at 48% 42%, color-mix(in srgb, var(--ink) 4%, transparent), transparent 64%),
-      url("/img/paper-noise.png");
+      url("/img/paper-noise.webp");
     background-size: 100% 100%, 170px 170px;
     padding-bottom: 5.5rem;
   }
@@ -79,23 +95,61 @@ const styles = `
     border: 1px solid color-mix(in srgb, var(--ink) 10%, transparent);
     pointer-events: none;
   }
-  .sc__hint {
+  .sc::after {
+    content: "┌─ textile.interface / 01—06 ─┐";
     position: absolute;
-    z-index: 6;
-    top: .9rem;
-    left: 1rem;
-    margin: 0;
+    z-index: 2;
+    right: 1.35rem;
+    bottom: 1.1rem;
     color: var(--ink);
-    font-family: var(--font-head);
-    font-size: var(--type-micro);
-    font-style: italic;
-    letter-spacing: .01em;
-    opacity: .58;
-    rotate: -1.4deg;
-    transition: opacity .35s ease;
+    font-family: var(--font-mono), monospace;
+    font-size: .58rem;
+    letter-spacing: .08em;
+    opacity: .22;
     pointer-events: none;
   }
-  .sc[data-touched="true"] .sc__hint { opacity: .22; }
+  .sc__ascii-field {
+    position: absolute;
+    z-index: 0;
+    inset: 2.4rem 3rem 4.8rem;
+    margin: 0;
+    overflow: hidden;
+    color: var(--ink);
+    font-family: var(--font-braille), var(--font-mono), monospace;
+    font-size: clamp(.56rem, .78vw, .78rem);
+    line-height: 2.25;
+    letter-spacing: .12em;
+    white-space: pre;
+    opacity: .19;
+    rotate: -.35deg;
+    pointer-events: none;
+    -webkit-mask-image: radial-gradient(ellipse 82% 74% at 50% 49%, #000 32%, transparent 100%);
+    mask-image: radial-gradient(ellipse 82% 74% at 50% 49%, #000 32%, transparent 100%);
+  }
+  .sc__register {
+    position: absolute;
+    z-index: 2;
+    top: 1.15rem;
+    right: 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    color: var(--ink);
+    font-family: var(--font-mono), monospace;
+    font-size: .59rem;
+    letter-spacing: .1em;
+    opacity: .3;
+    pointer-events: none;
+  }
+  .sc__register::before {
+    content: "⊹";
+    display: grid;
+    place-items: center;
+    width: 1.1rem;
+    height: 1.1rem;
+    border: 1px solid color-mix(in srgb, var(--ink) 28%, transparent);
+    border-radius: 50%;
+  }
   .sc__lines,
   .sc__nodes {
     position: absolute;
@@ -112,35 +166,42 @@ const styles = `
   .sc__thread {
     color: var(--ink);
     opacity: 0;
-    transition: opacity .25s ease;
+    transition: opacity var(--duration-slow) var(--ease-out);
   }
   .sc__thread[data-sewn="true"] { opacity: .46; }
   .sc__thread[data-sewn="true"][data-related="true"] { opacity: .76; }
   .sc__thread-indent {
-    opacity: .08;
-    filter: blur(.25px);
+    opacity: .045;
+    filter: blur(.45px);
   }
-  .sc__thread-shadow {
-    opacity: .68;
-    filter: drop-shadow(.7px 1px .3px color-mix(in srgb, var(--ink) 22%, transparent));
+  .sc__ascii-stitch {
+    fill: currentColor;
+    font-family: var(--font-braille), var(--font-mono), monospace;
+    font-size: 1.34px;
+    font-weight: 650;
+    text-rendering: geometricPrecision;
+    filter:
+      drop-shadow(.42px .58px .2px color-mix(in srgb, var(--ink) 24%, transparent))
+      drop-shadow(-.32px -.32px 0 color-mix(in srgb, white 42%, transparent));
   }
-  .sc__thread-fibre {
-    color: color-mix(in srgb, var(--paper) 72%, white);
-    opacity: .6;
+  .sc__ascii-stitch[data-accent="true"] {
+    font-size: 1.58px;
   }
   .sc__puncture {
     color: var(--ink);
-    opacity: .55;
+    opacity: .28;
   }
   .sc__thread--active {
     color: var(--ink);
     opacity: .92;
   }
-  .sc__needle {
+  .sc__crawler {
     color: var(--ink);
-    filter:
-      drop-shadow(.8px 1px .35px color-mix(in srgb, var(--ink) 25%, transparent))
-      drop-shadow(-.5px -.5px 0 color-mix(in srgb, white 48%, transparent));
+    fill: currentColor;
+    font-family: var(--font-braille), var(--font-mono), monospace;
+    font-size: 1.62px;
+    font-weight: 700;
+    filter: drop-shadow(.45px .65px .25px color-mix(in srgb, var(--ink) 28%, transparent));
   }
   .sc__node {
     position: absolute;
@@ -168,7 +229,7 @@ const styles = `
       linear-gradient(112deg, color-mix(in srgb, white 38%, transparent), transparent 46%, color-mix(in srgb, var(--ink) 5%, transparent)),
       repeating-linear-gradient(0deg, transparent 0 2px, color-mix(in srgb, var(--ink) 3%, transparent) 2px 3px),
       repeating-linear-gradient(90deg, transparent 0 3px, color-mix(in srgb, white 15%, transparent) 3px 4px),
-      url("/img/paper-noise.png"),
+      url("/img/paper-noise.webp"),
       color-mix(in srgb, var(--paper) 94%, white);
     background-size: 100% 100%, 100% 100%, 100% 100%, 145px 145px, 100% 100%;
     box-shadow:
@@ -177,10 +238,10 @@ const styles = `
     rotate: var(--sc-rotation);
     transform-origin: 50% .42rem;
     transition:
-      border-color .25s ease,
-      box-shadow .3s cubic-bezier(.16,1,.3,1),
-      filter .3s cubic-bezier(.16,1,.3,1),
-      translate .3s cubic-bezier(.16,1,.3,1);
+      border-color var(--duration-fast) var(--ease-default),
+      box-shadow var(--duration-normal) var(--ease-out),
+      filter var(--duration-normal) var(--ease-out),
+      translate var(--duration-normal) var(--ease-out);
   }
   .sc__strip::before {
     content: "";
@@ -222,7 +283,9 @@ const styles = `
     font-family: var(--font-mono), monospace;
     font-size: 1rem;
     line-height: 1;
-    transition: rotate .28s cubic-bezier(.16,1,.3,1), scale .28s cubic-bezier(.16,1,.3,1);
+    transition:
+      rotate var(--duration-normal) var(--ease-spring),
+      scale var(--duration-normal) var(--ease-spring);
   }
   .sc__node:hover .sc__glyph,
   .sc__node[data-active="true"] .sc__glyph {
@@ -235,6 +298,15 @@ const styles = `
     font-weight: 700;
     letter-spacing: .12em;
     text-transform: lowercase;
+  }
+  .sc__code {
+    align-self: flex-end;
+    margin-left: .1rem;
+    font-family: var(--font-mono), monospace;
+    font-size: .52rem;
+    font-weight: 400;
+    letter-spacing: .04em;
+    opacity: .34;
   }
   .sc__node[data-active="true"] .sc__name { letter-spacing: .145em; }
   .sc__detail {
@@ -254,7 +326,7 @@ const styles = `
     border: 1px solid color-mix(in srgb, var(--ink) 20%, transparent);
     background:
       linear-gradient(96deg, color-mix(in srgb, white 24%, transparent), transparent 52%),
-      url("/img/paper-noise.png"),
+      url("/img/paper-noise.webp"),
       color-mix(in srgb, var(--paper) 95%, white);
     background-size: 100% 100%, 145px 145px, 100% 100%;
     box-shadow: 5px 6px 0 color-mix(in srgb, var(--ink) 8%, transparent);
@@ -264,6 +336,19 @@ const styles = `
     font-style: italic;
     text-align: left;
   }
+  .sc__detail::before,
+  .sc__detail::after {
+    content: "· × · × · × · × · × ·";
+    position: absolute;
+    left: 1rem;
+    color: var(--ink);
+    font-family: var(--font-mono), monospace;
+    font-size: .48rem;
+    letter-spacing: .12em;
+    opacity: .24;
+  }
+  .sc__detail::before { top: -.42rem; }
+  .sc__detail::after { right: 1rem; bottom: -.46rem; text-align: right; }
   .sc__detail-key {
     font-family: var(--font-mono), monospace;
     font-size: var(--type-micro);
@@ -277,7 +362,14 @@ const styles = `
   @media (max-width: 720px) {
     .sc { min-height: 25rem; padding-bottom: 5.3rem; }
     .sc::before { inset: .5rem; }
-    .sc__hint { top: .65rem; left: .75rem; font-size: var(--type-micro); }
+    .sc__ascii-field {
+      inset: 2.5rem 1rem 5.2rem;
+      font-size: .52rem;
+      line-height: 2.55;
+      opacity: .13;
+    }
+    .sc__register,
+    .sc::after { display: none; }
     .sc__strip {
       min-height: var(--tap-min);
       gap: .33rem;
@@ -285,6 +377,7 @@ const styles = `
     }
     .sc__name { font-size: var(--type-micro); letter-spacing: .055em; }
     .sc__glyph { font-size: .77rem; }
+    .sc__code { display: none; }
     .sc__detail {
       width: calc(100% - 1.25rem);
       min-height: 4rem;
@@ -297,7 +390,6 @@ const styles = `
     .sc__detail-key { font-size: var(--type-micro); }
   }
   @media (prefers-reduced-motion: reduce) {
-    .sc__hint,
     .sc__thread,
     .sc__strip,
     .sc__glyph { transition: none; }
@@ -332,29 +424,18 @@ function connectionPath(from: Point, to: Point) {
     .join(" ");
 }
 
-function visibleStitches(from: Point, to: Point) {
-  const points = stitchPoints(from, to);
-  return points.slice(0, -1).flatMap((point, index) => {
-    if (index % 2 !== 0) return [];
-    const end = points[index + 1];
-    const dx = end.x - point.x;
-    const dy = end.y - point.y;
-    const length = Math.hypot(dx, dy) || 1;
-    const bend = index % 4 === 0 ? 0.14 : -0.14;
-    const middleX = (point.x + end.x) / 2 + (-dy / length) * bend;
-    const middleY = (point.y + end.y) / 2 + (dx / length) * bend;
-    return [{
-      path: `M ${point.x} ${point.y} Q ${middleX} ${middleY} ${end.x} ${end.y}`,
-      start: point,
-      end,
-    }];
-  });
+function asciiStitches(from: Point, to: Point) {
+  return stitchPoints(from, to).map((point, index) => ({
+    ...point,
+    glyph: STITCH_GLYPHS[index % STITCH_GLYPHS.length],
+    accent: index % 4 === 2,
+    puncture: index % 3 === 0,
+  }));
 }
 
 export default function SkillConstellation({ nodes }: { nodes: ConstellationNode[] }) {
   const placed = nodes.slice(0, positions.length);
   const [active, setActive] = useState(0);
-  const [touched, setTouched] = useState(false);
   const [sewn, setSewn] = useState<Set<number>>(() => new Set());
   const [run, setRun] = useState<StitchRun | null>(null);
   const [impact, setImpact] = useState<Impact>({ node: -1, from: -1, version: 0 });
@@ -364,7 +445,6 @@ export default function SkillConstellation({ nodes }: { nodes: ConstellationNode
   const rawId = useId();
   const componentId = rawId.replaceAll(":", "");
   const detailId = `${componentId}-detail`;
-  const { lang } = useT();
 
   const startRun = useCallback((segments: StitchSegment[], reset = false) => {
     if (segments.length === 0) return;
@@ -390,7 +470,6 @@ export default function SkillConstellation({ nodes }: { nodes: ConstellationNode
     setActive(index);
     if (!stitch) return;
 
-    setTouched(true);
     setSewn(new Set(allConnectionIndexes));
 
     if (reduceMotion) return;
@@ -412,7 +491,7 @@ export default function SkillConstellation({ nodes }: { nodes: ConstellationNode
   const currentTo = currentSegment ? positions[currentSegment.to] : null;
   const activePath = currentFrom && currentTo ? connectionPath(currentFrom, currentTo) : "";
 
-  const finishSegment = (finishedRun: number, finishedStep: number) => {
+  const finishSegment = useCallback((finishedRun: number, finishedStep: number) => {
     if (!run || run.id !== finishedRun || run.step !== finishedStep) return;
     const segment = run.segments[run.step];
 
@@ -432,47 +511,49 @@ export default function SkillConstellation({ nodes }: { nodes: ConstellationNode
     } else {
       setRun(null);
     }
-  };
+  }, [run]);
+
+  /*
+   * O relógio da costura é independente do callback visual do SVG.
+   * Assim, cada ponto mantém seu tempo de travessia e assentamento mesmo
+   * quando o navegador reaproveita o elemento de máscara entre segmentos.
+   */
+  useEffect(() => {
+    if (!run || reduceMotion) return;
+    const currentRun = run.id;
+    const currentStep = run.step;
+    const timer = window.setTimeout(
+      () => finishSegment(currentRun, currentStep),
+      stitchDuration * 1000,
+    );
+    return () => window.clearTimeout(timer);
+  }, [finishSegment, reduceMotion, run]);
 
   const relatedConnections = new Set(
     connections.flatMap(([a, b], index) => (a === active || b === active ? [index] : [])),
   );
 
-  const needle = currentFrom && currentTo
+  const crawler = currentFrom && currentTo
     ? (() => {
         const dx = currentTo.x - currentFrom.x;
         const dy = currentTo.y - currentFrom.y;
         const length = Math.hypot(dx, dy) || 1;
         const ux = dx / length;
         const uy = dy / length;
-        return {
-          start: {
-            x1: currentFrom.x - ux * 2.35,
-            y1: currentFrom.y - uy * 2.35,
-            x2: currentFrom.x + ux * 0.7,
-            y2: currentFrom.y + uy * 0.7,
-            eyeX: currentFrom.x - ux * 2.05,
-            eyeY: currentFrom.y - uy * 2.05,
-          },
-          end: {
-            x1: currentTo.x - ux * 2.35,
-            y1: currentTo.y - uy * 2.35,
-            x2: currentTo.x + ux * 0.7,
-            y2: currentTo.y + uy * 0.7,
-            eyeX: currentTo.x - ux * 2.05,
-            eyeY: currentTo.y - uy * 2.05,
-          },
-        };
+        return { ux, uy };
       })()
     : null;
 
   return (
-    <div className="sc" data-touched={touched ? "true" : "false"}>
+    <div className="sc">
       <style>{styles}</style>
 
-      <p className="sc__hint" aria-hidden="true">
-        {lang === "pt" ? "( toque nas amostras ✳︎ — a agulha responde )" : "( touch the samples ✳︎ — the needle responds )"}
-      </p>
+      <pre className="sc__ascii-field" aria-hidden="true">
+        {ASCII_WEAVE}
+      </pre>
+      <div className="sc__register" aria-hidden="true">
+        ⠿ [ ascii × matéria ]
+      </div>
 
       <svg className="sc__lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
         {connections.map(([from, to], connection) => (
@@ -491,45 +572,35 @@ export default function SkillConstellation({ nodes }: { nodes: ConstellationNode
                 strokeLinecap="round"
                 vectorEffect="non-scaling-stroke"
               />
-              {visibleStitches(positions[from], positions[to]).map((stitch, stitchIndex) => (
+              {asciiStitches(positions[from], positions[to]).map((stitch, stitchIndex) => (
                 <g key={stitchIndex}>
-                  <path
-                    className="sc__thread-shadow"
-                    d={stitch.path}
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.2"
-                    strokeLinecap="round"
-                    vectorEffect="non-scaling-stroke"
-                  />
-                  <path
-                    className="sc__thread-fibre"
-                    d={stitch.path}
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth=".34"
-                    strokeLinecap="round"
-                    vectorEffect="non-scaling-stroke"
-                  />
-                  {[stitch.start, stitch.end].map((point, pointIndex) => (
+                  {stitch.puncture && (
                     <circle
-                      key={pointIndex}
                       className="sc__puncture"
-                      cx={point.x}
-                      cy={point.y}
-                      r=".23"
+                      cx={stitch.x}
+                      cy={stitch.y}
+                      r=".16"
                       fill="var(--paper)"
                       stroke="currentColor"
-                      strokeWidth=".42"
+                      strokeWidth=".28"
                       vectorEffect="non-scaling-stroke"
-                    />
-                  ))}
+                    />)}
+                  <text
+                    className="sc__ascii-stitch"
+                    x={stitch.x}
+                    y={stitch.y}
+                    textAnchor="middle"
+                    dominantBaseline="central"
+                    data-accent={stitch.accent ? "true" : "false"}
+                  >
+                    {stitch.glyph}
+                  </text>
                 </g>
               ))}
           </g>
         ))}
 
-        {!reduceMotion && run && currentSegment && currentFrom && currentTo && needle && (
+        {!reduceMotion && run && currentSegment && currentFrom && currentTo && crawler && (
           <g key={`${run.id}-${run.step}`}>
             <mask
               id={`${componentId}-mask-${run.id}-${run.step}`}
@@ -540,15 +611,19 @@ export default function SkillConstellation({ nodes }: { nodes: ConstellationNode
               maskUnits="userSpaceOnUse"
             >
               <motion.path
+                key={`mask-${run.id}-${run.step}`}
                 d={activePath}
                 fill="none"
                 stroke="white"
                 strokeWidth="4"
                 strokeLinecap="round"
                 initial={{ pathLength: 0 }}
-                animate={{ pathLength: 1 }}
-                transition={{ duration: stitchDuration, ease: [0.87, 0, 0.13, 1] }}
-                onAnimationComplete={() => finishSegment(run.id, run.step)}
+                animate={{ pathLength: [0, 1, 1] }}
+                transition={{
+                  duration: stitchDuration,
+                  times: [0, stitchTravelEnd, 1],
+                  ease: [0.45, 0, 0.18, 1],
+                }}
               />
             </mask>
 
@@ -556,87 +631,64 @@ export default function SkillConstellation({ nodes }: { nodes: ConstellationNode
               className="sc__thread--active"
               mask={`url(#${componentId}-mask-${run.id}-${run.step})`}
             >
-              {visibleStitches(currentFrom, currentTo).map((stitch, stitchIndex) => (
+              {asciiStitches(currentFrom, currentTo).map((stitch, stitchIndex) => (
                 <g key={stitchIndex}>
-                  <path
-                    d={stitch.path}
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.25"
-                    strokeLinecap="round"
-                    vectorEffect="non-scaling-stroke"
-                  />
-                  <path
-                    className="sc__thread-fibre"
-                    d={stitch.path}
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth=".34"
-                    strokeLinecap="round"
-                    vectorEffect="non-scaling-stroke"
-                  />
-                  {[stitch.start, stitch.end].map((point, pointIndex) => (
+                  {stitch.puncture && (
                     <circle
-                      key={pointIndex}
                       className="sc__puncture"
-                      cx={point.x}
-                      cy={point.y}
-                      r=".23"
+                      cx={stitch.x}
+                      cy={stitch.y}
+                      r=".16"
                       fill="var(--paper)"
                       stroke="currentColor"
-                      strokeWidth=".42"
+                      strokeWidth=".28"
                       vectorEffect="non-scaling-stroke"
-                    />
-                  ))}
+                    />)}
+                  <text
+                    className="sc__ascii-stitch"
+                    x={stitch.x}
+                    y={stitch.y}
+                    textAnchor="middle"
+                    dominantBaseline="central"
+                    data-accent={stitch.accent ? "true" : "false"}
+                  >
+                    {stitch.glyph}
+                  </text>
                 </g>
               ))}
             </g>
 
-            <motion.line
-              className="sc__needle"
-              stroke="currentColor"
-              strokeWidth="1.35"
-              strokeLinecap="round"
-              vectorEffect="non-scaling-stroke"
-              initial={{
-                x1: needle.start.x1,
-                y1: needle.start.y1,
-                x2: needle.start.x2,
-                y2: needle.start.y2,
-                opacity: 0,
-              }}
-              animate={{
-                x1: needle.end.x1,
-                y1: needle.end.y1,
-                x2: needle.end.x2,
-                y2: needle.end.y2,
-                opacity: [0, 1, 1, 0],
-              }}
-              transition={{
-                duration: stitchDuration,
-                ease: [0.87, 0, 0.13, 1],
-                opacity: { times: [0, 0.08, 0.86, 1] },
-              }}
-            />
-            <motion.circle
-              className="sc__needle"
-              r=".42"
-              fill="var(--paper)"
-              stroke="currentColor"
-              strokeWidth=".65"
-              vectorEffect="non-scaling-stroke"
-              initial={{ cx: needle.start.eyeX, cy: needle.start.eyeY, opacity: 0 }}
-              animate={{
-                cx: needle.end.eyeX,
-                cy: needle.end.eyeY,
-                opacity: [0, 1, 1, 0],
-              }}
-              transition={{
-                duration: stitchDuration,
-                ease: [0.87, 0, 0.13, 1],
-                opacity: { times: [0, 0.08, 0.86, 1] },
-              }}
-            />
+            {CRAWLER_GLYPHS.map((glyph, glyphIndex) => {
+              const trail = glyphIndex * 0.72;
+              const startX = currentFrom.x - crawler.ux * trail;
+              const startY = currentFrom.y - crawler.uy * trail;
+              const endX = currentTo.x - crawler.ux * trail;
+              const endY = currentTo.y - crawler.uy * trail;
+              const middleX = startX + (endX - startX) * 0.76;
+              const middleY = startY + (endY - startY) * 0.76;
+
+              return (
+                <motion.text
+                  key={`crawler-${run.id}-${run.step}-${glyphIndex}`}
+                  className="sc__crawler"
+                  textAnchor="middle"
+                  dominantBaseline="central"
+                  initial={{ x: startX, y: startY, opacity: 0 }}
+                  animate={{
+                    x: [startX, startX, middleX, endX, endX],
+                    y: [startY, startY, middleY, endY, endY],
+                    opacity: [0, 0.88, 0.88, 0.58, 0],
+                  }}
+                  transition={{
+                    duration: stitchDuration,
+                    times: [0, 0.08, 0.7, stitchTravelEnd, 1],
+                    ease: [0.45, 0, 0.18, 1],
+                  }}
+                >
+                  {glyph}
+                </motion.text>
+              );
+            })}
           </g>
         )}
       </svg>
@@ -703,10 +755,17 @@ export default function SkillConstellation({ nodes }: { nodes: ConstellationNode
                       rotate: [0, pullX * 0.72, pullX * -0.34, 0],
                     }
                   : undefined}
-                transition={{ duration: 0.34, ease: [0.16, 1, 0.3, 1] }}
+                transition={{
+                  duration: reduceMotion ? 0 : 0.72,
+                  times: [0, 0.24, 0.56, 1],
+                  ease: [0.22, 1, 0.36, 1],
+                }}
               >
                 <span className="sc__glyph" aria-hidden="true">{positions[index].glyph}</span>
                 <span className="sc__name">{node.label}</span>
+                <span className="sc__code" aria-hidden="true">
+                  [{String(index + 1).padStart(2, "0")}]
+                </span>
               </motion.span>
             </motion.button>
           );

@@ -248,7 +248,7 @@ const styles = `
     background-image:
       repeating-linear-gradient(0deg, transparent 0 3px, rgba(28,27,24,.025) 3px 4px),
       repeating-linear-gradient(90deg, transparent 0 4px, rgba(255,255,255,.1) 4px 5px),
-      url("/img/paper-noise.png"),
+      url("/img/paper-noise.webp"),
       linear-gradient(118deg, rgba(255,255,255,.28), transparent 58%);
     background-size: 100% 100%, 100% 100%, 150px 150px, 100% 100%;
     box-shadow:

@@ -32,15 +32,15 @@ import { useCreativeStudio } from "./CreativeStudio";
 // mantendo a alternância esq/dir da colagem (cara de readymag).
 const SPOTS = [
   { left: "2%",  top: "0rem",   w: "clamp(300px, 46vw, 700px)", ratio: 0.562, rot: -2 }, // isadora 1920x1080
-  { left: "62%", top: "28rem",  w: "clamp(224px, 38.4vw, 576px)", ratio: 0.667, rot: 3 },  // helvetica 948x632
+  { left: "62%", top: "7rem",   w: "clamp(224px, 38.4vw, 576px)", ratio: 0.667, rot: 3 },  // helvetica 948x632 — sobe pra parear c/ isadora no topo (respiro: o topo-direita não fica vazio)
   { left: "30%", top: "59rem",  w: "clamp(320px, 52vw, 780px)", ratio: 0.498, rot: 1 },  // genlab 1743x868
   { left: "2%",  top: "90rem",  w: "clamp(300px, 38.4vw, 564px)", ratio: 0.562, rot: -4 }, // ebat 2400x1350
-  { left: "52%", top: "116rem", w: "clamp(280px, 40vw, 600px)", ratio: 0.494, rot: 2 },  // graduation animacao.webp 1000x494
+  { left: "52%", top: "116rem", w: "clamp(280px, 40vw, 600px)", ratio: 0.494, rot: 2 },  // graduation animacao-poster.webp 1000x494
   { left: "6%",  top: "142rem", w: "clamp(340px, 58vw, 880px)", ratio: 0.319, rot: -1 }, // pilotis 1600x511
   { left: "66%", top: "167rem", w: "clamp(250px, 30vw, 460px)", ratio: 0.667, rot: 4 },  // chinario 1600x1068
   { left: "8%",  top: "192rem", w: "clamp(320px, 54vw, 820px)", ratio: 0.562, rot: -2 }, // hologlam trio 1600x900 (recorte dela)
   { left: "56%", top: "226rem", w: "clamp(280px, 42vw, 640px)", ratio: 0.708, rot: 3 },  // vegcoz capa.png 1400x991 (recorte dela)
-  { left: "8%",  top: "258rem", w: "clamp(270px, 35vw, 520px)", ratio: 0.8, rot: -2 },   // ondularis capa 1080x1350
+  { left: "8%",  top: "258rem", w: "clamp(270px, 35vw, 520px)", ratio: 1.25, rot: -2 },  // ondularis capa 1080x1350
 ];
 
 // Uma cor por projeto, DERIVADA da capa real (tom característico, clampado pra
@@ -65,7 +65,7 @@ const MOTION_EASE_OUT = [0.16, 1, 0.3, 1] as const;
 
 const styles = `
   .sw {
-    --sw-paper-grain: url("/img/paper-noise.png");
+    --sw-paper-grain: url("/img/paper-noise.webp");
     --duration-ambient-a: 80s;
     --duration-ambient-b: 95s;
     position: relative;
@@ -623,8 +623,10 @@ export default function ScatteredWorks({ items, bgWord }: { items: IndexItem[]; 
             faixa — sempre visível ao rolar. Faixas (y em rem): c0 esq 0-27 ·
             c1 dir 30-57 · c2 centro 64-91 · c3 esq 98-121 · c4 dir 127-149 ·
             c5 esq 156-177 · c6 dir 184-206 · c7 esq 213-244 · c8 dir 251-282 */}
+        {/* ESFERA desceu: o card helvetica subiu pro topo-direita, então a voluta
+            vai pro vão novo entre ele e o genlab (antes flutuava sozinha no topo) */}
         <BrailleDeco art={ESFERA} fontSize={10} opacity={0.38} color="var(--ink)"
-          className="sw__deco" style={{ left: "62%", top: "3rem" }} />
+          className="sw__deco" style={{ left: "66%", top: "40rem" }} />
         {/* voluta DE VOLTA ao lugar original dela (ela: "volta o outro pro lugar") */}
         <BrailleDeco art={ORNAMENTAL} fontSize={8.5} opacity={0.42} color="var(--ink)"
           className="sw__deco" style={{ left: "48%", top: "101rem" }} />

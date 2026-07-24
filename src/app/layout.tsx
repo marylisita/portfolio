@@ -52,7 +52,7 @@ const braille = localFont({
 });
 
 const offBit = localFont({
-  src: "./fonts/OffBit-DotBold.ttf",
+  src: "./fonts/OffBit-DotBold.woff2",
   weight: "700",
   style: "normal",
   variable: "--font-offbit",
@@ -74,6 +74,15 @@ export default function RootLayout({
     <html lang="en" className={`${aeonik.variable} ${itcGaramond.variable} ${spaceMono.variable} ${seratonin.variable} ${braille.variable} ${offBit.variable}`}>
       <head>
         <link rel="preconnect" href="https://use.typekit.net" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://p.typekit.net" crossOrigin="anonymous" />
+        <link
+          rel="preload"
+          href="https://use.typekit.net/af/c7c109/0000000000000000774f2b0a/31/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+        <link rel="stylesheet" href="https://use.typekit.net/knv7rew.css" />
       </head>
       <body className="antialiased">
         <LanguageProvider>
@@ -90,7 +99,7 @@ export default function RootLayout({
                 inset: 0,
                 zIndex: 950,
                 pointerEvents: "none",
-                backgroundImage: "url('/img/paper-noise.png')",
+                backgroundImage: "url('/img/paper-noise.webp')",
                 backgroundSize: "180px 180px",
                 opacity: 0.065,
                 mixBlendMode: "multiply",

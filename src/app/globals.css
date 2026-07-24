@@ -1,8 +1,13 @@
 /* PF Pixelscript (caligrafia pixelada, escolha dela) — servida pelo Adobe Fonts
    (web project dela); o visitante NÃO precisa ter a fonte. Se a assinatura
    Adobe expirar, cai no fallback definido em --font-pixelscript. */
-@import url("https://use.typekit.net/knv7rew.css");
 @import "tailwindcss";
+
+@keyframes miniAsciiPulse {
+    0% { transform: scale(0.7) rotate(-10deg); opacity: 0.4; }
+    50% { transform: scale(1.15) rotate(15deg); opacity: 1; }
+    100% { transform: scale(1) rotate(0deg); opacity: 0.9; }
+}
 
 
 /* ==========================================

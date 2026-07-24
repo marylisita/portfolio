@@ -239,7 +239,7 @@ const styles = `
     background-color: var(--paper-sheet);
     background-image:
       repeating-linear-gradient(0deg, transparent 0 3px, rgba(28,27,24,.025) 3px 4px),
-      url("/img/paper-noise.png"),
+      url("/img/paper-noise.webp"),
       linear-gradient(120deg, rgba(255,255,255,.3), transparent 62%);
     background-size: 100% 100%, 150px 150px, 100% 100%;
     box-shadow:
@@ -301,7 +301,7 @@ const styles = `
     background-color: var(--paper-sheet);
     background-image:
       repeating-linear-gradient(0deg, transparent 0 3px, rgba(28,27,24,.025) 3px 4px),
-      url("/img/paper-noise.png");
+      url("/img/paper-noise.webp");
     background-size: 100% 100%, 130px 130px;
     box-shadow: 3px 3px 0 var(--paper-shadow);
     font-family: var(--font-subtitle), monospace;

@@ -95,7 +95,7 @@ const styles = `
     background-color: var(--paper-sheet);
     background-image:
       repeating-linear-gradient(0deg, transparent 0 3px, rgba(28,27,24,.025) 3px 4px),
-      url("/img/paper-noise.png");
+      url("/img/paper-noise.webp");
     background-size: 100% 100%, 140px 140px;
     box-shadow: 3px 4px 0 var(--paper-shadow);
     rotate: -.25deg;

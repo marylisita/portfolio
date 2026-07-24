@@ -108,13 +108,6 @@ function ScrambleTextContent({ text }: { text: string }) {
 
   return (
     <span aria-label={text} style={{ display: "inline", whiteSpace: "pre-wrap" }}>
-      <style>{`
-        @keyframes miniAsciiPulse {
-          0% { transform: scale(0.7) rotate(-10deg); opacity: 0.4; }
-          50% { transform: scale(1.15) rotate(15deg); opacity: 1; }
-          100% { transform: scale(1) rotate(0deg); opacity: 0.9; }
-        }
-      `}</style>
       {states.map((st, i) => {
         const isSpace = st.original === " ";
         if (isSpace) {

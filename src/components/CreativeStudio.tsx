@@ -357,7 +357,7 @@ const controlsStyles = `
     background-color: var(--paper-sheet);
     background-image:
       repeating-linear-gradient(0deg, transparent 0 3px, color-mix(in srgb, var(--ink) 2.5%, transparent) 3px 4px),
-      url("/img/paper-noise.png");
+      url("/img/paper-noise.webp");
     background-size: 100% 100%, 130px 130px;
     border: 1px solid var(--paper-edge);
     box-shadow: 4px 5px 0 var(--paper-shadow);

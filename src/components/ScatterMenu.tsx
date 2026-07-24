@@ -26,11 +26,11 @@ const styles = `
     position: absolute;
     z-index: 10;
     display: inline-block;
-    font-family: var(--font-body);
+    font-family: var(--font-subtitle), monospace;
     font-size: .95rem;
-    font-weight: 600;
+    font-weight: var(--offbit-weight-active);
     text-transform: lowercase;
-    letter-spacing: .05em;
+    letter-spacing: var(--offbit-letter-spacing);
     background: var(--ink);
     color: var(--paper);
     border: 1px solid var(--ink);
