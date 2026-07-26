@@ -69,8 +69,10 @@ const styles = `
   .vz-lead {
     font-family: var(--font-head); font-weight: 400;
     font-size: clamp(1.4rem, 3.4vw, 2.5rem); line-height: 1.25;
-    max-width: var(--measure-section-title); margin: 0;
-    text-wrap: balance;
+    /* Este é um texto de contexto, não um título: a medida curta de heading
+       deixava a abertura fragmentada e criava um vazio desproporcional. */
+    max-width: min(100%, 31ch); margin: 0;
+    text-wrap: pretty;
   }
   .vz-kicker {
     font-family: var(--font-subtitle, var(--font-mono)); font-size: var(--type-micro);

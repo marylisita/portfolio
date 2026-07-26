@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
+import HeroButton from "./HeroButton";
 
 /**
  * Menu criativo (referência: os rótulos soltos do barbianaliu.com, na NOSSA
@@ -22,42 +23,21 @@ export type MenuItem = {
 };
 
 const styles = `
-  .sm__tag {
+  .sm__tag-wrapper {
     position: absolute;
     z-index: 10;
     display: inline-block;
+  }
+  .sm__tag-wrapper:focus-within {
+    outline: 2px dotted var(--site-ink);
+    outline-offset: 4px;
+  }
+  .sm__label {
     font-family: var(--font-subtitle), monospace;
     font-size: .95rem;
     font-weight: var(--offbit-weight-active);
     text-transform: lowercase;
     letter-spacing: var(--offbit-letter-spacing);
-    background: var(--ink);
-    color: var(--paper);
-    border: 1px solid var(--ink);
-    padding: .55rem 1.15rem;
-    text-decoration: none;
-    cursor: pointer;
-    white-space: nowrap;
-    box-shadow: 4px 4px 0 color-mix(in srgb, var(--ink) 18%, transparent);
-    transition:
-      background var(--duration-fast) var(--ease-default),
-      color var(--duration-fast) var(--ease-default),
-      box-shadow var(--duration-fast) var(--ease-out),
-      translate var(--duration-fast) var(--ease-out);
-  }
-  .sm__tag:hover {
-    background: var(--ink);
-    color: var(--paper);
-    translate: -2px -2px;
-    box-shadow: 7px 7px 0 color-mix(in srgb, var(--ink) 20%, transparent);
-  }
-  .sm__tag:active {
-    translate: 3px 3px;
-    box-shadow: 1px 1px 0 color-mix(in srgb, var(--ink) 12%, transparent);
-  }
-  .sm__tag:focus-visible {
-    outline: 2px solid var(--ink);
-    outline-offset: 6px;
   }
   .sm__label {
     display: inline-flex;
@@ -253,12 +233,9 @@ export default function ScatterMenu({ items }: { items: MenuItem[] }) {
 
       {/* etiquetas espalhadas no hero */}
       {items.map((it, i) => (
-        <motion.a
+        <motion.div
           key={it.label}
-          className="sm__tag sm__tag--hero hover-trigger"
-          data-priority={it.priority}
-          href={it.href}
-          onClick={(e) => go(e, it.href)}
+          className="sm__tag-wrapper sm__tag--hero"
           style={{ left: it.left, top: it.top }}
           initial={reduceMotion ? false : { opacity: 0, scale: 0.5, rotate: it.rotate }}
           animate={{
@@ -268,7 +245,9 @@ export default function ScatterMenu({ items }: { items: MenuItem[] }) {
           }}
           transition={{ delay: reduceMotion || pinned ? 0 : 1.3 + i * 0.12, duration: reduceMotion ? 0 : 0.45, ease: [0.16, 1, 0.3, 1] }}
         >
-          <span className="sm__label">[ {it.label} ]</span>
+          <HeroButton href={it.href} onClick={(e) => go(e as any, it.href)} className="sm__label">
+            {`[ ${it.label} ]`}
+          </HeroButton>
           {it.previews?.length ? (
             <span className="sm__portal" aria-hidden="true">
               {it.previews.slice(0, 3).map((preview) => (
@@ -278,7 +257,7 @@ export default function ScatterMenu({ items }: { items: MenuItem[] }) {
               ))}
             </span>
           ) : null}
-        </motion.a>
+        </motion.div>
       ))}
 
       {/* molhinho fixo no canto depois que o hero sai de cena */}
@@ -292,12 +271,9 @@ export default function ScatterMenu({ items }: { items: MenuItem[] }) {
             transition={{ duration: reduceMotion ? 0 : 0.4, ease: [0.16, 1, 0.3, 1] }}
           >
             {items.map((it, i) => (
-              <motion.a
+              <motion.div
                 key={it.label}
-                className="sm__tag hover-trigger"
-                data-priority={it.priority}
-                href={it.href}
-                onClick={(e) => go(e, it.href)}
+                className="sm__tag-wrapper"
                 initial={reduceMotion ? false : { opacity: 0, x: 30 }}
                 animate={{
                   opacity: it.priority === "primary" ? 1 : it.priority === "secondary" ? 0.92 : 0.78,
@@ -305,9 +281,12 @@ export default function ScatterMenu({ items }: { items: MenuItem[] }) {
                   rotate: i % 2 ? 2 : -2,
                 }}
                 transition={{ delay: reduceMotion ? 0 : i * 0.06 }}
+                style={{ position: 'relative', display: 'inline-block' }}
               >
-                <span className="sm__label">[ {it.label} ]</span>
-              </motion.a>
+                <HeroButton href={it.href} onClick={(e) => go(e as any, it.href)} className="sm__label">
+                  {`[ ${it.label} ]`}
+                </HeroButton>
+              </motion.div>
             ))}
           </motion.div>
         )}

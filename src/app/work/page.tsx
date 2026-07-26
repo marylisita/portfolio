@@ -6,7 +6,9 @@ import BrailleDeco from "@/components/BrailleDeco";
 import { EDGE_RIGHT, EDGE_TOP, FILLER_COLUMN } from "@/components/foundBrailleArt";
 import { useT } from "@/i18n/LanguageContext";
 import { useProjects } from "@/components/useProjects";
+import UnderlineButton from "@/components/UnderlineButton";
 import EditorialFooter from "@/components/EditorialFooter";
+import SiteHeader from "@/components/SiteHeader";
 import LangToggle from "@/components/LangToggle";
 import type { CSSProperties } from "react";
 import { useEffect, useState } from "react";
@@ -234,8 +236,7 @@ export default function Work() {
       100% { box-shadow: 0 0 0 0 rgba(28,27,24,0); }
     }
     .wk-nav { display: inline-flex; align-items: center; gap: .7rem; }
-    .wk-nav a { color: var(--ink); text-decoration: none; opacity: .7; font-size: var(--type-micro); letter-spacing: .04em; transition: opacity .2s ease; }
-    .wk-nav a:hover, .wk-nav a:focus-visible { opacity: 1; text-decoration: underline; text-underline-offset: 3px; }
+    .wk-nav a { font-size: var(--type-micro); letter-spacing: .04em; }
     @media (prefers-reduced-motion: reduce) { .wk-status__dot { animation: none; } }
     @media (max-width: 860px) { .wk-status, .wk-nav, .wk-mark__sub { display: none; } }
     .wk-ornament {
@@ -478,27 +479,8 @@ export default function Work() {
         className="wk-ornament wk-ornament--left"
       />
 
-      {/* Header — mesmo do landing (marca + status + nav + idioma) */}
-      <span className="wk-corner wk-corner--l">
-        <Link href="/" className="wk-mark hover-trigger">
-          <span className="text-star" aria-hidden="true">✳︎</span> Maria Isabel Lisita
-        </Link>
-        <span className="wk-mark__sub">
-          {lang === "pt" ? "designer & tecnóloga criativa" : "designer & creative technologist"}
-        </span>
-      </span>
-      <span className="wk-corner wk-corner--r">
-        <span className="wk-status">
-          <span className="wk-status__dot" aria-hidden="true" />
-          {lang === "pt" ? "disponível p/ projetos" : "available for work"}
-        </span>
-        <nav className="wk-nav" aria-label={lang === "pt" ? "navegação" : "navigation"}>
-          <Link href="/">{t("pj_home").toLowerCase()}</Link>
-          <Link href="/#about">{t("rm_menu_about")}</Link>
-          <Link href="/#contact">{t("rm_menu_contact")}</Link>
-        </nav>
-        <LangToggle />
-      </span>
+      {/* Header — shared component */}
+      <SiteHeader />
 
       <main style={{ padding: "clamp(7.5rem, 11vh, 9.5rem) var(--project-gutter) 4rem", maxWidth: "var(--project-shell-max)", margin: "0 auto", position: "relative", zIndex: 10 }}>
         {/* Title row */}

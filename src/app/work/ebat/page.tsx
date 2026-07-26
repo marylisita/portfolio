@@ -7,6 +7,7 @@ import {
   CaseFigure,
   CasePanel,
   CaseSection,
+  CaseImpact,
 } from "@/components/CaseStudyKit";
 import { useT } from "@/i18n/LanguageContext";
 
@@ -69,8 +70,16 @@ export default function EbatProject() {
           </div>
         </CaseSection>
 
+        <CaseImpact
+          challengeLabel={t("ebat_chal_kicker")}
+          challengeTitle={t("ebat_chal_title")}
+          challengeDesc={t("ebat_chal_desc")}
+          impactLabel={t("ebat_imp_kicker")}
+          impactTitle={t("ebat_imp_title")}
+          impactDesc={t("ebat_imp_desc")}
+        />
+
         <CaseSection
-          ink
           label={pt ? "02 / campanha editorial" : "02 / editorial campaign"}
           title={t("ebat_spiw_title")}
           intro={t("ebat_spiw_desc")}

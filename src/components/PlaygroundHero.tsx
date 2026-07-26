@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { animate as animateValue, motion, useMotionValue, useReducedMotion } from "framer-motion";
+import { animate as animateValue, motion, useMotionValue, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import AsciiDivider from "./AsciiDivider";
 import ScrambleText from "./ScrambleText";
 import { useT } from "@/i18n/LanguageContext";
@@ -144,7 +144,7 @@ const styles = `
     font-size: 1.35rem;
     letter-spacing: .01em;
   }
-  .ph__em { font-family: var(--font-head); font-style: italic; letter-spacing: -0.01em; }
+  .ph__em { font-family: var(--font-head); font-style: italic; font-weight: 600; letter-spacing: -0.01em; }
 
   /* --- adesivos arrastáveis --- */
   .ph__sticker {
@@ -206,12 +206,22 @@ const styles = `
   }
 `;
 
+const containerAnim = {
+  hidden: {},
+  show: {
+    transition: {
+      staggerChildren: 0.11,
+      delayChildren: 0.15,
+    }
+  }
+};
+
 const lineAnim = {
   hidden: { y: "110%" },
-  show: (i: number) => ({
+  show: {
     y: "0%",
-    transition: { duration: 0.9, delay: 0.15 + i * 0.11, ease: [0.16, 1, 0.3, 1] as const },
-  }),
+    transition: { duration: 0.9, ease: [0.16, 1, 0.3, 1] as const },
+  },
 };
 
 type Sticker = {
@@ -340,6 +350,15 @@ export default function PlaygroundHero({
     { key: "clock", left: "58%", top: "12%", rotate: 3, el: <LiveClock /> },
   ];
 
+  const { scrollYProgress } = useScroll({
+    target: bounds,
+    offset: ["start start", "end start"]
+  });
+
+  // Parallax leve: o texto desce (y positivo) e some enquanto o container rola pra cima
+  const textY = useTransform(scrollYProgress, [0, 1], [0, 180]);
+  const textOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+
   return (
     <section className="ph" ref={bounds} data-stamp-active={stampMode ? "true" : "false"}>
       <style>{styles}</style>
@@ -379,30 +398,36 @@ export default function PlaygroundHero({
       {children}
 
 
-      <h1 className="ph__title">
+      <motion.h1 
+        className="ph__title" 
+        style={{ y: textY, opacity: textOpacity }}
+        variants={containerAnim}
+        initial={reduceMotion ? false : "hidden"}
+        animate="show"
+        suppressHydrationWarning
+      >
         {lines.map((l, i) => (
           <span className="ph__line" key={i}>
             <motion.span
               className={i === lines.length - 1 ? "ph__line--acid" : undefined}
               style={{ display: "block" }}
               variants={lineAnim}
-              custom={i}
-              initial={reduceMotion ? false : "hidden"}
-              animate="show"
             >
               <ScrambleText text={l} />
             </motion.span>
           </span>
         ))}
-      </h1>
+      </motion.h1>
 
+      {/* divisor fofo no lugar da linha tracejada */}
       <motion.div
         className="ph__foot"
         initial={reduceMotion ? false : { opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: reduceMotion ? 0 : 0.75, duration: reduceMotion ? 0 : 0.7 }}
+        style={{ y: textY, opacity: textOpacity }}
+        suppressHydrationWarning
       >
-        {/* divisor fofo no lugar da linha tracejada */}
         <AsciiDivider
           repeat={false}
           pattern="₊✧˚﹕︶︶︶﹕૮₍ ⸝⸝´ ꒳ `⸝⸝ ₎ა﹕︶︶︶﹕˚✧₊"
@@ -414,7 +439,7 @@ export default function PlaygroundHero({
 
       {/* frase no espaço em branco da onda (concavidade), alinhada à ESQUERDA
           e em OffBit — abaixo do título pra não encostar nele */}
-      <p className="ph__sub ph__sub--pocket">
+      <motion.p className="ph__sub ph__sub--pocket" style={{ y: textY, opacity: textOpacity }} suppressHydrationWarning>
         {(() => {
           // quebra forçada após a primeira vírgula ("...visuais,") = 2 linhas
           // exatas, sem depender de calibragem frágil de largura
@@ -430,7 +455,7 @@ export default function PlaygroundHero({
             </>
           );
         })()}
-      </p>
+      </motion.p>
     </section>
   );
 }

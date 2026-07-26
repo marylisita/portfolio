@@ -10,6 +10,8 @@ export type IndexItem = {
   tags: string;
   href: string;
   img: string;
+  /** Resultado qualitativo resumido para leitura rápida do arquivo. */
+  impact: string;
   /** proporção real do arquivo (altura/largura) — só evita pulo de layout;
    *  o PixelScrollImage mede a imagem e assume a proporção verdadeira. */
   ratio: number;

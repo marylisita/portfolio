@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import Link from "next/link";
-import PixelScrollImage from "./PixelScrollImage";
+import PixelReveal from "./PixelReveal";
 import PixelScrollText from "./PixelScrollText";
 import BrailleDeco from "./BrailleDeco";
 import { DRAGAO, QUIMERA, COELHOS } from "./brailleArt";
@@ -362,7 +362,7 @@ const styles = `
   .sw__title {
     font-family: var(--font-head);
     font-size: clamp(1.02rem, 1.7vw, 1.5rem);
-    font-weight: 400;
+    font-weight: 600;
     line-height: .95;
     letter-spacing: -.025em;
   }
@@ -393,6 +393,8 @@ const styles = `
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    font-weight: 400;
     transition: opacity .25s ease, letter-spacing .35s ease;
   }
   .sw__spec::before {
@@ -682,8 +684,8 @@ export default function ScatteredWorks({ items, bgWord }: { items: IndexItem[]; 
                 {/* sem aspect-ratio fixo aqui: quem manda é a proporção real
                     do arquivo, definida pelo próprio PixelScrollImage */}
                 <div className="sw__frame">
-                  <div className="sw__photo">
-                    <PixelScrollImage src={item.img} alt={item.title} ratio={s.ratio} style={{ width: "100%" }} />
+                  <div className="sw__photo" style={{ aspectRatio: `1 / ${s.ratio}` }}>
+                    <PixelReveal src={item.img} alt={item.title} className="w-full h-full object-cover" gridSize={40} />
                   </div>
                 </div>
                 {/* só número + título na home: as categorias (cliente/faculdade
@@ -694,7 +696,7 @@ export default function ScatteredWorks({ items, bgWord }: { items: IndexItem[]; 
                   <span className="sw__arrow" style={{ opacity: 0.7, fontSize: "0.82em", marginLeft: "0.15rem" }}>↗</span>
                 </span>
                 <span className="sw__spec">
-                  ✳︎ s.{item.num} / {item.tags.split("/").at(-1)?.trim()} / 2026
+                  impacto / {item.impact}
                 </span>
               </Link>
             </motion.div>

@@ -6,6 +6,7 @@ import {
   CaseCredits,
   CaseFigure,
   CaseSection,
+  CaseImpact,
 } from "@/components/CaseStudyKit";
 import { useT } from "@/i18n/LanguageContext";
 
@@ -67,8 +68,16 @@ export default function PilotisProject() {
           />
         </CaseSection>
 
+        <CaseImpact
+          challengeLabel={t("pilotis_chal_kicker")}
+          challengeTitle={t("pilotis_chal_title")}
+          challengeDesc={t("pilotis_chal_desc")}
+          impactLabel={t("pilotis_imp_kicker")}
+          impactTitle={t("pilotis_imp_title")}
+          impactDesc={t("pilotis_imp_desc")}
+        />
+
         <CaseSection
-          ink
           label={pt ? "02 / cobertura" : "02 / coverage"}
           title={pt ? "um feed com ritmo de evento" : "a feed with event rhythm"}
           intro={

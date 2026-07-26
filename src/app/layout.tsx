@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Space_Mono } from "next/font/google";
+import { Space_Mono, Instrument_Serif } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
@@ -18,14 +18,10 @@ const aeonik = localFont({
   fallback: ["Arial", "sans-serif"],
 });
 
-const itcGaramond = localFont({
-  src: [
-    { path: "./fonts/ITCGaramondStd-BkCond.ttf", weight: "400", style: "normal" },
-    { path: "./fonts/ITCGaramondStd-BkCondIta.ttf", weight: "400", style: "italic" },
-  ],
+const instrumentSerif = Instrument_Serif({
+  weight: "400",
+  subsets: ["latin"],
   variable: "--font-head",
-  display: "swap",
-  fallback: ["Georgia", "serif"],
 });
 
 const spaceMono = Space_Mono({
@@ -71,7 +67,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${aeonik.variable} ${itcGaramond.variable} ${spaceMono.variable} ${seratonin.variable} ${braille.variable} ${offBit.variable}`}>
+    <html lang="en" className={`${aeonik.variable} ${instrumentSerif.variable} ${spaceMono.variable} ${seratonin.variable} ${braille.variable} ${offBit.variable}`}>
       <head>
         <link rel="preconnect" href="https://use.typekit.net" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://p.typekit.net" crossOrigin="anonymous" />

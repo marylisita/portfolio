@@ -1,69 +1,77 @@
 "use client";
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
+
+/**
+ * Botão "voltar ao topo" no estilo editorial do site:
+ * sem bolha escura genérica — uma etiqueta sutil com borda fina,
+ * fundo da página e a seta ↑ na fonte mono do site.
+ */
+
+const styles = `
+  .btt {
+    position: fixed;
+    bottom: 1.4rem;
+    right: 1.4rem;
+    z-index: 900;
+    display: inline-flex;
+    align-items: center;
+    gap: .38rem;
+    padding: .45rem .7rem;
+    font-family: var(--font-mono), monospace;
+    font-size: var(--type-micro, .68rem);
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1px solid color-mix(in srgb, var(--ink) 30%, transparent);
+    cursor: pointer;
+    transition: background .25s ease, color .25s ease;
+  }
+  .btt:hover {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .btt:focus-visible {
+    outline: 2px dotted var(--ink);
+    outline-offset: 3px;
+  }
+`;
 
 export default function FloatingBackToTop() {
   const [isVisible, setIsVisible] = useState(false);
+  const { scrollY } = useScroll();
 
-  useEffect(() => {
-    const handleScroll = () => {
-      // Show when scrolled past half of the viewport height
-      if (window.scrollY > window.innerHeight / 2) {
-        setIsVisible(true);
-      } else {
-        setIsVisible(false);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    // Initialize state on mount
-    handleScroll();
-
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    // Avoid re-renders by checking threshold
+    const shouldShow = latest > (typeof window !== 'undefined' ? window.innerHeight : 800);
+    if (shouldShow !== isVisible) {
+      setIsVisible(shouldShow);
+    }
+  });
 
   const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth"
-    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
-    <AnimatePresence>
-      {isVisible && (
-        <motion.button
-          initial={{ opacity: 0, y: 30, scale: 0.8 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 30, scale: 0.8 }}
-          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          onClick={scrollToTop}
-          className="hover-trigger"
-          style={{
-            position: "fixed",
-            bottom: "40px",
-            right: "40px",
-            zIndex: 9999,
-            width: "60px",
-            height: "60px",
-            borderRadius: "50%",
-            background: "var(--fg, #111)",
-            color: "var(--surface, #fff)",
-            border: "1px solid rgba(255,255,255,0.2)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            cursor: "none",
-            boxShadow: "0 10px 30px rgba(0,0,0,0.15)",
-          }}
-          whileHover={{ scale: 1.05, y: -4, backgroundColor: "#000" }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 19V5M5 12l7-7 7 7"/>
-          </svg>
-        </motion.button>
-      )}
-    </AnimatePresence>
+    <>
+      <style>{styles}</style>
+      <AnimatePresence>
+        {isVisible && (
+          <motion.button
+            className="btt hover-trigger"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 12 }}
+            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            onClick={scrollToTop}
+            aria-label="Voltar ao topo"
+          >
+            ↑ topo
+          </motion.button>
+        )}
+      </AnimatePresence>
+    </>
   );
 }

@@ -1,12 +1,12 @@
 "use client";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import { useReducedMotion } from "framer-motion";
 
 /**
  * Scramble Tipográfico Editorial para o Header:
  * - Apenas na letra focada (no hover).
  * - Sem quebrar linha ou alterar a largura do texto (overlay absoluto preservando as métricas exatas da letra).
- * - Transição em 5 passos de metamorfose ASCII.
+ * - Transição em passos curtos via requestAnimationFrame e mutação DOM direta (60fps garantido).
  * - Cores pasteis/editoriais sutis (lilás, rosa, verde ácido sutil, creme, tinta).
  */
 
@@ -22,95 +22,71 @@ const SUBTLE_COLORS = [
   "#5b564a", // cinza quente
 ];
 
-type MiniCell = {
-  symbol: string;
-  color: string;
-  rotate: number;
-  scale: number;
-  opacity: number;
-};
-
-type CharState = {
-  original: string;
-  scrambling: boolean;
-  grid: MiniCell[];
-};
-
-function generateGrid(): MiniCell[] {
-  return Array.from({ length: 9 }, () => {
-    const symbol = POOL[Math.floor(Math.random() * POOL.length)];
-    const color = SUBTLE_COLORS[Math.floor(Math.random() * SUBTLE_COLORS.length)];
-    const rotate = (Math.random() - 0.5) * 36;
-    const scale = 0.85 + Math.random() * 0.4;
-    const opacity = 0.7 + Math.random() * 0.3;
-    return { symbol, color, rotate, scale, opacity };
-  });
-}
-
-function ScrambleTextContent({ text }: { text: string }) {
-  const reduceMotion = useReducedMotion();
-  const originals = Array.from(text);
-  const [states, setStates] = useState<CharState[]>(() =>
-    originals.map((c) => ({ original: c, scrambling: false, grid: [] }))
-  );
-  const busy = useRef<Set<number>>(new Set());
-  const timers = useRef<Map<number, ReturnType<typeof setTimeout>[]>>(new Map());
+function ScrambleLetter({ original, reduceMotion }: { original: string; reduceMotion: boolean | null }) {
+  const containerRef = useRef<HTMLSpanElement>(null);
+  const originalRef = useRef<HTMLSpanElement>(null);
+  const gridRef = useRef<HTMLSpanElement>(null);
+  const cellsRef = useRef<HTMLSpanElement[]>([]);
+  const busy = useRef(false);
+  const rafId = useRef<number>(0);
 
   useEffect(() => {
-    const activeTimers = timers.current;
     return () => {
-      activeTimers.forEach((tList) => tList.forEach(clearTimeout));
-      activeTimers.clear();
+      cancelAnimationFrame(rafId.current);
     };
   }, []);
 
-  const scramble = (i: number) => {
-    if (reduceMotion) return;
-    const original = originals[i];
-    if (!original || original.trim() === "" || busy.current.has(i)) return;
+  const scramble = () => {
+    if (reduceMotion || busy.current) return;
+    busy.current = true;
 
-    busy.current.add(i);
+    if (originalRef.current) originalRef.current.style.opacity = "0";
+    if (gridRef.current) gridRef.current.style.opacity = "1";
 
-    const existing = timers.current.get(i);
-    if (existing) existing.forEach(clearTimeout);
-
-    const charTimers: ReturnType<typeof setTimeout>[] = [];
     const steps = 5;
     const stepDuration = 85;
+    let currentStep = 0;
+    let lastTime = performance.now();
 
-    for (let s = 0; s <= steps; s++) {
-      const t = setTimeout(() => {
-        setStates((prev) => {
-          const next = [...prev];
-          if (s === steps) {
-            next[i] = { original, scrambling: false, grid: [] };
-          } else {
-            next[i] = {
-              original,
-              scrambling: true,
-              grid: generateGrid(),
-            };
-          }
-          return next;
-        });
+    const tick = (time: number) => {
+      if (time - lastTime >= stepDuration) {
+        lastTime = time;
+        currentStep++;
 
-        if (s === steps) {
-          busy.current.delete(i);
-          timers.current.delete(i);
+        if (currentStep > steps) {
+          if (originalRef.current) originalRef.current.style.opacity = "1";
+          if (gridRef.current) gridRef.current.style.opacity = "0";
+          busy.current = false;
+          return;
         }
-      }, s * stepDuration);
 
-      charTimers.push(t);
-    }
+        // Mutate grid directly without React state overhead
+        cellsRef.current.forEach((cell) => {
+          if (!cell) return;
+          const symbol = POOL[Math.floor(Math.random() * POOL.length)];
+          const color = SUBTLE_COLORS[Math.floor(Math.random() * SUBTLE_COLORS.length)];
+          const rotate = (Math.random() - 0.5) * 36;
+          const scale = 0.85 + Math.random() * 0.4;
+          const opacity = 0.7 + Math.random() * 0.3;
 
-    timers.current.set(i, charTimers);
+          cell.innerText = symbol;
+          cell.style.color = color;
+          cell.style.transform = `rotate(${rotate}deg) scale(${scale})`;
+          cell.style.opacity = opacity.toString();
+        });
+      }
+
+      rafId.current = requestAnimationFrame(tick);
+    };
+
+    rafId.current = requestAnimationFrame(tick);
   };
 
-  const renderLetter = (st: CharState, i: number) => (
+  return (
     <span
-      key={i}
+      ref={containerRef}
       aria-hidden="true"
-      onMouseEnter={() => scramble(i)}
+      onMouseEnter={scramble}
       style={{
         display: "inline-block",
         position: "relative",
@@ -119,72 +95,69 @@ function ScrambleTextContent({ text }: { text: string }) {
         cursor: "inherit",
       }}
     >
-      {/* Mantém a largura e altura EXATAS da letra original */}
-      <span style={{ opacity: st.scrambling ? 0 : 1, display: "inline-block" }}>
-        {st.original}
+      <span ref={originalRef} style={{ opacity: 1, display: "inline-block" }}>
+        {original}
       </span>
 
-      {/* Matriz 3x3 desenhada em overlay absoluto dentro dos limites da letra */}
-      {st.scrambling && st.grid.length === 9 && (
-        <span
-          style={{
-            position: "absolute",
-            inset: 0,
-            display: "inline-grid",
-            gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-            gap: ".02em .04em",
-            fontSize: ".24em",
-            lineHeight: 1,
-            letterSpacing: 0,
-            alignItems: "center",
-            justifyItems: "center",
-            pointerEvents: "none",
-            overflow: "hidden",
-          }}
-        >
-          {st.grid.map((cell, k) => (
-            <span
-              key={k}
-              style={{
-                display: "inline-block",
-                color: cell.color,
-                transform: `rotate(${cell.rotate}deg) scale(${cell.scale})`,
-                opacity: cell.opacity,
-                transition: "all 80ms ease-out",
-                animation: "miniAsciiPulse 120ms ease-out forwards",
-                textAlign: "center",
-                fontFamily: "var(--font-mono), monospace",
-                textShadow: cell.color !== "#1c1b18" ? `0 0 4px ${cell.color}` : "none",
-              }}
-            >
-              {cell.symbol}
-            </span>
-          ))}
-        </span>
-      )}
+      <span
+        ref={gridRef}
+        style={{
+          opacity: 0,
+          position: "absolute",
+          inset: 0,
+          display: "inline-grid",
+          gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+          gap: ".02em .04em",
+          fontSize: ".24em",
+          lineHeight: 1,
+          letterSpacing: 0,
+          alignItems: "center",
+          justifyItems: "center",
+          pointerEvents: "none",
+          overflow: "hidden",
+        }}
+      >
+        {Array.from({ length: 9 }).map((_, k) => (
+          <span
+            key={k}
+            ref={(el) => {
+              if (el) cellsRef.current[k] = el;
+            }}
+            style={{
+              display: "inline-block",
+              textAlign: "center",
+              fontFamily: "var(--font-mono), monospace",
+            }}
+          />
+        ))}
+      </span>
     </span>
   );
+}
 
-  // Agrupa as letras em PALAVRAS: cada letra é um inline-block, então sem
-  // agrupar a linha quebrava no meio da palavra ("vi/suais"). Cada palavra vira
-  // um wrapper nowrap; a quebra de linha só acontece nos ESPAÇOS entre palavras.
+function ScrambleTextContent({ text }: { text: string }) {
+  const reduceMotion = useReducedMotion();
+  const originals = Array.from(text);
+
   const tokens: ReactNode[] = [];
   let word: ReactNode[] = [];
+  
   const flush = () => {
     if (!word.length) return;
     tokens.push(
       <span key={`w${tokens.length}`} style={{ display: "inline-block", whiteSpace: "nowrap" }}>
         {word}
-      </span>,
+      </span>
     );
     word = [];
   };
-  states.forEach((st, i) => {
-    if (st.original === " ") {
+
+  originals.forEach((char, i) => {
+    if (char === " ") {
       flush();
       tokens.push(<span key={`s${i}`}> </span>);
     } else {
-      word.push(renderLetter(st, i));
+      word.push(<ScrambleLetter key={`c${i}`} original={char} reduceMotion={reduceMotion} />);
     }
   });
   flush();

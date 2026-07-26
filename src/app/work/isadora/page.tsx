@@ -7,6 +7,7 @@ import {
   CaseFigure,
   CasePanel,
   CaseSection,
+  CaseImpact,
 } from "@/components/CaseStudyKit";
 import { useT } from "@/i18n/LanguageContext";
 
@@ -76,8 +77,16 @@ export default function IsadoraProject() {
           />
         </CaseSection>
 
+        <CaseImpact
+          challengeLabel={t("isadora_chal_kicker")}
+          challengeTitle={t("isadora_chal_title")}
+          challengeDesc={t("isadora_chal_desc")}
+          impactLabel={t("isadora_imp_kicker")}
+          impactTitle={t("isadora_imp_title")}
+          impactDesc={t("isadora_imp_desc")}
+        />
+
         <CaseSection
-          ink
           label={pt ? "02 / caderno horizontal" : "02 / landscape folio"}
           title={pt ? "folhear para conhecer" : "browse to discover"}
           intro={

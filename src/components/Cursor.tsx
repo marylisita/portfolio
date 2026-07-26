@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion, useMotionValue, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, useMotionValue, useReducedMotion, useSpring } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 
 type InkDot = {
@@ -45,6 +45,10 @@ export default function Cursor() {
   const lastPos = useRef({ x: -9999, y: -9999 });
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
+  
+  const springConfig = { damping: 30, stiffness: 700, mass: 0.2 };
+  const smoothX = useSpring(cursorX, springConfig);
+  const smoothY = useSpring(cursorY, springConfig);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -64,9 +68,13 @@ export default function Cursor() {
     resize();
     window.addEventListener("resize", resize);
     let frame = 0;
+    let lastTime = performance.now();
 
-    const render = () => {
+    const render = (time: number) => {
       frame = 0;
+      const dt = Math.min(2.5, (time - lastTime) / 16.666); 
+      lastTime = time;
+
       ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
       ctx.globalCompositeOperation = "source-over";
 
@@ -75,10 +83,10 @@ export default function Cursor() {
 
       for (let index = totalDots - 1; index >= 0; index -= 1) {
         const dot = dots.current[index];
-        dot.x += dot.vx;
-        dot.y += dot.vy;
-        dot.rotation += dot.spin;
-        dot.life -= 1;
+        dot.x += dot.vx * dt;
+        dot.y += dot.vy * dt;
+        dot.rotation += dot.spin * dt;
+        dot.life -= 1 * dt;
 
         if (dot.life <= 0) {
           dots.current.splice(index, 1);
@@ -108,7 +116,10 @@ export default function Cursor() {
     };
 
     startTrail.current = () => {
-      if (!frame) frame = requestAnimationFrame(render);
+      if (!frame) {
+        lastTime = performance.now();
+        frame = requestAnimationFrame(render);
+      }
     };
     return () => {
       window.removeEventListener("resize", resize);
@@ -135,15 +146,19 @@ export default function Cursor() {
       const dy = y - lastPos.current.y;
       const distance = Math.hypot(dx, dy);
 
-      if (!reduceMotion && finePointer.matches && distance > 9) {
-        const steps = Math.min(5, Math.max(1, Math.floor(distance / 12)));
+      // distance represents speed (pixels per event)
+      if (!reduceMotion && finePointer.matches && distance > 5) {
+        // More steps (particles) if moving fast. 
+        // Old: max 5 steps, distance/12
+        // New: max 20 steps, distance/6
+        const steps = Math.min(20, Math.max(1, Math.floor(distance / 6)));
         for (let index = 0; index < steps; index += 1) {
           const t = steps === 1 ? 1 : index / (steps - 1);
           const maxLife = 34 + Math.random() * 18;
           const ink = INKS[Math.floor(Math.random() * INKS.length)];
           dots.current.push({
-            x: lastPos.current.x + dx * t + (Math.random() - 0.5) * 3,
-            y: lastPos.current.y + dy * t + (Math.random() - 0.5) * 3,
+            x: lastPos.current.x + dx * t + (Math.random() - 0.5) * 4,
+            y: lastPos.current.y + dy * t + (Math.random() - 0.5) * 4,
             symbol: SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)],
             size: 9 + Math.random() * 7,
             rotation: (Math.random() - 0.5) * 0.7,
@@ -152,11 +167,12 @@ export default function Cursor() {
             maxLife,
             color: ink.color,
             glow: ink.glow,
-            vx: (Math.random() - 0.5) * 0.22,
-            vy: -0.04 - Math.random() * 0.12,
+            vx: (Math.random() - 0.5) * 0.4,
+            vy: -0.04 - Math.random() * 0.2,
           });
         }
-        if (dots.current.length > 88) dots.current.splice(0, dots.current.length - 88);
+        // Increased max particles on screen to accommodate faster bursts
+        if (dots.current.length > 200) dots.current.splice(0, dots.current.length - 200);
         startTrail.current();
       }
 
@@ -199,7 +215,7 @@ export default function Cursor() {
       <motion.div
         data-ink-cursor
         aria-hidden="true"
-        style={{ position: "fixed", left: 0, top: 0, x: cursorX, y: cursorY, pointerEvents: "none", zIndex: 10000 }}
+        style={{ position: "fixed", left: 0, top: 0, x: smoothX, y: smoothY, pointerEvents: "none", zIndex: 10000 }}
       >
         <motion.span
           animate={{

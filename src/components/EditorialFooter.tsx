@@ -65,27 +65,20 @@ const styles = `
     text-align: center;
     opacity: .75;
   }
-  .ef__talk {
-    font-family: var(--font-subtitle), monospace;
-    font-weight: var(--offbit-weight);
-    font-size: clamp(2.4rem, 7.8vw, 6.8rem);
-    line-height: 1;
-    letter-spacing: .02em;
-    margin: 0 0 1.6rem;
-    text-align: center;
-  }
   .ef__mail {
-    font-family: var(--font-pixelscript);
-    font-size: clamp(1.35rem, 2.6vw, 2.2rem);
-    letter-spacing: .02em;
-    text-transform: none;
+    font-family: var(--font-pixelscript, cursive);
+    font-weight: 400;
+    font-size: clamp(2.4rem, 7.8vw, 5.8rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
     color: var(--acid);
     text-decoration: none;
     display: block;
     text-align: center;
     margin-bottom: 4.5rem;
+    transition: color 0.3s ease;
   }
-  .ef__mail:hover { text-decoration: underline; }
+  .ef__mail:hover { color: var(--ink); }
   .ef__row {
     display: grid;
     grid-template-columns: 4.5rem 1fr auto;
@@ -108,37 +101,7 @@ const styles = `
     font-family: var(--font-body); font-size: var(--type-micro);
     text-transform: uppercase; letter-spacing: .16em; opacity: .6;
   }
-  .ef__knot {
-    display: flex;
-    align-items: center;
-    gap: .7rem;
-    margin-top: 4rem;
-    color: var(--ink);
-    opacity: .5;
-    font-family: var(--font-mono), monospace;
-    font-size: var(--type-micro);
-    white-space: nowrap;
-  }
-  .ef__knot::before {
-    content: "------------------------";
-    width: clamp(2rem, 8vw, 7rem);
-    overflow: hidden;
-    font-family: var(--font-mono), monospace;
-    white-space: nowrap;
-  }
-  .ef__knot::after {
-    content: "--------------------------------------------------------------------------------";
-    flex: 1;
-    overflow: hidden;
-    font-family: var(--font-mono), monospace;
-    white-space: nowrap;
-    opacity: .38;
-  }
-  .ef__knot-mark {
-    display: inline-block;
-    rotate: -2deg;
-    letter-spacing: -.04em;
-  }
+
   .ef__bottom {
     display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
     padding-top: 1rem;
@@ -207,21 +170,16 @@ export default function EditorialFooter() {
         <AsciiDivider pattern=".・。.・゜✭・.・✫・゜・。" size=".85rem" opacity={0.5} style={{ width: "100%" }} />
       </div>
 
-      <span className="ef__label">{t("rm_footer_label")}</span>
-
-      <motion.h2
-        className="ef__talk"
+      <motion.a
+        className="ef__mail hover-trigger"
+        href="mailto:lisita.medeiros@gmail.com"
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
       >
-        {t("rm_footer_talk")}
-      </motion.h2>
-
-      <a className="ef__mail hover-trigger" href="mailto:lisita.medeiros@gmail.com">
-        lisita.medeiros@gmail.com ↗
-      </a>
+        lisita.medeiros@gmail.com
+      </motion.a>
 
       <div>
         {socials.map((s) => (
@@ -243,11 +201,6 @@ export default function EditorialFooter() {
         <AsciiDivider opacity={0.42} />
       </div>
 
-      <div className="ef__knot" aria-hidden="true">
-        <span className="ef__knot-mark">⠂⠄⠂────╳⌁</span>
-      </div>
-
-      <AsciiDivider opacity={0.42} style={{ marginTop: ".4rem" }} />
       <div className="ef__bottom">
         <span>mary lisita © {new Date().getFullYear()}</span>
         {studioActive ? (

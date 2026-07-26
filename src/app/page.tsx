@@ -476,7 +476,6 @@ function HomeContent() {
             </div>
             <div className="rm-tools">
               <SkillConstellation nodes={constellation} />
-              <AsciiDivider opacity={0.45} />
               <div className="rm-tool-row">
                 <span>{t("about_nano_sub")}</span>
                 <span>NANO — UFRJ</span>

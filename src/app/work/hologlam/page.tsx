@@ -45,7 +45,7 @@ const styles = `
   .hg-kicker {
     font-family: var(--font-body); font-size: var(--type-micro);
     text-transform: uppercase; letter-spacing: .2em;
-    color: var(--tc-accent); margin: 0 0 .9rem;
+    color: var(--tc-accent); margin: 0 0 .5rem;
   }
   .hg-h2 {
     font-family: var(--font-head); font-weight: 400;
@@ -67,7 +67,7 @@ const styles = `
     text-wrap: balance;
   }
   .hg-quest em { font-style: italic; color: var(--tc-accent); }
-  .hg-rule { margin: 0 0 2.4rem; color: currentColor; opacity: .5; }
+  .hg-rule { margin: 0.2rem 0 1.2rem; color: currentColor; opacity: .5; }
   .hg-opening,
   .hg-critical {
     max-width: var(--project-content-max);
@@ -140,11 +140,12 @@ const styles = `
 
   /* imagens */
   .hg-trio { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; }
-  .hg-img { width: 100%; display: block; }
+  .hg-img { width: 100%; display: block; border-radius: calc(var(--r-xl) - .45rem); }
   .hg-fig {
     overflow: hidden;
     padding: .45rem;
     border: 1px solid rgba(28,27,24,.26);
+    border-radius: var(--r-xl);
     background: var(--tc-paper);
     box-shadow: 7px 8px 0 var(--tc-accent-soft);
     transition: translate var(--duration-normal) var(--ease-out), box-shadow var(--duration-normal) var(--ease-out);
@@ -159,6 +160,7 @@ const styles = `
     display: block;
     padding: .45rem;
     border: 1px dashed rgba(28,27,24,.28);
+    border-radius: var(--r-xl);
     background: var(--tc-paper);
     box-shadow: 7px 8px 0 var(--tc-accent-soft);
   }

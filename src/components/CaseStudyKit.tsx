@@ -1,8 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { motion, useReducedMotion } from "framer-motion";
-import type { CSSProperties, ReactNode } from "react";
+import PixelReveal from "./PixelReveal";
+import { motion, useReducedMotion, AnimatePresence } from "framer-motion";
+import { CSSProperties, ReactNode, useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import AsciiDivider from "./AsciiDivider";
 
 export type CaseVariant =
@@ -21,6 +23,8 @@ const ease = [0.16, 1, 0.3, 1] as const;
 const styles = `
   .tc {
     --tc-accent: var(--acid);
+    --tc-accent-text: var(--tc-accent);
+    --tc-label-text: #f8f3e8;
     --tc-accent-soft: rgba(28, 27, 24, .1);
     --tc-paper: rgba(247, 243, 233, .9);
     --tc-ink: var(--ink);
@@ -44,10 +48,12 @@ const styles = `
     --tc-deep: #18234e;
   }
   .tc--genlab {
-    --tc-accent: #b8ff5a;
-    --tc-accent-soft: rgba(184, 255, 90, .14);
-    --tc-paper: rgba(236, 241, 221, .92);
-    --tc-deep: #11170d;
+    --tc-accent: #B482F6;
+    --tc-accent-text: #8A4AE5;
+    --tc-label-text: #FDF7FA;
+    --tc-accent-soft: rgba(180, 130, 246, 0.14);
+    --tc-paper: rgba(252, 246, 249, 0.94);
+    --tc-deep: #161224;
   }
   .tc--graduation {
     --tc-accent: #fb4c2f;
@@ -62,8 +68,8 @@ const styles = `
     --tc-deep: #130b22;
   }
   .tc--isadora {
-    --tc-accent: #303030;
-    --tc-accent-soft: rgba(30, 30, 30, .12);
+    --tc-accent: #E32026;
+    --tc-accent-soft: rgba(227, 32, 38, .16);
     --tc-paper: rgba(248, 244, 235, .95);
     --tc-deep: #171717;
   }
@@ -97,19 +103,21 @@ const styles = `
   .tc-section {
     width: min(100%, var(--project-content-max));
     margin: 0 auto;
-    padding: 0 var(--project-gutter) clamp(4.5rem, 9vw, 8rem);
+    /* Mantém a pausa editorial entre capítulos, mas não transforma cada
+       divisor em uma tela vazia antes do próximo conteúdo. */
+    padding: 0 var(--project-gutter) clamp(2.75rem, 5vw, 4.75rem);
     position: relative;
   }
   .tc-section__rule {
-    margin-top: clamp(3rem, 7vw, 6rem);
+    margin-top: clamp(1.75rem, 3.5vw, 3.25rem);
     color: currentColor;
     opacity: .52;
   }
   .tc-section--compact { width: min(100%, var(--project-compact-max)); }
   .tc-section--ink {
     width: min(calc(100% - 2rem), var(--project-content-max));
-    margin-bottom: clamp(4.5rem, 9vw, 8rem);
-    padding-top: clamp(3rem, 7vw, 6rem);
+    margin-bottom: clamp(2.75rem, 5vw, 4.75rem);
+    padding-top: clamp(2.25rem, 4vw, 3.75rem);
     border: 1px dashed color-mix(in srgb, var(--tc-accent) 52%, transparent);
     color: #f7f3e9;
     background:
@@ -124,6 +132,10 @@ const styles = `
   }
   .tc-section--ink .tc-kicker,
   .tc-section--ink .tc-copy { color: inherit; }
+  .tc-section--ink .tc-kicker,
+  .tc-section--ink .tc-impact__title {
+    color: var(--tc-accent);
+  }
   .tc-section--ink .tc-copy { opacity: .78; }
 
   .tc-heading {
@@ -135,7 +147,7 @@ const styles = `
   }
   .tc-kicker {
     margin: 0 0 .8rem;
-    color: var(--tc-accent);
+    color: var(--tc-accent-text);
     font-family: var(--font-subtitle), monospace;
     font-weight: var(--offbit-weight);
     font-size: var(--type-micro);
@@ -161,6 +173,14 @@ const styles = `
     font-size: clamp(1.04rem, 1.55vw, 1.2rem);
     line-height: 1.68;
     text-wrap: pretty;
+  }
+  .tc-copy em, .tc-copy strong {
+    font-weight: 700;
+    font-style: italic;
+    color: var(--tc-ink);
+  }
+  .tc-section--ink .tc-copy em, .tc-section--ink .tc-copy strong {
+    color: inherit;
   }
 
   .tc-grid { display: grid; gap: clamp(1rem, 3vw, 2.5rem); align-items: start; }
@@ -291,7 +311,7 @@ const styles = `
     min-height: var(--tap-min);
     margin: 0 0 1rem;
     padding: .55rem .75rem;
-    color: #f8f3e8;
+    color: var(--tc-label-text);
     background: var(--tc-accent);
     box-shadow: 2px 2px 0 color-mix(in srgb, var(--tc-ink) 15%, transparent);
     font-family: var(--font-subtitle), monospace;
@@ -329,7 +349,11 @@ const styles = `
   }
   .tc-manifest::before { top: 0; }
   .tc-manifest::after { bottom: 0; }
-  .tc-manifest em { color: var(--tc-accent); font-weight: 400; }
+  .tc-manifest em { 
+    color: var(--tc-accent-text); 
+    font-weight: 700; 
+    font-style: italic; 
+  }
 
   .tc-tape {
     width: fit-content;
@@ -426,6 +450,42 @@ const styles = `
     line-height: 1.55;
   }
 
+  .tc-impact {
+    padding-top: clamp(3rem, 6vw, 4.5rem);
+    padding-bottom: clamp(3rem, 6vw, 4.5rem);
+  }
+  .tc-impact__block {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .tc-impact__block--outcome {
+    padding-left: clamp(0rem, 4vw, 3rem);
+    border-left: 1px dashed color-mix(in srgb, var(--tc-accent) 40%, transparent);
+  }
+  .tc-impact__kicker {
+    margin: 0;
+    opacity: 0.8;
+  }
+  .tc-impact__title {
+    font-family: var(--font-head);
+    font-size: clamp(1.8rem, 4vw, 3.2rem);
+    line-height: 1.05;
+    letter-spacing: -.02em;
+    font-weight: 700;
+    font-style: italic;
+    margin: 0;
+    color: var(--tc-accent-text);
+  }
+  .tc-impact__desc {
+    font-family: var(--font-body);
+    font-size: clamp(1.05rem, 1.5vw, 1.25rem);
+    line-height: 1.65;
+    margin: 0;
+    opacity: 0.9;
+    text-wrap: pretty;
+  }
+
   @media (max-width: 780px) {
     .tc-heading,
     .tc-grid--two,
@@ -437,6 +497,12 @@ const styles = `
     .tc-grid--offset > :nth-child(even) { margin-top: 0; }
     .tc-credits { grid-template-columns: 1fr; }
     .tc-section--ink { width: calc(100% - 1rem); }
+    .tc-impact__block--outcome {
+      padding-left: 0;
+      padding-top: 2.5rem;
+      border-left: none;
+      border-top: 1px dashed color-mix(in srgb, var(--tc-accent) 40%, transparent);
+    }
   }
   @media (max-width: 520px) {
     .tc-section { padding-inline: 1.25rem; }
@@ -541,30 +607,99 @@ export function CaseFigure({
   className?: string;
 }) {
   const reducedMotion = useReducedMotion();
+  const [isOpen, setIsOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setIsOpen(false);
+    };
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
+  }, []);
+
   return (
-    <motion.figure
-      className={`tc-figure ${className}`}
-      style={{ "--tc-tilt": `${tilt}deg` } as CSSProperties}
-      initial={reducedMotion ? false : { opacity: 0, y: 34, rotate: tilt * 1.8 }}
-      whileInView={{ opacity: 1, y: 0, rotate: tilt }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: reducedMotion ? 0 : .78, ease }}
-    >
-      <Image
+    <>
+      <motion.figure
+        className={`tc-figure ${className}`}
+        style={{ "--tc-tilt": `${tilt}deg`, cursor: "zoom-in" } as CSSProperties}
+        initial={reducedMotion ? false : { opacity: 0, y: 34, rotate: tilt * 1.8 }}
+        whileInView={{ opacity: 1, y: 0, rotate: tilt }}
+        viewport={{ once: true, margin: "-50px" }}
+        transition={{ duration: reducedMotion ? 0 : .78, ease }}
+        onClick={() => setIsOpen(true)}
+      >
+      <PixelReveal
         src={src}
         width={width}
         height={height}
-        alt={alt}
-        sizes={sizes}
-        priority={priority}
+        alt={alt || "Project asset"}
+        className="tc-image__img"
+        gridSize={40}
       />
-      {caption || index ? (
-        <figcaption className="tc-figure__cap">
-          <span>{index ?? "imagem"}</span>
-          {caption ? <span>{caption}</span> : null}
-        </figcaption>
-      ) : null}
-    </motion.figure>
+        {caption || index ? (
+          <figcaption className="tc-figure__cap">
+            <span>{index ?? "imagem"}</span>
+            {caption ? <span>{caption}</span> : null}
+          </figcaption>
+        ) : null}
+      </motion.figure>
+
+      {mounted &&
+        createPortal(
+          <AnimatePresence>
+            {isOpen && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                style={{
+                  position: "fixed",
+                  inset: 0,
+                  zIndex: 99999,
+                  backgroundColor: "rgba(10, 10, 10, 0.92)",
+                  backdropFilter: "blur(12px)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: "3vw",
+                  cursor: "zoom-out",
+                }}
+                onClick={() => setIsOpen(false)}
+              >
+                <motion.div
+                  initial={reducedMotion ? false : { scale: 0.9, y: 15 }}
+                  animate={{ scale: 1, y: 0 }}
+                  exit={reducedMotion ? false : { scale: 0.9, y: 15 }}
+                  transition={{ duration: 0.4, ease }}
+                  style={{
+                    position: "relative",
+                    width: "100%",
+                    height: "100%",
+                    maxWidth: width,
+                    maxHeight: height,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Image
+                    src={src}
+                    alt={alt || "Zoomed image"}
+                    fill
+                    style={{ objectFit: "contain" }}
+                    sizes="100vw"
+                    quality={100}
+                  />
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>,
+          document.body
+        )}
+    </>
   );
 }
 
@@ -606,5 +741,51 @@ export function CaseCredits({
         </div>
       ))}
     </div>
+  );
+}
+
+export function CaseImpact({
+  challengeLabel,
+  challengeTitle,
+  challengeDesc,
+  impactLabel,
+  impactTitle,
+  impactDesc,
+}: {
+  challengeLabel: string;
+  challengeTitle: string;
+  challengeDesc: string;
+  impactLabel: string;
+  impactTitle: string;
+  impactDesc: string;
+}) {
+  const reducedMotion = useReducedMotion();
+  return (
+    <CaseSection ink className="tc-impact">
+      <div className="tc-grid tc-grid--two">
+        <motion.div
+          className="tc-impact__block"
+          initial={reducedMotion ? false : { opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: reducedMotion ? 0 : 0.6, ease }}
+        >
+          <p className="tc-kicker tc-impact__kicker">{challengeLabel}</p>
+          <h3 className="tc-impact__title">{challengeTitle}</h3>
+          <p className="tc-impact__desc">{challengeDesc}</p>
+        </motion.div>
+        <motion.div
+          className="tc-impact__block tc-impact__block--outcome"
+          initial={reducedMotion ? false : { opacity: 0, x: 20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: reducedMotion ? 0 : 0.6, delay: 0.15, ease }}
+        >
+          <p className="tc-kicker tc-impact__kicker">{impactLabel}</p>
+          <h3 className="tc-impact__title">{impactTitle}</h3>
+          <p className="tc-impact__desc">{impactDesc}</p>
+        </motion.div>
+      </div>
+    </CaseSection>
   );
 }

@@ -6,6 +6,7 @@ import {
   CaseCredits,
   CaseFigure,
   CaseSection,
+  CaseImpact,
 } from "@/components/CaseStudyKit";
 import { useT } from "@/i18n/LanguageContext";
 
@@ -55,6 +56,15 @@ export default function ChinaRioProject() {
             sizes="(max-width: 1260px) 92vw, 1180px"
           />
         </CaseSection>
+
+        <CaseImpact
+          challengeLabel={t("chinario_chal_kicker")}
+          challengeTitle={t("chinario_chal_title")}
+          challengeDesc={t("chinario_chal_desc")}
+          impactLabel={t("chinario_imp_kicker")}
+          impactTitle={t("chinario_imp_title")}
+          impactDesc={t("chinario_imp_desc")}
+        />
 
         <CaseSection
           label={pt ? "02 / tradução visual" : "02 / visual translation"}

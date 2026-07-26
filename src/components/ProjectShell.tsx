@@ -1,6 +1,7 @@
 "use client";
 import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
+import PixelReveal from "./PixelReveal";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import EditorialFooter from "./EditorialFooter";
@@ -11,13 +12,15 @@ import { COELHOS, ESTRELA, QUIMERA } from "./brailleArt";
 import { ANJOS, ESFERA, ORNAMENTAL } from "./brailleEditorial";
 import { EDGE_RIGHT, FILLER_COLUMN, FILLER_GROUP } from "./foundBrailleArt";
 import { useProjects } from "./useProjects";
+import { getProjectStory } from "@/content/projectStories";
 import { useT } from "@/i18n/LanguageContext";
-import { useEffect, useRef, type CSSProperties } from "react";
+import UnderlineButton from "./UnderlineButton";
+import { useEffect, useRef, type CSSProperties, type ReactNode, useState } from "react";
 
 const PROJECT_GLOWS = [
   "rgba(199, 155, 57, .26)",
   "rgba(89, 118, 163, .25)",
-  "rgba(139, 207, 73, .26)",
+  "rgba(180, 130, 246, .26)",
   "rgba(175, 48, 228, .25)",
   "rgba(249, 76, 47, .25)",
   "rgba(0, 168, 173, .25)",
@@ -135,6 +138,8 @@ const styles = `
     font-family: var(--font-body); font-size: var(--type-label);
     text-transform: lowercase; letter-spacing: .08em;
     background: var(--ink); color: var(--paper);
+    --primary-color: var(--paper);
+    --hovered-color: var(--ink);
     padding: .58rem .82rem; text-decoration: none;
     box-shadow: 3px 3px 0 color-mix(in srgb, var(--ink) 16%, transparent);
     transition:
@@ -206,6 +211,12 @@ const styles = `
     text-wrap: pretty;
   }
   .pj-desc .pj-em { font-family: var(--font-head); font-style: italic; color: var(--acid); }
+  .pj-impact { margin-top: 3.5rem; }
+  .pj-impact__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: clamp(1.5rem, 4vw, 3rem); margin: 1.5rem 0 2rem; }
+  .pj-impact__label { font-family: var(--font-subtitle), monospace; font-weight: var(--offbit-weight-active); font-size: var(--type-micro); letter-spacing: var(--offbit-letter-spacing); text-transform: lowercase; color: var(--gray-600); margin-bottom: 1rem; }
+  .pj-impact__body { font-family: var(--font-body); font-size: 1.05rem; line-height: 1.6; color: var(--ink); text-wrap: pretty; }
+  /* O Outcome/Resultado ganha destaque tipográfico com a fonte display (acid) */
+  .pj-impact__col--highlight .pj-impact__body { font-family: var(--font-head); font-size: 1.4rem; line-height: 1.35; color: var(--acid); letter-spacing: -0.02em; }
   .pj-meta {
     margin-top: 2.6rem;
   }
@@ -431,10 +442,11 @@ const styles = `
   .pj-turn__card:focus-visible .pj-turn__num {
     font-weight: var(--offbit-weight-active);
   }
-  .pj-turn__title { font-family: var(--font-head); font-size: clamp(1.6rem, 3.4vw, 3.4rem); line-height: .9; }
+  .pj-turn__title { font-family: var(--font-head); font-size: clamp(1.6rem, 3.4vw, 3.4rem); line-height: .9; font-weight: 600; }
   .pj-turn__dir {
     font-family: var(--font-body);
     font-size: var(--type-micro);
+    font-weight: 400;
     letter-spacing: .12em;
     text-transform: uppercase;
   }
@@ -476,11 +488,17 @@ export type ProjectMeta = { label: string; value: string };
 export default function ProjectShell({
   title,
   desc,
+  challenge,
+  outcome,
+  role,
   meta = [],
   children,
 }: {
   title: string;
   desc: React.ReactNode;
+  challenge?: React.ReactNode;
+  outcome?: React.ReactNode;
+  role?: React.ReactNode;
   meta?: ProjectMeta[];
   children: React.ReactNode;
 }) {
@@ -498,6 +516,9 @@ export default function ProjectShell({
       ]
     : [];
   const notes = current?.tags.split("/").map((tag) => tag.trim()).filter(Boolean).slice(0, 3) ?? [];
+  const story = getProjectStory(pathname, lang);
+  const impactOutcome = outcome ?? story?.impact;
+  const impactChallenge = challenge ?? story?.challenge;
   const archiveLabel = lang === "pt" ? "arquivo de projeto" : "project archive";
   const notesLabel = lang === "pt" ? "etiquetas do projeto" : "project labels";
   const turnLabel = lang === "pt" ? "continue folheando" : "keep browsing";
@@ -590,9 +611,9 @@ export default function ProjectShell({
 
       {/* molhinho de navegação fixo */}
       <nav className="pj-cluster" aria-label="menu">
-        <Link className="pj-tag hover-trigger" href="/">[ {t("pj_home")} ]</Link>
-        <Link className="pj-tag hover-trigger" href="/work">[ {t("nav_work").toLowerCase()} ]</Link>
-        <a className="pj-tag hover-trigger" href="#contact">[ {t("rm_menu_contact")} ]</a>
+        <UnderlineButton className="pj-tag" href="/">[ {t("pj_home")} ]</UnderlineButton>
+        <UnderlineButton className="pj-tag" href="/work">[ {t("nav_work").toLowerCase()} ]</UnderlineButton>
+        <UnderlineButton className="pj-tag" href="#contact">[ {t("rm_menu_contact")} ]</UnderlineButton>
       </nav>
 
       <header className="pj-head">
@@ -611,6 +632,32 @@ export default function ProjectShell({
           <h1 className="pj-title">{title}</h1>
           <p className="pj-desc">{desc}</p>
         </motion.div>
+
+        {(impactChallenge || impactOutcome || role) && (
+          <div className="pj-impact">
+            <AsciiDivider className="pj-rule pj-rule--meta" />
+            <div className="pj-impact__grid">
+              {impactOutcome && (
+                <div className="pj-impact__col pj-impact__col--highlight">
+                  <h3 className="pj-impact__label">{lang === "pt" ? "O que mudou" : "What changed"}</h3>
+                  <div className="pj-impact__body">{impactOutcome}</div>
+                </div>
+              )}
+              {impactChallenge && (
+                <div className="pj-impact__col">
+                  <h3 className="pj-impact__label">{lang === "pt" ? "A pergunta" : "The question"}</h3>
+                  <div className="pj-impact__body">{impactChallenge}</div>
+                </div>
+              )}
+              {role && (
+                <div className="pj-impact__col">
+                  <h3 className="pj-impact__label">{lang === "pt" ? "Meu Papel" : "My Role"}</h3>
+                  <div className="pj-impact__body">{role}</div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {meta.length > 0 && (
           <div className="pj-meta">
@@ -647,14 +694,14 @@ export default function ProjectShell({
           <div className="pj-turn__grid">
             {neighbours.map((project, index) => (
               <Link className="pj-turn__card hover-trigger" href={project.href} key={project.href}>
-                <span className="pj-turn__image">
-                  <Image
+                <div className="pj-turn__image">
+                  <PixelReveal
                     src={project.img}
                     alt=""
-                    fill
-                    sizes="(max-width: 720px) 100vw, 50vw"
+                    className="w-full h-full object-cover"
+                    gridSize={40}
                   />
-                </span>
+                </div>
                 <span className="pj-turn__copy">
                   <span className="pj-turn__num">{project.num}</span>
                   <span className="pj-turn__title">{project.title}</span>
