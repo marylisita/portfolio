@@ -47,29 +47,20 @@ const styles = `
   }
   .ei-row:hover { padding-left: 1.4rem; }
   .ei-title {
-    font-family: var(--font-head);
-    font-style: italic;
-    font-size: clamp(2.5rem, 8vw, 6.5rem);
+    font-family: var(--font-grotesk);
+    font-size: clamp(2rem, 7vw, 5.5rem);
     line-height: .92;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.04em;
     text-transform: lowercase;
-    font-weight: 400;
+    font-weight: 700;
   }
   .ei-num, .ei-tags {
-    font-family: var(--font-subtitle);
+    font-family: var(--font-mono);
     font-size: .7rem;
     text-transform: uppercase;
     letter-spacing: .16em;
   }
-  .ei-num {
-    font-weight: 700;
-  }
-  .ei-tags {
-    font-weight: 400;
-    opacity: 0.6;
-    text-align: right;
-    white-space: nowrap;
-  }
+  .ei-tags { text-align: right; white-space: nowrap; }
 
   @media (max-width: 720px) {
     .ei-row { grid-template-columns: 2.5rem 1fr; gap: .8rem; padding: 1.1rem 0; }
