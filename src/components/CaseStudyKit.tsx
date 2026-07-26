@@ -331,24 +331,7 @@ const styles = `
     letter-spacing: -.04em;
     text-transform: lowercase;
   }
-  .tc-manifest::before,
-  .tc-manifest::after {
-    content: "--------------------------------------------------------------------------------";
-    position: absolute;
-    left: 0;
-    right: 0;
-    overflow: hidden;
-    font-family: var(--font-mono), monospace;
-    font-size: var(--type-ascii-rule);
-    font-style: normal;
-    font-weight: 400;
-    line-height: 1;
-    letter-spacing: .02em;
-    white-space: nowrap;
-    opacity: .48;
-  }
-  .tc-manifest::before { top: 0; }
-  .tc-manifest::after { bottom: 0; }
+
   .tc-manifest em { 
     color: var(--tc-accent-text); 
     font-weight: 700; 
