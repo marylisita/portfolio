@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import ProjectShell from "@/components/ProjectShell";
 import {
@@ -28,11 +28,11 @@ export default function MagazineProject() {
   const pt = lang !== "en";
 
   return (
-    <ProjectShell
+    <ProjectShell accent="#CC181E"
       title={
         pt ? (
           <>
-            <strong style={{ color: "#CC181E", fontWeight: 700 }}>HELVETICA:</strong> A Fonte da Discórdia
+            <strong style={{ color: "#CC181E", fontWeight: 700 }}>HELVETICA:</strong> A Fonte da DiscÃ³rdia
           </>
         ) : (
           <>
@@ -54,17 +54,17 @@ export default function MagazineProject() {
       <CaseCanvas variant="magazine">
         <CaseSection
           label={pt ? "01 / revista como objeto" : "01 / magazine as object"}
-          title={pt ? "tipografia que ocupa espaço" : "typography taking up space"}
+          title={pt ? "tipografia que ocupa espaÃ§o" : "typography taking up space"}
           intro={
             pt
-              ? "As páginas deixam de ser imagens alinhadas e passam a se comportar como provas de impressão sobre uma mesa: giradas, sobrepostas e com marcas de manuseio."
+              ? "As pÃ¡ginas deixam de ser imagens alinhadas e passam a se comportar como provas de impressÃ£o sobre uma mesa: giradas, sobrepostas e com marcas de manuseio."
               : "Pages stop behaving like aligned images and become print proofs on a table: rotated, layered and marked by handling."
           }
         >
           <CaseFigure
             {...SPREADS[0]}
             alt={pt ? "Capa da revista experimental de tipografia" : "Cover of the experimental typography magazine"}
-            caption={pt ? "abertura · david carson" : "opening · david carson"}
+            caption={pt ? "abertura Â· david carson" : "opening Â· david carson"}
             index="prova 01"
             priority
             tilt={-0.5}
@@ -88,11 +88,11 @@ export default function MagazineProject() {
 
         <CaseSection
           ink
-          label={pt ? "02 / tensão editorial" : "02 / editorial tension"}
-          title={pt ? "ordem suficiente para sustentar o ruído" : "enough order to hold the noise"}
+          label={pt ? "02 / tensÃ£o editorial" : "02 / editorial tension"}
+          title={pt ? "ordem suficiente para sustentar o ruÃ­do" : "enough order to hold the noise"}
           intro={
             pt
-              ? "A composição alterna respiro e colisão. O contraste não vem de um efeito digital genérico, mas do modo como as folhas se aproximam e se afastam."
+              ? "A composiÃ§Ã£o alterna respiro e colisÃ£o. O contraste nÃ£o vem de um efeito digital genÃ©rico, mas do modo como as folhas se aproximam e se afastam."
               : "The composition alternates breathing room and collision. Contrast comes not from a generic digital effect, but from the way sheets move closer and farther apart."
           }
         >
@@ -101,8 +101,8 @@ export default function MagazineProject() {
               <CaseFigure
                 key={spread.src}
                 {...spread}
-                alt={pt ? "Diagramação experimental da revista" : "Experimental magazine layout"}
-                caption={pt ? "abertura tipográfica" : "typographic spread"}
+                alt={pt ? "DiagramaÃ§Ã£o experimental da revista" : "Experimental magazine layout"}
+                caption={pt ? "abertura tipogrÃ¡fica" : "typographic spread"}
                 index={`prova 0${index + 2}`}
                 tilt={index === 0 ? -1 : 1}
               />
@@ -113,8 +113,8 @@ export default function MagazineProject() {
         <CaseSection compact>
           <CaseFigure
             {...SPREADS[3]}
-            alt={pt ? "Página dupla da revista experimental" : "Experimental magazine double-page spread"}
-            caption={pt ? "página dupla" : "double-page spread"}
+            alt={pt ? "PÃ¡gina dupla da revista experimental" : "Experimental magazine double-page spread"}
+            caption={pt ? "pÃ¡gina dupla" : "double-page spread"}
             index="prova 04"
             tilt={0.35}
             sizes="(max-width: 1050px) 92vw, 980px"
@@ -123,10 +123,10 @@ export default function MagazineProject() {
 
         <CaseSection
           label={pt ? "03 / recortes" : "03 / fragments"}
-          title={pt ? "três vozes na mesma bancada" : "three voices on one workbench"}
+          title={pt ? "trÃªs vozes na mesma bancada" : "three voices on one workbench"}
           intro={
             pt
-              ? "Os recortes menores formam uma grade irregular, como referências separadas durante o processo de edição."
+              ? "Os recortes menores formam uma grade irregular, como referÃªncias separadas durante o processo de ediÃ§Ã£o."
               : "Smaller fragments form an irregular grid, like references separated during the editing process."
           }
         >
@@ -146,19 +146,19 @@ export default function MagazineProject() {
 
         <CaseSection
           ink
-          label={pt ? "04 / sequência final" : "04 / final sequence"}
+          label={pt ? "04 / sequÃªncia final" : "04 / final sequence"}
           title={pt ? "o ritmo fecha sem se acalmar" : "the rhythm closes without calming down"}
           intro={
             pt
-              ? "As últimas provas preservam a instabilidade da publicação, mas ganham uma hierarquia clara de leitura."
-              : "The final proofs preserve the publication’s instability while gaining a clear reading hierarchy."
+              ? "As Ãºltimas provas preservam a instabilidade da publicaÃ§Ã£o, mas ganham uma hierarquia clara de leitura."
+              : "The final proofs preserve the publicationâ€™s instability while gaining a clear reading hierarchy."
           }
         >
           <div className="tc-grid tc-grid--asym">
             <CaseFigure
               {...SPREADS[7]}
               alt={pt ? "Prova editorial oito" : "Editorial proof eight"}
-              caption={pt ? "prova de impressão" : "print proof"}
+              caption={pt ? "prova de impressÃ£o" : "print proof"}
               index="prova 08"
               tilt={-0.75}
             />
@@ -180,3 +180,4 @@ export default function MagazineProject() {
     </ProjectShell>
   );
 }
+

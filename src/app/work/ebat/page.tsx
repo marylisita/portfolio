@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import FlipBook from "@/components/FlipBook";
 import ProjectShell from "@/components/ProjectShell";
@@ -33,7 +33,7 @@ export default function EbatProject() {
   const pt = lang !== "en";
 
   return (
-    <ProjectShell
+    <ProjectShell accent="#3158d7"
       title={
         <>
           <strong style={{ color: "#3158d7", fontWeight: 700 }}>EBAT</strong> - Escola de Arte e Tecnologia
@@ -68,7 +68,7 @@ export default function EbatProject() {
             sizes="(max-width: 1260px) 92vw, 1180px"
           />
           <div style={{ marginTop: "clamp(2rem, 5vw, 4rem)" }}>
-            <CasePanel label={pt ? "manual de marca · folheável" : "brand manual · browsable"}>
+            <CasePanel label={pt ? "manual de marca Â· folheÃ¡vel" : "brand manual Â· browsable"}>
               <FlipBook images={MANUAL} aspectRatio="56.25%" />
             </CasePanel>
           </div>
@@ -97,7 +97,7 @@ export default function EbatProject() {
                 height={1414}
                 alt={image.alt}
                 caption={pt ? "mockup impresso" : "printed mockup"}
-                index={`lâmina 0${index + 2}`}
+                index={`lÃ¢mina 0${index + 2}`}
                 tilt={index === 0 ? -0.65 : 0.65}
               />
             ))}
@@ -111,7 +111,7 @@ export default function EbatProject() {
                 height={1414}
                 alt={image.alt}
                 caption={pt ? "arquivo aberto" : "flat artwork"}
-                index={`lâmina 0${index + 4}`}
+                index={`lÃ¢mina 0${index + 4}`}
                 tilt={index === 0 ? 0.35 : -0.35}
               />
             ))}
@@ -132,19 +132,19 @@ export default function EbatProject() {
         </CaseSection>
 
         <CaseSection
-          label={pt ? "03 / comunicação em circulação" : "03 / communication in circulation"}
+          label={pt ? "03 / comunicaÃ§Ã£o em circulaÃ§Ã£o" : "03 / communication in circulation"}
           title={t("ebat_social_title")}
           intro={
             pt
-              ? "Os carrosséis são tratados como pequenos cadernos editoriais. As peças avulsas aparecem abaixo como impressos presos à mesma mesa."
+              ? "Os carrossÃ©is sÃ£o tratados como pequenos cadernos editoriais. As peÃ§as avulsas aparecem abaixo como impressos presos Ã  mesma mesa."
               : "Carousels are treated as small editorial booklets. Individual posts sit below like prints pinned to the same table."
           }
         >
           <div className="tc-grid tc-grid--two tc-grid--offset">
-            <CasePanel label={pt ? "carrossel · boas-vindas" : "carousel · welcome"}>
+            <CasePanel label={pt ? "carrossel Â· boas-vindas" : "carousel Â· welcome"}>
               <FlipBook images={CAROUSEL_ONE} aspectRatio="125%" />
             </CasePanel>
-            <CasePanel label={pt ? "carrossel · módulos" : "carousel · modules"}>
+            <CasePanel label={pt ? "carrossel Â· mÃ³dulos" : "carousel Â· modules"}>
               <FlipBook images={CAROUSEL_TWO} aspectRatio="125%" />
             </CasePanel>
           </div>
@@ -168,3 +168,4 @@ export default function EbatProject() {
     </ProjectShell>
   );
 }
+

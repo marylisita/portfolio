@@ -210,7 +210,7 @@ const styles = `
     line-height: 1.62;
     text-wrap: pretty;
   }
-  .pj-desc .pj-em { font-family: var(--font-head); font-style: italic; font-weight: 700; color: var(--acid); }
+  .pj-desc .pj-em { font-family: var(--font-head); font-style: italic; font-weight: 700; color: var(--pj-accent, var(--acid)); }
   .pj-impact { margin-top: 3.5rem; }
   .pj-impact__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: clamp(1.5rem, 4vw, 3rem); margin: 1.5rem 0 2rem; }
   .pj-impact__label { font-family: var(--font-subtitle), monospace; font-weight: var(--offbit-weight-active); font-size: var(--type-micro); letter-spacing: var(--offbit-letter-spacing); text-transform: lowercase; color: var(--gray-600); margin-bottom: 1rem; }
@@ -493,6 +493,7 @@ export default function ProjectShell({
   role,
   meta = [],
   children,
+  accent,
 }: {
   title: string;
   desc: React.ReactNode;
@@ -501,6 +502,7 @@ export default function ProjectShell({
   role?: React.ReactNode;
   meta?: ProjectMeta[];
   children: React.ReactNode;
+  accent?: string;
 }) {
   const { t, lang } = useT();
   const pathname = usePathname();
@@ -594,7 +596,10 @@ export default function ProjectShell({
     <div
       ref={shellRef}
       className="pj"
-      style={{ "--pj-glow": PROJECT_GLOWS[(currentIndex >= 0 ? currentIndex : 0) % PROJECT_GLOWS.length] } as CSSProperties}
+      style={{ 
+        "--pj-glow": PROJECT_GLOWS[(currentIndex >= 0 ? currentIndex : 0) % PROJECT_GLOWS.length],
+        ...(accent ? { "--pj-accent": accent } : {})
+      } as CSSProperties}
     >
       <style>{styles}</style>
       <div className="pj-progress" aria-hidden="true" />

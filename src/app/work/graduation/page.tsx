@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import ProjectShell from "@/components/ProjectShell";
 import {
@@ -26,7 +26,7 @@ export default function GraduationProject() {
   const pt = lang !== "en";
 
   return (
-    <ProjectShell
+    <ProjectShell accent="#fb4c2f"
       title={t("grad_title")}
       desc={
         <>
@@ -54,7 +54,7 @@ export default function GraduationProject() {
             src="/img/graduation/animacao.webp"
             width={1000}
             height={494}
-            alt={pt ? "Animação da identidade Rio de Janeiro Starter Pack" : "Rio de Janeiro Starter Pack identity animation"}
+            alt={pt ? "AnimaÃ§Ã£o da identidade Rio de Janeiro Starter Pack" : "Rio de Janeiro Starter Pack identity animation"}
             caption={pt ? "marca em movimento" : "identity in motion"}
             index="abertura 01"
             priority
@@ -64,10 +64,10 @@ export default function GraduationProject() {
 
         <CaseSection
           label={pt ? "02 / ingredientes" : "02 / ingredients"}
-          title={pt ? "cor, onda e memória" : "color, wave and memory"}
+          title={pt ? "cor, onda e memÃ³ria" : "color, wave and memory"}
           intro={
             pt
-              ? "Em vez de apresentar as pranchas como uma lista, elas aparecem como recortes de uma mesa de preparação: paleta, tipografia e referências se encostam."
+              ? "Em vez de apresentar as pranchas como uma lista, elas aparecem como recortes de uma mesa de preparaÃ§Ã£o: paleta, tipografia e referÃªncias se encostam."
               : "Instead of presenting boards as a list, they appear as cutouts from a preparation table: palette, typography and references touch one another."
           }
         >
@@ -77,7 +77,7 @@ export default function GraduationProject() {
                 key={image.src}
                 {...image}
                 alt={pt ? "Elementos da identidade visual de formatura" : "Graduation visual identity elements"}
-                caption={index === 0 ? (pt ? "paleta & ritmo" : "palette & rhythm") : (pt ? "sistema gráfico" : "graphic system")}
+                caption={index === 0 ? (pt ? "paleta & ritmo" : "palette & rhythm") : (pt ? "sistema grÃ¡fico" : "graphic system")}
                 index={`folha 0${index + 2}`}
                 tilt={index === 0 ? -0.7 : 0.65}
               />
@@ -86,11 +86,11 @@ export default function GraduationProject() {
         </CaseSection>
 
         <CaseSection
-          label={pt ? "03 / kit em circulação" : "03 / kit in circulation"}
-          title={pt ? "peças que parecem lembranças" : "pieces that feel like keepsakes"}
+          label={pt ? "03 / kit em circulaÃ§Ã£o" : "03 / kit in circulation"}
+          title={pt ? "peÃ§as que parecem lembranÃ§as" : "pieces that feel like keepsakes"}
           intro={
             pt
-              ? "Checklist, materiais impressos e objetos entram como lembranças sobrepostas. A leve inclinação das folhas dá corpo sem virar uma pilha caótica."
+              ? "Checklist, materiais impressos e objetos entram como lembranÃ§as sobrepostas. A leve inclinaÃ§Ã£o das folhas dÃ¡ corpo sem virar uma pilha caÃ³tica."
               : "Checklists, printed matter and objects become layered keepsakes. Slightly tilted sheets add body without turning into a chaotic pile."
           }
         >
@@ -107,7 +107,7 @@ export default function GraduationProject() {
                 <CaseFigure
                   key={image.src}
                   {...image}
-                  alt={pt ? "Aplicação da identidade de formatura" : "Graduation identity application"}
+                  alt={pt ? "AplicaÃ§Ã£o da identidade de formatura" : "Graduation identity application"}
                   caption={pt ? "desdobramento" : "application"}
                   index={`folha 0${index + 5}`}
                   tilt={index === 0 ? 0.6 : -0.35}
@@ -119,11 +119,11 @@ export default function GraduationProject() {
 
         <CaseSection
           ink
-          label={pt ? "04 / celebração aplicada" : "04 / applied celebration"}
+          label={pt ? "04 / celebraÃ§Ã£o aplicada" : "04 / applied celebration"}
           title={t("grad_gallery_title")}
           intro={
             pt
-              ? "As últimas peças fecham o sistema como uma faixa contínua: objetos, ambientação e assinatura visual pertencem ao mesmo gesto."
+              ? "As Ãºltimas peÃ§as fecham o sistema como uma faixa contÃ­nua: objetos, ambientaÃ§Ã£o e assinatura visual pertencem ao mesmo gesto."
               : "The final pieces close the system as a continuous band: objects, environment and visual signature share the same gesture."
           }
         >
@@ -132,8 +132,8 @@ export default function GraduationProject() {
               <CaseFigure
                 key={image.src}
                 {...image}
-                alt={pt ? "Aplicações finais do Rio Starter Pack" : "Final Rio Starter Pack applications"}
-                caption={pt ? "aplicação" : "application"}
+                alt={pt ? "AplicaÃ§Ãµes finais do Rio Starter Pack" : "Final Rio Starter Pack applications"}
+                caption={pt ? "aplicaÃ§Ã£o" : "application"}
                 index={`folha ${String(index + 7).padStart(2, "0")}`}
                 tilt={index % 2 === 0 ? -0.45 : 0.55}
               />
@@ -162,11 +162,11 @@ export default function GraduationProject() {
             items={[
               {
                 label: t("grad_credits_design"),
-                value: "Dillon Wong · Maria Isabel Lisita · Matheus Petermann",
+                value: "Dillon Wong Â· Maria Isabel Lisita Â· Matheus Petermann",
               },
               {
                 label: t("grad_credits_comms"),
-                value: "Carolina Mello · Vinicius de Moura",
+                value: "Carolina Mello Â· Vinicius de Moura",
               },
             ]}
           />
@@ -175,3 +175,4 @@ export default function GraduationProject() {
     </ProjectShell>
   );
 }
+
