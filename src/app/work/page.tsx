@@ -299,7 +299,7 @@ export default function Work() {
       border-right: 1px solid rgba(28,27,24,.24);
       border-bottom: 1px solid rgba(28,27,24,.18);
       color: var(--ink); text-decoration: none;
-      transition: background-color var(--duration-fast) var(--ease-default), color var(--duration-fast) var(--ease-default);
+      transition: background-color 400ms cubic-bezier(0.25, 1, 0.5, 1), color 400ms cubic-bezier(0.25, 1, 0.5, 1);
     }
     .wk-toc__link:hover, .wk-toc__link:focus-visible { background: var(--ink); color: var(--paper); }
     .wk-toc__link[data-active="true"] {
@@ -316,7 +316,7 @@ export default function Work() {
     }
     .wk-card__title,
     .wk-toc__num {
-      transition: font-weight var(--duration-normal) var(--ease-out);
+      transition: font-weight 500ms cubic-bezier(0.25, 1, 0.5, 1);
     }
     .wk-card:hover .wk-card__title,
     .wk-card:focus-within .wk-card__title,
@@ -339,7 +339,7 @@ export default function Work() {
       background-size: 100% 100%, 150px 150px;
       box-shadow: 8px 9px 0 var(--paper-shadow);
       rotate: -.12deg;
-      transition: translate var(--duration-normal) var(--ease-out), rotate var(--duration-normal) var(--ease-out), box-shadow var(--duration-normal) var(--ease-default);
+      transition: translate 600ms cubic-bezier(0.25, 1, 0.5, 1), rotate 600ms cubic-bezier(0.25, 1, 0.5, 1), box-shadow 600ms cubic-bezier(0.25, 1, 0.5, 1);
     }
     .wk-cover::before {
       content: "";
@@ -373,9 +373,9 @@ export default function Work() {
     .wk-cover:focus-visible {
       z-index: 2;
       outline: none;
-      translate: 0 -4px;
+      translate: 0 -2px;
       rotate: 0deg;
-      box-shadow: 12px 13px 0 var(--paper-shadow);
+      box-shadow: 10px 11px 0 var(--paper-shadow);
     }
     .wk-toc__link[data-active="true"] .wk-toc__num { color: var(--acid); }
     .wk-card { position: relative; isolation: isolate; scroll-margin-top: 8rem; }
@@ -396,10 +396,10 @@ export default function Work() {
       letter-spacing: var(--offbit-letter-spacing);
       scale: var(--offbit-condense) 1;
       transform-origin: right top;
-      transition: opacity var(--duration-normal) var(--ease-default), translate var(--duration-slow) var(--ease-out);
+      transition: opacity 700ms cubic-bezier(0.25, 1, 0.5, 1), translate 800ms cubic-bezier(0.25, 1, 0.5, 1);
     }
     .wk-card:hover::after,
-    .wk-card:focus-within::after { opacity: .075; translate: -1.5vw 1rem; }
+    .wk-card:focus-within::after { opacity: .055; translate: -1vw .6rem; }
     .wk-cover {
       overflow: hidden;
       color: inherit;
@@ -409,9 +409,9 @@ export default function Work() {
     .wk-cover > * { overflow: hidden; }
     .wk-card:hover .wk-cover,
     .wk-card:focus-within .wk-cover {
-      translate: 0 -4px;
+      translate: 0 -2px;
       rotate: 0deg;
-      box-shadow: 12px 13px 0 var(--paper-shadow);
+      box-shadow: 10px 11px 0 var(--paper-shadow);
     }
     @media (max-width: 1000px) {
       .wk-toc { position: relative; top: auto; grid-template-columns: repeat(3, minmax(0, 1fr)); }
