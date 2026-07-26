@@ -202,6 +202,10 @@ const styles = `
     margin: 0 0 1.8rem;
     text-wrap: balance;
   }
+  .pj-title strong {
+    font-weight: 700;
+    -webkit-text-stroke: 0.02em currentColor;
+  }
   .pj-desc {
     font-family: var(--font-body);
     font-size: clamp(1.08rem, 1.7vw, 1.34rem);

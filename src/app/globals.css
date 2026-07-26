@@ -553,10 +553,13 @@ img { max-width:100%; display:block; }
 /* Títulos dos cards em /work — escopo separado para não disputar com edições do card. */
 .wk-page h2 {
     font-family: var(--font-head) !important;
-    font-style: italic !important;
     letter-spacing: -0.02em !important;
-    font-weight: 400 !important;
+    font-weight: 400;
     transform-origin: left center;
+}
+.wk-page h2 strong {
+    font-weight: 700;
+    -webkit-text-stroke: 0.02em currentColor;
 }
 
 @media (prefers-reduced-motion: reduce) {
