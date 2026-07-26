@@ -217,7 +217,7 @@ export default function VegCozProject() {
   ];
 
   return (
-    <ProjectShell
+    <ProjectShell accent="#4f7f3a"
       title={
         <>
           <strong style={{ color: "#4f7f3a", fontWeight: 700 }}>vegcoz:</strong> culinária consciente

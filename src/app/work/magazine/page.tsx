@@ -28,7 +28,7 @@ export default function MagazineProject() {
   const pt = lang !== "en";
 
   return (
-    <ProjectShell
+    <ProjectShell accent="#CC181E"
       title={
         pt ? (
           <>

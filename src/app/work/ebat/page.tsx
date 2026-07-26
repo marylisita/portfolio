@@ -33,7 +33,7 @@ export default function EbatProject() {
   const pt = lang !== "en";
 
   return (
-    <ProjectShell
+    <ProjectShell accent="#3158d7"
       title={
         <>
           <strong style={{ color: "#3158d7", fontWeight: 700 }}>EBAT</strong> - Escola de Arte e Tecnologia

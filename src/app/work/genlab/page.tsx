@@ -14,7 +14,7 @@ export default function GenLabProject() {
   const pt = lang !== "en";
 
   return (
-    <ProjectShell
+    <ProjectShell accent="#B482F6"
       title={
         <>
           <strong style={{ color: "#B482F6", fontWeight: 700 }}>GenLab:</strong> {pt ? "Ideias que moldam o mundo digital." : "Ideas that shape the digital world."}

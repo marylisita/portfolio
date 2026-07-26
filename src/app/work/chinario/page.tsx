@@ -24,7 +24,7 @@ export default function ChinaRioProject() {
   const pt = lang !== "en";
 
   return (
-    <ProjectShell
+    <ProjectShell accent="#c90035"
       title={
         <>
           <strong style={{ color: "#c90035", fontWeight: 700 }}>china-rio:</strong> pontes para inovação

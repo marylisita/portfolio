@@ -212,7 +212,7 @@ export default function HoloGlamProject() {
   ];
 
   return (
-    <ProjectShell
+    <ProjectShell accent="#c685ff"
       title={t("holo_title")}
       desc={
         <>

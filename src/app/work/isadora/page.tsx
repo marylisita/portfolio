@@ -40,7 +40,7 @@ export default function IsadoraProject() {
   const pt = lang !== "en";
 
   return (
-    <ProjectShell
+    <ProjectShell accent="#E32026"
       title={
         <>
           <strong style={{ color: "#E32026", fontWeight: 700 }}>press kit</strong> — isadora ruppert

@@ -35,7 +35,7 @@ export default function PilotisProject() {
   const pt = lang !== "en";
 
   return (
-    <ProjectShell
+    <ProjectShell accent="#00a8ad"
       title={
         <>
           <strong style={{ color: "#00a8ad", fontWeight: 700 }}>devs no pilotis</strong>

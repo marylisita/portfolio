@@ -26,7 +26,7 @@ export default function GraduationProject() {
   const pt = lang !== "en";
 
   return (
-    <ProjectShell
+    <ProjectShell accent="#fb4c2f"
       title={t("grad_title")}
       desc={
         <>

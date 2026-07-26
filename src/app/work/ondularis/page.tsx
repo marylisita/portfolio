@@ -694,7 +694,7 @@ export default function OndularisProject() {
   const c = copy[selectedLang];
 
   return (
-    <ProjectShell
+    <ProjectShell accent="#164b53"
       title={
         <>
           <strong style={{ color: "#164b53", fontWeight: 700 }}>ondularis</strong>
