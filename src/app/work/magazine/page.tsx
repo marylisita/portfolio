@@ -29,7 +29,17 @@ export default function MagazineProject() {
 
   return (
     <ProjectShell
-      title={t("work_helvetica_title").replace(/\n/g, " ")}
+      title={
+        pt ? (
+          <>
+            <strong style={{ color: "#CC181E", fontWeight: 700 }}>HELVETICA:</strong> A Fonte da Discórdia
+          </>
+        ) : (
+          <>
+            <strong style={{ color: "#CC181E", fontWeight: 700 }}>HELVETICA:</strong> The Font of Discord
+          </>
+        )
+      }
       desc={
         <>
           {t("magazine_p1")} <span className="pj-em">{t("magazine_p1_highlight")}</span> {t("magazine_p1_rest")}{" "}
