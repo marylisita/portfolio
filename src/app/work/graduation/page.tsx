@@ -27,7 +27,11 @@ export default function GraduationProject() {
 
   return (
     <ProjectShell accent="#fb4c2f"
-      title={t("grad_title")}
+      title={
+        <>
+          <strong style={{ color: "#fb4c2f", fontWeight: 700 }}>apple academy:</strong> graduation
+        </>
+      }
       desc={
         <>
           {t("grad_desc_1")} <span className="pj-em">{t("grad_desc_em")}</span> {t("grad_desc_2")}

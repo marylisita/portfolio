@@ -213,7 +213,11 @@ export default function HoloGlamProject() {
 
   return (
     <ProjectShell accent="#c685ff"
-      title={t("holo_title")}
+      title={
+        <>
+          <strong style={{ color: "#c685ff", fontWeight: 700 }}>hologlam:</strong> fashion reloaded
+        </>
+      }
       desc={
         <>
           {t("holo_desc_1")} <span className="pj-em">{t("holo_desc_em")}</span>
