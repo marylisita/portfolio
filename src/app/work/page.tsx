@@ -53,9 +53,9 @@ function ProjectCard({ num, title, tags, href, img, desc, ratio }: ProjectCardPr
         <span
           className="wk-card__num"
           style={{
-            fontFamily: "var(--font-mono), monospace",
+            fontFamily: "var(--font-subtitle), monospace",
             fontSize: "var(--type-micro)",
-            color: "var(--acid)",
+            color: "var(--ink)",
             fontWeight: 700,
           }}
         >
@@ -64,13 +64,14 @@ function ProjectCard({ num, title, tags, href, img, desc, ratio }: ProjectCardPr
         <h2
           className="wk-card__title"
           style={{
-            fontFamily: "var(--font-subtitle), monospace",
-            fontSize: "clamp(1.4rem, 4vw, 2.5rem)",
+            fontFamily: "var(--font-head)",
+            fontStyle: "italic",
+            fontSize: "clamp(2.5rem, 8vw, 5rem)",
             fontWeight: 400,
             textTransform: "lowercase",
-            letterSpacing: "var(--offbit-letter-spacing)",
+            letterSpacing: "-0.02em",
             margin: 0,
-            lineHeight: 1.1,
+            lineHeight: 1,
           }}
         >
           {title}
@@ -78,11 +79,13 @@ function ProjectCard({ num, title, tags, href, img, desc, ratio }: ProjectCardPr
         <span
           className="wk-card__tags"
           style={{
-            fontFamily: "var(--font-mono), monospace",
-            fontSize: "var(--type-micro)",
+            fontFamily: "var(--font-subtitle), monospace",
+            fontSize: "0.7rem",
             textTransform: "uppercase",
-            letterSpacing: "0.1em",
+            letterSpacing: "0.16em",
             textAlign: "right",
+            fontWeight: 400,
+            opacity: 0.6,
           }}
         >
           {tags}
@@ -323,7 +326,7 @@ export default function Work() {
       font-weight: var(--offbit-weight-active) !important;
     }
     .wk-toc__title {
-      font-family: var(--font-head); font-size: var(--type-body);
+      font-family: var(--font-head); font-style: italic; font-size: var(--type-body);
       line-height: .9; text-transform: lowercase;
     }
     .wk-cover {
