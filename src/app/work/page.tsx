@@ -64,8 +64,7 @@ function ProjectCard({ num, title, tags, href, img, desc, ratio }: ProjectCardPr
         <h2
           className="wk-card__title"
           style={{
-            fontFamily: "var(--font-head)",
-            fontStyle: "italic",
+            fontFamily: "var(--font-editorial), serif",
             fontSize: "clamp(2.5rem, 8vw, 5rem)",
             fontWeight: 400,
             textTransform: "lowercase",
@@ -326,7 +325,7 @@ export default function Work() {
       font-weight: var(--offbit-weight-active) !important;
     }
     .wk-toc__title {
-      font-family: var(--font-head); font-style: italic; font-size: var(--type-body);
+      font-family: var(--font-editorial), serif; font-size: var(--type-body);
       line-height: .9; text-transform: lowercase;
     }
     .wk-cover {

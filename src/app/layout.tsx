@@ -56,6 +56,17 @@ const offBit = localFont({
   fallback: ["monospace"],
 });
 
+const editorialNew = localFont({
+  src: [
+    { path: "./fonts/PPEditorialNew-Regular.otf", weight: "400", style: "normal" },
+    { path: "./fonts/PPEditorialNew-Italic.otf", weight: "400", style: "italic" },
+    { path: "./fonts/PPEditorialNew-Ultrabold.otf", weight: "800", style: "normal" },
+    { path: "./fonts/PPEditorialNew-UltraboldItalic.otf", weight: "800", style: "italic" },
+  ],
+  variable: "--font-editorial",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "Mary Lisita | Portfolio",
   description: "Designer multidisciplinar. Projetos em Design Gráfico, Web Design, UX/UI e Programação Criativa.",
@@ -67,7 +78,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${aeonik.variable} ${instrumentSerif.variable} ${spaceMono.variable} ${seratonin.variable} ${braille.variable} ${offBit.variable}`}>
+    <html lang="en" className={`${aeonik.variable} ${instrumentSerif.variable} ${spaceMono.variable} ${seratonin.variable} ${braille.variable} ${offBit.variable} ${editorialNew.variable}`}>
       <head>
         <link rel="preconnect" href="https://use.typekit.net" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://p.typekit.net" crossOrigin="anonymous" />

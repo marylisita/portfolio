@@ -194,7 +194,7 @@ const styles = `
   }
   .pj-back:hover { text-decoration: underline; }
   .pj-title {
-    font-family: var(--font-head); font-weight: 400;
+    font-family: var(--font-editorial), serif; font-weight: 400;
     font-size: clamp(3.2rem, 9vw, 8.5rem);
     line-height: .82; letter-spacing: -0.045em;
     text-transform: lowercase;
@@ -203,8 +203,8 @@ const styles = `
     text-wrap: balance;
   }
   .pj-title strong {
-    font-weight: 700;
-    -webkit-text-stroke: 0.02em currentColor;
+    font-weight: 800;
+    font-style: italic;
   }
   .pj-desc {
     font-family: var(--font-body);
