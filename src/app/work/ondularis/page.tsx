@@ -456,6 +456,7 @@ const styles = `
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: clamp(1rem, 3vw, 2.5rem);
+    align-items: start;
   }
   .on-gesture .on-photo:nth-child(2) { margin-top: clamp(3rem, 8vw, 7rem); }
 
@@ -500,9 +501,8 @@ const styles = `
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: clamp(.8rem, 2vw, 1.6rem);
+    align-items: center;
   }
-  .on-people .on-photo:nth-child(2) { margin-top: clamp(2rem, 7vw, 6rem); }
-  .on-people .on-photo:nth-child(3) { margin-top: clamp(1rem, 3.5vw, 3rem); }
   .on-context {
     display: grid;
     grid-template-columns: .82fr 1.18fr;
