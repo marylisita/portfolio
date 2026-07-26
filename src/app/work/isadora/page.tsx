@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import FlipBook from "@/components/FlipBook";
 import ProjectShell from "@/components/ProjectShell";
@@ -40,10 +40,10 @@ export default function IsadoraProject() {
   const pt = lang !== "en";
 
   return (
-    <ProjectShell accent="#E32026"
+    <ProjectShell
       title={
         <>
-          <strong style={{ color: "#E32026", fontWeight: 700 }}>press kit</strong> â€” isadora ruppert
+          <strong style={{ color: "#E32026", fontWeight: 700 }}>press kit</strong> — isadora ruppert
         </>
       }
       desc={
@@ -60,12 +60,12 @@ export default function IsadoraProject() {
     >
       <CaseCanvas variant="isadora">
         <CaseSection
-          label={pt ? "01 / presenÃ§a editorial" : "01 / editorial presence"}
+          label={pt ? "01 / presença editorial" : "01 / editorial presence"}
           title={pt ? "um retrato que se desdobra" : "a portrait that unfolds"}
           intro={
             pt
-              ? "O press kit Ã© apresentado como um objeto editorial, nÃ£o como um carrossel de telas. Preto, branco e respiro preservam a presenÃ§a da artista."
-              : "The press kit is presented as an editorial object rather than a screen carousel. Black, white and generous space preserve the artistâ€™s presence."
+              ? "O press kit é apresentado como um objeto editorial, não como um carrossel de telas. Preto, branco e respiro preservam a presença da artista."
+              : "The press kit is presented as an editorial object rather than a screen carousel. Black, white and generous space preserve the artist’s presence."
           }
         >
           <CaseFigure
@@ -73,7 +73,7 @@ export default function IsadoraProject() {
             width={1920}
             height={1080}
             alt={pt ? "Capa do press kit de Isadora Ruppert" : "Isadora Ruppert press kit cover"}
-            caption={pt ? "capa do dossiÃª" : "press dossier cover"}
+            caption={pt ? "capa do dossiê" : "press dossier cover"}
             index="caderno 01"
             priority
             tilt={-0.45}
@@ -95,7 +95,7 @@ export default function IsadoraProject() {
           title={pt ? "folhear para conhecer" : "browse to discover"}
           intro={
             pt
-              ? "As pÃ¡ginas vivem dentro de uma pasta escura, como material enviado para imprensa, curadoria e produÃ§Ã£o."
+              ? "As páginas vivem dentro de uma pasta escura, como material enviado para imprensa, curadoria e produção."
               : "The pages live inside a dark folder, like material sent to press, curators and production teams."
           }
         >
@@ -110,19 +110,18 @@ export default function IsadoraProject() {
           title={t("isadora_vertical_title")}
           intro={t("isadora_vertical_sub")}
         >
-          <CasePanel label={pt ? "versÃ£o para leitura vertical" : "portrait reading version"}>
+          <CasePanel label={pt ? "versão para leitura vertical" : "portrait reading version"}>
             <FlipBook images={VERTICAL} aspectRatio="141.4%" />
           </CasePanel>
         </CaseSection>
 
         <CaseSection compact>
           <p className="tc-manifest">
-            {pt ? "imagem, trajetÃ³ria & " : "image, trajectory & "}
-            <em>{pt ? "presenÃ§a." : "presence."}</em>
+            {pt ? "imagem, trajetória & " : "image, trajectory & "}
+            <em>{pt ? "presença." : "presence."}</em>
           </p>
         </CaseSection>
       </CaseCanvas>
     </ProjectShell>
   );
 }
-

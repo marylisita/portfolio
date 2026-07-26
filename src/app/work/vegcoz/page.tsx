@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import ProjectShell from "@/components/ProjectShell";
@@ -7,23 +7,23 @@ import AsciiDivider from "@/components/AsciiDivider";
 import { useT } from "@/i18n/LanguageContext";
 
 /**
- * VegCoz â€” case de UX.
+ * VegCoz — case de UX.
  *
- * ANTES: a pÃ¡gina servia /img/vegcoz/1.png E /img/vegcoz/2.png, que sÃ£o a MESMA
- * prancha do Behance em resoluÃ§Ãµes diferentes (1400x21705 e 1920x29767). Ou
+ * ANTES: a página servia /img/vegcoz/1.png E /img/vegcoz/2.png, que são a MESMA
+ * prancha do Behance em resoluções diferentes (1400x21705 e 1920x29767). Ou
  * seja: 6,4 MB, a mesma coisa duas vezes, sem texto, sem estrutura, sem
- * responsividade â€” e as nove etapas do processo invisÃ­veis dentro do PNG.
+ * responsividade — e as nove etapas do processo invisíveis dentro do PNG.
  *
- * AGORA: a prancha foi fatiada nas nove etapas (1,1 MB no total, âˆ’82%) e cada
- * uma ganhou tÃ­tulo e texto prÃ³prios. O projeto Ã© um processo de UX completo,
- * nÃ£o "branding": pesquisa com 45 pessoas, benchmarking de trÃªs concorrentes,
- * card sorting, jornada, arquitetura, trÃªs personas, wireframes e telas finais.
+ * AGORA: a prancha foi fatiada nas nove etapas (1,1 MB no total, −82%) e cada
+ * uma ganhou título e texto próprios. O projeto é um processo de UX completo,
+ * não "branding": pesquisa com 45 pessoas, benchmarking de três concorrentes,
+ * card sorting, jornada, arquitetura, três personas, wireframes e telas finais.
  *
- * Os tÃ­tulos originais da prancha ficaram DE FORA de cada fatia de propÃ³sito
- * (o corte comeÃ§a abaixo deles) â€” quem titula agora Ã© a tipografia do site.
+ * Os títulos originais da prancha ficaram DE FORA de cada fatia de propósito
+ * (o corte começa abaixo deles) — quem titula agora é a tipografia do site.
  *
  * Layout: `span` alterna largura e lado a cada etapa. Nove blocos iguais viravam
- * uma lista; alternando, vira composiÃ§Ã£o.
+ * uma lista; alternando, vira composição.
  */
 
 const reveal = (d = 0) => ({
@@ -69,7 +69,7 @@ const styles = `
   .vz-lead {
     font-family: var(--font-head); font-weight: 400;
     font-size: clamp(1.4rem, 3.4vw, 2.5rem); line-height: 1.25;
-    /* Este Ã© um texto de contexto, nÃ£o um tÃ­tulo: a medida curta de heading
+    /* Este é um texto de contexto, não um título: a medida curta de heading
        deixava a abertura fragmentada e criava um vazio desproporcional. */
     max-width: min(100%, 31ch); margin: 0;
     text-wrap: pretty;
@@ -217,10 +217,10 @@ export default function VegCozProject() {
   ];
 
   return (
-    <ProjectShell accent="#4f7f3a"
+    <ProjectShell
       title={
         <>
-          <strong style={{ color: "#4f7f3a", fontWeight: 700 }}>vegcoz:</strong> culinÃ¡ria consciente
+          <strong style={{ color: "#4f7f3a", fontWeight: 700 }}>vegcoz:</strong> culinária consciente
         </>
       }
       desc={
@@ -360,4 +360,3 @@ export default function VegCozProject() {
     </ProjectShell>
   );
 }
-

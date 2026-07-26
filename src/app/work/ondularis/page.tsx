@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
@@ -19,21 +19,21 @@ const PHOTOS = {
     src: "/img/ondularis/img-0090.webp",
     width: 2000,
     height: 1333,
-    altPt: "Vista ampla da instalaÃ§Ã£o Ondularis, com esculturas suspensas e projeÃ§Ãµes azuis",
+    altPt: "Vista ampla da instalação Ondularis, com esculturas suspensas e projeções azuis",
     altEn: "Wide view of the Ondularis installation with suspended sculptures and blue projections",
   },
   floating: {
     src: "/img/ondularis/img-0156.webp",
     width: 2000,
     height: 1222,
-    altPt: "ProjeÃ§Ã£o azul flutuando entre esculturas orgÃ¢nicas suspensas",
+    altPt: "Projeção azul flutuando entre esculturas orgânicas suspensas",
     altEn: "Blue projection floating among suspended organic sculptures",
   },
   shadow: {
     src: "/img/ondularis/img-0014.webp",
     width: 2000,
     height: 1455,
-    altPt: "Silhueta de uma pessoa atravessada por projeÃ§Ãµes azuis",
+    altPt: "Silhueta de uma pessoa atravessada por projeções azuis",
     altEn: "Silhouette of a person crossed by blue projections",
   },
   panorama: {
@@ -47,14 +47,14 @@ const PHOTOS = {
     src: "/img/ondularis/img-0033.webp",
     width: 2000,
     height: 1128,
-    altPt: "Visitante observa uma escultura diante de uma projeÃ§Ã£o ondulante",
+    altPt: "Visitante observa uma escultura diante de uma projeção ondulante",
     altEn: "Visitor observing a sculpture in front of an undulating projection",
   },
   gesture: {
     src: "/img/ondularis/img-0070.webp",
     width: 2000,
     height: 1333,
-    altPt: "Pessoa ergue os braÃ§os diante de uma projeÃ§Ã£o azul reativa",
+    altPt: "Pessoa ergue os braços diante de uma projeção azul reativa",
     altEn: "Person raising their arms in front of a reactive blue projection",
   },
   portrait: {
@@ -68,21 +68,21 @@ const PHOTOS = {
     src: "/img/ondularis/img-0045.webp",
     width: 2000,
     height: 1333,
-    altPt: "Membrana escultÃ³rica translÃºcida iluminada por projeÃ§Ãµes azuis e violetas",
+    altPt: "Membrana escultórica translúcida iluminada por projeções azuis e violetas",
     altEn: "Translucent sculptural membrane lit by blue and violet projections",
   },
   residue: {
     src: "/img/ondularis/img-0023.webp",
     width: 2000,
     height: 1333,
-    altPt: "Detalhe de escultura feita com resÃ­duos e texturas orgÃ¢nicas",
+    altPt: "Detalhe de escultura feita com resíduos e texturas orgânicas",
     altEn: "Detail of a sculpture made with residues and organic textures",
   },
   hand: {
     src: "/img/ondularis/img-0066.webp",
     width: 2000,
     height: 1333,
-    altPt: "MÃ£o em silhueta toca visualmente uma projeÃ§Ã£o de padrÃµes marinhos",
+    altPt: "Mão em silhueta toca visualmente uma projeção de padrões marinhos",
     altEn: "Silhouetted hand visually touching a projection of marine patterns",
   },
   atmosphere: {
@@ -96,7 +96,7 @@ const PHOTOS = {
     src: "/img/ondularis/img-0131.webp",
     width: 2000,
     height: 1333,
-    altPt: "Silhueta diante de uma projeÃ§Ã£o rosa e azul semelhante a um organismo",
+    altPt: "Silhueta diante de uma projeção rosa e azul semelhante a um organismo",
     altEn: "Silhouette in front of a pink and blue organism-like projection",
   },
   organism: {
@@ -117,14 +117,14 @@ const PHOTOS = {
     src: "/img/ondularis/img-0124.webp",
     width: 2000,
     height: 1333,
-    altPt: "Pessoa atravessa a instalaÃ§Ã£o entre esculturas, projeÃ§Ãµes e luz violeta",
+    altPt: "Pessoa atravessa a instalação entre esculturas, projeções e luz violeta",
     altEn: "Person crossing the installation among sculptures, projections and violet light",
   },
   ending: {
     src: "/img/ondularis/img-9970.webp",
     width: 2000,
     height: 1333,
-    altPt: "Conjunto de esculturas e projeÃ§Ã£o em azul, rosa e violeta",
+    altPt: "Conjunto de esculturas e projeção em azul, rosa e violeta",
     altEn: "Group of sculptures and projection in blue, pink and violet",
   },
 } satisfies Record<string, PhotoData>;
@@ -132,65 +132,65 @@ const PHOTOS = {
 const copy = {
   pt: {
     description:
-      "Um oceano inventado, composto de esculturas tentaculares, resÃ­duos industriais, atmosfera imersiva e projeÃ§Ãµes que reagem ao som.",
+      "Um oceano inventado, composto de esculturas tentaculares, resíduos industriais, atmosfera imersiva e projeções que reagem ao som.",
     meta: [
-      { label: "formato", value: "exposiÃ§Ã£o coletiva Â· instalaÃ§Ã£o imersiva" },
-      { label: "participaÃ§Ã£o", value: "artista Â· coletivo Endosymbiosis" },
-      { label: "perÃ­odo", value: "14â€“31 de julho de 2026" },
-      { label: "local", value: "Meta Gallery Â· Rio de Janeiro" },
+      { label: "formato", value: "exposição coletiva · instalação imersiva" },
+      { label: "participação", value: "artista · coletivo Endosymbiosis" },
+      { label: "período", value: "14–31 de julho de 2026" },
+      { label: "local", value: "Meta Gallery · Rio de Janeiro" },
     ],
-    coverNote: "primeira exposiÃ§Ã£o do coletivo Endosymbiosis",
+    coverNote: "primeira exposição do coletivo Endosymbiosis",
     coverPrefix: "um oceano",
     coverEmphasis: "inventado",
-    open: "visitaÃ§Ã£o aberta Â· 14.07â€”31.07",
-    sectionSound: "som Â· corpo Â· imagem",
-    sectionMatter: "matÃ©ria",
+    open: "visitação aberta · 14.07—31.07",
+    sectionSound: "som · corpo · imagem",
+    sectionMatter: "matéria",
     sectionAtmosphere: "atmosfera",
     sectionArchive: "arquivo",
-    introTitle: "um territÃ³rio entre tÃ©cnica e delÃ­rio",
+    introTitle: "um território entre técnica e delírio",
     intro:
-      "Criado a partir da residÃªncia de artistas-pesquisadores do NANO (EBA/UFRJ) na Meta Gallery, o coletivo Endosymbiosis trabalha na intersecÃ§Ã£o entre arte, ciÃªncia e tecnologia. A simpoiese â€” fazer-com â€” orienta tanto o processo de criaÃ§Ã£o quanto o modo de relaÃ§Ã£o do grupo.",
+      "Criado a partir da residência de artistas-pesquisadores do NANO (EBA/UFRJ) na Meta Gallery, o coletivo Endosymbiosis trabalha na intersecção entre arte, ciência e tecnologia. A simpoiese — fazer-com — orienta tanto o processo de criação quanto o modo de relação do grupo.",
     introSide:
-      "Esculturas tentaculares, resÃ­duos industriais e imagens responsivas nÃ£o ilustram um ecossistema conhecido. Elas negociam entre si e com quem atravessa o espaÃ§o.",
-    quoteA: "Ondularis nÃ£o simula o mar.",
-    quoteB: "Cria um outro: artificial, instÃ¡vel, fabulado.",
+      "Esculturas tentaculares, resíduos industriais e imagens responsivas não ilustram um ecossistema conhecido. Elas negociam entre si e com quem atravessa o espaço.",
+    quoteA: "Ondularis não simula o mar.",
+    quoteB: "Cria um outro: artificial, instável, fabulado.",
     interactionTitle: "um ambiente que escuta",
     interaction:
-      "As projeÃ§Ãµes reagem ao som e se espalham sobre corpos, paredes e matÃ©rias suspensas. O pÃºblico deixa de observar uma paisagem Ã  distÃ¢ncia e passa a interferir em suas marÃ©s.",
-    materialTitle: "vestÃ­gio e invenÃ§Ã£o",
+      "As projeções reagem ao som e se espalham sobre corpos, paredes e matérias suspensas. O público deixa de observar uma paisagem à distância e passa a interferir em suas marés.",
+    materialTitle: "vestígio e invenção",
     material:
-      "O oceano aparece como hipÃ³tese material: restos industriais assumem anatomias ambÃ­guas, membranas recebem luz e volumes escuros oscilam entre organismo, ruÃ­na e mÃ¡quina.",
-    atmosphereTitle: "abaixo da superfÃ­cie",
+      "O oceano aparece como hipótese material: restos industriais assumem anatomias ambíguas, membranas recebem luz e volumes escuros oscilam entre organismo, ruína e máquina.",
+    atmosphereTitle: "abaixo da superfície",
     atmosphere:
-      "Luz, reflexo e sombra dissolvem os limites da galeria. A instalaÃ§Ã£o nÃ£o reconstrÃ³i um ambiente natural; produz condiÃ§Ãµes para que outro ambiente possa emergir.",
-    contextCaption: "Meta Gallery Â· Rio de Janeiro Â· julho de 2026",
-    galleryCaption: "registros da exposiÃ§Ã£o e de suas relaÃ§Ãµes com o pÃºblico",
-    creditsTitle: "ficha tÃ©cnica",
-    partnersLabel: "realizaÃ§Ã£o & apoio",
+      "Luz, reflexo e sombra dissolvem os limites da galeria. A instalação não reconstrói um ambiente natural; produz condições para que outro ambiente possa emergir.",
+    contextCaption: "Meta Gallery · Rio de Janeiro · julho de 2026",
+    galleryCaption: "registros da exposição e de suas relações com o público",
+    creditsTitle: "ficha técnica",
+    partnersLabel: "realização & apoio",
     partnersAlt:
-      "CrÃ©ditos institucionais de Ondularis: Meta Gallery, MetaverseAgency, NANO, Reviver Cultural e Escola de Belas Artes",
+      "Créditos institucionais de Ondularis: Meta Gallery, MetaverseAgency, NANO, Reviver Cultural e Escola de Belas Artes",
     credits: [
       { label: "curadoria", value: "Fabiane M. Borges" },
       {
         label: "coletivo Endosymbiosis",
-        value: "Crisia Â· Maria Isabel Â· Giovanna Medeiros Â· LÃ©o Cauper Â· Soso Reis",
+        value: "Crisia · Maria Isabel · Giovanna Medeiros · Léo Cauper · Soso Reis",
       },
-      { label: "orientaÃ§Ã£o", value: "Malu Fragoso Â· Guto NÃ³brega" },
-      { label: "co-orientaÃ§Ã£o", value: "Cila Mac Dowell Â· Paula Scamparini" },
-      { label: "residÃªncia artÃ­stica Â· orientaÃ§Ã£o", value: "Byron Mendes" },
+      { label: "orientação", value: "Malu Fragoso · Guto Nóbrega" },
+      { label: "co-orientação", value: "Cila Mac Dowell · Paula Scamparini" },
+      { label: "residência artística · orientação", value: "Byron Mendes" },
       {
-        label: "participaÃ§Ã£o especial",
-        value: "Bruna Pellegrino Â· Giulia Moraes Â· Pathenopy Bertoli",
+        label: "participação especial",
+        value: "Bruna Pellegrino · Giulia Moraes · Pathenopy Bertoli",
       },
       {
-        label: "colaboraÃ§Ã£o",
-        value: "AndrÃ©a Renck Â· Ricardo Nogueira Â· Taki Runa Â· JoÃ£o Vitor Â· Stefany Fernandes",
+        label: "colaboração",
+        value: "Andréa Renck · Ricardo Nogueira · Taki Runa · João Vitor · Stefany Fernandes",
       },
-      { label: "realizaÃ§Ã£o", value: "Meta Gallery Â· MetaverseAgency" },
+      { label: "realização", value: "Meta Gallery · MetaverseAgency" },
       {
         label: "apoio",
         value:
-          "NÃºcleo de Artes e Novos Organismos (NANO) Â· Reviver Cultural Â· Escola de Belas Artes (EBA/UFRJ)",
+          "Núcleo de Artes e Novos Organismos (NANO) · Reviver Cultural · Escola de Belas Artes (EBA/UFRJ)",
       },
     ],
   },
@@ -198,22 +198,22 @@ const copy = {
     description:
       "An invented ocean made of tentacular sculptures, industrial residues, an immersive atmosphere and projections that react to sound.",
     meta: [
-      { label: "format", value: "group exhibition Â· immersive installation" },
-      { label: "participation", value: "artist Â· Endosymbiosis collective" },
-      { label: "dates", value: "July 14â€“31, 2026" },
-      { label: "venue", value: "Meta Gallery Â· Rio de Janeiro" },
+      { label: "format", value: "group exhibition · immersive installation" },
+      { label: "participation", value: "artist · Endosymbiosis collective" },
+      { label: "dates", value: "July 14–31, 2026" },
+      { label: "venue", value: "Meta Gallery · Rio de Janeiro" },
     ],
     coverNote: "the first exhibition by the Endosymbiosis collective",
     coverPrefix: "an",
     coverEmphasis: "invented ocean",
-    open: "open to visitors Â· 14.07â€”31.07",
-    sectionSound: "sound Â· body Â· image",
+    open: "open to visitors · 14.07—31.07",
+    sectionSound: "sound · body · image",
     sectionMatter: "matter",
     sectionAtmosphere: "atmosphere",
     sectionArchive: "archive",
     introTitle: "a territory between technique and delirium",
     intro:
-      "Born from an artist-researcher residency by NANO (EBA/UFRJ) at Meta Gallery, the Endosymbiosis collective works at the intersection of art, science and technology. Sympoiesis â€” making-with â€” guides both the creative process and the groupâ€™s way of relating.",
+      "Born from an artist-researcher residency by NANO (EBA/UFRJ) at Meta Gallery, the Endosymbiosis collective works at the intersection of art, science and technology. Sympoiesis — making-with — guides both the creative process and the group’s way of relating.",
     introSide:
       "Tentacular sculptures, industrial residues and responsive images do not illustrate a known ecosystem. They negotiate with one another and with those who move through the space.",
     quoteA: "Ondularis does not simulate the sea.",
@@ -226,8 +226,8 @@ const copy = {
       "The ocean emerges as a material hypothesis: industrial remnants acquire ambiguous anatomies, membranes receive light, and dark volumes oscillate between organism, ruin and machine.",
     atmosphereTitle: "below the surface",
     atmosphere:
-      "Light, reflection and shadow dissolve the galleryâ€™s boundaries. The installation does not reconstruct a natural environment; it produces the conditions for another environment to emerge.",
-    contextCaption: "Meta Gallery Â· Rio de Janeiro Â· July 2026",
+      "Light, reflection and shadow dissolve the gallery’s boundaries. The installation does not reconstruct a natural environment; it produces the conditions for another environment to emerge.",
+    contextCaption: "Meta Gallery · Rio de Janeiro · July 2026",
     galleryCaption: "exhibition views and encounters with its visitors",
     creditsTitle: "credits",
     partnersLabel: "presented by & support",
@@ -237,24 +237,24 @@ const copy = {
       { label: "curation", value: "Fabiane M. Borges" },
       {
         label: "Endosymbiosis collective",
-        value: "Crisia Â· Maria Isabel Â· Giovanna Medeiros Â· LÃ©o Cauper Â· Soso Reis",
+        value: "Crisia · Maria Isabel · Giovanna Medeiros · Léo Cauper · Soso Reis",
       },
-      { label: "advisors", value: "Malu Fragoso Â· Guto NÃ³brega" },
-      { label: "co-advisors", value: "Cila Mac Dowell Â· Paula Scamparini" },
-      { label: "artistic residency Â· advisor", value: "Byron Mendes" },
+      { label: "advisors", value: "Malu Fragoso · Guto Nóbrega" },
+      { label: "co-advisors", value: "Cila Mac Dowell · Paula Scamparini" },
+      { label: "artistic residency · advisor", value: "Byron Mendes" },
       {
         label: "special participation",
-        value: "Bruna Pellegrino Â· Giulia Moraes Â· Pathenopy Bertoli",
+        value: "Bruna Pellegrino · Giulia Moraes · Pathenopy Bertoli",
       },
       {
         label: "collaboration",
-        value: "AndrÃ©a Renck Â· Ricardo Nogueira Â· Taki Runa Â· JoÃ£o Vitor Â· Stefany Fernandes",
+        value: "Andréa Renck · Ricardo Nogueira · Taki Runa · João Vitor · Stefany Fernandes",
       },
-      { label: "presented by", value: "Meta Gallery Â· MetaverseAgency" },
+      { label: "presented by", value: "Meta Gallery · MetaverseAgency" },
       {
         label: "support",
         value:
-          "NÃºcleo de Artes e Novos Organismos (NANO) Â· Reviver Cultural Â· Escola de Belas Artes (EBA/UFRJ)",
+          "Núcleo de Artes e Novos Organismos (NANO) · Reviver Cultural · Escola de Belas Artes (EBA/UFRJ)",
       },
     ],
   },
@@ -389,7 +389,7 @@ const styles = `
     rotate: -1deg;
   }
   .on-cover__poster::before {
-    content: "â•³  â ‚â „â ‚  â•³";
+    content: "╳  ⠂⠄⠂  ╳";
     position: absolute;
     z-index: 2;
     top: .55rem;
@@ -694,7 +694,7 @@ export default function OndularisProject() {
   const c = copy[selectedLang];
 
   return (
-    <ProjectShell accent="#164b53"
+    <ProjectShell
       title={
         <>
           <strong style={{ color: "#164b53", fontWeight: 700 }}>ondularis</strong>
@@ -718,7 +718,7 @@ export default function OndularisProject() {
                 src="/img/ondularis/capa.webp"
                 alt={
                   selectedLang === "pt"
-                    ? "Cartaz oficial de Ondularis, com o tÃ­tulo da exposiÃ§Ã£o, curadoria, coletivo e datas"
+                    ? "Cartaz oficial de Ondularis, com o título da exposição, curadoria, coletivo e datas"
                     : "Official Ondularis poster with the exhibition title, curation, collective and dates"
                 }
                 width={1080}
@@ -735,9 +735,9 @@ export default function OndularisProject() {
               viewport={{ once: true }}
               transition={{ duration: reducedMotion ? 0 : .9, delay: .12, ease: motionEase }}
             >
-              <p className="on-kicker">{c.open} Â· Meta Gallery</p>
+              <p className="on-kicker">{c.open} · Meta Gallery</p>
               <div className="on-cover__ascii" aria-hidden="true">
-                {"      â‰ˆâ‰ˆâ‰ˆ      âˆ¿âˆ¿âˆ¿\n  âˆ¿âˆ¿      â—Œ       â‰ˆâ‰ˆ\n      ã€°  ð–¦¹  ã€°\n â‰ˆâ‰ˆ      âˆ¿âˆ¿      â‰ˆâ‰ˆ"}
+                {"      ≈≈≈      ∿∿∿\n  ∿∿      ◌       ≈≈\n      〰  𖦹  〰\n ≈≈      ∿∿      ≈≈"}
               </div>
               <p className="on-cover__statement">
                 {c.coverPrefix} <em>{c.coverEmphasis}</em>
@@ -952,7 +952,7 @@ export default function OndularisProject() {
                 <p className="on-kicker">05 / {c.sectionArchive}</p>
                 <h2 className="on-h2">{c.creditsTitle}</h2>
               </div>
-              <span className="on-credits__mark" aria-hidden="true">â‰ˆ ð–¦¹ â‰ˆ</span>
+              <span className="on-credits__mark" aria-hidden="true">≈ 𖦹 ≈</span>
             </div>
             <AsciiDivider opacity={0.52} style={{ marginBottom: "1rem" }} />
             <div className="on-credits__grid">
@@ -981,7 +981,7 @@ export default function OndularisProject() {
               />
             </motion.figure>
             <p className="on-credits__end" aria-hidden="true">
-              â ‚â „â „â ‚  â‰ˆ  â ‚â „â „â ‚  ð–¦¹  â ‚â „â „â ‚  â‰ˆ  â ‚â „â „â ‚
+              ⠂⠄⠄⠂  ≈  ⠂⠄⠄⠂  𖦹  ⠂⠄⠄⠂  ≈  ⠂⠄⠄⠂
             </p>
           </div>
         </section>
@@ -989,4 +989,3 @@ export default function OndularisProject() {
     </ProjectShell>
   );
 }
-

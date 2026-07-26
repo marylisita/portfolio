@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import ProjectShell from "@/components/ProjectShell";
@@ -8,24 +8,24 @@ import AsciiDivider from "@/components/AsciiDivider";
 import { useT } from "@/i18n/LanguageContext";
 
 /**
- * HoloGlam â€” design especulativo (com Maria Luiza Costa).
+ * HoloGlam — design especulativo (com Maria Luiza Costa).
  *
- * ENQUADRAMENTO (escolha dela): a pÃ¡gina apresenta o projeto como PERGUNTA, nÃ£o
- * como produto. O deck original vendia a roupa como soluÃ§Ã£o sustentÃ¡vel, mas a
- * Future Wheel das duas jÃ¡ registrava dependÃªncia tecnolÃ³gica, elitismo,
- * privacidade e impacto dos eletrÃ´nicos â€” em bolinhas pequenas ao lado das boas
- * notÃ­cias. Aqui essas consequÃªncias ganham seÃ§Ã£o prÃ³pria, com o mesmo peso.
- * Nada foi inventado: Ã© leitura honesta da pesquisa que elas mesmas fizeram.
+ * ENQUADRAMENTO (escolha dela): a página apresenta o projeto como PERGUNTA, não
+ * como produto. O deck original vendia a roupa como solução sustentável, mas a
+ * Future Wheel das duas já registrava dependência tecnológica, elitismo,
+ * privacidade e impacto dos eletrônicos — em bolinhas pequenas ao lado das boas
+ * notícias. Aqui essas consequências ganham seção própria, com o mesmo peso.
+ * Nada foi inventado: é leitura honesta da pesquisa que elas mesmas fizeram.
  *
- * As telas de app entram menores de propÃ³sito â€” grandes, puxavam a leitura para
- * "pitch de startup", que Ã© o oposto de design especulativo.
+ * As telas de app entram menores de propósito — grandes, puxavam a leitura para
+ * "pitch de startup", que é o oposto de design especulativo.
  */
 
 /**
- * FUNÃ‡ÃƒO, nÃ£o constante: espalhar o MESMO objeto (e os mesmos `viewport` e
- * `transition` aninhados) em vÃ¡rios motion.div fazia quatro seÃ§Ãµes â€” inclusive
- * "o que nÃ£o fecha" inteira â€” travarem em opacity 0 e nunca aparecerem. Cada
- * componente precisa da sua prÃ³pria cÃ³pia.
+ * FUNÇÃO, não constante: espalhar o MESMO objeto (e os mesmos `viewport` e
+ * `transition` aninhados) em vários motion.div fazia quatro seções — inclusive
+ * "o que não fecha" inteira — travarem em opacity 0 e nunca aparecerem. Cada
+ * componente precisa da sua própria cópia.
  */
 const reveal = () => ({
   initial: { opacity: 0, y: 28 },
@@ -59,7 +59,7 @@ const styles = `
   }
   .hg-p--forte { opacity: 1; font-weight: 500; }
 
-  /* a provocaÃ§Ã£o: peÃ§a tipogrÃ¡fica, nÃ£o parÃ¡grafo */
+  /* a provocação: peça tipográfica, não parágrafo */
   .hg-quest {
     font-family: var(--font-head); font-weight: 400;
     font-size: clamp(1.7rem, 5.2vw, 4rem); line-height: 1.08;
@@ -86,7 +86,7 @@ const styles = `
     background-attachment: fixed;
     box-shadow: 11px 12px 0 var(--tc-accent-soft);
   }
-  /* mÃ©todo: 4 fases */
+  /* método: 4 fases */
   .hg-fases { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; }
   .hg-fase {
     position: relative;
@@ -111,7 +111,7 @@ const styles = `
   }
   .hg-fase__d { font-family: var(--font-body); font-size: var(--type-body); line-height: 1.62; opacity: .82; margin: 0; }
 
-  /* STEEP: a letra Ã© a Ã¢ncora */
+  /* STEEP: a letra é a âncora */
   .hg-steep { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.6rem; }
   .hg-steep__l {
     font-family: var(--font-head); font-size: clamp(2.4rem, 5vw, 4.4rem);
@@ -124,7 +124,7 @@ const styles = `
   }
   .hg-steep__d { font-family: var(--font-body); font-size: var(--type-body); line-height: 1.62; opacity: .82; margin: 0; }
 
-  /* o que nÃ£o fecha */
+  /* o que não fecha */
   .hg-gaps { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2.6rem 3rem; margin-bottom: 3rem; }
   .hg-gap__t {
     font-family: var(--font-head); font-size: clamp(1.2rem, 2.6vw, 1.9rem);
@@ -153,7 +153,7 @@ const styles = `
   .hg-fig:hover { translate: 0 -5px; box-shadow: 11px 13px 0 var(--tc-accent-soft); }
   .hg-dupla { display: grid; grid-template-columns: 1.15fr .85fr; gap: 3rem; align-items: center; }
   /* telas de app: viraram mockups de celular em prancha 16:9 (recorte dela,
-     2026-07-23) â€” em 190px ficavam ilegÃ­veis, entÃ£o agora Ã© grade de 2 colunas */
+     2026-07-23) — em 190px ficavam ilegíveis, então agora é grade de 2 colunas */
   .hg-apps { display: grid; grid-template-columns: 1fr 1fr; gap: 1.6rem; }
   .hg-apps img {
     width: 100%;
@@ -212,7 +212,7 @@ export default function HoloGlamProject() {
   ];
 
   return (
-    <ProjectShell accent="#c685ff"
+    <ProjectShell
       title={t("holo_title")}
       desc={
         <>
@@ -228,7 +228,7 @@ export default function HoloGlamProject() {
       <CaseCanvas variant="hologlam">
       <style>{styles}</style>
 
-      {/* a pergunta â€” antes de qualquer imagem */}
+      {/* a pergunta — antes de qualquer imagem */}
       <section className="hg-sec hg-opening">
         <motion.div {...reveal()}>
           <p className="hg-kicker">{t("holo_question_kicker")}</p>
@@ -237,7 +237,7 @@ export default function HoloGlamProject() {
         </motion.div>
       </section>
 
-      {/* os trÃªs looks */}
+      {/* os três looks */}
       <section className="hg-sec">
         <div className="hg-trio">
           {MODELS.map((model, i) => (
@@ -253,7 +253,7 @@ export default function HoloGlamProject() {
                 width={model.width}
                 height={model.height}
                 sizes="(max-width: 900px) 100vw, 33vw"
-                alt={`HoloGlam â€” look ${model.n}`}
+                alt={`HoloGlam — look ${model.n}`}
               />
             </motion.figure>
           ))}
@@ -261,7 +261,7 @@ export default function HoloGlamProject() {
         <p className="hg-cap">{t("holo_cred_imgs")}</p>
       </section>
 
-      {/* mÃ©todo */}
+      {/* método */}
       <section className="hg-sec">
         <motion.div {...reveal()}>
           <h2 className="hg-h2">{t("holo_method_title")}</h2>
@@ -304,7 +304,7 @@ export default function HoloGlamProject() {
         </motion.div>
       </section>
 
-      {/* 02 especulaÃ§Ã£o â€” a roda */}
+      {/* 02 especulação — a roda */}
       <section className="hg-sec">
         <motion.div {...reveal()}>
           <p className="hg-kicker">{t("holo_wheel_kicker")}</p>
@@ -314,7 +314,7 @@ export default function HoloGlamProject() {
         <FutureWheel />
       </section>
 
-      {/* 03 ativaÃ§Ã£o â€” o artefato */}
+      {/* 03 ativação — o artefato */}
       <section className="hg-sec">
         <div className="hg-dupla">
           <motion.div {...reveal()}>
@@ -324,7 +324,7 @@ export default function HoloGlamProject() {
             <p className="hg-p">{t("holo_art_2")}</p>
             <p className="hg-p">{t("holo_art_3")}</p>
           </motion.div>
-          {/* imagem com fundo transparente (recorte dela) â€” flutua na pÃ¡gina */}
+          {/* imagem com fundo transparente (recorte dela) — flutua na página */}
           <motion.figure className="hg-fig" style={{ margin: 0, background: "transparent" }}
             initial={{ opacity: 0, scale: 0.94 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -337,13 +337,13 @@ export default function HoloGlamProject() {
               width={1600}
               height={900}
               sizes="(max-width: 900px) 100vw, 45vw"
-              alt="HoloGlam â€” projeÃ§Ã£o hologrÃ¡fica"
+              alt="HoloGlam — projeção holográfica"
             />
           </motion.figure>
         </div>
       </section>
 
-      {/* o app â€” pequeno de propÃ³sito */}
+      {/* o app — pequeno de propósito */}
       <section className="hg-sec">
         <motion.div {...reveal()}>
           <h2 className="hg-h2">{t("holo_app_title")}</h2>
@@ -355,7 +355,7 @@ export default function HoloGlamProject() {
               width={1600}
               height={900}
               sizes="(max-width: 560px) 100vw, 50vw"
-              alt="HoloGlam â€” app"
+              alt="HoloGlam — app"
             />
             <Image
               src={`/img/hologlam/comunidade-${suf}.webp`}
@@ -372,7 +372,7 @@ export default function HoloGlamProject() {
         </motion.div>
       </section>
 
-      {/* o que nÃ£o fecha â€” o coraÃ§Ã£o da pÃ¡gina */}
+      {/* o que não fecha — o coração da página */}
       <section className="hg-sec hg-critical">
         <motion.div {...reveal()}>
           <p className="hg-kicker">{t("holo_gap_kicker")}</p>
@@ -390,7 +390,7 @@ export default function HoloGlamProject() {
         </motion.div>
       </section>
 
-      {/* 04 reverberaÃ§Ã£o */}
+      {/* 04 reverberação */}
       <section className="hg-sec">
         <motion.div {...reveal()}>
           <p className="hg-kicker">{t("holo_rev_kicker")}</p>
@@ -400,7 +400,7 @@ export default function HoloGlamProject() {
         </motion.div>
       </section>
 
-      {/* crÃ©ditos */}
+      {/* créditos */}
       <section className="hg-sec" style={{ paddingBottom: "6rem" }}>
         <h2 className="pj-h2">{t("grad_credits_title")}</h2>
         <div
@@ -410,11 +410,10 @@ export default function HoloGlamProject() {
             borderBottom: "1px solid rgba(28,27,24,.28)",
           }}
         >
-          <div className="pj-meta__value">Maria Isabel Lisita Â· Maria Luiza Costa</div>
+          <div className="pj-meta__value">Maria Isabel Lisita · Maria Luiza Costa</div>
         </div>
       </section>
       </CaseCanvas>
     </ProjectShell>
   );
 }
-

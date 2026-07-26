@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import ProjectShell from "@/components/ProjectShell";
 import {
@@ -22,12 +22,12 @@ const GALLERY = [
 ] as const;
 
 const CREDIT_NAMES = [
-  { key: "pilotis_cred_design", names: "VinÃ­cius de Moura Â· Stella Bandeira Â· Matheus Petermann" },
-  { key: "pilotis_cred_comms", names: "Carolina Mello Â· Raphaela Ortega" },
-  { key: "pilotis_cred_social", names: "Stella Bandeira Â· Matheus Petermann Â· Maria Isabel Lisita" },
+  { key: "pilotis_cred_design", names: "Vinícius de Moura · Stella Bandeira · Matheus Petermann" },
+  { key: "pilotis_cred_comms", names: "Carolina Mello · Raphaela Ortega" },
+  { key: "pilotis_cred_social", names: "Stella Bandeira · Matheus Petermann · Maria Isabel Lisita" },
   { key: "pilotis_cred_ux", names: "Raquel Pinheiro" },
   { key: "pilotis_cred_video", names: "Johnson Victor" },
-  { key: "pilotis_cred_photo", names: "Guilherme Chartuni Â· Raphaela Ortega" },
+  { key: "pilotis_cred_photo", names: "Guilherme Chartuni · Raphaela Ortega" },
 ] as const;
 
 export default function PilotisProject() {
@@ -35,7 +35,7 @@ export default function PilotisProject() {
   const pt = lang !== "en";
 
   return (
-    <ProjectShell accent="#00a8ad"
+    <ProjectShell
       title={
         <>
           <strong style={{ color: "#00a8ad", fontWeight: 700 }}>devs no pilotis</strong>
@@ -58,7 +58,7 @@ export default function PilotisProject() {
           title={pt ? "tecnologia ocupando o pilotis" : "technology taking over the pilotis"}
           intro={
             pt
-              ? "A cobertura visual aproxima programaÃ§Ã£o, realidade virtual e encontro presencial. O sistema grÃ¡fico funciona como sinalizaÃ§Ã£o: rÃ¡pido, legÃ­vel e reconhecÃ­vel em movimento."
+              ? "A cobertura visual aproxima programação, realidade virtual e encontro presencial. O sistema gráfico funciona como sinalização: rápido, legível e reconhecível em movimento."
               : "The visual coverage connects programming, virtual reality and in-person encounters. The graphic system works like signage: fast, legible and recognizable in motion."
           }
         >
@@ -86,21 +86,21 @@ export default function PilotisProject() {
           title={pt ? "um feed com ritmo de evento" : "a feed with event rhythm"}
           intro={
             pt
-              ? "A sequÃªncia vertical Ã© tratada como uma faixa de cobertura presa Ã  pÃ¡gina. Ao lado, a sÃ­ntese horizontal mostra como a identidade atravessa formatos."
+              ? "A sequência vertical é tratada como uma faixa de cobertura presa à página. Ao lado, a síntese horizontal mostra como a identidade atravessa formatos."
               : "The vertical sequence becomes a coverage strip pinned to the page. Beside it, the horizontal summary shows how the identity moves across formats."
           }
         >
           <div className="tc-grid tc-grid--asym-reverse">
             <CaseFigure
               {...GALLERY[1]}
-              alt={pt ? "SequÃªncia de publicaÃ§Ãµes do evento Devs no Pilotis" : "Devs no Pilotis social post sequence"}
-              caption={pt ? "cobertura contÃ­nua" : "continuous coverage"}
+              alt={pt ? "Sequência de publicações do evento Devs no Pilotis" : "Devs no Pilotis social post sequence"}
+              caption={pt ? "cobertura contínua" : "continuous coverage"}
               index="faixa 02"
               tilt={-0.45}
             />
             <CaseFigure
               {...GALLERY[2]}
-              alt={pt ? "PeÃ§as digitais do evento Devs no Pilotis" : "Devs no Pilotis digital pieces"}
+              alt={pt ? "Peças digitais do evento Devs no Pilotis" : "Devs no Pilotis digital pieces"}
               caption={pt ? "sistema nas redes" : "social system"}
               index="folha 03"
               tilt={0.6}
@@ -110,17 +110,17 @@ export default function PilotisProject() {
 
         <CaseSection
           label={pt ? "03 / sinais do encontro" : "03 / signals of the encounter"}
-          title={pt ? "pessoas primeiro, cÃ³digo depois" : "people first, code second"}
+          title={pt ? "pessoas primeiro, código depois" : "people first, code second"}
           intro={
             pt
-              ? "As imagens do evento mantÃªm o pÃºblico no centro. Os sinais grÃ¡ficos organizam a leitura sem cobrir a experiÃªncia registrada."
+              ? "As imagens do evento mantêm o público no centro. Os sinais gráficos organizam a leitura sem cobrir a experiência registrada."
               : "Event imagery keeps people at the center. Graphic signals organize the reading without covering the documented experience."
           }
         >
           <div className="tc-grid tc-grid--stack">
             <CaseFigure
               {...GALLERY[3]}
-              alt={pt ? "Faixa grÃ¡fica do evento Devs no Pilotis" : "Devs no Pilotis graphic strip"}
+              alt={pt ? "Faixa gráfica do evento Devs no Pilotis" : "Devs no Pilotis graphic strip"}
               caption={pt ? "faixa de chamada" : "announcement strip"}
               index="faixa 04"
               tilt={-0.25}
@@ -131,7 +131,7 @@ export default function PilotisProject() {
                 <CaseFigure
                   key={image.src}
                   {...image}
-                  alt={pt ? "Registros e aplicaÃ§Ãµes do Devs no Pilotis" : "Devs no Pilotis records and applications"}
+                  alt={pt ? "Registros e aplicações do Devs no Pilotis" : "Devs no Pilotis records and applications"}
                   caption={pt ? "registro aplicado" : "applied record"}
                   index={`folha 0${index + 5}`}
                   tilt={index === 0 ? -0.65 : 0.65}
@@ -153,7 +153,7 @@ export default function PilotisProject() {
           <div style={{ marginTop: "clamp(1.4rem, 4vw, 3rem)" }}>
             <CaseFigure
               {...GALLERY[7]}
-              alt={pt ? "Assinatura grÃ¡fica de encerramento" : "Closing graphic signature"}
+              alt={pt ? "Assinatura gráfica de encerramento" : "Closing graphic signature"}
               caption={pt ? "encerramento" : "closing"}
               index="faixa 08"
               sizes="(max-width: 1050px) 92vw, 980px"
@@ -168,7 +168,7 @@ export default function PilotisProject() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            {t("pilotis_visit")} â†—
+            {t("pilotis_visit")} ↗
           </a>
         </CaseSection>
 
@@ -187,4 +187,3 @@ export default function PilotisProject() {
     </ProjectShell>
   );
 }
-
