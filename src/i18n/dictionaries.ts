@@ -410,6 +410,12 @@ const dictionaries = {
     pilotis_imp_kicker: "o resultado",
     pilotis_imp_title: "Conexão real",
     pilotis_imp_desc: "A cobertura \"people-first\" e a linguagem de sinalização urbana conectaram os alunos de forma humana, aumentando o tempo de permanência e as interações no evento.",
+    magazine_chal_kicker: "o desafio",
+    magazine_chal_title: "Caos com propósito",
+    magazine_chal_desc: "Criar uma publicação sobre tipografia experimental onde a própria diagramação atua como a mensagem, desafiando a leitura tradicional sem perder a coesão.",
+    magazine_imp_kicker: "o resultado",
+    magazine_imp_title: "Tensão editorial",
+    magazine_imp_desc: "Uma peça gráfica que eleva as provas de impressão a um status de objeto de arte, provando que o ruído visual pode guiar o olhar tanto quanto o espaço em branco.",
 
     // Metadata
     meta_description: "Designer multidisciplinar. Projetos em Design Gráfico, Web Design, UX/UI e Programação Criativa.",
@@ -824,6 +830,12 @@ const dictionaries = {
     pilotis_imp_kicker: "the outcome",
     pilotis_imp_title: "Real connection",
     pilotis_imp_desc: "The \"people-first\" coverage and urban signage language connected students in a human way, increasing dwell time and interactions at the event.",
+    magazine_chal_kicker: "the challenge",
+    magazine_chal_title: "Breaking the grid",
+    magazine_chal_desc: "Creating a publication about experimental typography where the layout itself acts as the message, challenging traditional reading without losing cohesion.",
+    magazine_imp_kicker: "the outcome",
+    magazine_imp_title: "Editorial tension",
+    magazine_imp_desc: "A graphic piece that elevates print proofs to the status of an art object, proving that visual noise can guide the eye just as much as whitespace.",
 
     // Metadata
     meta_description: "Multidisciplinary designer. Projects in Graphic Design, Web Design, UX/UI and Creative Coding.",

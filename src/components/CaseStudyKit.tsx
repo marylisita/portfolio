@@ -74,8 +74,8 @@ const styles = `
     --tc-deep: #171717;
   }
   .tc--magazine {
-    --tc-accent: #ff3d00;
-    --tc-accent-soft: rgba(255, 61, 0, .15);
+    --tc-accent: #CC181E;
+    --tc-accent-soft: rgba(204, 24, 30, .14);
     --tc-paper: rgba(245, 239, 222, .94);
     --tc-deep: #211d18;
   }

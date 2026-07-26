@@ -6,6 +6,7 @@ import {
   CaseFigure,
   CasePanel,
   CaseSection,
+  CaseImpact,
 } from "@/components/CaseStudyKit";
 import { useT } from "@/i18n/LanguageContext";
 
@@ -65,6 +66,15 @@ export default function MagazineProject() {
             </CasePanel>
           </div>
         </CaseSection>
+
+        <CaseImpact
+          challengeLabel={t("magazine_chal_kicker")}
+          challengeTitle={t("magazine_chal_title")}
+          challengeDesc={t("magazine_chal_desc")}
+          impactLabel={t("magazine_imp_kicker")}
+          impactTitle={t("magazine_imp_title")}
+          impactDesc={t("magazine_imp_desc")}
+        />
 
         <CaseSection
           ink
