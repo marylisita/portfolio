@@ -552,10 +552,10 @@ img { max-width:100%; display:block; }
 
 /* Títulos dos cards em /work — escopo separado para não disputar com edições do card. */
 .wk-page h2 {
-    font-family: var(--font-subtitle) !important;
-    font-weight: var(--offbit-weight) !important;
-    letter-spacing: var(--offbit-letter-spacing) !important;
-    scale: var(--offbit-condense) 1;
+    font-family: var(--font-head) !important;
+    font-style: italic !important;
+    letter-spacing: -0.02em !important;
+    font-weight: 400 !important;
     transform-origin: left center;
 }
 
