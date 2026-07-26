@@ -36,7 +36,11 @@ export default function PilotisProject() {
 
   return (
     <ProjectShell
-      title={t("pilotis_title")}
+      title={
+        <>
+          <strong style={{ color: "#00a8ad", fontWeight: 700 }}>devs no pilotis</strong>
+        </>
+      }
       desc={
         <>
           {t("pilotis_desc_1")} <span className="pj-em">{t("pilotis_desc_em")}</span>

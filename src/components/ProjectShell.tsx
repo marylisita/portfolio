@@ -210,7 +210,7 @@ const styles = `
     line-height: 1.62;
     text-wrap: pretty;
   }
-  .pj-desc .pj-em { font-family: var(--font-head); font-style: italic; color: var(--acid); }
+  .pj-desc .pj-em { font-family: var(--font-head); font-style: italic; font-weight: 700; color: var(--acid); }
   .pj-impact { margin-top: 3.5rem; }
   .pj-impact__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: clamp(1.5rem, 4vw, 3rem); margin: 1.5rem 0 2rem; }
   .pj-impact__label { font-family: var(--font-subtitle), monospace; font-weight: var(--offbit-weight-active); font-size: var(--type-micro); letter-spacing: var(--offbit-letter-spacing); text-transform: lowercase; color: var(--gray-600); margin-bottom: 1rem; }

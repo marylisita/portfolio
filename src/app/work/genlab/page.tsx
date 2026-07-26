@@ -15,7 +15,11 @@ export default function GenLabProject() {
 
   return (
     <ProjectShell
-      title={t("genlab_title").replace(/\n/g, " ")}
+      title={
+        <>
+          <strong style={{ color: "#B482F6", fontWeight: 700 }}>GenLab:</strong> {pt ? "Ideias que moldam o mundo digital." : "Ideas that shape the digital world."}
+        </>
+      }
       desc={
         <>
           {t("genlab_desc")} <span className="pj-em">{t("genlab_highlight1")}</span> {t("genlab_desc2")}{" "}

@@ -217,7 +217,11 @@ export default function VegCozProject() {
 
   return (
     <ProjectShell
-      title={t("vegcoz_title")}
+      title={
+        <>
+          <strong style={{ color: "#4f7f3a", fontWeight: 700 }}>vegcoz:</strong> culinária consciente
+        </>
+      }
       desc={
         <>
           {t("vegcoz_desc_1")} <span className="pj-em">{t("vegcoz_desc_em")}</span>

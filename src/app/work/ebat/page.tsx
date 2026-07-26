@@ -34,7 +34,11 @@ export default function EbatProject() {
 
   return (
     <ProjectShell
-      title={t("ebat_title")}
+      title={
+        <>
+          <strong style={{ color: "#3158d7", fontWeight: 700 }}>EBAT</strong> - Escola de Arte e Tecnologia
+        </>
+      }
       desc={
         <>
           {t("ebat_desc")} <span className="pj-em">{t("ebat_desc_highlight")}</span> {t("ebat_desc_rest")}

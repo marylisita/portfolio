@@ -41,7 +41,11 @@ export default function IsadoraProject() {
 
   return (
     <ProjectShell
-      title="press kit — isadora ruppert"
+      title={
+        <>
+          <strong style={{ color: "#E32026", fontWeight: 700 }}>press kit</strong> — isadora ruppert
+        </>
+      }
       desc={
         <>
           {t("isadora_subtitle")} <span className="pj-em">{t("isadora_highlight1")}</span>{" "}

@@ -25,7 +25,11 @@ export default function ChinaRioProject() {
 
   return (
     <ProjectShell
-      title={t("chinario_title")}
+      title={
+        <>
+          <strong style={{ color: "#c90035", fontWeight: 700 }}>china-rio:</strong> pontes para inovação
+        </>
+      }
       desc={
         <>
           {t("chinario_desc_1")} <span className="pj-em">{t("chinario_desc_em")}</span>

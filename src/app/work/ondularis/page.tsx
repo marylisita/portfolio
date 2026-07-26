@@ -695,7 +695,11 @@ export default function OndularisProject() {
 
   return (
     <ProjectShell
-      title="Ondularis"
+      title={
+        <>
+          <strong style={{ color: "#64f6d0", fontWeight: 700 }}>ondularis</strong>
+        </>
+      }
       desc={c.description}
       meta={c.meta.map((item) => ({ ...item }))}
     >
