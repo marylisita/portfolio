@@ -175,8 +175,9 @@ const styles = `
   .vz-retro { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.4rem; margin-bottom: 2.6rem; }
   .vz-r__t {
     font-family: var(--font-head); font-size: clamp(1.15rem, 2.4vw, 1.6rem);
+    font-weight: 700; color: var(--tc-accent);
     margin: 0 0 .6rem; line-height: 1.15;
-    padding-left: .9rem; border-left: 2px solid var(--ink);
+    padding-left: .9rem; border-left: 2px solid var(--tc-accent);
   }
   .vz-r__d { font-family: var(--font-body); font-size: var(--type-body); line-height: 1.68; opacity: .86; margin: 0; padding-left: .9rem; }
   .vz-close {

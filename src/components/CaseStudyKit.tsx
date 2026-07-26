@@ -138,6 +138,15 @@ const styles = `
   }
   .tc-section--ink .tc-copy { opacity: .78; }
 
+  .tc-impact__title {
+    font-family: var(--font-head);
+    font-size: clamp(1.25rem, 2.6vw, 1.8rem);
+    font-weight: 700;
+    color: var(--tc-accent);
+    margin: 0 0 .75rem;
+    line-height: 1.2;
+  }
+
   .tc-heading {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(16rem, .72fr);
@@ -177,7 +186,7 @@ const styles = `
   .tc-copy em, .tc-copy strong {
     font-weight: 700;
     font-style: italic;
-    color: var(--tc-ink);
+    color: var(--tc-accent);
   }
   .tc-section--ink .tc-copy em, .tc-section--ink .tc-copy strong {
     color: inherit;

@@ -697,7 +697,7 @@ export default function OndularisProject() {
     <ProjectShell
       title={
         <>
-          <strong style={{ color: "#64f6d0", fontWeight: 700 }}>ondularis</strong>
+          <strong style={{ color: "#164b53", fontWeight: 700 }}>ondularis</strong>
         </>
       }
       desc={c.description}
