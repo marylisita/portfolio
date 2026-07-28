@@ -162,8 +162,7 @@ export default function EditorialFooter() {
             src={cupidosBraille}
             alt=""
             fill
-            sizes="(max-width: 720px) 100vw, 72rem"
-            unoptimized
+            sizes="(max-width: 720px) 74vw, 44rem"
           />
         </motion.div>
         {/* céu de estrelinhas embaixo dos ANJINHOS do beijo (mantidos) */}

@@ -28,6 +28,8 @@ const ENTER = 650;
 function PixelGrid({ status, reduceMotion }: { status: Status, reduceMotion: boolean | null }) {
   const [grid, setGrid] = useState({ cols: 0, rows: 0 });
   const TILE_SIZE = 80; // tamanho fixo de cada bloco
+  const isMoving = status !== "idle";
+  const isExit = status === "exit";
 
   useEffect(() => {
     const calc = () => {
@@ -41,11 +43,11 @@ function PixelGrid({ status, reduceMotion }: { status: Status, reduceMotion: boo
     return () => window.removeEventListener("resize", calc);
   }, []);
 
-  if (grid.cols === 0) return null;
+  // A grade só existe durante a troca de rota. Antes, centenas de nós
+  // transparentes ficavam montados durante toda a visita.
+  if (!isMoving || grid.cols === 0) return null;
 
   const total = grid.cols * grid.rows;
-  const isMoving = status !== "idle";
-  const isExit = status === "exit";
 
   // Se o usuário pedir reduzir movimento, só dá fade no contêiner todo
   if (reduceMotion) {
@@ -89,15 +91,15 @@ function PixelGrid({ status, reduceMotion }: { status: Status, reduceMotion: boo
         // Efeito Wavefront / Diagonal sweep com 'noise' (dither):
         // Adicionando variação aleatória suaviza a "linha dura" da onda.
         const baseDelay = isExit ? p * 0.35 : (1 - p) * 0.35;
-        const noise = Math.random() * 0.12; 
+        const noise = (((i * 73) % 101) / 101) * 0.12;
         const delay = baseDelay + noise;
 
         return (
           <motion.div
             key={i}
-            initial={false}
+            initial={{ opacity: isExit ? 0 : 1 }}
             animate={{
-              opacity: isMoving && isExit ? 1 : 0,
+              opacity: isExit ? 1 : 0,
             }}
             transition={{
               duration: 0.1, // fade rápido mas não instantâneo
@@ -106,7 +108,7 @@ function PixelGrid({ status, reduceMotion }: { status: Status, reduceMotion: boo
             }}
             style={{
               backgroundColor: "var(--site-paper)",
-              willChange: isMoving ? "opacity" : "auto"
+              willChange: "opacity"
             }}
           />
         );
@@ -121,7 +123,7 @@ function PixelGrid({ status, reduceMotion }: { status: Status, reduceMotion: boo
           backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cfilter id='sheet'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.78' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23sheet)' opacity='.13'/%3E%3C/svg%3E\"), repeating-linear-gradient(0deg, transparent 0 17px, rgba(28,27,24,.025) 17px 18px), radial-gradient(circle at 18% 12%, rgba(255,255,255,.42), transparent 48%)",
           backgroundSize: "180px 180px, 100% 18px, 100% 100%",
           backgroundBlendMode: "multiply, multiply, normal",
-          opacity: isMoving ? 1 : 0,
+          opacity: 1,
           transition: "opacity 0.4s ease",
           zIndex: 10, // above the grid pixels
         }}

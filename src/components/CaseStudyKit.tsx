@@ -662,9 +662,9 @@ export function CaseFigure({
                 onClick={() => setIsOpen(false)}
               >
                 <motion.div
-                  initial={reducedMotion ? false : { scale: 0.9, y: 15 }}
+                  initial={reducedMotion ? undefined : { scale: 0.9, y: 15 }}
                   animate={{ scale: 1, y: 0 }}
-                  exit={reducedMotion ? false : { scale: 0.9, y: 15 }}
+                  exit={reducedMotion ? undefined : { scale: 0.9, y: 15 }}
                   transition={{ duration: 0.4, ease }}
                   style={{
                     position: "relative",

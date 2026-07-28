@@ -65,7 +65,9 @@ const styles = `
     position: relative;
     background: transparent; /* deixa o degradê+ruído do .rm aparecer */
     color: var(--ink);
-    min-height: 100svh;
+    /* A gravura mede 1521×1034. O pequeno respiro adicional preserva o
+       wordmark no topo sem afastar a onda do ticker. */
+    min-height: max(100svh, calc(67.98vw + 2rem));
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -120,21 +122,30 @@ const styles = `
   /* frase no vazio da onda: OffBit, alinhada à esquerda, abaixo do título */
   .ph__sub--pocket {
     position: absolute;
-    left: 49%;
-    top: 66%;
+    left: 52%;
+    top: 60%;
     /* a quebra é forçada no JSX; a largura só evita reflow das duas linhas */
-    max-width: min(42rem, 50vw);
+    width: min(42rem, 43vw);
+    max-width: none;
     text-align: left;
     text-transform: lowercase;
     font-family: var(--font-subtitle);
-    line-height: 1.3;
+    font-size: clamp(1rem, 1.2vw, 1.3rem);
+    line-height: 1.35;
+    letter-spacing: .01em;
     z-index: 1;
     pointer-events: none;
   }
-  /* abaixo de 1180px o vazio some — volta ao fluxo, empilhado */
-  @media (max-width: 1180px) {
+  @media (min-width: 1360px) {
+    .ph__title {
+      top: clamp(-4.5rem, -3vw, -2.5rem);
+    }
+  }
+  /* sem largura editorial suficiente, volta ao fluxo e evita sobreposição */
+  @media (max-width: 1359px) {
     .ph__sub--pocket {
       position: static;
+      width: auto;
       max-width: 100%;
       margin-top: 1.25rem;
     }
@@ -145,6 +156,17 @@ const styles = `
     letter-spacing: .01em;
   }
   .ph__em { font-family: var(--font-head); font-style: italic; font-weight: 600; letter-spacing: -0.01em; }
+  .ph__wave-word { display: inline-block; white-space: nowrap; }
+  .ph__wave-char { display: inline-block; }
+  @keyframes ph-wave {
+    0%, 7%, 100% { transform: translateY(0); }
+    3.5% { transform: translateY(-3px); }
+  }
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .ph__wave-char {
+      animation: ph-wave 8.52s cubic-bezier(.33, 1, .68, 1) var(--wave-delay) infinite;
+    }
+  }
 
   /* --- adesivos arrastáveis --- */
   .ph__sticker {
@@ -223,6 +245,43 @@ const lineAnim = {
     transition: { duration: 0.9, ease: [0.16, 1, 0.3, 1] as const },
   },
 };
+
+function WavyText({
+  text,
+  accent = false,
+  delay = 0,
+}: {
+  text: string;
+  accent?: boolean;
+  delay?: number;
+}) {
+  const words = text.split(/(\s+)/);
+  let character = 0;
+
+  return (
+    <span className={accent ? "ph__em" : undefined}>
+      {words.map((word, wordIndex) => {
+        if (/^\s+$/.test(word)) return word;
+        return (
+          <span className="ph__wave-word" key={`${word}-${wordIndex}`}>
+            {Array.from(word).map((letter) => {
+              const index = character++;
+              return (
+                <span
+                  className="ph__wave-char"
+                  key={`${letter}-${index}`}
+                  style={{ "--wave-delay": `${delay + index * .018}s` } as React.CSSProperties}
+                >
+                  {letter}
+                </span>
+              );
+            })}
+          </span>
+        );
+      })}
+    </span>
+  );
+}
 
 type Sticker = {
   key: string;
@@ -355,9 +414,9 @@ export default function PlaygroundHero({
     offset: ["start start", "end start"]
   });
 
-  // Parallax leve: o texto desce (y positivo) e some enquanto o container rola pra cima
+  // Parallax leve. A opacidade fica em CSS/HTML para o conteúdo principal já
+  // nascer visível antes da hidratação (essencial para o LCP no mobile).
   const textY = useTransform(scrollYProgress, [0, 1], [0, 180]);
-  const textOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
   return (
     <section className="ph" ref={bounds} data-stamp-active={stampMode ? "true" : "false"}>
@@ -400,7 +459,7 @@ export default function PlaygroundHero({
 
       <motion.h1 
         className="ph__title" 
-        style={{ y: textY, opacity: textOpacity }}
+        style={{ y: textY }}
         variants={containerAnim}
         initial={reduceMotion ? false : "hidden"}
         animate="show"
@@ -425,7 +484,7 @@ export default function PlaygroundHero({
         initial={reduceMotion ? false : { opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: reduceMotion ? 0 : 0.75, duration: reduceMotion ? 0 : 0.7 }}
-        style={{ y: textY, opacity: textOpacity }}
+        style={{ y: textY }}
         suppressHydrationWarning
       >
         <AsciiDivider
@@ -439,23 +498,32 @@ export default function PlaygroundHero({
 
       {/* frase no espaço em branco da onda (concavidade), alinhada à ESQUERDA
           e em OffBit — abaixo do título pra não encostar nele */}
-      <motion.p className="ph__sub ph__sub--pocket" style={{ y: textY, opacity: textOpacity }} suppressHydrationWarning>
+      <p
+        className="ph__sub ph__sub--pocket"
+        aria-label={`${sub} ${subHighlight}`}
+      >
         {(() => {
           // quebra forçada após a primeira vírgula ("...visuais,") = 2 linhas
           // exatas, sem depender de calibragem frágil de largura
           const i = sub.indexOf(",");
           if (i === -1) {
-            return <>{sub} <span className="ph__em">{subHighlight}</span></>;
+            return (
+              <span aria-hidden="true">
+                <WavyText text={`${sub} `} delay={.92} />
+                <WavyText text={subHighlight} accent delay={.92 + sub.length * .018} />
+              </span>
+            );
           }
           return (
-            <>
-              {sub.slice(0, i + 1)}
+            <span aria-hidden="true">
+              <WavyText text={sub.slice(0, i + 1)} delay={.92} />
               <br />
-              {sub.slice(i + 1).trim()} <span className="ph__em">{subHighlight}</span>
-            </>
+              <WavyText text={`${sub.slice(i + 1).trim()} `} delay={.92 + (i + 1) * .018} />
+              <WavyText text={subHighlight} accent delay={.92 + (sub.length + 1) * .018} />
+            </span>
           );
         })()}
-      </motion.p>
+      </p>
     </section>
   );
 }

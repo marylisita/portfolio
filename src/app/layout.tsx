@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Space_Mono, Instrument_Serif } from "next/font/google";
 import localFont from "next/font/local";
+import Script from "next/script";
 import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
 import FloatingBackToTop from "@/components/FloatingBackToTop";
@@ -22,6 +23,7 @@ const instrumentSerif = Instrument_Serif({
   weight: "400",
   subsets: ["latin"],
   variable: "--font-head",
+  display: "optional",
 });
 
 const spaceMono = Space_Mono({
@@ -35,6 +37,7 @@ const seratonin = localFont({
   src: "./fonts/Seratonin.otf",
   variable: "--font-hand",
   display: "swap",
+  preload: false,
 });
 
 /* Só os 256 glifos do bloco braille (U+2800–U+28FF), tirados do DejaVu Sans:
@@ -45,6 +48,7 @@ const braille = localFont({
   src: "./fonts/BrailleMono.woff2",
   variable: "--font-braille",
   display: "block",
+  preload: false,
 });
 
 const offBit = localFont({
@@ -52,7 +56,7 @@ const offBit = localFont({
   weight: "700",
   style: "normal",
   variable: "--font-offbit",
-  display: "swap",
+  display: "optional",
   fallback: ["monospace"],
 });
 
@@ -65,6 +69,7 @@ const editorialNew = localFont({
   ],
   variable: "--font-editorial",
   display: "swap",
+  preload: false,
 });
 
 export const metadata: Metadata = {
@@ -89,9 +94,32 @@ export default function RootLayout({
           type="font/woff2"
           crossOrigin="anonymous"
         />
-        <link rel="stylesheet" href="https://use.typekit.net/knv7rew.css" />
+        <style>{`
+          @font-face {
+            font-family: "pf-pixelscript";
+            src: url("https://use.typekit.net/af/c7c109/0000000000000000774f2b0a/31/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("woff2");
+            font-display: optional;
+            font-style: normal;
+            font-weight: 400;
+            font-stretch: normal;
+          }
+        `}</style>
       </head>
       <body className="antialiased">
+        <Script id="typekit-stylesheet" strategy="afterInteractive">
+          {`
+            const loadTypekit = () => {
+              if (document.querySelector('link[data-typekit="knv7rew"]')) return;
+              const typekit = document.createElement("link");
+              typekit.rel = "stylesheet";
+              typekit.href = "https://use.typekit.net/knv7rew.css";
+              typekit.dataset.typekit = "knv7rew";
+              document.head.appendChild(typekit);
+            };
+            addEventListener("pointerdown", loadTypekit, { once: true, passive: true });
+            addEventListener("keydown", loadTypekit, { once: true });
+          `}
+        </Script>
         <LanguageProvider>
           <SmoothScroll>
             {/* Cursor fica FORA do PageTransitionProvider de propósito: o wrapper de

@@ -30,18 +30,27 @@ const styles = `
     font-size: var(--type-micro); letter-spacing: .06em; opacity: .82; white-space: nowrap;
   }
   .sh__dot {
+    position: relative;
     width: 7px; height: 7px; border-radius: 50%;
     background: var(--site-ink, #1C1B18);
+  }
+  .sh__dot::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: currentColor;
+    opacity: .35;
     animation: sh-pulse 2.4s ease-out infinite;
+    will-change: transform, opacity;
   }
   @keyframes sh-pulse {
-    0% { box-shadow: 0 0 0 0 rgba(28,27,24,.35); }
-    70% { box-shadow: 0 0 0 6px rgba(28,27,24,0); }
-    100% { box-shadow: 0 0 0 0 rgba(28,27,24,0); }
+    0% { transform: scale(1); opacity: .35; }
+    70%, 100% { transform: scale(2.7); opacity: 0; }
   }
   .sh__nav { display: inline-flex; align-items: center; gap: .7rem; }
   .sh__nav a { font-size: var(--type-micro); letter-spacing: .04em; }
-  @media (prefers-reduced-motion: reduce) { .sh__dot { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { .sh__dot::after { animation: none; opacity: 0; } }
   @media (max-width: 860px) {
     .sh__status, .sh__nav, .sh__sub { display: none; }
     .sh--l { max-width: calc(100vw - 8rem); }

@@ -499,7 +499,7 @@ export default function ProjectShell({
   children,
   accent,
 }: {
-  title: string;
+  title: React.ReactNode;
   desc: React.ReactNode;
   challenge?: React.ReactNode;
   outcome?: React.ReactNode;

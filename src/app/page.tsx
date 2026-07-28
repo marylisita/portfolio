@@ -4,23 +4,17 @@ import PlaygroundHero from "@/components/PlaygroundHero";
 import ScatteredWorks from "@/components/ScatteredWorks";
 import { useProjects } from "@/components/useProjects";
 import Marquee from "@/components/Marquee";
-import AsciiAnim from "@/components/AsciiAnim";
-import BootIntro from "@/components/BootIntro";
 import AsciiKanagawa from "@/components/AsciiKanagawa";
 import AsciiDivider from "@/components/AsciiDivider";
 import ScatterMenu, { type MenuItem } from "@/components/ScatterMenu";
-import { GATO_FRAMES } from "@/components/asciiArt";
 import EditorialFooter from "@/components/EditorialFooter";
 import SiteHeader from "@/components/SiteHeader";
-import LangToggle from "@/components/LangToggle";
 import { useT } from "@/i18n/LanguageContext";
 import {
-  CreativeStudioControls,
   CreativeStudioProvider,
   useCreativeStudio,
 } from "@/components/CreativeStudio";
 import SkillConstellation from "@/components/SkillConstellation";
-import ScrambleText from "@/components/ScrambleText";
 
 const STITCH_DIVIDER = "------  ";
 
@@ -77,7 +71,6 @@ const rmStyles = `
   .rm .rm-idle {
     color: color-mix(in srgb, var(--ink) 17%, transparent);
   }
-  .rm .sw__deco { opacity: .78 !important; }
   .rm .rm-thread { opacity: .36; }
   .rm .ph__sticker { filter: contrast(1.12); }
   /* grão de filme por cima de tudo (feTurbulence), sem capturar cliques */
@@ -251,8 +244,9 @@ const rmStyles = `
   /* --- seções --- */
   .rm-sec { padding: 6rem 5.5rem; scroll-margin-top: 6.5rem; }
   .rm-label {
-    font-family: var(--font-body); font-size: var(--type-micro);
-    text-transform: lowercase; letter-spacing: .12em;
+    font-family: var(--font-body);
+    font-size: clamp(1.05rem, .95rem + .55vw, 1.45rem);
+    text-transform: lowercase; letter-spacing: .08em;
     display: flex; justify-content: space-between;
     padding-bottom: .55rem; margin-bottom: 0;
   }
@@ -382,8 +376,6 @@ function HomeContent() {
       data-contact-visible={contactVisible ? "true" : "false"}
     >
       <style>{rmStyles}</style>
-      <BootIntro />
-      <CreativeStudioControls />
       <div className="rm-spine" aria-hidden="true" />
 
       <div className="rm-thread" aria-hidden="true">
@@ -441,23 +433,15 @@ function HomeContent() {
 
         <Marquee items={marquee} />
 
-        {/* Índice de trabalhos — imagem persegue o cursor com tratamento CFTV */}
+        {/* Galeria horizontal de trabalhos — scroll nativo, arraste e hover leve */}
         <section id="work" className="rm-sec" style={{ position: "relative" }}>
           <span className="rm-guide" aria-hidden="true" style={{ left: "51%", top: "3.4rem" }}>✳︎</span>
-          <AsciiAnim
-            frames={GATO_FRAMES}
-            interval={220}
-            fontSize={7}
-            opacity={0.28}
-            style={{ position: "absolute", right: "3%", top: "-2rem" }}
-          />
           <div className="rm-label">
             <span>{t("selected_work")}</span>
             <span>{projects.length.toString().padStart(2, "0")} —</span>
           </div>
           <AsciiDivider className="rm-divider" pattern={STITCH_DIVIDER} fullWidth opacity={0.52} />
-          {/* projetos jogados no canvas (t-i-n-y) — capas nascem nítidas e viram pixel no scroll */}
-          <ScatteredWorks items={projects} bgWord={`${t("nav_work").toLowerCase()}!`} />
+          <ScatteredWorks items={projects} />
         </section>
 
         {/* Sobre */}

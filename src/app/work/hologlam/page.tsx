@@ -366,11 +366,7 @@ export default function HoloGlamProject() {
               width={1600}
               height={900}
               sizes="(max-width: 560px) 100vw, 50vw"
-              title={
-        <>
-          <strong style={{ color: "#c685ff", fontWeight: 700 }}>hologlam:</strong> fashion reloaded
-        </>
-      }
+              alt="HoloGlam — comunidade"
             />
           </div>
         </motion.div>

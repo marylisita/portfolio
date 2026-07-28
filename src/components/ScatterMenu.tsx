@@ -44,14 +44,6 @@ const styles = `
     align-items: center;
     gap: .42rem;
   }
-  .sm__label::before,
-  .sm__label::after {
-    content: "╳";
-    font-family: var(--font-mono), monospace;
-    font-size: .48em;
-    font-weight: 400;
-    opacity: .56;
-  }
   .sm__tag[data-priority="primary"] {
     font-family: var(--font-subtitle), monospace;
     font-size: 1.18rem;
@@ -194,7 +186,7 @@ const styles = `
   }
 `;
 
-function go(e: React.MouseEvent, href: string) {
+function go(e: React.MouseEvent<HTMLElement>, href: string) {
   if (href.startsWith("#")) {
     e.preventDefault();
     if (href === "#about") window.dispatchEvent(new Event("studio:reveal-about"));
@@ -245,7 +237,7 @@ export default function ScatterMenu({ items }: { items: MenuItem[] }) {
           }}
           transition={{ delay: reduceMotion || pinned ? 0 : 1.3 + i * 0.12, duration: reduceMotion ? 0 : 0.45, ease: [0.16, 1, 0.3, 1] }}
         >
-          <HeroButton href={it.href} onClick={(e) => go(e as any, it.href)} className="sm__label">
+          <HeroButton href={it.href} onClick={(e) => go(e, it.href)} className="sm__label">
             {`[ ${it.label} ]`}
           </HeroButton>
           {it.previews?.length ? (
@@ -283,7 +275,7 @@ export default function ScatterMenu({ items }: { items: MenuItem[] }) {
                 transition={{ delay: reduceMotion ? 0 : i * 0.06 }}
                 style={{ position: 'relative', display: 'inline-block' }}
               >
-                <HeroButton href={it.href} onClick={(e) => go(e as any, it.href)} className="sm__label">
+                <HeroButton href={it.href} onClick={(e) => go(e, it.href)} className="sm__label">
                   {`[ ${it.label} ]`}
                 </HeroButton>
               </motion.div>

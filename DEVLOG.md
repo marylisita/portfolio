@@ -1,3 +1,22 @@
+# Devlog: recuperação seletiva após a reversão
+
+27 de julho de 2026
+
+A reversão de segurança recuperou a estabilidade, mas também trouxe de volta os
+`x` decorativos nas etiquetas do hero e apagou ajustes visuais que já estavam
+aprovados em produção. A recuperação foi seletiva: os `x` saíram, os colchetes
+foram preservados, e voltaram apenas o enquadramento responsivo da Kanagawa, a
+animação sutil de seus contornos, a onda tipográfica do subtítulo e a composição
+editorial validada do título.
+
+O backlog também foi corrigido para separar fatos de hipóteses. A pontuação 86
+do Lighthouse não é um baseline de TBT em milissegundos; o duplo scroll foi uma
+regressão histórica, não uma justificativa para criar outro contêiner rolável;
+e a reorganização arquitetural deixou de ser tratada como solução automática
+para um problema de performance ainda não atribuído.
+
+---
+
 # Devlog: costurar o digital
 
 23 de julho de 2026
@@ -97,3 +116,23 @@ O projeto usa Next.js 16, React 19, Framer Motion e Lenis. As fontes principais 
 A versão descrita aqui foi publicada no commit [`c7a433d`](https://github.com/marylisita/portfolio/commit/c7a433d) e está disponível em [portfolio-nine-lime-73.vercel.app](https://portfolio-nine-lime-73.vercel.app/).
 
 No próximo ciclo, quero revisar a compressão do vídeo da EBAT e continuar ajustando o equilíbrio entre imagem, ornamento e espaço vazio. O objetivo não é deixar tudo preenchido. É fazer cada vazio parecer intencional.
+
+---
+
+# Devlog: Reversao de Seguranca (Scroll e Fontes)
+
+27 de julho de 2026 (Segunda sessao)
+
+Houve uma tentativa de refatorar os componentes e alterar a logica de IntersectionObserver e idle timers em FeaturedWorks para mitigar um bug de lentidao no scroll. Porem, a refatoracao introduziu quebras graves de interface:
+1. O surgimento de duas barras de rolagem (two scrolls).
+2. O reset involuntario da opacidade no header ao voltar ao topo.
+3. A remocao indevida da fonte Seratonin no titulo principal.
+
+Para preservar a estabilidade da producao, todas as alteracoes foram completamente descartadas via 'git reset --hard'. Os unicos commits e codigos mantidos foram os ja registrados pela intervencao anterior da outra IA.
+
+Adicionalmente, tres erros de tipagem estrita (Type errors) pre-existentes que bloqueavam a build na Vercel foram corrigidos permanentemente para que o deploy da versao restaurada ocorresse com sucesso:
+- src/components/ProjectShell.tsx: A prop title passou a aceitar ReactNode.
+- src/components/CaseStudyKit.tsx: Foi substituido 'false' por 'undefined' nas propriedades de animacao do Framer Motion.
+- src/app/work/hologlam/page.tsx: Foi removida a passagem de JSX para o atributo HTML title em um componente Image.
+
+O codigo em main esta agora 100% igual a versao anterior funcional (sem bugs de fonte ou layout duplicado). O deploy de producao na Vercel foi finalizado.

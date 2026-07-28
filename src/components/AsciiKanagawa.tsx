@@ -18,6 +18,10 @@ const TITLE_SCRAMBLE_GLYPHS = [
 
 const UNIFIED_COLOR = "#173b58"; // Navy azul-escuro único
 const PAPER_BG = "rgba(245, 236, 219, 0.05)";
+// A última linha visível da gravura está em y=996; os 37 px restantes do
+// arquivo são transparentes. Alinhar por esse limite aproxima a tinta do
+// ticker sem recortar nenhum caractere da obra.
+const ART_VISIBLE_BOTTOM_RATIO = 996 / 1034;
 
 const hash = (x: number, y: number, seed = 0) => {
   const value = Math.sin(x * 127.1 + y * 311.7 + seed * 74.7) * 43758.5453;
@@ -139,19 +143,18 @@ export default function AsciiKanagawa({
 
     function fitImage() {
       if (!image.naturalWidth || !image.naturalHeight) return;
-      const imageRatio = image.naturalWidth / image.naturalHeight;
-      const viewportRatio = width / height;
-
-      if (imageRatio < viewportRatio) {
-        drawWidth = width;
-        drawHeight = width / imageRatio;
-      } else {
-        drawHeight = height;
-        drawWidth = height * imageRatio;
-      }
+      const bottomGap = Math.min(12, Math.max(6, width * 0.005));
+      const scale = Math.min(
+        width / image.naturalWidth,
+        (height - bottomGap) / (image.naturalHeight * ART_VISIBLE_BOTTOM_RATIO),
+      );
+      drawWidth = image.naturalWidth * scale;
+      drawHeight = image.naturalHeight * scale;
       drawX = (width - drawWidth) / 2;
-      // Subiu a imagem mais para o topo
-      drawY = Math.max(-50, (height - drawHeight) / 2 - 25);
+      drawY =
+        height -
+        bottomGap -
+        image.naturalHeight * ART_VISIBLE_BOTTOM_RATIO * scale;
     }
 
     // Gerador do mapa de ruído de GibbonJoyeux focado na crista marcada da onda
@@ -196,7 +199,9 @@ export default function AsciiKanagawa({
       // 3. FINALIZE MAP (FrameLoops de GibbonJoyeux)
       const points: MutationPoint[] = [];
       const waveRidgePoints: MutationPoint[] = [];
-      const FRAMES = 300;
+      // Movimento lento e editorial: visível aos poucos, sem deixar a gravura
+      // com aparência de glitch ou superfície nervosa.
+      const FRAMES = 150;
       const MAX_CHAR_IDX = SITE_GIBBON_RAMP.length - 1;
 
       for (let y = 1; y < mapHeight - 1; y += 1) {
@@ -242,8 +247,11 @@ export default function AsciiKanagawa({
 
           points.push(pt);
 
-          // Filtra a crista da onda demarcada pelo usuário
-          if (isBoundary && pt.y < 0.85 && (pt.x < 0.72 || pt.y < 0.45)) {
+          // O movimento vive principalmente nas bordas. Alguns raros pontos
+          // internos mantêm continuidade sem descaracterizar a impressão.
+          const sparseInterior =
+            pt.strength > 0.62 && (pt.col * 3 + pt.row * 5) % 17 === 0;
+          if (isBoundary || sparseInterior) {
             waveRidgePoints.push(pt);
           }
         }
@@ -302,8 +310,19 @@ export default function AsciiKanagawa({
 
       const tile = gibbonAtlasTile;
       const half = patchSize / 2;
+      const eraseSize = patchSize * 0.48;
       ctx.save();
-      ctx.globalAlpha = 0.85;
+
+      // Remove parcialmente o glifo-base antes da substituição. A passagem
+      // pequena torna a mudança legível sem abrir buracos agressivos na arte.
+      for (let i = 0; i < contourPoints.length; i += 1) {
+        const pt = contourPoints[i];
+        const x = drawX + pt.x * drawWidth;
+        const y = drawY + pt.y * drawHeight;
+        ctx.clearRect(x - eraseSize / 2, y - eraseSize / 2, eraseSize, eraseSize);
+      }
+
+      ctx.globalAlpha = 0.76;
       for (let i = 0; i < contourPoints.length; i += 1) {
         const pt = contourPoints[i];
         if (!pt.frameLoop) continue;
