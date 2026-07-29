@@ -224,6 +224,7 @@ export function CreativeStudioProvider({ children }: { children: React.ReactNode
   const audioRef = useRef<AudioContext | null>(null);
   const soundEnabledRef = useRef(false);
   const stampId = useRef(0);
+  const paperEffectMounted = useRef(false);
 
   const playSound = useCallback((kind: StudioSound, force = false) => {
     if (!soundEnabledRef.current && !force) return;
@@ -293,6 +294,13 @@ export function CreativeStudioProvider({ children }: { children: React.ReactNode
   }, [stampMode]);
 
   useEffect(() => {
+    // O HTML já nasce com os tokens de "cream". Reescrevê-los na primeira
+    // hidratação invalida os estilos da página inteira e posterga o LCP.
+    if (!paperEffectMounted.current) {
+      paperEffectMounted.current = true;
+      return;
+    }
+
     const root = document.documentElement;
     root.dataset.paper = paper;
     Object.entries(PAPER_TOKENS[paper]).forEach(([name, value]) => {

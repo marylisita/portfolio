@@ -575,3 +575,51 @@ img { max-width:100%; display:block; }
     transition-delay: 0s !important;
   }
 }
+.scramble-text {
+  display: inline;
+  pointer-events: auto;
+}
+
+.scramble-text__word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.scramble-text__letter {
+  display: inline-block;
+  pointer-events: auto;
+  transition: opacity 40ms linear;
+}
+
+.scramble-text__emoji {
+  display: inline-block;
+  margin-left: 0.13em;
+  font-family: var(--font-emoji), monospace;
+  font-size: 0.62em;
+  line-height: 1;
+  vertical-align: 0.08em;
+  white-space: nowrap;
+}
+
+.scramble-text__grid {
+  position: fixed;
+  /* Acima do grão global (z-index 950), para a grade não ficar lavada. */
+  z-index: 960;
+  display: inline-grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: center;
+  justify-items: center;
+  gap: .02em .04em;
+  overflow: hidden;
+  line-height: 1;
+  letter-spacing: 0;
+  font-family: var(--font-mono), monospace;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 40ms linear;
+}
+
+.scramble-text__grid > span {
+  display: inline-block;
+  text-align: center;
+}

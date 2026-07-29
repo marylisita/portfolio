@@ -28,20 +28,22 @@ const FEATURED_PROJECT_HREFS = [
 
 const HERO_HEADLINES = {
   pt: [
-    ["Faço marcas, sites", "e escolhas questionavelmente específicas."],
-    ["Contrate-me antes que eu crie", "outro projeto pessoal."],
-    ["Designer por profissão.", "Obcecada por pixels por algum motivo."],
-    ["Talvez sua próxima", "designer favorita."],
-    ["Disponível para projetos,", "dinheiro e elogios."],
-    ["Eu tive uma ideia.", "Agora ela tem identidade visual e um site."],
+    ["Foi só um ajuste pequeno.", "Mentira, foi tudo de novo [[ :3 ]]"],
+    ["Não sei se ficou bom.", "Só sei que não paro de olhar [[ :) ]]"],
+    ["Não pensei muito nisso...", "Só fiquei acordada até terminar [[ ^_^ ]]"],
+    ["Eu tinha outras coisas pra fazer,", "Mas esse projeto ficou melhor [[ :D ]]"],
+    ["Fiz parecer casual.....", "Mas pensei nisso por três dias [[ ;) ]]"],
+    ["Não mudei tanto assim!", "Só refiz tudo [[ :P ]]"],
+    ["Eu ia deixar pra depois,", "Aí ficou bonito demais pra ignorar kkkkkk [[ <3 ]]"],
   ],
   en: [
-    ["I make brands, websites", "and suspiciously specific choices."],
-    ["Please hire me before I start", "another personal project."],
-    ["Designer by trade.", "Pixel freak by choice."],
-    ["Possibly your new", "favourite designer."],
-    ["Currently accepting projects,", "money and compliments."],
-    ["Had an idea.", "Gave it a brand and a website."],
+    ["Just a small tweak.", "lying, i redid the whole thing [[ :3 ]]"],
+    ["Not sure if it's good.", "I just can't stop looking [[ :) ]]"],
+    ["Didn't think about it much...", "just stayed up till it was done [[ ^_^ ]]"],
+    ["Had other stuff to do,", "but this one turned out better [[ :D ]]"],
+    ["Made it look casual.....", "but thought about it for three days [[ ;) ]]"],
+    ["Didn't change that much!", "Just redid everything [[ :P ]]"],
+    ["Was gonna leave it for later,", "then it got too pretty to ignore lmao [[ <3 ]]"],
   ],
 } as const;
 
@@ -272,7 +274,12 @@ const rmStyles = `
   }
 
   /* --- seções --- */
-  .rm-sec { padding: 6rem 5.5rem; scroll-margin-top: 6.5rem; }
+  .rm-sec {
+    padding: 6rem 5.5rem;
+    scroll-margin-top: 6.5rem;
+    content-visibility: auto;
+    contain-intrinsic-size: auto 900px;
+  }
   .rm-label {
     font-family: var(--font-body);
     font-size: clamp(1.05rem, .95rem + .55vw, 1.45rem);

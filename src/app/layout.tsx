@@ -60,6 +60,13 @@ const offBit = localFont({
   fallback: ["monospace"],
 });
 
+const emoji = localFont({
+  src: "./fonts/EmojiFont.ttf",
+  variable: "--font-emoji",
+  display: "swap",
+  preload: false,
+});
+
 const editorialNew = localFont({
   src: [
     { path: "./fonts/PPEditorialNew-Regular.otf", weight: "400", style: "normal" },
@@ -83,7 +90,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${aeonik.variable} ${instrumentSerif.variable} ${spaceMono.variable} ${seratonin.variable} ${braille.variable} ${offBit.variable} ${editorialNew.variable}`}>
+    <html lang="en" className={`${aeonik.variable} ${instrumentSerif.variable} ${spaceMono.variable} ${seratonin.variable} ${braille.variable} ${offBit.variable} ${emoji.variable} ${editorialNew.variable}`}>
       <head>
         <link rel="preconnect" href="https://use.typekit.net" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://p.typekit.net" crossOrigin="anonymous" />

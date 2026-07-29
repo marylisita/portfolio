@@ -99,6 +99,10 @@ export default function AsciiKanagawa({
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
+    const interactivePointer = window.matchMedia(
+      "(hover: hover) and (pointer: fine) and (min-width: 861px)",
+    );
+
     const canvas = canvasRef.current;
     if (!canvas) return;
     const context = canvas.getContext("2d", { alpha: true });
@@ -108,6 +112,57 @@ export default function AsciiKanagawa({
     const parent = canvas.parentElement ?? canvas;
     const image = new Image();
     image.src = src;
+
+    // No mobile a obra continua visível, mas é desenhada uma única vez. Canvas
+    // não vira candidato de LCP e evita todo o mapa, partículas e loop animado.
+    if (!interactivePointer.matches) {
+      let staticWidth = 0;
+      let staticHeight = 0;
+      let staticDpr = 1;
+
+      const drawStatic = () => {
+        if (!image.naturalWidth || !image.naturalHeight) return;
+        const rect = parent.getBoundingClientRect();
+        staticWidth = rect.width || window.innerWidth;
+        staticHeight = rect.height || window.innerHeight;
+        staticDpr = Math.min(window.devicePixelRatio || 1, 1.25);
+        canvas.width = Math.round(staticWidth * staticDpr);
+        canvas.height = Math.round(staticHeight * staticDpr);
+        ctx.setTransform(staticDpr, 0, 0, staticDpr, 0, 0);
+        ctx.clearRect(0, 0, staticWidth, staticHeight);
+
+        const bottomGap = Math.min(12, Math.max(6, staticWidth * 0.005));
+        const scale = Math.min(
+          staticWidth / image.naturalWidth,
+          (staticHeight - bottomGap) /
+            (image.naturalHeight * ART_VISIBLE_BOTTOM_RATIO),
+        );
+        const staticDrawWidth = image.naturalWidth * scale;
+        const staticDrawHeight = image.naturalHeight * scale;
+        const staticDrawX = (staticWidth - staticDrawWidth) / 2;
+        const staticDrawY =
+          staticHeight -
+          bottomGap -
+          image.naturalHeight * ART_VISIBLE_BOTTOM_RATIO * scale;
+
+        ctx.drawImage(
+          image,
+          staticDrawX,
+          staticDrawY,
+          staticDrawWidth,
+          staticDrawHeight,
+        );
+      };
+
+      image.addEventListener("load", drawStatic);
+      window.addEventListener("resize", drawStatic, { passive: true });
+      if (image.complete && image.naturalWidth) drawStatic();
+
+      return () => {
+        image.removeEventListener("load", drawStatic);
+        window.removeEventListener("resize", drawStatic);
+      };
+    }
 
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -565,19 +620,29 @@ export default function AsciiKanagawa({
   }, [src]);
 
   return (
-    <canvas
-      ref={canvasRef}
-      className={className}
-      style={{
-        display: "block",
-        width: "100%",
-        height: "100%",
-        pointerEvents: "auto",
-        cursor: "crosshair",
-        opacity,
-        ...style,
-      }}
-      aria-label="A Grande Onda de Kanagawa em ASCII animado"
-    />
+    <>
+      <style>{`
+        @media (max-width: 860px), (hover: none), (pointer: coarse) {
+          .ak-canvas {
+            pointer-events: none !important;
+            cursor: default !important;
+          }
+        }
+      `}</style>
+      <canvas
+        ref={canvasRef}
+        className={`${className ?? ""} ak-canvas`}
+        style={{
+          display: "block",
+          width: "100%",
+          height: "100%",
+          pointerEvents: "auto",
+          cursor: "crosshair",
+          opacity,
+          ...style,
+        }}
+        aria-hidden="true"
+      />
+    </>
   );
 }

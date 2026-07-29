@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { animate as animateValue, motion, useMotionValue, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { animate as animateValue, motion, useMotionValue, useReducedMotion } from "framer-motion";
 import AsciiDivider from "./AsciiDivider";
 import ScrambleText from "./ScrambleText";
 import { useT } from "@/i18n/LanguageContext";
@@ -98,12 +98,23 @@ const styles = `
     text-transform: none;
     margin: clamp(1.2rem, 3.8vh, 2.8rem) 0;
     position: relative;
+    translate: 0 -3vh;
     z-index: 1;
     pointer-events: none;
   }
   /* padding+margin negativa: expande a CAIXA DE CLIP (máscara da entrada) sem
      mudar o ritmo — senão o floreio da capitular da Pixelscript sai cortado */
   .ph__line { overflow: hidden; display: block; padding: .18em .12em .12em .08em; margin: -.18em -.12em -.12em -.08em; }
+  .ph__line-inner {
+    display: block;
+    will-change: transform, filter;
+    animation: ph-title-arrive .9s cubic-bezier(.16, 1, .3, 1) var(--line-delay, .15s) both;
+  }
+  .ph__line:nth-child(2) .ph__line-inner { --line-delay: .26s; }
+  @keyframes ph-title-arrive {
+    from { transform: translate3d(0, .3em, 0); filter: blur(.35px); }
+    to { transform: translate3d(0, 0, 0); filter: blur(0); }
+  }
   .ph__line--acid { color: var(--hero-highlight, var(--acid)); }
   .ph__foot {
     display: grid;
@@ -122,8 +133,8 @@ const styles = `
   /* frase no vazio da onda: OffBit, alinhada à esquerda, abaixo do título */
   .ph__sub--pocket {
     position: absolute;
-    left: 52%;
-    top: 60%;
+    left: 44%;
+    top: 52%;
     /* a quebra é forçada no JSX; a largura só evita reflow das duas linhas */
     width: min(42rem, 43vw);
     max-width: none;
@@ -142,16 +153,18 @@ const styles = `
   }
   @media (min-width: 1360px) {
     .ph__title {
-      top: clamp(-4.5rem, -3vw, -2.5rem);
+      top: clamp(-5.8rem, -3.9vw, -3.8rem);
     }
   }
   /* sem largura editorial suficiente, volta ao fluxo e evita sobreposição */
   @media (max-width: 1359px) {
+    .ph__title { translate: 0 -5svh; }
     .ph__sub--pocket {
       position: static;
       width: auto;
       max-width: 100%;
       margin-top: 1.25rem;
+      translate: 0 -4svh;
     }
   }
   .ph__scroll {
@@ -210,9 +223,13 @@ const styles = `
     }
     .ph__meta span:nth-child(2) { display: none; }
     .ph__title {
+      font-family: var(--font-pixelscript);
+      font-weight: 400;
       font-size: clamp(2rem, 10.6vw, 2.75rem);
       line-height: 1.08;
+      letter-spacing: -.015em;
       margin: 7.5rem 0 10rem;
+      translate: 0 -6svh;
     }
     .ph__title[data-compact="true"] {
       font-size: clamp(1.75rem, 9.2vw, 2.4rem);
@@ -231,65 +248,10 @@ const styles = `
     .ph__note { font-size: var(--type-micro); }
   }
   @media (prefers-reduced-motion: reduce) {
-    .ph__line > span { transform: none !important; }
+    .ph__line > span { transform: none !important; animation: none !important; filter: none !important; }
     .ph__sticker { translate: none; }
   }
 `;
-
-const containerAnim = {
-  hidden: {},
-  show: {
-    transition: {
-      staggerChildren: 0.11,
-      delayChildren: 0.15,
-    }
-  }
-};
-
-const lineAnim = {
-  hidden: { y: "110%" },
-  show: {
-    y: "0%",
-    transition: { duration: 0.9, ease: [0.16, 1, 0.3, 1] as const },
-  },
-};
-
-function WavyText({
-  text,
-  accent = false,
-  delay = 0,
-}: {
-  text: string;
-  accent?: boolean;
-  delay?: number;
-}) {
-  const words = text.split(/(\s+)/);
-  let character = 0;
-
-  return (
-    <span className={accent ? "ph__em" : undefined}>
-      {words.map((word, wordIndex) => {
-        if (/^\s+$/.test(word)) return word;
-        return (
-          <span className="ph__wave-word" key={`${word}-${wordIndex}`}>
-            {Array.from(word).map((letter) => {
-              const index = character++;
-              return (
-                <span
-                  className="ph__wave-char"
-                  key={`${letter}-${index}`}
-                  style={{ "--wave-delay": `${delay + index * .018}s` } as React.CSSProperties}
-                >
-                  {letter}
-                </span>
-              );
-            })}
-          </span>
-        );
-      })}
-    </span>
-  );
-}
 
 type Sticker = {
   key: string;
@@ -417,15 +379,6 @@ export default function PlaygroundHero({
     { key: "clock", left: "58%", top: "12%", rotate: 3, el: <LiveClock /> },
   ];
 
-  const { scrollYProgress } = useScroll({
-    target: bounds,
-    offset: ["start start", "end start"]
-  });
-
-  // Parallax leve. A opacidade fica em CSS/HTML para o conteúdo principal já
-  // nascer visível antes da hidratação (essencial para o LCP no mobile).
-  const textY = useTransform(scrollYProgress, [0, 1], [0, 180]);
-
   return (
     <section className="ph" ref={bounds} data-stamp-active={stampMode ? "true" : "false"}>
       <style>{styles}</style>
@@ -465,35 +418,26 @@ export default function PlaygroundHero({
       {children}
 
 
-      <motion.h1 
+      <h1
         className="ph__title" 
         data-compact={lines.join(" ").length > 48 ? "true" : "false"}
-        style={{ y: textY }}
-        variants={containerAnim}
-        initial={reduceMotion ? false : "hidden"}
-        animate="show"
         suppressHydrationWarning
       >
         {lines.map((l, i) => (
           <span className="ph__line" key={i}>
-            <motion.span
-              className={i === lines.length - 1 ? "ph__line--acid" : undefined}
+            <span
+              className={`ph__line-inner${i === lines.length - 1 ? " ph__line--acid" : ""}`}
               style={{ display: "block" }}
-              variants={lineAnim}
             >
               <ScrambleText text={l} />
-            </motion.span>
+            </span>
           </span>
         ))}
-      </motion.h1>
+      </h1>
 
       {/* divisor fofo no lugar da linha tracejada */}
-      <motion.div
+      <div
         className="ph__foot"
-        initial={reduceMotion ? false : { opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: reduceMotion ? 0 : 0.75, duration: reduceMotion ? 0 : 0.7 }}
-        style={{ y: textY }}
         suppressHydrationWarning
       >
         <AsciiDivider
@@ -503,13 +447,12 @@ export default function PlaygroundHero({
           opacity={0.62}
           style={{ width: "100%", marginBottom: ".4rem" }}
         />
-      </motion.div>
+      </div>
 
       {/* frase no espaço em branco da onda (concavidade), alinhada à ESQUERDA
           e em OffBit — abaixo do título pra não encostar nele */}
       <p
         className="ph__sub ph__sub--pocket"
-        aria-label={`${sub} ${subHighlight}`}
       >
         {(() => {
           // quebra forçada após a primeira vírgula ("...visuais,") = 2 linhas
@@ -517,18 +460,16 @@ export default function PlaygroundHero({
           const i = sub.indexOf(",");
           if (i === -1) {
             return (
-              <span aria-hidden="true">
-                <WavyText text={`${sub} `} delay={.92} />
-                <WavyText text={subHighlight} accent delay={.92 + sub.length * .018} />
+              <span>
+                {sub} <span className="ph__em">{subHighlight}</span>
               </span>
             );
           }
           return (
-            <span aria-hidden="true">
-              <WavyText text={sub.slice(0, i + 1)} delay={.92} />
+            <span>
+              {sub.slice(0, i + 1)}
               <br />
-              <WavyText text={`${sub.slice(i + 1).trim()} `} delay={.92 + (i + 1) * .018} />
-              <WavyText text={subHighlight} accent delay={.92 + (sub.length + 1) * .018} />
+              {sub.slice(i + 1).trim()} <span className="ph__em">{subHighlight}</span>
             </span>
           );
         })()}

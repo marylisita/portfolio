@@ -1,174 +1,160 @@
 "use client";
-import { useEffect, useRef, type ReactNode } from "react";
-import { useReducedMotion } from "framer-motion";
+
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+
+const GLYPHS = ["♡", "✦", "✧", "⋆", "░", "▒", "▓", "≈", "°", "⊹", "·", "⠂", "⠁", "✿", "₊", "˚", "✳"];
+const COLORS = ["#d8b4fe", "#f472b6", "#a3e635", "#fef08a", "#99f6e4", "#1c1b18", "#5b564a"];
 
 /**
- * Scramble Tipográfico Editorial para o Header:
- * - Apenas na letra focada (no hover).
- * - Sem quebrar linha ou alterar a largura do texto (overlay absoluto preservando as métricas exatas da letra).
- * - Transição em passos curtos via requestAnimationFrame e mutação DOM direta (60fps garantido).
- * - Cores pasteis/editoriais sutis (lilás, rosa, verde ácido sutil, creme, tinta).
+ * O scramble original criava uma grade 3×3 para CADA letra do título.
+ * Aqui existe apenas uma grade por linha: ela é posicionada sobre a letra
+ * em hover e reutilizada. O resultado visual permanece o mesmo, com uma
+ * fração do DOM e do trabalho de animação.
  */
-
-const POOL = ["♡", "✦", "✧", "⋆", "░", "▒", "▓", "≈", "°", "⊹", "·", "⠂", "⠁", "✿", "₊", "˚", "✳"];
-
-const SUBTLE_COLORS = [
-  "#d8b4fe", // lilás suave
-  "#f472b6", // rosa pastel
-  "#a3e635", // verde ácido sutil
-  "#fef08a", // dourado/creme
-  "#99f6e4", // azul-verde sutil
-  "#1c1b18", // tinta escura dominante
-  "#5b564a", // cinza quente
-];
-
-function ScrambleLetter({ original, reduceMotion }: { original: string; reduceMotion: boolean | null }) {
-  const containerRef = useRef<HTMLSpanElement>(null);
-  const originalRef = useRef<HTMLSpanElement>(null);
+export default function ScrambleText({ text }: { text: string }) {
   const gridRef = useRef<HTMLSpanElement>(null);
-  const cellsRef = useRef<HTMLSpanElement[]>([]);
-  const busy = useRef(false);
-  const rafId = useRef<number>(0);
+  const cellRefs = useRef<HTMLSpanElement[]>([]);
+  const activeLetterRef = useRef<HTMLSpanElement | null>(null);
+  const animationFrameRef = useRef(0);
+  const canAnimateRef = useRef(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    const pointerQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const syncCapability = () => {
+      canAnimateRef.current = pointerQuery.matches && !motionQuery.matches;
+    };
+
+    syncCapability();
+    setIsMounted(true);
+    pointerQuery.addEventListener("change", syncCapability);
+    motionQuery.addEventListener("change", syncCapability);
+
     return () => {
-      cancelAnimationFrame(rafId.current);
+      cancelAnimationFrame(animationFrameRef.current);
+      pointerQuery.removeEventListener("change", syncCapability);
+      motionQuery.removeEventListener("change", syncCapability);
     };
   }, []);
 
-  const scramble = () => {
-    if (reduceMotion || busy.current) return;
-    busy.current = true;
+  const resetGrid = () => {
+    cancelAnimationFrame(animationFrameRef.current);
+    animationFrameRef.current = 0;
 
-    if (originalRef.current) originalRef.current.style.opacity = "0";
-    if (gridRef.current) gridRef.current.style.opacity = "1";
+    if (activeLetterRef.current) {
+      activeLetterRef.current.style.opacity = "1";
+      activeLetterRef.current = null;
+    }
+
+    if (gridRef.current) gridRef.current.style.opacity = "0";
+  };
+
+  const scrambleLetter = (letter: HTMLSpanElement) => {
+    if (!canAnimateRef.current || activeLetterRef.current === letter) return;
+
+    resetGrid();
+    const grid = gridRef.current;
+    if (!grid) return;
+
+    const rect = letter.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+
+    activeLetterRef.current = letter;
+    letter.style.opacity = "0";
+    grid.style.left = `${rect.left}px`;
+    grid.style.top = `${rect.top}px`;
+    grid.style.width = `${rect.width}px`;
+    grid.style.height = `${rect.height}px`;
+    grid.style.fontSize = `${Math.max(5, rect.height * 0.24)}px`;
+    grid.style.opacity = "1";
+
+    const drawStep = () => {
+      cellRefs.current.forEach((cell) => {
+        if (!cell) return;
+        cell.textContent = GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
+        cell.style.color = COLORS[Math.floor(Math.random() * COLORS.length)];
+        cell.style.transform = `rotate(${(Math.random() - 0.5) * 36}deg) scale(${0.85 + Math.random() * 0.4})`;
+        cell.style.opacity = String(0.7 + Math.random() * 0.3);
+      });
+    };
 
     const steps = 5;
     const stepDuration = 85;
-    let currentStep = 0;
-    let lastTime = performance.now();
+    let step = 0;
+    let previousTime = performance.now();
+    drawStep();
 
     const tick = (time: number) => {
-      if (time - lastTime >= stepDuration) {
-        lastTime = time;
-        currentStep++;
+      if (time - previousTime >= stepDuration) {
+        previousTime = time;
+        step += 1;
 
-        if (currentStep > steps) {
-          if (originalRef.current) originalRef.current.style.opacity = "1";
-          if (gridRef.current) gridRef.current.style.opacity = "0";
-          busy.current = false;
+        if (step >= steps) {
+          resetGrid();
           return;
         }
-
-        // Mutate grid directly without React state overhead
-        cellsRef.current.forEach((cell) => {
-          if (!cell) return;
-          const symbol = POOL[Math.floor(Math.random() * POOL.length)];
-          const color = SUBTLE_COLORS[Math.floor(Math.random() * SUBTLE_COLORS.length)];
-          const rotate = (Math.random() - 0.5) * 36;
-          const scale = 0.85 + Math.random() * 0.4;
-          const opacity = 0.7 + Math.random() * 0.3;
-
-          cell.innerText = symbol;
-          cell.style.color = color;
-          cell.style.transform = `rotate(${rotate}deg) scale(${scale})`;
-          cell.style.opacity = opacity.toString();
-        });
+        drawStep();
       }
-
-      rafId.current = requestAnimationFrame(tick);
+      animationFrameRef.current = requestAnimationFrame(tick);
     };
 
-    rafId.current = requestAnimationFrame(tick);
+    animationFrameRef.current = requestAnimationFrame(tick);
   };
 
-  return (
-    <span
-      ref={containerRef}
-      aria-hidden="true"
-      onMouseEnter={scramble}
-      style={{
-        display: "inline-block",
-        position: "relative",
-        pointerEvents: "auto",
-        whiteSpace: "pre",
-        cursor: "inherit",
-      }}
-    >
-      <span ref={originalRef} style={{ opacity: 1, display: "inline-block" }}>
-        {original}
-      </span>
+  const parts = text.split(/(\[\[\s*[^\]]+\s*\]\]|\s+)/);
 
-      <span
-        ref={gridRef}
-        style={{
-          opacity: 0,
-          position: "absolute",
-          inset: 0,
-          display: "inline-grid",
-          gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-          gap: ".02em .04em",
-          fontSize: ".24em",
-          lineHeight: 1,
-          letterSpacing: 0,
-          alignItems: "center",
-          justifyItems: "center",
-          pointerEvents: "none",
-          overflow: "hidden",
-        }}
-      >
-        {Array.from({ length: 9 }).map((_, k) => (
+  return (
+    <span className="scramble-text" aria-label={text.replace(/\[\[\s*(.+?)\s*\]\]/g, " $1")}>
+      {parts.map((part, partIndex) => {
+        if (/^\s+$/.test(part)) {
+          return <span key={`space-${partIndex}`}>{part}</span>;
+        }
+
+        const emojiMatch = part.match(/^\[\[\s*(.+?)\s*\]\]$/);
+        if (emojiMatch) {
+          return (
+            <span className="scramble-text__emoji" aria-hidden="true" key={`emoji-${partIndex}`}>
+              {emojiMatch[1]}
+            </span>
+          );
+        }
+
+        return (
           <span
-            key={k}
-            ref={(el) => {
-              if (el) cellsRef.current[k] = el;
-            }}
-            style={{
-              display: "inline-block",
-              textAlign: "center",
-              fontFamily: "var(--font-mono), monospace",
-            }}
-          />
-        ))}
-      </span>
+            className="scramble-text__word"
+            key={`word-${partIndex}`}
+          >
+            {Array.from(part).map((character, characterIndex) => (
+              <span
+                className="scramble-text__letter"
+                key={`${character}-${characterIndex}`}
+                onPointerEnter={(event) => scrambleLetter(event.currentTarget)}
+              >
+                {character}
+              </span>
+            ))}
+          </span>
+        );
+      })}
+      {isMounted && createPortal(
+        <span
+          ref={gridRef}
+          className="scramble-text__grid"
+          aria-hidden="true"
+        >
+          {Array.from({ length: 9 }).map((_, index) => (
+            <span
+              key={index}
+              ref={(element) => {
+                if (element) cellRefs.current[index] = element;
+              }}
+            />
+          ))}
+        </span>,
+        document.body,
+      )}
     </span>
   );
-}
-
-function ScrambleTextContent({ text }: { text: string }) {
-  const reduceMotion = useReducedMotion();
-  const originals = Array.from(text);
-
-  const tokens: ReactNode[] = [];
-  let word: ReactNode[] = [];
-  
-  const flush = () => {
-    if (!word.length) return;
-    tokens.push(
-      <span key={`w${tokens.length}`} style={{ display: "inline-block", whiteSpace: "nowrap" }}>
-        {word}
-      </span>
-    );
-    word = [];
-  };
-
-  originals.forEach((char, i) => {
-    if (char === " ") {
-      flush();
-      tokens.push(<span key={`s${i}`}> </span>);
-    } else {
-      word.push(<ScrambleLetter key={`c${i}`} original={char} reduceMotion={reduceMotion} />);
-    }
-  });
-  flush();
-
-  return (
-    <span aria-label={text} style={{ display: "inline", whiteSpace: "normal" }}>
-      {tokens}
-    </span>
-  );
-}
-
-export default function ScrambleText({ text }: { text: string }) {
-  return <ScrambleTextContent key={text} text={text} />;
 }

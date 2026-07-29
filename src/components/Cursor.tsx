@@ -51,6 +51,8 @@ export default function Cursor() {
   const smoothY = useSpring(cursorY, springConfig);
 
   useEffect(() => {
+    if (!window.matchMedia("(pointer: fine)").matches) return;
+
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
@@ -130,6 +132,7 @@ export default function Cursor() {
 
   useEffect(() => {
     const finePointer = window.matchMedia("(pointer: fine)");
+    if (!finePointer.matches) return;
 
     const handleMove = (event: MouseEvent) => {
       cursorX.set(event.clientX);
