@@ -16,10 +16,10 @@ const dictionaries = {
 
     // Hero
     hero_location: "RIO DE JANEIRO, RJ, BRASIL",
-    hero_title_1: "Identidades visuais marcantes",
-    hero_title_highlight: "& experiências imersivas.",
-    hero_sub_1: "Designer multidisciplinar criando identidades visuais, sites e experiências digitais",
-    hero_sub_highlight: "que se destacam.",
+    hero_title_1: "Pesquisa visual, design",
+    hero_title_highlight: "& tecnologia criativa.",
+    hero_sub_1: "Designer e pesquisadora cruzando cultura visual, interfaces e código",
+    hero_sub_highlight: "do conceito à experiência.",
 
     // Spread Cards
     card_uxui_title: "UX/UI Design",
@@ -436,10 +436,10 @@ const dictionaries = {
 
     // Hero
     hero_location: "RIO DE JANEIRO, RJ, BRAZIL",
-    hero_title_1: "Striking visual identities",
-    hero_title_highlight: "& immersive experiences.",
-    hero_sub_1: "Multidisciplinary designer crafting visual identities, websites and digital experiences that",
-    hero_sub_highlight: "stand out.",
+    hero_title_1: "Visual research, design",
+    hero_title_highlight: "& creative technology.",
+    hero_sub_1: "Designer and researcher bridging visual culture, interfaces and code",
+    hero_sub_highlight: "from concept to experience.",
 
     // Spread Cards
     card_uxui_title: "UX/UI Design",

@@ -18,6 +18,14 @@ import SkillConstellation from "@/components/SkillConstellation";
 
 const STITCH_DIVIDER = "------  ";
 
+const FEATURED_PROJECT_HREFS = [
+  "/work/isadora",
+  "/work/genlab",
+  "/work/ebat",
+  "/work/vegcoz",
+  "/work/ondularis",
+];
+
 /* ==========================================================
    Landing — direção de arte editorial ("reset visual").
    Tokens locais: o resto do site segue usando os tokens do
@@ -159,6 +167,7 @@ const rmStyles = `
     pointer-events: none;
     color: var(--ink);
     font-family: var(--font-mono), monospace;
+    transform: translateY(clamp(-4rem, -4vh, -2rem));
   }
   .rm-thread {
     position: absolute;
@@ -228,6 +237,7 @@ const rmStyles = `
     .rm-status__dot { animation: none; }
   }
   @media (max-width: 860px) {
+    .rm-field { transform: translateY(-1.25rem); }
     .rm-status, .rm-nav, .rm-mark__sub { display: none; }
     .rm-corner { top: 1.25rem; }
     .rm-corner--l { left: 1.25rem; max-width: calc(100vw - 6rem); }
@@ -345,6 +355,13 @@ function HomeContent() {
 
   // lista única de projetos (mesma fonte da página /work)
   const projects = useProjects();
+  const featuredProjects = FEATURED_PROJECT_HREFS.flatMap((href) => {
+    const project = projects.find((item) => item.href === href);
+    return project ? [project] : [];
+  }).map((project, index) => ({
+    ...project,
+    num: String(index + 1).padStart(2, "0"),
+  }));
 
   const marquee = [
     t("p04_tag1"), t("p01_tag1"), t("about_cat_web"),
@@ -423,7 +440,7 @@ function HomeContent() {
                 top: "20%",
                 rotate: 3,
                 priority: "primary",
-                previews: projects.slice(0, 3).map((project) => ({ src: project.img, alt: project.title })),
+                previews: featuredProjects.slice(0, 3).map((project) => ({ src: project.img, alt: project.title })),
               },
               { label: t("rm_menu_about"), href: "#about", left: "6%", top: "70%", rotate: -3, priority: "secondary" },
               { label: t("rm_menu_contact"), href: "#contact", left: "72%", top: "78%", rotate: 2, priority: "tertiary" },
@@ -438,10 +455,10 @@ function HomeContent() {
           <span className="rm-guide" aria-hidden="true" style={{ left: "51%", top: "3.4rem" }}>✳︎</span>
           <div className="rm-label">
             <span>{t("selected_work")}</span>
-            <span>{projects.length.toString().padStart(2, "0")} —</span>
+            <span>{featuredProjects.length.toString().padStart(2, "0")} —</span>
           </div>
           <AsciiDivider className="rm-divider" pattern={STITCH_DIVIDER} fullWidth opacity={0.52} />
-          <ScatteredWorks items={projects} />
+          <ScatteredWorks items={featuredProjects} />
         </section>
 
         {/* Sobre */}
