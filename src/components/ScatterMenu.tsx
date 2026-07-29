@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 import HeroButton from "./HeroButton";
 
@@ -43,6 +42,23 @@ const styles = `
     display: inline-flex;
     align-items: center;
     gap: .42rem;
+  }
+  .sm__tag--hero {
+    opacity: var(--tag-opacity, .8);
+    transform: rotate(var(--tag-rotate, 0deg));
+    animation: sm-tag-in .45s cubic-bezier(.16, 1, .3, 1) var(--tag-delay, 1.3s) both;
+    transition:
+      opacity .3s ease,
+      transform .35s cubic-bezier(.16, 1, .3, 1);
+  }
+  .sm__tag--hero[data-pinned="true"] {
+    opacity: 0;
+    transform: scale(.6) rotate(var(--tag-rotate, 0deg));
+    pointer-events: none;
+  }
+  @keyframes sm-tag-in {
+    from { opacity: 0; transform: scale(.5) rotate(var(--tag-rotate, 0deg)); }
+    to { opacity: var(--tag-opacity, .8); transform: scale(1) rotate(var(--tag-rotate, 0deg)); }
   }
   .sm__tag[data-priority="primary"] {
     font-family: var(--font-subtitle), monospace;
@@ -113,6 +129,18 @@ const styles = `
     flex-direction: column;
     align-items: flex-end;
     gap: .45rem;
+    animation: sm-cluster-in .4s cubic-bezier(.16, 1, .3, 1) both;
+  }
+  .sm__cluster > .sm__tag-wrapper {
+    animation: sm-cluster-item-in .3s cubic-bezier(.16, 1, .3, 1) var(--tag-delay, 0s) both;
+  }
+  @keyframes sm-cluster-in {
+    from { opacity: 0; transform: translateX(40px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes sm-cluster-item-in {
+    from { opacity: 0; transform: translateX(30px); }
+    to { opacity: var(--tag-opacity, .8); transform: translateX(0) rotate(var(--tag-rotate, 0deg)); }
   }
   .sm__cluster .sm__tag {
     position: static;
@@ -196,7 +224,6 @@ function go(e: React.MouseEvent<HTMLElement>, href: string) {
 }
 
 export default function ScatterMenu({ items }: { items: MenuItem[] }) {
-  const reduceMotion = useReducedMotion();
   const [pinned, setPinned] = useState(false);
   const [footerVisible, setFooterVisible] = useState(false);
 
@@ -225,17 +252,17 @@ export default function ScatterMenu({ items }: { items: MenuItem[] }) {
 
       {/* etiquetas espalhadas no hero */}
       {items.map((it, i) => (
-        <motion.div
+        <div
           key={it.label}
           className="sm__tag-wrapper sm__tag--hero"
-          style={{ left: it.left, top: it.top }}
-          initial={reduceMotion ? false : { opacity: 0, scale: 0.5, rotate: it.rotate }}
-          animate={{
-            opacity: pinned ? 0 : it.priority === "primary" ? 1 : it.priority === "secondary" ? 0.92 : 0.78,
-            scale: pinned ? 0.6 : 1,
-            rotate: it.rotate,
-          }}
-          transition={{ delay: reduceMotion || pinned ? 0 : 1.3 + i * 0.12, duration: reduceMotion ? 0 : 0.45, ease: [0.16, 1, 0.3, 1] }}
+          data-pinned={pinned ? "true" : "false"}
+          style={{
+            left: it.left,
+            top: it.top,
+            "--tag-opacity": it.priority === "primary" ? 1 : it.priority === "secondary" ? .92 : .78,
+            "--tag-rotate": `${it.rotate}deg`,
+            "--tag-delay": `${1.3 + i * .12}s`,
+          } as React.CSSProperties}
         >
           <HeroButton href={it.href} onClick={(e) => go(e, it.href)} className="sm__label">
             {`[ ${it.label} ]`}
@@ -249,40 +276,33 @@ export default function ScatterMenu({ items }: { items: MenuItem[] }) {
               ))}
             </span>
           ) : null}
-        </motion.div>
+        </div>
       ))}
 
       {/* molhinho fixo no canto depois que o hero sai de cena */}
-      <AnimatePresence>
-        {pinned && !footerVisible && (
-          <motion.div
+      {pinned && !footerVisible && (
+          <div
             className="sm__cluster"
-            initial={reduceMotion ? false : { opacity: 0, x: 40 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 40 }}
-            transition={{ duration: reduceMotion ? 0 : 0.4, ease: [0.16, 1, 0.3, 1] }}
           >
             {items.map((it, i) => (
-              <motion.div
+              <div
                 key={it.label}
                 className="sm__tag-wrapper"
-                initial={reduceMotion ? false : { opacity: 0, x: 30 }}
-                animate={{
-                  opacity: it.priority === "primary" ? 1 : it.priority === "secondary" ? 0.92 : 0.78,
-                  x: 0,
-                  rotate: i % 2 ? 2 : -2,
-                }}
-                transition={{ delay: reduceMotion ? 0 : i * 0.06 }}
-                style={{ position: 'relative', display: 'inline-block' }}
+                style={{
+                  position: "relative",
+                  display: "inline-block",
+                  "--tag-opacity": it.priority === "primary" ? 1 : it.priority === "secondary" ? .92 : .78,
+                  "--tag-rotate": `${i % 2 ? 2 : -2}deg`,
+                  "--tag-delay": `${i * .06}s`,
+                } as React.CSSProperties}
               >
                 <HeroButton href={it.href} onClick={(e) => go(e, it.href)} className="sm__label">
                   {`[ ${it.label} ]`}
                 </HeroButton>
-              </motion.div>
+              </div>
             ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </div>
+      )}
     </nav>
   );
 }

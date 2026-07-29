@@ -1,6 +1,5 @@
 "use client";
-import { useState } from "react";
-import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
+import { useEffect, useState } from "react";
 
 /**
  * Botão "voltar ao topo" no estilo editorial do site:
@@ -26,7 +25,19 @@ const styles = `
     background: var(--paper);
     border: 1px solid color-mix(in srgb, var(--ink) 30%, transparent);
     cursor: pointer;
-    transition: background .25s ease, color .25s ease;
+    opacity: 0;
+    translate: 0 12px;
+    pointer-events: none;
+    transition:
+      opacity .35s cubic-bezier(.16, 1, .3, 1),
+      translate .35s cubic-bezier(.16, 1, .3, 1),
+      background .25s ease,
+      color .25s ease;
+  }
+  .btt[data-visible="true"] {
+    opacity: 1;
+    translate: 0 0;
+    pointer-events: auto;
   }
   .btt:hover {
     background: var(--ink);
@@ -40,15 +51,24 @@ const styles = `
 
 export default function FloatingBackToTop() {
   const [isVisible, setIsVisible] = useState(false);
-  const { scrollY } = useScroll();
 
-  useMotionValueEvent(scrollY, "change", (latest) => {
-    // Avoid re-renders by checking threshold
-    const shouldShow = latest > (typeof window !== 'undefined' ? window.innerHeight : 800);
-    if (shouldShow !== isVisible) {
-      setIsVisible(shouldShow);
-    }
-  });
+  useEffect(() => {
+    let previous = false;
+    const sync = () => {
+      const next = window.scrollY > window.innerHeight;
+      if (next !== previous) {
+        previous = next;
+        setIsVisible(next);
+      }
+    };
+    sync();
+    window.addEventListener("scroll", sync, { passive: true });
+    window.addEventListener("resize", sync, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", sync);
+      window.removeEventListener("resize", sync);
+    };
+  }, []);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -57,21 +77,15 @@ export default function FloatingBackToTop() {
   return (
     <>
       <style>{styles}</style>
-      <AnimatePresence>
-        {isVisible && (
-          <motion.button
-            className="btt hover-trigger"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 12 }}
-            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-            onClick={scrollToTop}
-            aria-label="Voltar ao topo"
-          >
-            ↑ topo
-          </motion.button>
-        )}
-      </AnimatePresence>
+      <button
+        className="btt hover-trigger"
+        data-visible={isVisible ? "true" : "false"}
+        onClick={scrollToTop}
+        aria-label="Voltar ao topo"
+        tabIndex={isVisible ? 0 : -1}
+      >
+        ↑ topo
+      </button>
     </>
   );
 }

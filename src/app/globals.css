@@ -595,10 +595,49 @@ img { max-width:100%; display:block; }
   display: inline-block;
   margin-left: 0.13em;
   font-family: var(--font-emoji), monospace;
-  font-size: 0.62em;
+  font-size: 0.72em;
+  font-style: normal;
+  font-weight: 400;
   line-height: 1;
-  vertical-align: 0.08em;
+  vertical-align: 0.04em;
   white-space: nowrap;
+}
+
+/* Ajuste óptico: a caixa tipográfica é igual, mas a área desenhada varia
+   quase 2× entre os glifos desta fonte. */
+.scramble-text__emoji[data-emoji=":3"],
+.scramble-text__emoji[data-emoji=":)"] { font-size: 0.9em; }
+.scramble-text__emoji[data-emoji="^_^"] { font-size: 1em; }
+.scramble-text__emoji[data-emoji=":D"],
+.scramble-text__emoji[data-emoji=":P"] {
+  font-size: 0.56em;
+  vertical-align: 0.11em;
+}
+.scramble-text__emoji[data-emoji=";)"] {
+  font-size: 0.54em;
+  vertical-align: 0.12em;
+}
+.scramble-text__emoji[data-emoji="<3"] {
+  font-size: 0.66em;
+  vertical-align: 0.08em;
+}
+
+/* Qualidade adaptativa: mantém cor, foco e feedback, mas remove deslocamentos,
+   loops e filtros caros em hardware/rede limitados. O atributo é definido no
+   <head>, antes da primeira pintura, evitando começar e cancelar animações. */
+html[data-motion="lite"] *,
+html[data-motion="lite"] *::before,
+html[data-motion="lite"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+html[data-motion="lite"] .ph__line-inner {
+  animation-delay: 0ms !important;
+  transform: none !important;
+  filter: none !important;
 }
 
 .scramble-text__grid {

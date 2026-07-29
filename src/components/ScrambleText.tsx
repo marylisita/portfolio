@@ -6,6 +6,21 @@ import { createPortal } from "react-dom";
 const GLYPHS = ["♡", "✦", "✧", "⋆", "░", "▒", "▓", "≈", "°", "⊹", "·", "⠂", "⠁", "✿", "₊", "˚", "✳"];
 const COLORS = ["#d8b4fe", "#f472b6", "#a3e635", "#fef08a", "#99f6e4", "#1c1b18", "#5b564a"];
 
+/*
+ * A EmojiFont não possui ligaturas: cada desenho vive atrás de uma tecla
+ * comum. Os atalhos continuam legíveis nas frases e são mapeados aqui para
+ * uma carinha diferente em cada final.
+ */
+const EMOJI_GLYPHS: Record<string, string> = {
+  ":3": "j",
+  ":)": "k",
+  "^_^": "l",
+  ":D": "b",
+  ";)": "f",
+  ":P": "q",
+  "<3": "p",
+};
+
 /**
  * O scramble original criava uma grade 3×3 para CADA letra do título.
  * Aqui existe apenas uma grade por linha: ela é posicionada sobre a letra
@@ -106,7 +121,7 @@ export default function ScrambleText({ text }: { text: string }) {
   const parts = text.split(/(\[\[\s*[^\]]+\s*\]\]|\s+)/);
 
   return (
-    <span className="scramble-text" aria-label={text.replace(/\[\[\s*(.+?)\s*\]\]/g, " $1")}>
+    <span className="scramble-text" aria-label={text.replace(/\[\[\s*(.+?)\s*\]\]/g, " carinha")}>
       {parts.map((part, partIndex) => {
         if (/^\s+$/.test(part)) {
           return <span key={`space-${partIndex}`}>{part}</span>;
@@ -114,9 +129,15 @@ export default function ScrambleText({ text }: { text: string }) {
 
         const emojiMatch = part.match(/^\[\[\s*(.+?)\s*\]\]$/);
         if (emojiMatch) {
+          const emojiGlyph = EMOJI_GLYPHS[emojiMatch[1].trim()] ?? "j";
           return (
-            <span className="scramble-text__emoji" aria-hidden="true" key={`emoji-${partIndex}`}>
-              {emojiMatch[1]}
+            <span
+              className="scramble-text__emoji"
+              data-emoji={emojiMatch[1].trim()}
+              aria-hidden="true"
+              key={`emoji-${partIndex}`}
+            >
+              {emojiGlyph}
             </span>
           );
         }

@@ -4,7 +4,7 @@ import PlaygroundHero from "@/components/PlaygroundHero";
 import ScatteredWorks from "@/components/ScatteredWorks";
 import { useProjects } from "@/components/useProjects";
 import Marquee from "@/components/Marquee";
-import AsciiKanagawa from "@/components/AsciiKanagawa";
+import AdaptiveKanagawa from "@/components/AdaptiveKanagawa";
 import AsciiDivider from "@/components/AsciiDivider";
 import ScatterMenu, { type MenuItem } from "@/components/ScatterMenu";
 import EditorialFooter from "@/components/EditorialFooter";
@@ -481,7 +481,7 @@ function HomeContent() {
           subHighlight={t("hero_sub_highlight")}
           scrollLabel={t("rm_scroll")}
         >
-          <AsciiKanagawa className="rm-field" opacity={0.3} />
+          <AdaptiveKanagawa className="rm-field" opacity={0.3} />
           <ScatterMenu
             items={[
               {

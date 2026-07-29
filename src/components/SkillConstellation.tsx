@@ -1,6 +1,5 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 
 export type ConstellationNode = {
@@ -80,6 +79,16 @@ export default function SkillConstellation({ nodes }: Props) {
 
         .rm-skill-detail-wrapper {
           overflow: hidden;
+          max-height: 0;
+          opacity: 0;
+          transition:
+            max-height .4s cubic-bezier(.23, 1, .32, 1),
+            opacity .3s ease;
+        }
+
+        .rm-skill-row[data-open="true"] .rm-skill-detail-wrapper {
+          max-height: 8rem;
+          opacity: 1;
         }
 
         .rm-skill-detail {
@@ -121,8 +130,13 @@ export default function SkillConstellation({ nodes }: Props) {
           <div 
             key={i} 
             className="rm-skill-row"
+            data-open={isHovered ? "true" : "false"}
+            tabIndex={0}
             onMouseEnter={() => setHoveredIndex(i)}
             onMouseLeave={() => setHoveredIndex(null)}
+            onFocus={() => setHoveredIndex(i)}
+            onBlur={() => setHoveredIndex(null)}
+            onClick={() => setHoveredIndex(isHovered ? null : i)}
           >
             <div className="rm-skill-header">
               <div className="rm-skill-title">
@@ -132,21 +146,11 @@ export default function SkillConstellation({ nodes }: Props) {
               <span className="rm-skill-icon">✳︎</span>
             </div>
 
-            <AnimatePresence initial={false}>
-              {isHovered && (
-                <motion.div
-                  className="rm-skill-detail-wrapper"
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
-                >
-                  <div className="rm-skill-detail">
-                    {node.detail}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            <div className="rm-skill-detail-wrapper" aria-hidden={!isHovered}>
+              <div className="rm-skill-detail">
+                {node.detail}
+              </div>
+            </div>
 
             <div className="rm-skill-divider" />
           </div>

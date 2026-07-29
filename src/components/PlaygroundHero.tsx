@@ -1,10 +1,10 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { animate as animateValue, motion, useMotionValue, useReducedMotion } from "framer-motion";
 import AsciiDivider from "./AsciiDivider";
 import ScrambleText from "./ScrambleText";
 import { useT } from "@/i18n/LanguageContext";
 import { StampCanvas, useCreativeStudio } from "./CreativeStudio";
+import { useRichMotion } from "@/lib/performanceTier";
 
 /* canto em degrau de 8px — recorte "pixel" nas molduras */
 export const PIXEL_CLIP =
@@ -192,6 +192,12 @@ const styles = `
     cursor: grab;
     touch-action: none;
     user-select: none;
+    transform: rotate(var(--sticker-rotate, 0deg));
+    animation: ph-sticker-in .5s cubic-bezier(.16, 1, .3, 1) var(--sticker-delay, .9s) both;
+  }
+  @keyframes ph-sticker-in {
+    from { opacity: 0; transform: scale(.6) rotate(var(--sticker-rotate, 0deg)); }
+    to { opacity: 1; transform: scale(1) rotate(var(--sticker-rotate, 0deg)); }
   }
   .ph__sticker:active { cursor: grabbing; }
   .ph__note {
@@ -267,7 +273,6 @@ function DraggableSticker({
   index,
   bounds,
   canDrag,
-  reduceMotion,
   resetToken,
   onMoved,
   onSound,
@@ -276,65 +281,74 @@ function DraggableSticker({
   index: number;
   bounds: React.RefObject<HTMLElement | null>;
   canDrag: boolean;
-  reduceMotion: boolean;
   resetToken: number;
   onMoved: () => void;
   onSound: () => void;
 }) {
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
+  const elementRef = useRef<HTMLDivElement>(null);
+  const offsetRef = useRef({ x: 0, y: 0 });
+  const dragRef = useRef<{ pointerId: number; x: number; y: number } | null>(null);
   const previousReset = useRef(resetToken);
 
   useEffect(() => {
     if (previousReset.current === resetToken) return;
     previousReset.current = resetToken;
-    const xAnimation = animateValue(x, 0, {
-      type: "spring",
-      stiffness: 155,
-      damping: 18,
-      mass: .85,
-    });
-    const yAnimation = animateValue(y, 0, {
-      type: "spring",
-      stiffness: 155,
-      damping: 18,
-      mass: .85,
-    });
-    return () => {
-      xAnimation.stop();
-      yAnimation.stop();
+    offsetRef.current = { x: 0, y: 0 };
+    if (elementRef.current) {
+      elementRef.current.style.transform = `translate3d(0, 0, 0) rotate(${sticker.rotate}deg)`;
+    }
+  }, [resetToken, sticker.rotate]);
+
+  const move = (event: React.PointerEvent<HTMLDivElement>) => {
+    const drag = dragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId || !elementRef.current) return;
+    const nextX = offsetRef.current.x + event.clientX - drag.x;
+    const nextY = offsetRef.current.y + event.clientY - drag.y;
+    elementRef.current.style.transform =
+      `translate3d(${nextX}px, ${nextY}px, 0) rotate(0deg) scale(1.06)`;
+  };
+
+  const finish = (event: React.PointerEvent<HTMLDivElement>) => {
+    const drag = dragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId || !elementRef.current) return;
+    offsetRef.current = {
+      x: offsetRef.current.x + event.clientX - drag.x,
+      y: offsetRef.current.y + event.clientY - drag.y,
     };
-  }, [resetToken, x, y]);
+    dragRef.current = null;
+    elementRef.current.releasePointerCapture(event.pointerId);
+    elementRef.current.style.transform =
+      `translate3d(${offsetRef.current.x}px, ${offsetRef.current.y}px, 0) rotate(${sticker.rotate}deg)`;
+    onMoved();
+    onSound();
+  };
 
   return (
-    <motion.div
+    <div
+      ref={elementRef}
       className={`ph__sticker ph__sticker--${sticker.key}${sticker.deskOnly ? " ph__sticker--desk" : ""}`}
-      style={{ left: sticker.left, top: sticker.top, x, y }}
-      initial={reduceMotion ? false : { opacity: 0, scale: 0.6, rotate: sticker.rotate }}
-      animate={{ opacity: 1, scale: 1, rotate: sticker.rotate }}
-      transition={{ delay: reduceMotion ? 0 : 0.9 + index * 0.07, duration: reduceMotion ? 0 : 0.5, ease: [0.16, 1, 0.3, 1] }}
-      drag={canDrag}
-      dragConstraints={bounds}
-      dragElastic={0.12}
-      dragMomentum
-      onDragStart={onSound}
-      onDragEnd={() => {
-        onMoved();
+      style={{
+        left: sticker.left,
+        top: sticker.top,
+        "--sticker-rotate": `${sticker.rotate}deg`,
+        "--sticker-delay": `${0.9 + index * 0.07}s`,
+      } as React.CSSProperties}
+      onPointerDown={(event) => {
+        if (!canDrag || !bounds.current) return;
+        dragRef.current = {
+          pointerId: event.pointerId,
+          x: event.clientX,
+          y: event.clientY,
+        };
+        event.currentTarget.setPointerCapture(event.pointerId);
         onSound();
       }}
-      whileHover={canDrag ? {
-        scale: 1.045,
-        filter: "drop-shadow(0 5px 4px rgba(20,19,16,.18))",
-      } : undefined}
-      whileDrag={canDrag ? {
-        scale: 1.1,
-        rotate: 0,
-        zIndex: 30,
-        filter: "drop-shadow(0 14px 9px rgba(20,19,16,.26))",
-      } : undefined}
+      onPointerMove={move}
+      onPointerUp={finish}
+      onPointerCancel={finish}
     >
       {sticker.el}
-    </motion.div>
+    </div>
   );
 }
 
@@ -352,7 +366,7 @@ export default function PlaygroundHero({
   children?: React.ReactNode;
 }) {
   const bounds = useRef<HTMLElement>(null);
-  const reduceMotion = useReducedMotion();
+  const richMotion = useRichMotion();
   const [isMobile, setIsMobile] = useState(false);
   const {
     stampMode,
@@ -370,7 +384,7 @@ export default function PlaygroundHero({
     return () => media.removeEventListener("change", syncViewport);
   }, []);
 
-  const canDrag = !reduceMotion && !isMobile;
+  const canDrag = richMotion && !isMobile;
 
   // Elementos funcionais do hero; os desenhos ASCII agora vivem só no background.
   const stickers: Sticker[] = [
@@ -407,7 +421,6 @@ export default function PlaygroundHero({
           index={i}
           bounds={bounds}
           canDrag={canDrag}
-          reduceMotion={Boolean(reduceMotion)}
           resetToken={resetToken}
           onMoved={markMoved}
           onSound={() => playSound("drag")}

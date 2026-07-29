@@ -5,14 +5,14 @@ import Script from "next/script";
 import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
 import FloatingBackToTop from "@/components/FloatingBackToTop";
-import Cursor from "@/components/Cursor";
+import AdaptiveCursor from "@/components/AdaptiveCursor";
 import { PageTransitionProvider } from "@/components/Curtains";
 import { LanguageProvider } from "@/i18n/LanguageContext";
 
 const aeonik = localFont({
   src: [
-    { path: "./fonts/Aeonik-Regular.ttf", weight: "400", style: "normal" },
-    { path: "./fonts/Aeonik-Bold.ttf", weight: "700", style: "normal" },
+    { path: "./fonts/Aeonik-Regular-site.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/Aeonik-Bold-site.woff2", weight: "700", style: "normal" },
   ],
   variable: "--font-body",
   display: "swap",
@@ -52,7 +52,7 @@ const braille = localFont({
 });
 
 const offBit = localFont({
-  src: "./fonts/OffBit-DotBold.woff2",
+  src: "./fonts/OffBit-DotBold-site.woff2",
   weight: "700",
   style: "normal",
   variable: "--font-offbit",
@@ -61,7 +61,7 @@ const offBit = localFont({
 });
 
 const emoji = localFont({
-  src: "./fonts/EmojiFont.ttf",
+  src: "./fonts/EmojiFont.woff2",
   variable: "--font-emoji",
   display: "swap",
   preload: false,
@@ -79,6 +79,52 @@ const editorialNew = localFont({
   preload: false,
 });
 
+const performanceTierScript = `
+(() => {
+  const root = document.documentElement;
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  const saveData = Boolean(connection && connection.saveData);
+  const network = connection && connection.effectiveType;
+  const slowNetwork = network === "slow-2g" || network === "2g";
+  const memory = navigator.deviceMemory;
+  const cores = navigator.hardwareConcurrency;
+  const constrainedHardware =
+    (typeof memory === "number" && memory <= 4) ||
+    (typeof cores === "number" && cores <= 4);
+
+  let tier = reduce || saveData || slowNetwork || constrainedHardware ? "lite" : "full";
+  root.dataset.motion = tier;
+
+  const setTier = (next) => {
+    if (tier === next) return;
+    tier = next;
+    root.dataset.motion = next;
+    dispatchEvent(new Event("mary:motion-tier"));
+  };
+
+  const motionQuery = matchMedia("(prefers-reduced-motion: reduce)");
+  motionQuery.addEventListener("change", (event) => {
+    if (event.matches) setTier("lite");
+  });
+
+  if (tier === "full") {
+    let previous = performance.now();
+    let slowFrames = 0;
+    let samples = 0;
+    const sample = (now) => {
+      const elapsed = now - previous;
+      previous = now;
+      samples += 1;
+      if (elapsed > 32) slowFrames += 1;
+      if (samples < 4) requestAnimationFrame(sample);
+      else if (slowFrames >= 2) setTier("lite");
+    };
+    requestAnimationFrame(sample);
+  }
+})();
+`;
+
 export const metadata: Metadata = {
   title: "Mary Lisita | Portfolio",
   description: "Designer multidisciplinar. Projetos em Design Gráfico, Web Design, UX/UI e Programação Criativa.",
@@ -90,8 +136,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${aeonik.variable} ${instrumentSerif.variable} ${spaceMono.variable} ${seratonin.variable} ${braille.variable} ${offBit.variable} ${emoji.variable} ${editorialNew.variable}`}>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${aeonik.variable} ${instrumentSerif.variable} ${spaceMono.variable} ${seratonin.variable} ${braille.variable} ${offBit.variable} ${emoji.variable} ${editorialNew.variable}`}
+    >
       <head>
+        <script dangerouslySetInnerHTML={{ __html: performanceTierScript }} />
         <link rel="preconnect" href="https://use.typekit.net" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://p.typekit.net" crossOrigin="anonymous" />
         <link
@@ -132,7 +183,7 @@ export default function RootLayout({
             {/* Cursor fica FORA do PageTransitionProvider de propósito: o wrapper de
                 transição aplica transform durante a saída, o que quebraria o
                 position:fixed do canvas. Aqui ele também não some no fade da troca de página. */}
-            <Cursor />
+            <AdaptiveCursor />
             <div
               aria-hidden="true"
               data-paper-grain="global"

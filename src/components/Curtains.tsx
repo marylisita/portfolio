@@ -1,8 +1,8 @@
 "use client";
 
 import React, { createContext, useCallback, useContext, useState, useEffect, useRef } from "react";
-import { useReducedMotion, motion } from "framer-motion";
 import { useRouter, usePathname } from "next/navigation";
+import { useRichMotion } from "@/lib/performanceTier";
 
 interface TransitionContextProps {
   transitionTo: (href: string) => void;
@@ -25,7 +25,21 @@ type Status = "idle" | "entrance" | "exit";
 const EXIT = 650;
 const ENTER = 650;
 
-function PixelGrid({ status, reduceMotion }: { status: Status, reduceMotion: boolean | null }) {
+const transitionStyles = `
+  .curtain-tile { background: var(--site-paper); will-change: opacity; }
+  .curtain-grid[data-status="exit"] .curtain-tile {
+    opacity: 0;
+    animation: curtain-cover .1s linear var(--tile-delay) both;
+  }
+  .curtain-grid[data-status="entrance"] .curtain-tile {
+    opacity: 1;
+    animation: curtain-reveal .1s linear var(--tile-delay) both;
+  }
+  @keyframes curtain-cover { to { opacity: 1; } }
+  @keyframes curtain-reveal { to { opacity: 0; } }
+`;
+
+function PixelGrid({ status, richMotion }: { status: Status; richMotion: boolean }) {
   const [grid, setGrid] = useState({ cols: 0, rows: 0 });
   const TILE_SIZE = 80; // tamanho fixo de cada bloco
   const isMoving = status !== "idle";
@@ -50,7 +64,7 @@ function PixelGrid({ status, reduceMotion }: { status: Status, reduceMotion: boo
   const total = grid.cols * grid.rows;
 
   // Se o usuário pedir reduzir movimento, só dá fade no contêiner todo
-  if (reduceMotion) {
+  if (!richMotion) {
     return (
       <div
         style={{
@@ -60,7 +74,7 @@ function PixelGrid({ status, reduceMotion }: { status: Status, reduceMotion: boo
           pointerEvents: isMoving ? "auto" : "none",
           backgroundColor: "var(--site-paper)",
           opacity: isExit ? 1 : 0,
-          transition: "opacity 0.4s ease",
+          transition: "opacity .15s ease",
         }}
       />
     );
@@ -69,6 +83,8 @@ function PixelGrid({ status, reduceMotion }: { status: Status, reduceMotion: boo
   return (
     <div
       aria-hidden="true"
+      className="curtain-grid"
+      data-status={status}
       style={{
         position: "fixed",
         inset: 0,
@@ -95,21 +111,10 @@ function PixelGrid({ status, reduceMotion }: { status: Status, reduceMotion: boo
         const delay = baseDelay + noise;
 
         return (
-          <motion.div
+          <div
             key={i}
-            initial={{ opacity: isExit ? 0 : 1 }}
-            animate={{
-              opacity: isExit ? 1 : 0,
-            }}
-            transition={{
-              duration: 0.1, // fade rápido mas não instantâneo
-              delay: delay,
-              ease: "linear"
-            }}
-            style={{
-              backgroundColor: "var(--site-paper)",
-              willChange: "opacity"
-            }}
+            className="curtain-tile"
+            style={{ "--tile-delay": `${delay}s` } as React.CSSProperties}
           />
         );
       })}
@@ -135,12 +140,12 @@ function PixelGrid({ status, reduceMotion }: { status: Status, reduceMotion: boo
 export function PageTransitionProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const reduceMotion = useReducedMotion();
+  const richMotion = useRichMotion();
   const [status, setStatus] = useState<Status>("idle");
   const [pendingHref, setPendingHref] = useState<string | null>(null);
   const isFirstLoad = useRef(true);
-  const exitDuration = reduceMotion ? 0 : EXIT;
-  const enterDuration = reduceMotion ? 0 : ENTER;
+  const exitDuration = richMotion ? EXIT : 0;
+  const enterDuration = richMotion ? ENTER : 0;
 
   // Ao trocar de rota, roda a entrada (revela o conteúdo novo) — exceto no 1º load.
   useEffect(() => {
@@ -209,7 +214,8 @@ export function PageTransitionProvider({ children }: { children: React.ReactNode
 
   return (
     <TransitionContext.Provider value={{ transitionTo }}>
-      <PixelGrid status={status} reduceMotion={reduceMotion} />
+      <style>{transitionStyles}</style>
+      <PixelGrid status={status} richMotion={richMotion} />
       <div style={wrapperStyle}>{children}</div>
     </TransitionContext.Provider>
   );

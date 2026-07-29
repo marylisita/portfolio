@@ -9,7 +9,6 @@ import {
   useRef,
   useState,
 } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 
 export type PaperMode = "cream" | "cyanotype" | "vellum";
 export type StudioSound = "stamp" | "paper" | "drag" | "hover" | "flip";
@@ -401,6 +400,13 @@ const controlsStyles = `
     outline: 2px solid var(--ink);
     outline-offset: 3px;
   }
+  .cs-tool--pop {
+    animation: cs-tool-pop .24s cubic-bezier(.16, 1, .3, 1) both;
+  }
+  @keyframes cs-tool-pop {
+    from { opacity: 0; transform: scale(.6); }
+    to { opacity: 1; transform: scale(1); }
+  }
   .cs-tool--drawer { display: none; }
   .cs-tool::after {
     content: attr(data-tip);
@@ -533,38 +539,28 @@ export function CreativeStudioControls() {
       >
         [ {stampMode ? "❀" : "✿"} ]
       </button>
-      <AnimatePresence initial={false}>
-        {stamps.length > 0 && (
-          <motion.button
+      {stamps.length > 0 && (
+          <button
             type="button"
-            className="cs-tool hover-trigger"
+            className="cs-tool cs-tool--pop hover-trigger"
             aria-label="Limpar carimbos"
             data-tip="limpar"
             onClick={clearStamps}
-            initial={{ opacity: 0, scale: .6 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: .6 }}
           >
             [ ✕ ]
-          </motion.button>
-        )}
-      </AnimatePresence>
-      <AnimatePresence initial={false}>
-        {moved && (
-          <motion.button
+          </button>
+      )}
+      {moved && (
+          <button
             type="button"
-            className="cs-tool hover-trigger"
+            className="cs-tool cs-tool--pop hover-trigger"
             aria-label="Reorganizar os objetos"
             data-tip="reorganizar"
             onClick={resetTable}
-            initial={{ opacity: 0, scale: .6 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: .6 }}
           >
             [ ↺ ]
-          </motion.button>
-        )}
-      </AnimatePresence>
+          </button>
+      )}
     </aside>
   );
 }
@@ -599,6 +595,31 @@ const stampStyles = `
     transform-origin: center;
     text-shadow: .65px .45px 0 color-mix(in srgb, var(--ink) 24%, transparent);
     will-change: transform, opacity, filter;
+    opacity: var(--stamp-opacity, .6);
+    scale: var(--stamp-scale, 1);
+    animation: cs-stamp-in .43s cubic-bezier(.16, 1, .3, 1) both;
+  }
+  @keyframes cs-stamp-in {
+    0% {
+      opacity: 0;
+      scale: calc(var(--stamp-scale, 1) * 1.52);
+      filter: blur(1.2px);
+    }
+    40% {
+      opacity: min(.48, calc(var(--stamp-opacity, .6) * 1.72));
+      scale: calc(var(--stamp-scale, 1) * .88);
+      filter: blur(.18px);
+    }
+    72% {
+      opacity: calc(var(--stamp-opacity, .6) * 1.14);
+      scale: calc(var(--stamp-scale, 1) * 1.035);
+      filter: blur(.05px);
+    }
+    100% {
+      opacity: var(--stamp-opacity, .6);
+      scale: var(--stamp-scale, 1);
+      filter: blur(0);
+    }
   }
   .cs-stamp::after {
     content: attr(data-ink);
@@ -636,7 +657,6 @@ export function StampCanvas() {
   const { stampMode, stamps, nextStamp, addStamp } = useCreativeStudio();
   const layerRef = useRef<HTMLDivElement>(null);
   const previewRef = useRef<HTMLSpanElement>(null);
-  const reduceMotion = useReducedMotion();
 
   useEffect(() => {
     const layer = layerRef.current;
@@ -677,55 +697,23 @@ export function StampCanvas() {
     <>
       <style>{stampStyles}</style>
       <div className="cs-stamp-layer" ref={layerRef} aria-hidden="true">
-        <AnimatePresence>
           {stamps.map((stamp) => (
-            <motion.span
+            <span
               key={stamp.id}
               className="cs-stamp"
               data-ink={stamp.symbol}
               style={{
                 left: `${stamp.x}%`,
                 top: `${stamp.y}%`,
-                opacity: stamp.opacity,
-                rotate: stamp.rotate,
-                scale: stamp.scale,
+                rotate: `${stamp.rotate}deg`,
                 fontSize: stampFontSize(stamp.symbol),
-              }}
-              initial={reduceMotion ? false : {
-                scale: stamp.scale * 1.52,
-                opacity: 0,
-                filter: "blur(1.2px)",
-              }}
-              animate={reduceMotion ? {
-                scale: stamp.scale,
-                opacity: stamp.opacity,
-                filter: "blur(0px)",
-              } : {
-                scale: [
-                  stamp.scale * 1.52,
-                  stamp.scale * .88,
-                  stamp.scale * 1.035,
-                  stamp.scale,
-                ],
-                opacity: [
-                  0,
-                  Math.min(.48, stamp.opacity * 1.72),
-                  stamp.opacity * 1.14,
-                  stamp.opacity,
-                ],
-                filter: ["blur(1.2px)", "blur(.18px)", "blur(.05px)", "blur(0px)"],
-              }}
-              exit={{ scale: .6, opacity: 0 }}
-              transition={reduceMotion ? { duration: 0 } : {
-                duration: .43,
-                times: [0, .4, .72, 1],
-                ease: [0.16, 1, 0.3, 1],
-              }}
+                "--stamp-opacity": stamp.opacity,
+                "--stamp-scale": stamp.scale,
+              } as React.CSSProperties}
             >
               {stamp.symbol}
-            </motion.span>
+            </span>
           ))}
-        </AnimatePresence>
       </div>
       <span
         ref={previewRef}

@@ -1,5 +1,4 @@
 "use client";
-import { motion } from "framer-motion";
 import Image from "next/image";
 import AsciiDivider from "./AsciiDivider";
 import { useT } from "@/i18n/LanguageContext";
@@ -125,6 +124,17 @@ const styles = `
   .ef__sound:hover,
   .ef__sound[aria-pressed="true"] { color: var(--paper); background: var(--ink); opacity: 1; }
   .ef__sound:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+  @supports (animation-timeline: view()) {
+    html[data-motion="full"] .ef__view-reveal {
+      animation: ef-view-reveal linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 48%;
+    }
+    @keyframes ef-view-reveal {
+      from { opacity: 0; transform: translateY(var(--reveal-y, 18px)); }
+      to { opacity: var(--reveal-opacity, 1); transform: translateY(0); }
+    }
+  }
   @media (max-width: 720px) {
     .ef { padding: 4rem 1.8rem 1.5rem; }
     .ef__obra { width: 86%; }
@@ -149,13 +159,10 @@ export default function EditorialFooter() {
       <style>{styles}</style>
 
       <div className="ef__divisa">
-        <motion.div
-          className="ef__obra"
+        <div
+          className="ef__obra ef__view-reveal"
           aria-hidden="true"
-          initial={{ opacity: 0, y: 18 }}
-          whileInView={{ opacity: 0.92, y: 0 }}
-          viewport={{ once: true, margin: "-40px" }}
-          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+          style={{ "--reveal-opacity": .92 } as React.CSSProperties}
         >
           <Image
             className="ef__obra-image"
@@ -164,21 +171,18 @@ export default function EditorialFooter() {
             fill
             sizes="(max-width: 720px) 74vw, 44rem"
           />
-        </motion.div>
+        </div>
         {/* céu de estrelinhas embaixo dos ANJINHOS do beijo (mantidos) */}
         <AsciiDivider pattern=".・。.・゜✭・.・✫・゜・。" size=".85rem" opacity={0.5} style={{ width: "100%" }} />
       </div>
 
-      <motion.a
-        className="ef__mail hover-trigger"
+      <a
+        className="ef__mail ef__view-reveal hover-trigger"
         href="mailto:lisita.medeiros@gmail.com"
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        style={{ "--reveal-y": "30px" } as React.CSSProperties}
       >
         lisita.medeiros@gmail.com
-      </motion.a>
+      </a>
 
       <div>
         {socials.map((s) => (
