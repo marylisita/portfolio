@@ -89,11 +89,18 @@ const performanceTierScript = `
   const slowNetwork = network === "slow-2g" || network === "2g";
   const memory = navigator.deviceMemory;
   const cores = navigator.hardwareConcurrency;
+  const handheld = matchMedia("(pointer: coarse)").matches &&
+    !matchMedia("(any-pointer: fine)").matches;
   const constrainedHardware =
-    (typeof memory === "number" && memory <= 4) ||
-    (typeof cores === "number" && cores <= 4);
+    handheld && (
+      (typeof memory === "number" && memory <= 2) ||
+      (typeof cores === "number" && cores <= 2)
+    );
 
-  let tier = reduce || saveData || slowNetwork || constrainedHardware ? "lite" : "full";
+  let tier = reduce ||
+    (handheld && (saveData || slowNetwork || constrainedHardware))
+    ? "lite"
+    : "full";
   root.dataset.motion = tier;
 
   const setTier = (next) => {
@@ -108,19 +115,27 @@ const performanceTierScript = `
     if (event.matches) setTier("lite");
   });
 
-  if (tier === "full") {
-    let previous = performance.now();
-    let slowFrames = 0;
-    let samples = 0;
-    const sample = (now) => {
-      const elapsed = now - previous;
-      previous = now;
-      samples += 1;
-      if (elapsed > 32) slowFrames += 1;
-      if (samples < 4) requestAnimationFrame(sample);
-      else if (slowFrames >= 2) setTier("lite");
+  if (tier === "full" && handheld) {
+    const measureSettledFrames = () => {
+      let previous = performance.now();
+      let slowFrames = 0;
+      let samples = 0;
+      const sample = (now) => {
+        const elapsed = now - previous;
+        previous = now;
+        samples += 1;
+        if (elapsed > 40) slowFrames += 1;
+        if (samples < 12) requestAnimationFrame(sample);
+        else if (slowFrames >= 5) setTier("lite");
+      };
+      requestAnimationFrame(sample);
     };
-    requestAnimationFrame(sample);
+
+    const scheduleMeasurement = () => {
+      setTimeout(measureSettledFrames, 800);
+    };
+    if (document.readyState === "complete") scheduleMeasurement();
+    else addEventListener("load", scheduleMeasurement, { once: true });
   }
 })();
 `;

@@ -115,6 +115,15 @@ const styles = `
     from { transform: translate3d(0, .3em, 0); filter: blur(.35px); }
     to { transform: translate3d(0, 0, 0); filter: blur(0); }
   }
+  /* Em telas pequenas o mesmo gesto precisa resolver antes: mantém a entrada
+     preferida, mas evita que o LCP espere quase um segundo pela animação. */
+  @media (max-width: 767px) {
+    .ph__line-inner {
+      animation-duration: .48s;
+      --line-delay: .02s;
+    }
+    .ph__line:nth-child(2) .ph__line-inner { --line-delay: .08s; }
+  }
   .ph__line--acid { color: var(--hero-highlight, var(--acid)); }
   .ph__foot {
     display: grid;
