@@ -16,7 +16,7 @@ export function useProjects(): IndexItem[] {
       tags: `${t("cat_freela")} / ${t("p01_tag1")} / ${t("p01_tag2")}`,
       href: "/work/isadora",
       impact: impact("/work/isadora"),
-      ratio: 0.562,
+      ratio: 0.5625,
       img: "/img/previews/isadora.webp",
     },
     {
@@ -34,7 +34,7 @@ export function useProjects(): IndexItem[] {
       tags: `${t("cat_collab")} / ${t("p03_tag1")} / ${t("p03_tag2")}`,
       href: "/work/genlab",
       impact: impact("/work/genlab"),
-      ratio: 0.498,
+      ratio: 598 / 1200,
       img: "/img/previews/genlab.webp",
     },
     {
@@ -43,7 +43,7 @@ export function useProjects(): IndexItem[] {
       tags: `${t("cat_client")} / ${t("p04_tag1")} / ${t("p04_tag2")}`,
       href: "/work/ebat",
       impact: impact("/work/ebat"),
-      ratio: 0.562,
+      ratio: 0.5625,
       img: "/img/previews/ebat.webp",
     },
     {
@@ -88,7 +88,7 @@ export function useProjects(): IndexItem[] {
       tags: `${t("cat_college")} / ` + t("p09_tags").replace(", ", " / "),
       href: "/work/vegcoz",
       impact: impact("/work/vegcoz"),
-      ratio: 0.708, // capa.png 1400x991 (recorte dela, 2026-07-23 — termina nas telas, sem o "Sobre o projeto" cortado)
+      ratio: 849 / 1200, // preview.webp 1200x849
       img: "/img/previews/vegcoz.webp",
     },
     {

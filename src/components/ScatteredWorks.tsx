@@ -170,7 +170,6 @@ const styles = `
   .sw__media {
     position: relative;
     display: block;
-    aspect-ratio: 16 / 10;
     overflow: hidden;
     border: 1px solid color-mix(in srgb, var(--ink) 32%, transparent);
     background: color-mix(in srgb, var(--paper) 90%, var(--ink));
@@ -190,9 +189,7 @@ const styles = `
     transition: opacity var(--duration-normal) var(--ease-out);
   }
   .sw__image {
-    object-fit: cover;
-    transform: scale(1.001);
-    transition: transform var(--duration-slow) var(--ease-out);
+    object-fit: contain;
   }
   .sw__caption {
     display: grid;
@@ -256,10 +253,6 @@ const styles = `
     .sw__link:hover::after,
     .sw__link:focus-visible::after {
       opacity: 1;
-    }
-    .sw__link:hover .sw__image,
-    .sw__link:focus-visible .sw__image {
-      transform: scale(1.018);
     }
     .sw__link:hover .sw__media::after,
     .sw__link:focus-visible .sw__media::after {
@@ -326,7 +319,6 @@ const styles = `
     .sw__link,
     .sw__link::after,
     .sw__media::after,
-    .sw__image,
     .sw__cta-arrow {
       transition: none;
     }
@@ -335,8 +327,6 @@ const styles = `
     .sw__button:focus-visible,
     .sw__link:hover,
     .sw__link:focus-visible,
-    .sw__link:hover .sw__image,
-    .sw__link:focus-visible .sw__image,
     .sw__link:hover .sw__cta-arrow,
     .sw__link:focus-visible .sw__cta-arrow {
       transform: none;
@@ -528,7 +518,10 @@ export default function ScatteredWorks({ items }: { items: IndexItem[] }) {
                   draggable={false}
                   data-cursor-label={`↗ ${item.num}`}
                 >
-                  <span className="sw__media">
+                  <span
+                    className="sw__media"
+                    style={{ aspectRatio: `${1 / item.ratio} / 1` }}
+                  >
                     <Image
                       className="sw__image"
                       src={item.img}
