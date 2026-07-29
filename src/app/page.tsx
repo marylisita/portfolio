@@ -36,12 +36,12 @@ const HERO_HEADLINES = {
     ["Eu tive uma ideia.", "Agora ela tem identidade visual e um site."],
   ],
   en: [
-    ["I make brands, websites", "and questionably specific choices."],
-    ["Hire me before I start", "another personal project."],
-    ["Designer by profession.", "Pixel-obsessed for some reason."],
-    ["Maybe your next", "favorite designer."],
-    ["Available for projects,", "money and compliments."],
-    ["I had an idea.", "Now it has a visual identity and a website."],
+    ["I make brands, websites", "and suspiciously specific choices."],
+    ["Please hire me before I start", "another personal project."],
+    ["Designer by trade.", "Pixel freak by choice."],
+    ["Possibly your new", "favourite designer."],
+    ["Currently accepting projects,", "money and compliments."],
+    ["Had an idea.", "Gave it a brand and a website."],
   ],
 } as const;
 
