@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import PlaygroundHero from "@/components/PlaygroundHero";
 import ScatteredWorks from "@/components/ScatteredWorks";
 import { useProjects } from "@/components/useProjects";
@@ -25,6 +25,25 @@ const FEATURED_PROJECT_HREFS = [
   "/work/vegcoz",
   "/work/ondularis",
 ];
+
+const HERO_HEADLINES = {
+  pt: [
+    ["Faço marcas, sites", "e escolhas questionavelmente específicas."],
+    ["Contrate-me antes que eu crie", "outro projeto pessoal."],
+    ["Designer por profissão.", "Obcecada por pixels por algum motivo."],
+    ["Talvez sua próxima", "designer favorita."],
+    ["Disponível para projetos,", "dinheiro e elogios."],
+    ["Eu tive uma ideia.", "Agora ela tem identidade visual e um site."],
+  ],
+  en: [
+    ["I make brands, websites", "and questionably specific choices."],
+    ["Hire me before I start", "another personal project."],
+    ["Designer by profession.", "Pixel-obsessed for some reason."],
+    ["Maybe your next", "favorite designer."],
+    ["Available for projects,", "money and compliments."],
+    ["I had an idea.", "Now it has a visual identity and a website."],
+  ],
+} as const;
 
 /* ==========================================================
    Landing — direção de arte editorial ("reset visual").
@@ -341,6 +360,29 @@ function HomeContent() {
   const { t, lang } = useT();
   const { paper } = useCreativeStudio();
   const [contactVisible, setContactVisible] = useState(false);
+  const [headlineIndex, setHeadlineIndex] = useState(0);
+  const headlineInitialized = useRef(false);
+
+  useEffect(() => {
+    if (headlineInitialized.current) return;
+    headlineInitialized.current = true;
+
+    const indexKey = "mary-hero-headline";
+    const loadKey = "mary-hero-page-load";
+    const pageLoad = String(performance.timeOrigin);
+    const savedIndex = Number.parseInt(sessionStorage.getItem(indexKey) ?? "-1", 10);
+    const samePageLoad = sessionStorage.getItem(loadKey) === pageLoad;
+    const currentIndex = Number.isFinite(savedIndex) && savedIndex >= 0 ? savedIndex : 0;
+    const nextIndex = samePageLoad
+      ? currentIndex % HERO_HEADLINES.pt.length
+      : savedIndex < 0
+        ? 0
+        : (currentIndex + 1) % HERO_HEADLINES.pt.length;
+
+    sessionStorage.setItem(indexKey, String(nextIndex));
+    sessionStorage.setItem(loadKey, pageLoad);
+    setHeadlineIndex(nextIndex);
+  }, []);
 
   useEffect(() => {
     const contact = document.querySelector("#contact");
@@ -385,6 +427,7 @@ function HomeContent() {
         { label: "motion", detail: "animation, rhythm, interaction and transforming images" },
         { label: "technology", detail: "creative coding, generative AI and experimentation" },
       ];
+  const heroLines = HERO_HEADLINES[lang][headlineIndex] ?? HERO_HEADLINES[lang][0];
 
   return (
     <div
@@ -425,7 +468,7 @@ function HomeContent() {
 
       <main>
         <PlaygroundHero
-          lines={[t("hero_title_1"), t("hero_title_highlight")]}
+          lines={[...heroLines]}
           sub={t("hero_sub_1")}
           subHighlight={t("hero_sub_highlight")}
           scrollLabel={t("rm_scroll")}

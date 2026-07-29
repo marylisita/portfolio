@@ -136,6 +136,10 @@ const styles = `
     z-index: 1;
     pointer-events: none;
   }
+  .ph__title[data-compact="true"] {
+    font-size: clamp(1.9rem, min(6.3vw, 8vh), 5.5rem);
+    line-height: .94;
+  }
   @media (min-width: 1360px) {
     .ph__title {
       top: clamp(-4.5rem, -3vw, -2.5rem);
@@ -209,6 +213,10 @@ const styles = `
       font-size: clamp(2rem, 10.6vw, 2.75rem);
       line-height: 1.08;
       margin: 7.5rem 0 10rem;
+    }
+    .ph__title[data-compact="true"] {
+      font-size: clamp(1.75rem, 9.2vw, 2.4rem);
+      line-height: 1.08;
     }
     .ph__foot { grid-template-columns: 1fr; gap: 1.25rem; }
     .ph__sticker--desk { display: none; }
@@ -459,6 +467,7 @@ export default function PlaygroundHero({
 
       <motion.h1 
         className="ph__title" 
+        data-compact={lines.join(" ").length > 48 ? "true" : "false"}
         style={{ y: textY }}
         variants={containerAnim}
         initial={reduceMotion ? false : "hidden"}

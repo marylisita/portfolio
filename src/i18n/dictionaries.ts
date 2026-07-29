@@ -18,8 +18,8 @@ const dictionaries = {
     hero_location: "RIO DE JANEIRO, RJ, BRASIL",
     hero_title_1: "Pesquisa visual, design",
     hero_title_highlight: "& tecnologia criativa.",
-    hero_sub_1: "Designer e pesquisadora cruzando cultura visual, interfaces e código",
-    hero_sub_highlight: "do conceito à experiência.",
+    hero_sub_1: "Identidade visual, direção de arte e web design",
+    hero_sub_highlight: "Rio de Janeiro + remoto.",
 
     // Spread Cards
     card_uxui_title: "UX/UI Design",
@@ -438,8 +438,8 @@ const dictionaries = {
     hero_location: "RIO DE JANEIRO, RJ, BRAZIL",
     hero_title_1: "Visual research, design",
     hero_title_highlight: "& creative technology.",
-    hero_sub_1: "Designer and researcher bridging visual culture, interfaces and code",
-    hero_sub_highlight: "from concept to experience.",
+    hero_sub_1: "Visual identity, art direction and web design",
+    hero_sub_highlight: "Rio de Janeiro + remote.",
 
     // Spread Cards
     card_uxui_title: "UX/UI Design",
