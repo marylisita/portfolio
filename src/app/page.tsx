@@ -59,7 +59,7 @@ const rmStyles = `
     --ink: var(--site-ink);
     --paper: var(--site-paper);
     --acid: var(--site-accent);
-    --hero-highlight: #9c554f;
+    --hero-highlight: #75332f;
     --hero-art-lift: clamp(2rem, 4vh, 4rem);
     --font-grotesk: Arial, "Helvetica Neue", Helvetica, sans-serif;
     /* degradê profundo: roxo/azul da id EBAT respirando por baixo do preto */

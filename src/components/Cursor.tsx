@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion, useMotionValue, useReducedMotion, useSpring } from "framer-motion";
+import { AnimatePresence, motion, useMotionValue, useReducedMotion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 
 type InkDot = {
@@ -34,6 +34,9 @@ const INKS = [
 const SYMBOLS = ["✦", "✧", "⋆", "✳", "·", "°", "♡", "⊹", "+"];
 const MOTION_FAST = 0.2;
 const MOTION_EASE_STANDARD = [0, 0, 0.2, 1] as const;
+const TRAIL_SPACING = 10;
+const MAX_TRAIL_STEPS = 8;
+const MAX_TRAIL_DOTS = 96;
 
 export default function Cursor() {
   const reduceMotion = useReducedMotion();
@@ -42,24 +45,20 @@ export default function Cursor() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const dots = useRef<InkDot[]>([]);
   const startTrail = useRef<() => void>(() => undefined);
-  const lastPos = useRef({ x: -9999, y: -9999 });
+  const lastTrailPos = useRef({ x: -9999, y: -9999 });
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
-  
-  const springConfig = { damping: 30, stiffness: 700, mass: 0.2 };
-  const smoothX = useSpring(cursorX, springConfig);
-  const smoothY = useSpring(cursorY, springConfig);
 
   useEffect(() => {
     if (!window.matchMedia("(pointer: fine)").matches) return;
 
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d", { alpha: true, desynchronized: true });
     if (!ctx) return;
 
     const resize = () => {
-      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      const dpr = Math.min(1.5, window.devicePixelRatio || 1);
       canvas.width = Math.round(window.innerWidth * dpr);
       canvas.height = Math.round(window.innerHeight * dpr);
       canvas.style.width = `${window.innerWidth}px`;
@@ -81,7 +80,7 @@ export default function Cursor() {
       ctx.globalCompositeOperation = "source-over";
 
       const totalDots = dots.current.length;
-      const useShadow = totalDots <= 30;
+      const useShadow = totalDots <= 24;
 
       for (let index = totalDots - 1; index >= 0; index -= 1) {
         const dot = dots.current[index];
@@ -140,30 +139,37 @@ export default function Cursor() {
 
       const x = event.clientX;
       const y = event.clientY;
-      if (lastPos.current.x === -9999) {
-        lastPos.current = { x, y };
+      if (lastTrailPos.current.x === -9999) {
+        lastTrailPos.current = { x, y };
         return;
       }
 
-      const dx = x - lastPos.current.x;
-      const dy = y - lastPos.current.y;
+      if (reduceMotion) {
+        lastTrailPos.current = { x, y };
+        return;
+      }
+
+      const dx = x - lastTrailPos.current.x;
+      const dy = y - lastTrailPos.current.y;
       const distance = Math.hypot(dx, dy);
 
-      // distance represents speed (pixels per event)
-      if (!reduceMotion && finePointer.matches && distance > 5) {
-        // More steps (particles) if moving fast. 
-        // Old: max 5 steps, distance/12
-        // New: max 20 steps, distance/6
-        const steps = Math.min(20, Math.max(1, Math.floor(distance / 6)));
+      // Mede desde a última emissão, não desde o último evento. Assim mouses
+      // de polling alto também formam um traço contínuo sem criar partículas
+      // demais por frame.
+      if (finePointer.matches && distance >= TRAIL_SPACING) {
+        const steps = Math.min(
+          MAX_TRAIL_STEPS,
+          Math.max(1, Math.floor(distance / TRAIL_SPACING)),
+        );
         for (let index = 0; index < steps; index += 1) {
-          const t = steps === 1 ? 1 : index / (steps - 1);
-          const maxLife = 34 + Math.random() * 18;
+          const t = (index + 1) / steps;
+          const maxLife = 26 + Math.random() * 12;
           const ink = INKS[Math.floor(Math.random() * INKS.length)];
           dots.current.push({
-            x: lastPos.current.x + dx * t + (Math.random() - 0.5) * 4,
-            y: lastPos.current.y + dy * t + (Math.random() - 0.5) * 4,
+            x: lastTrailPos.current.x + dx * t + (Math.random() - 0.5) * 3,
+            y: lastTrailPos.current.y + dy * t + (Math.random() - 0.5) * 3,
             symbol: SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)],
-            size: 9 + Math.random() * 7,
+            size: 9 + Math.random() * 6,
             rotation: (Math.random() - 0.5) * 0.7,
             spin: (Math.random() - 0.5) * 0.025,
             life: maxLife,
@@ -174,12 +180,16 @@ export default function Cursor() {
             vy: -0.04 - Math.random() * 0.2,
           });
         }
-        // Increased max particles on screen to accommodate faster bursts
-        if (dots.current.length > 200) dots.current.splice(0, dots.current.length - 200);
+        if (dots.current.length > MAX_TRAIL_DOTS) {
+          dots.current.splice(0, dots.current.length - MAX_TRAIL_DOTS);
+        }
+        lastTrailPos.current = { x, y };
         startTrail.current();
       }
+    };
 
-      lastPos.current = { x, y };
+    const resetTrailOrigin = () => {
+      lastTrailPos.current = { x: -9999, y: -9999 };
     };
 
     const handleOver = (event: MouseEvent) => {
@@ -191,9 +201,11 @@ export default function Cursor() {
 
     window.addEventListener("mousemove", handleMove);
     window.addEventListener("mouseover", handleOver);
+    document.documentElement.addEventListener("mouseleave", resetTrailOrigin);
     return () => {
       window.removeEventListener("mousemove", handleMove);
       window.removeEventListener("mouseover", handleOver);
+      document.documentElement.removeEventListener("mouseleave", resetTrailOrigin);
     };
   }, [cursorX, cursorY, reduceMotion]);
 
@@ -218,7 +230,7 @@ export default function Cursor() {
       <motion.div
         data-ink-cursor
         aria-hidden="true"
-        style={{ position: "fixed", left: 0, top: 0, x: smoothX, y: smoothY, pointerEvents: "none", zIndex: 10000 }}
+        style={{ position: "fixed", left: 0, top: 0, x: cursorX, y: cursorY, pointerEvents: "none", zIndex: 10000 }}
       >
         <motion.span
           animate={{
