@@ -161,7 +161,7 @@ const styles = `
     font-family: var(--font-pixelscript);
     font-weight: 400;
     font-size: clamp(2rem, min(7.5vw, 9.5vh), 6.5rem);
-    line-height: .9;
+    line-height: .98;
     /* tracking levemente negativo — testado que a Pixelscript aguenta -.015em
        sem quebrar as ligações do script (mais que isso começa a colar demais) */
     letter-spacing: -.015em;
@@ -173,8 +173,14 @@ const styles = `
     pointer-events: none;
   }
   /* padding+margin negativa: expande a CAIXA DE CLIP (máscara da entrada) sem
-     mudar o ritmo — senão o floreio da capitular da Pixelscript sai cortado */
-  .ph__line { overflow: hidden; display: block; padding: .18em .12em .12em .08em; margin: -.18em -.12em -.12em -.08em; }
+     mudar o ritmo. A Pixelscript tem capitulares altas e descendentes longas,
+     então o respiro inferior precisa ser maior que o line box convencional. */
+  .ph__line {
+    overflow: hidden;
+    display: block;
+    padding: .24em .2em .64em .2em;
+    margin: -.24em -.2em -.64em -.2em;
+  }
   .ph__line-inner {
     display: block;
     will-change: transform, filter;
@@ -228,7 +234,7 @@ const styles = `
   }
   .ph__title[data-compact="true"] {
     font-size: clamp(1.9rem, min(6.3vw, 8vh), 5.5rem);
-    line-height: .94;
+    line-height: 1.02;
   }
   @media (min-width: 1360px) {
     .ph__title {

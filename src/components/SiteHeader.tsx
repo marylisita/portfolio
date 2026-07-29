@@ -18,10 +18,16 @@ const styles = `
   .sh--l { left: clamp(1.5rem, 5vw, 5.5rem); display: flex; flex-direction: column; gap: .12rem; line-height: 1.1; }
   .sh__mark {
     font-family: var(--font-pixelscript, cursive);
-    font-weight: 400; font-size: 2.3rem; letter-spacing: .02em;
+    font-weight: 400; font-size: 2.3rem; letter-spacing: 0;
     line-height: 1; text-transform: none;
+    font-kerning: normal;
+    font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+    text-rendering: optimizeLegibility;
     color: inherit; text-decoration: none;
   }
+  .sh__name { white-space: nowrap; }
+  .sh__name-word { display: inline; }
+  .sh__name-word--isabel { letter-spacing: -.035em; }
   .sh__mark:focus-visible { outline: 2px dotted var(--site-ink, #1C1B18); outline-offset: 4px; }
   .sh__sub { font-size: var(--type-micro); letter-spacing: .08em; opacity: .62; color: var(--site-ink, #1C1B18); }
   .sh--r { right: clamp(1.5rem, 5vw, 5.5rem); display: flex; align-items: center; gap: 1rem; }
@@ -70,7 +76,11 @@ export default function SiteHeader() {
       <span className="sh sh--l">
         <Link href="/" className="sh__mark">
           <span className="text-star" aria-hidden="true">✳︎</span>{" "}
-          <ScrambleText text="Maria Isabel Lisita" />
+          <span className="sh__name" aria-label="Maria Isabel Lisita">
+            <span className="sh__name-word">Maria</span>{" "}
+            <span className="sh__name-word sh__name-word--isabel">Isabel</span>{" "}
+            <span className="sh__name-word">Lisita</span>
+          </span>
         </Link>
         <span className="sh__sub">
           <ScrambleText
