@@ -122,6 +122,7 @@ export default function AsciiKanagawa({
     let raf = 0;
     let isVisible = false;
     let isRunning = false;
+    let hasInteracted = false;
 
     let mutationGrid = new Map<string, MutationPoint>();
     let contourPoints: MutationPoint[] = [];
@@ -477,11 +478,26 @@ export default function AsciiKanagawa({
 
     const handlePointerMove = (e: PointerEvent) => {
       if (!isVisible) return;
+      hasInteracted = true;
       activateHover(e.clientX, e.clientY, performance.now());
+      startLoop();
+    };
+
+    const handlePointerDown = () => {
+      hasInteracted = true;
+      startLoop();
     };
 
     const startLoop = () => {
-      if (reduceMotion || isRunning || !isVisible || !image.complete || !image.naturalWidth) return;
+      if (
+        reduceMotion ||
+        !hasInteracted ||
+        document.visibilityState === "hidden" ||
+        isRunning ||
+        !isVisible ||
+        !image.complete ||
+        !image.naturalWidth
+      ) return;
       isRunning = true;
       lastFrame = -Infinity;
       raf = requestAnimationFrame(loop);
@@ -497,7 +513,6 @@ export default function AsciiKanagawa({
       resize();
       buildGibbonWaveMap();
       draw(performance.now());
-      startLoop();
     };
 
     const handleResize = () => {
@@ -525,8 +540,18 @@ export default function AsciiKanagawa({
     );
     visibilityObserver.observe(canvas);
 
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "hidden") {
+        stopLoop();
+        return;
+      }
+      startLoop();
+    };
+
     window.addEventListener("resize", handleResize);
     window.addEventListener("pointermove", handlePointerMove, { passive: true });
+    window.addEventListener("pointerdown", handlePointerDown, { passive: true });
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
       stopLoop();
@@ -534,6 +559,8 @@ export default function AsciiKanagawa({
       image.removeEventListener("load", handleImageLoad);
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [src]);
 
