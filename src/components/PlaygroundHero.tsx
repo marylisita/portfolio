@@ -10,20 +10,53 @@ import { useRichMotion } from "@/lib/performanceTier";
 export const PIXEL_CLIP =
   "polygon(0 8px, 8px 8px, 8px 0, calc(100% - 8px) 0, calc(100% - 8px) 8px, 100% 8px, 100% calc(100% - 8px), calc(100% - 8px) calc(100% - 8px), calc(100% - 8px) 100%, 8px 100%, 8px calc(100% - 8px), 0 calc(100% - 8px))";
 
-/** Saudação que muda com a hora real E o idioma do site (pedido dela:
- *  brincalhona, sem emoji). Calculada no tick (client-only), então não
- *  dá mismatch de hidratação. */
-function greetingFor(hour: number, lang: "pt" | "en") {
-  if (lang === "pt") {
-    if (hour < 6) return "ainda acordada?";
-    if (hour < 10) return "cedo demais para tanta tipografia";
-    if (hour < 18) return "horário comercial, aparentemente";
-    return "a luz ficou acesa";
-  }
-  if (hour < 6) return "still up?";
-  if (hour < 10) return "too early for this much typography";
-  if (hour < 18) return "business hours, apparently";
-  return "the light stayed on";
+type ClockPeriod = "late" | "morning" | "afternoon" | "evening";
+
+const CLOCK_GREETINGS: Record<
+  "pt" | "en",
+  Record<ClockPeriod, readonly string[]>
+> = {
+  pt: {
+    late: [
+      "a luz dormiu acesa",
+      "o computador ainda quente",
+      "só o brilho da tela agora",
+      "o silêncio ficou mais alto",
+      "só o som do ventilador do pc",
+    ],
+    morning: ["bom dia?"],
+    afternoon: [
+      "horário comercial, aparentemente",
+      "produtividade, dizem",
+      "tecnicamente ainda é dia útil",
+      "meio do expediente, moralmente falando",
+    ],
+    evening: ["a luz ficou acesa"],
+  },
+  en: {
+    late: [
+      "the light fell asleep first",
+      "computer's still warm",
+      "just the screen glow now",
+      "the silence got louder",
+      "just the pc fan humming",
+    ],
+    morning: ["morning, i guess?"],
+    afternoon: [
+      "business hours, apparently",
+      "productivity, allegedly",
+      "technically still a workday",
+      "mid-shift, morally speaking",
+    ],
+    evening: ["the light stayed on"],
+  },
+};
+
+function clockPeriodFor(hour: number): ClockPeriod {
+  if (hour < 6) return "late";
+  if (hour < 12) return "morning";
+  if (hour < 18) return "afternoon";
+  return "evening";
 }
 
 /** Relógio ao vivo (referência: barbianaliu.com — "Mon 01:39:03 AM"). */
@@ -31,7 +64,44 @@ function LiveClock() {
   const { lang } = useT();
   const [now, setNow] = useState("");
   const [greet, setGreet] = useState("");
+  const phraseRef = useRef<{ period: ClockPeriod | ""; index: number }>({
+    period: "",
+    index: 0,
+  });
+
   useEffect(() => {
+    const phraseFor = (hour: number) => {
+      const period = clockPeriodFor(hour);
+
+      if (phraseRef.current.period !== period) {
+        const phrases = CLOCK_GREETINGS.pt[period];
+        const indexKey = `mary-clock-${period}`;
+        const loadKey = `mary-clock-load-${period}`;
+        const pageLoad = String(performance.timeOrigin);
+        const savedIndex = Number.parseInt(
+          sessionStorage.getItem(indexKey) ?? "-1",
+          10,
+        );
+        const currentIndex =
+          Number.isFinite(savedIndex) && savedIndex >= 0 ? savedIndex : 0;
+        const samePageLoad = sessionStorage.getItem(loadKey) === pageLoad;
+        const nextIndex = samePageLoad
+          ? currentIndex % phrases.length
+          : savedIndex < 0
+            ? 0
+            : (currentIndex + 1) % phrases.length;
+
+        sessionStorage.setItem(indexKey, String(nextIndex));
+        sessionStorage.setItem(loadKey, pageLoad);
+        phraseRef.current = { period, index: nextIndex };
+      }
+
+      const { period: activePeriod, index } = phraseRef.current;
+      if (!activePeriod) return "";
+      const phrases = CLOCK_GREETINGS[lang][activePeriod];
+      return phrases[index % phrases.length];
+    };
+
     const tick = () => {
       const d = new Date();
       setNow(
@@ -44,7 +114,7 @@ function LiveClock() {
           })
           .replace(",", "")
       );
-      setGreet(greetingFor(d.getHours(), lang));
+      setGreet(phraseFor(d.getHours()));
     };
     tick();
     const id = setInterval(tick, 1000);
