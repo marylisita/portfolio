@@ -58,6 +58,7 @@ const rmStyles = `
     --paper: var(--site-paper);
     --acid: var(--site-accent);
     --hero-highlight: #9c554f;
+    --hero-art-lift: clamp(2rem, 4vh, 4rem);
     --font-grotesk: Arial, "Helvetica Neue", Helvetica, sans-serif;
     /* degradê profundo: roxo/azul da id EBAT respirando por baixo do preto */
     background:
@@ -186,7 +187,7 @@ const rmStyles = `
     pointer-events: none;
     color: var(--ink);
     font-family: var(--font-mono), monospace;
-    transform: translateY(clamp(-4rem, -4vh, -2rem));
+    transform: translateY(calc(0px - var(--hero-art-lift)));
   }
   .rm-thread {
     position: absolute;
@@ -256,7 +257,7 @@ const rmStyles = `
     .rm-status__dot { animation: none; }
   }
   @media (max-width: 860px) {
-    .rm-field { transform: translateY(-1.25rem); }
+    .rm { --hero-art-lift: 1.25rem; }
     .rm-status, .rm-nav, .rm-mark__sub { display: none; }
     .rm-corner { top: 1.25rem; }
     .rm-corner--l { left: 1.25rem; max-width: calc(100vw - 6rem); }

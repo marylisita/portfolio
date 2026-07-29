@@ -4,14 +4,42 @@ import { useEffect, useRef } from "react";
 
 const styles = `
   .mq {
+    position: relative;
+    z-index: 3;
     overflow: hidden;
-    border-top: 1px solid var(--ink);
-    border-bottom: 1px solid var(--ink);
     background: var(--acid);
     color: var(--paper);
-    padding: .75rem 0;
+    margin-top: calc(0px - var(--hero-art-lift, 0px));
+    padding: 1rem 0 .95rem;
+    isolation: isolate;
+  }
+  .mq::before,
+  .mq::after {
+    content: "· . ── ✦ ── . ·   · . ── ✦ ── . ·   · . ── ✦ ── . ·   · . ── ✦ ── . ·   · . ── ✦ ── . ·   · . ── ✦ ── . ·   · . ── ✦ ── . ·   · . ── ✦ ── . ·   · . ── ✦ ── . ·   · . ── ✦ ── . ·";
+    position: absolute;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    overflow: hidden;
+    color: var(--paper);
+    font-family: var(--font-mono), monospace;
+    font-size: .46rem;
+    line-height: 1;
+    letter-spacing: .16em;
+    text-align: center;
+    white-space: nowrap;
+    opacity: .3;
+    pointer-events: none;
+  }
+  .mq::before {
+    top: .12rem;
+  }
+  .mq::after {
+    bottom: .1rem;
   }
   .mq__track {
+    position: relative;
+    z-index: 1;
     display: flex;
     width: max-content;
     animation: mq-roll 32s linear infinite;
