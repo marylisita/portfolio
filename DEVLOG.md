@@ -1,3 +1,30 @@
+# Devlog: EBAT no mesmo sistema editorial
+
+30 de julho de 2026
+
+O case da EBAT foi refeito a partir do padrão aprovado no Graduation. A página
+agora explica três problemas concretos — tornar a identidade ensinável, manter
+um sistema capaz de publicar toda semana e apresentar a escola no São Paulo
+Innovation Week sem parecer uma startup genérica — em vez de empilhar adjetivos
+sobre a marca.
+
+A autoria também ficou mais precisa: Maria aparece como designer da escola,
+responsável por identidade, redes sociais, peças impressas e campanha
+audiovisual. O texto registra apenas números sustentados pelo material do case:
+manual de 22 páginas e um ciclo de cerca de 190 inscrições e 100 aprovados. A
+copy não atribui causalidade entre identidade e inscrições.
+
+Visualmente, as peças saíram de molduras, fitas e inclinações. Os dois capítulos
+azuis ocupam a viewport inteira; o conteúdo permanece no grid e o menu inverte
+o contraste enquanto cruza essas faixas. O manual, os carrosséis e as peças do
+SPIW usam imagens limpas, legendas tracejadas e índices `imagem` / `image`.
+
+O `FlipBook` compartilhado foi atualizado para o mesmo vocabulário: borda
+tracejada, contador técnico e controles bilíngues entre colchetes. A interação
+mantém botões acessíveis e respeita `prefers-reduced-motion`.
+
+---
+
 # Devlog: Graduation sem simulação de papel
 
 30 de julho de 2026

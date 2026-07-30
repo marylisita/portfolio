@@ -64,14 +64,14 @@ no site, nunca como único portador de informação.
 **FICA: textura.** Ela gosta. `paper-noise.webp` (9 usos) e a paleta
 `--paper-*` permanecem.
 
-**SAI: colagem.** Fita, folha torta, recorte empilhado. Ainda não foi feito:
+**SAI: colagem.** A limpeza foi concluída nos cases em 30/07. Fita, dobra,
+moldura clara, sombra deslocada e inclinação saíram do `CaseStudyKit`. As
+imagens agora entram limpas no grid e usam legendas `imagem` / `image` com linha
+tracejada. Não reabrir essa pendência nem recriar papel em páginas individuais.
 
-- `--paper-tape` (fita) — 3 usos: `globals.css`, `work/page.tsx`, `CaseStudyKit.tsx`
-- folhas tortas — 25 props `tilt=` nos cases + ~63 rotações em CSS
-- legendas "folha 01 / lâmina 02" — 13 ocorrências
-
-Fazer num bloco só, com ela olhando. `globals.css` e `CaseStudyKit.tsx` são
-compartilhados com a outra sessão.
+Os cases Graduation e EBAT são as referências visuais: capítulos escuros ocupam
+`100vw`, preservam o alinhamento interno e invertem o contraste do menu ao
+cruzar a viewport.
 
 ## Registro da copy
 
@@ -93,7 +93,7 @@ para qualquer texto novo:
    "a estrutura veio dos usuários, não do meu gosto" é designer.
 
 Referência de voz boa, já no site: o case da VegCoz (`vz_*` no dicionário),
-o bloco "o que não fecha" do HoloGlam, e o case do Graduation.
+o bloco "o que não fecha" do HoloGlam e os cases Graduation e EBAT.
 
 ## Armadilhas verificadas
 
@@ -115,7 +115,6 @@ o bloco "o que não fecha" do HoloGlam, e o case do Graduation.
 
 ## Pendente
 
-- [ ] Tirar fita, folhas tortas e legendas "folha/lâmina" (bloco único)
 - [ ] Home destaca `isadora · genlab · ebat · vegcoz · ondularis`, e 3 desses
       estão fora do núcleo. Sugestão: `graduation · ebat · cyber-marinum ·
       magazine · isadora`. Fica em `FEATURED_PROJECT_HREFS` em `app/page.tsx`
@@ -124,4 +123,5 @@ o bloco "o que não fecha" do HoloGlam, e o case do Graduation.
       é piada com o chiado carioca, quantos ícones desenhou e quantos entraram,
       quantos kits foram produzidos, e se a impressão em uma cor foi restrição
       de custo ou escolha.
-- [ ] `HANDOFF.md` na raiz está com lixo de saída de ferramenta — limpar ou apagar.
+- [ ] EBAT: confirmar créditos completos da equipe quando houver fonte; não
+      inferir nomes ou divisão de autoria.

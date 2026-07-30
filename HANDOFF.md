@@ -7,9 +7,9 @@ continue o trabalho sem reconstruir a direção visual ou a voz do portfólio.
 
 ## Objetivo atual
 
-O case `/work/graduation` é a referência para a nova linguagem das páginas de
-projeto: editorial e digital, com ASCII e linhas tracejadas, sem simular folhas
-soltas, fita adesiva ou colagem de papel.
+Os cases `/work/graduation` e `/work/ebat` são as referências para a nova
+linguagem das páginas de projeto: editorial e digital, com ASCII e linhas
+tracejadas, sem simular folhas soltas, fita adesiva ou colagem de papel.
 
 ## Padrão visual aprovado para os cases
 
@@ -67,6 +67,27 @@ trabalho. O resumo mostra entregáveis (`ícones`, `checklist`, `objetos
 impressos`) e o bloco `meu papel` informa que foi design gráfico em equipe de
 três.
 
+Na EBAT, a narrativa não chama a identidade apenas de “vibrante” ou
+“inovadora”. Ela mostra para que o sistema servia:
+
+- um manual de 22 páginas para outra pessoa conseguir montar peças;
+- uma rotina editorial de processo seletivo, módulos e redes sociais;
+- um folder, peças de estande e vídeo recap para o São Paulo Innovation Week.
+
+O resumo pode citar cerca de 190 inscrições e 100 aprovados como contexto do
+ciclo, mas não deve dizer que a identidade causou esses números. O papel
+registrado é “designer da escola: identidade, redes sociais, peças impressas e
+campanha audiovisual”. Créditos de outras pessoas continuam pendentes e não
+devem ser inferidos.
+
+## Flipbooks
+
+`src/components/FlipBook.tsx` também segue o sistema dos cases. Usar imagem
+limpa, borda tracejada, contador `01 / 22` e controles entre colchetes. Os
+controles são bilíngues e precisam conservar `aria-label`, estado `disabled` e
+suporte a `prefers-reduced-motion`. Não reintroduzir moldura de folha, sombra ou
+efeito de livro físico.
+
 ## Fatos ainda necessários no Graduation
 
 Não inventar:
@@ -79,10 +100,12 @@ Não inventar:
 ## Arquivos centrais desta rodada
 
 - `src/app/work/graduation/page.tsx`
+- `src/app/work/ebat/page.tsx`
 - `src/content/projectStories.ts`
 - `src/i18n/dictionaries.ts`
 - `src/components/ProjectShell.tsx`
 - `src/components/CaseStudyKit.tsx`
+- `src/components/FlipBook.tsx`
 - `PAGINA-TRABALHOS.md`
 
 ## Validação
@@ -91,14 +114,15 @@ Rodar antes de entregar:
 
 ```powershell
 npx tsc --noEmit
-npx eslint src/app/work/graduation/page.tsx src/components/ProjectShell.tsx src/components/CaseStudyKit.tsx src/content/projectStories.ts src/i18n/dictionaries.ts
+npx eslint src/app/work/graduation/page.tsx src/app/work/ebat/page.tsx src/components/ProjectShell.tsx src/components/CaseStudyKit.tsx src/components/FlipBook.tsx src/content/projectStories.ts src/i18n/dictionaries.ts
 npm run build
 ```
 
-Visualizar localmente em `http://localhost:3456/work/graduation`. Conferir pelo
-menos 390×844 e 1494×780, inclusive com o header e os atalhos cruzando as duas
-faixas escuras. O documento deve manter uma única rolagem e não pode ter
-overflow horizontal.
+Visualizar localmente `http://localhost:3456/work/graduation` e
+`http://localhost:3456/work/ebat`. Conferir pelo menos 390×844 e 1494×780,
+inclusive com o header e os atalhos cruzando as faixas escuras. O documento
+deve manter uma única rolagem e não pode ter overflow horizontal. Na EBAT,
+testar ainda o avanço do flipbook e os controles em português e inglês.
 
 Na rodada de 30/07, TypeScript, o ESLint dos cinco arquivos centrais e a build
 de produção passaram. A rota foi conferida em 390×844 e 1494×780, sem overflow

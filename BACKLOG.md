@@ -30,6 +30,9 @@ Atualizado em 30 de julho de 2026.
   piada com o chiado carioca, número de ícones desenhados/aplicados, tiragem do
   kit e se a impressão em uma cor foi restrição ou escolha. Não preencher por
   inferência.
+- [ ] **Confirmar os créditos completos da EBAT.** A página registra o papel de
+  Maria como designer da escola, mas não inventa nomes, duração do vínculo ou
+  divisão de autoria com outras pessoas. Completar apenas quando houver fonte.
 - [ ] **Revisar os demais cases que usam `CaseStudyKit`.** A retirada de fita,
   dobra, sombra e inclinação é um padrão compartilhado aprovado. Conferir se
   painéis e legendas específicas continuam legíveis em cada variante, sem
@@ -37,6 +40,10 @@ Atualizado em 30 de julho de 2026.
 
 ## Concluído nesta rodada
 
+- [x] O case EBAT foi reorganizado em identidade, rotina editorial e SPIW, com
+  linguagem concreta, autoria explícita e sem causalidade de impacto inventada.
+- [x] O `FlipBook` passou a usar bordas tracejadas, contador editorial e
+  controles bilíngues no mesmo padrão visual dos cases.
 - [x] O case Graduation passou a explicar decisão, entregáveis e colaboração,
   sem alegação de impacto não medido.
 - [x] O cabeçalho dos projetos ganhou uma hierarquia única para resultado,
