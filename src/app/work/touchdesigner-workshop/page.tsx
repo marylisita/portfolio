@@ -859,18 +859,18 @@ export default function TouchDesignerWorkshopProject() {
           <div className="td-cover td-inner">
             <motion.figure
               className="td-poster"
-              data-frame="input / cartaz"
+              data-frame="output / projeção"
               {...heroReveal()}
             >
               <Image
-                src="/img/touchdesigner-workshop/cartaz-oficina-v2.webp"
-                width={675}
-                height={880}
+                src="/img/touchdesigner-workshop/busto-colorido-capa.webp"
+                width={941}
+                height={1227}
                 sizes="(max-width: 620px) 88vw, 38vw"
                 alt={
                   selectedLang === "pt"
-                    ? "Cartaz da Oficina de Vídeo Mapping: introdução ao TouchDesigner"
-                    : "Poster for the Video Mapping Workshop: introduction to TouchDesigner"
+                    ? "Busto iluminado por projeções coloridas durante a oficina de TouchDesigner"
+                    : "Bust illuminated by colourful projections during the TouchDesigner workshop"
                 }
                 priority
               />

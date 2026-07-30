@@ -78,8 +78,8 @@ export function useProjects(): IndexItem[] {
       }`,
       href: "/work/touchdesigner-workshop",
       impact: impact("/work/touchdesigner-workshop"),
-      ratio: 880 / 675,
-      img: "/img/touchdesigner-workshop/cartaz-oficina-v2.webp",
+      ratio: 1227 / 941,
+      img: "/img/touchdesigner-workshop/busto-colorido-capa.webp",
     },
     {
       num: "08",

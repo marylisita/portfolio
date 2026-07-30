@@ -11,6 +11,11 @@ Os cases `/work/graduation` e `/work/ebat` são as referências para a nova
 linguagem das páginas de projeto: editorial e digital, com ASCII e linhas
 tracejadas, sem simular folhas soltas, fita adesiva ou colagem de papel.
 
+A home apresenta cinco trabalhos selecionados, nesta ordem:
+`graduation · ebat · cyber-marinum · magazine · isadora`. Manter essa lista
+sincronizada com `FEATURED_PROJECT_HREFS` em `src/app/page.tsx`; a página
+`/work` continua com o núcleo maior de sete projetos.
+
 ## Padrão visual aprovado para os cases
 
 - A textura creme global do site continua. O que saiu foi a simulação de

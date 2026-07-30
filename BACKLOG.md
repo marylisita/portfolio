@@ -40,6 +40,8 @@ Atualizado em 30 de julho de 2026.
 
 ## Concluído nesta rodada
 
+- [x] A seleção da home foi alinhada ao núcleo curado: Graduation, EBAT, Cyber
+  Marinum, Helvetica: Discórdia e Isadora.
 - [x] O case EBAT foi reorganizado em identidade, rotina editorial e SPIW, com
   linguagem concreta, autoria explícita e sem causalidade de impacto inventada.
 - [x] O `FlipBook` passou a usar bordas tracejadas, contador editorial e

@@ -1,3 +1,20 @@
+# Devlog: home alinhada à curadoria
+
+30 de julho de 2026
+
+Os cinco destaques da home agora são Graduation, EBAT, Cyber Marinum,
+Helvetica: Discórdia e Isadora. A sequência abre com o trabalho gráfico mais
+forte e percorre cliente, arte e tecnologia, tipografia e direção de arte. Ela
+substitui a seleção anterior, que destacava três projetos fora do núcleo curado
+da página de trabalhos.
+
+A capa da oficina de TouchDesigner também passou do cartaz institucional para
+uma fotografia do resultado de vídeo mapping sobre o busto. O recorte preserva
+cabeça e base, usa a mesma proporção da capa anterior e foi convertido para
+WebP, reduzindo o arquivo para cerca de 77 KB.
+
+---
+
 # Devlog: EBAT no mesmo sistema editorial
 
 30 de julho de 2026

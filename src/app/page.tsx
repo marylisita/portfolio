@@ -19,11 +19,11 @@ import SkillConstellation from "@/components/SkillConstellation";
 const STITCH_DIVIDER = "------  ";
 
 const FEATURED_PROJECT_HREFS = [
-  "/work/isadora",
-  "/work/genlab",
+  "/work/graduation",
   "/work/ebat",
-  "/work/vegcoz",
-  "/work/ondularis",
+  "/work/cyber-marinum",
+  "/work/magazine",
+  "/work/isadora",
 ];
 
 const HERO_HEADLINES = {

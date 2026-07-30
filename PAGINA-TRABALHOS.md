@@ -30,6 +30,11 @@ Cada um cobre um território que nenhum outro cobre:
 | 06 | hologlam | pesquisa especulativa + autocrítica |
 | 07 | touchdesigner-workshop | ensino — prova facilitação e tradução de conhecimento |
 
+A home usa uma seleção menor, com cinco entradas, nesta ordem:
+`graduation · ebat · cyber-marinum · magazine · isadora`. Ela apresenta o
+recorte mais direto de identidade, cliente, arte-tech, tipografia e direção de
+arte. A lista vive em `FEATURED_PROJECT_HREFS`, em `src/app/page.tsx`.
+
 Fora do núcleo: vegcoz, ondularis, pilotis, chinario, genlab. **Continuam na
 fonte (`useProjects`) de propósito** — o `ProjectShell` usa a lista completa
 para as tags e a navegação anterior/próximo. Se você filtrar a fonte, essas 5
@@ -115,10 +120,6 @@ o bloco "o que não fecha" do HoloGlam e os cases Graduation e EBAT.
 
 ## Pendente
 
-- [ ] Home destaca `isadora · genlab · ebat · vegcoz · ondularis`, e 3 desses
-      estão fora do núcleo. Sugestão: `graduation · ebat · cyber-marinum ·
-      magazine · isadora`. Fica em `FEATURED_PROJECT_HREFS` em `app/page.tsx`
-      (arquivo da outra sessão).
 - [ ] Case do Graduation: faltam 4 fatos que só ela tem — se "CHECKLIZT" com Z
       é piada com o chiado carioca, quantos ícones desenhou e quantos entraram,
       quantos kits foram produzidos, e se a impressão em uma cor foi restrição
