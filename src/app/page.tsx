@@ -34,7 +34,7 @@ const HERO_HEADLINES = {
     ["Eu tinha outras coisas pra fazer,", "Mas esse projeto ficou melhor [[ :D ]]"],
     ["Fiz parecer casual.....", "Mas pensei nisso por três dias [[ ;) ]]"],
     ["Não mudei tanto assim!", "Só refiz tudo [[ :P ]]"],
-    ["Eu ia deixar pra depois,", "Aí ficou bonito demais pra ignorar kkkkkk [[ <3 ]]"],
+    ["Eu ia deixar pra depois,", "Aí ficou bonito demais pra ignorar kk [[ <3 ]]"],
   ],
   en: [
     ["Just a small tweak.", "lying, i redid the whole thing [[ :3 ]]"],
@@ -60,7 +60,7 @@ const rmStyles = `
     --paper: var(--site-paper);
     --acid: var(--site-accent);
     --hero-highlight: #75332f;
-    --hero-art-lift: clamp(2rem, 4vh, 4rem);
+    --hero-art-lift: 0rem;
     --font-grotesk: Arial, "Helvetica Neue", Helvetica, sans-serif;
     /* degradê profundo: roxo/azul da id EBAT respirando por baixo do preto */
     background:
@@ -189,7 +189,7 @@ const rmStyles = `
     pointer-events: none;
     color: var(--ink);
     font-family: var(--font-mono), monospace;
-    transform: translateY(calc(0px - var(--hero-art-lift)));
+    transform: none;
   }
   .rm-thread {
     position: absolute;
@@ -259,7 +259,7 @@ const rmStyles = `
     .rm-status__dot { animation: none; }
   }
   @media (max-width: 860px) {
-    .rm { --hero-art-lift: 1.25rem; }
+    .rm { --hero-art-lift: 0rem; }
     .rm-status, .rm-nav, .rm-mark__sub { display: none; }
     .rm-corner { top: 1.25rem; }
     .rm-corner--l { left: 1.25rem; max-width: calc(100vw - 6rem); }
@@ -493,8 +493,8 @@ function HomeContent() {
                 priority: "primary",
                 previews: featuredProjects.slice(0, 3).map((project) => ({ src: project.img, alt: project.title })),
               },
-              { label: t("rm_menu_about"), href: "#about", left: "6%", top: "70%", rotate: -3, priority: "secondary" },
-              { label: t("rm_menu_contact"), href: "#contact", left: "72%", top: "78%", rotate: 2, priority: "tertiary" },
+              { label: t("rm_menu_about"), href: "#about", left: "5.2%", top: "19.2%", rotate: -3, priority: "secondary" },
+              { label: t("rm_menu_contact"), href: "#contact", left: "81%", top: "44.5%", rotate: -2, priority: "tertiary" },
             ] satisfies MenuItem[]}
           />
         </PlaygroundHero>

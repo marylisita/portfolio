@@ -1,10 +1,8 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import AsciiDivider from "./AsciiDivider";
 import ScrambleText from "./ScrambleText";
 import { useT } from "@/i18n/LanguageContext";
 import { StampCanvas, useCreativeStudio } from "./CreativeStudio";
-import { useRichMotion } from "@/lib/performanceTier";
 
 /* canto em degrau de 8px — recorte "pixel" nas molduras */
 export const PIXEL_CLIP =
@@ -135,9 +133,9 @@ const styles = `
     position: relative;
     background: transparent; /* deixa o degradê+ruído do .rm aparecer */
     color: var(--ink);
-    /* A gravura mede 1521×1034. O pequeno respiro adicional preserva o
-       wordmark no topo sem afastar a onda do ticker. */
-    min-height: max(100svh, calc(67.98vw + 2rem));
+    /* Uma tela exata: a gravura é enquadrada e recortada, não exibida inteira. */
+    height: 100svh;
+    min-height: 100svh;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -166,9 +164,11 @@ const styles = `
        sem quebrar as ligações do script (mais que isso começa a colar demais) */
     letter-spacing: -.015em;
     text-transform: none;
-    margin: clamp(1.2rem, 3.8vh, 2.8rem) 0;
-    position: relative;
-    translate: 0 -3vh;
+    margin: 0;
+    position: absolute;
+    left: clamp(5.5rem, 5.1vw, 6.25rem);
+    right: 5.5rem;
+    top: 52.5%;
     z-index: 1;
     pointer-events: none;
   }
@@ -201,15 +201,6 @@ const styles = `
     .ph__line:nth-child(2) .ph__line-inner { --line-delay: .08s; }
   }
   .ph__line--acid { color: var(--hero-highlight, var(--acid)); }
-  .ph__foot {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 2rem;
-    align-items: end;
-    padding-top: .4rem;
-    position: relative;
-    z-index: 1;
-  }
   .ph__sub {
     font-family: var(--font-body);
     font-size: clamp(.95rem, 1.3vw, 1.1rem);
@@ -218,38 +209,36 @@ const styles = `
   /* frase no vazio da onda: OffBit, alinhada à esquerda, abaixo do título */
   .ph__sub--pocket {
     position: absolute;
-    left: 44%;
-    top: 52%;
-    /* a quebra é forçada no JSX; a largura só evita reflow das duas linhas */
-    width: min(42rem, 43vw);
+    left: 45.6%;
+    top: 71.5%;
+    /* duas linhas editoriais fixas; a largura evita qualquer reflow acidental */
+    width: max-content;
+    max-width: 50vw;
     max-width: none;
     text-align: left;
     text-transform: lowercase;
     font-family: var(--font-subtitle);
-    font-size: clamp(1rem, 1.2vw, 1.3rem);
+    font-size: clamp(.78rem, 1.2vw, 1.3rem);
     line-height: 1.35;
     letter-spacing: .01em;
     z-index: 1;
     pointer-events: none;
   }
+  .ph__sub-line {
+    display: block;
+    white-space: nowrap;
+  }
   .ph__title[data-compact="true"] {
     font-size: clamp(1.9rem, min(6.3vw, 8vh), 5.5rem);
     line-height: 1.02;
   }
-  @media (min-width: 1360px) {
-    .ph__title {
-      top: clamp(-5.8rem, -3.9vw, -3.8rem);
-    }
-  }
-  /* sem largura editorial suficiente, volta ao fluxo e evita sobreposição */
-  @media (max-width: 1359px) {
-    .ph__title { translate: 0 -5svh; }
+  /* Em notebooks, preserva a mesma composição por proporção. */
+  @media (min-width: 721px) and (max-width: 1359px) {
+    .ph__title { top: 52.5%; }
     .ph__sub--pocket {
-      position: static;
-      width: auto;
-      max-width: 100%;
-      margin-top: 1.25rem;
-      translate: 0 -4svh;
+      left: 45.6%;
+      top: 71.5%;
+      max-width: 52vw;
     }
   }
   .ph__scroll {
@@ -257,7 +246,7 @@ const styles = `
     font-size: 1.35rem;
     letter-spacing: .01em;
   }
-  .ph__em { font-family: var(--font-head); font-style: italic; font-weight: 600; letter-spacing: -0.01em; }
+  .ph__em { font-family: var(--font-head); font-style: italic; font-weight: 800; letter-spacing: -0.01em; }
   .ph__wave-word { display: inline-block; white-space: nowrap; }
   .ph__wave-char { display: inline-block; }
   @keyframes ph-wave {
@@ -309,11 +298,16 @@ const styles = `
   }
   @media (max-width: 720px) {
     .ph {
+      height: auto;
       min-height: max(100svh, 54rem);
       padding: 7rem 1.25rem 1.5rem;
     }
     .ph__meta span:nth-child(2) { display: none; }
     .ph__title {
+      position: relative;
+      left: auto;
+      right: auto;
+      top: auto;
       font-family: var(--font-pixelscript);
       font-weight: 400;
       font-size: clamp(2rem, 10.6vw, 2.75rem);
@@ -326,7 +320,14 @@ const styles = `
       font-size: clamp(1.75rem, 9.2vw, 2.4rem);
       line-height: 1.08;
     }
-    .ph__foot { grid-template-columns: 1fr; gap: 1.25rem; }
+    .ph__sub--pocket {
+      position: static;
+      width: auto;
+      max-width: 100%;
+      margin-top: 1.25rem;
+      translate: 0 -4svh;
+    }
+    .ph__sub-line { white-space: normal; }
     .ph__sticker--desk { display: none; }
     .ph__sticker { cursor: default; }
     .ph__sticker--clock {
@@ -412,6 +413,7 @@ function DraggableSticker({
     <div
       ref={elementRef}
       className={`ph__sticker ph__sticker--${sticker.key}${sticker.deskOnly ? " ph__sticker--desk" : ""}`}
+      data-no-stamp
       style={{
         left: sticker.left,
         top: sticker.top,
@@ -451,7 +453,6 @@ export default function PlaygroundHero({
   children?: React.ReactNode;
 }) {
   const bounds = useRef<HTMLElement>(null);
-  const richMotion = useRichMotion();
   const [isMobile, setIsMobile] = useState(false);
   const {
     stampMode,
@@ -469,7 +470,7 @@ export default function PlaygroundHero({
     return () => media.removeEventListener("change", syncViewport);
   }, []);
 
-  const canDrag = richMotion && !isMobile;
+  const canDrag = !isMobile;
 
   // Elementos funcionais do hero; os desenhos ASCII agora vivem só no background.
   const stickers: Sticker[] = [
@@ -532,45 +533,15 @@ export default function PlaygroundHero({
           </span>
         ))}
       </h1>
-
-      {/* divisor fofo no lugar da linha tracejada */}
-      <div
-        className="ph__foot"
-        suppressHydrationWarning
-      >
-        <AsciiDivider
-          repeat={false}
-          pattern="₊✧˚﹕︶︶︶﹕૮₍ ⸝⸝´ ꒳ `⸝⸝ ₎ა﹕︶︶︶﹕˚✧₊"
-          size=".82rem"
-          opacity={0.62}
-          style={{ width: "100%", marginBottom: ".4rem" }}
-        />
-      </div>
-
       {/* frase no espaço em branco da onda (concavidade), alinhada à ESQUERDA
           e em OffBit — abaixo do título pra não encostar nele */}
       <p
         className="ph__sub ph__sub--pocket"
       >
-        {(() => {
-          // quebra forçada após a primeira vírgula ("...visuais,") = 2 linhas
-          // exatas, sem depender de calibragem frágil de largura
-          const i = sub.indexOf(",");
-          if (i === -1) {
-            return (
-              <span>
-                {sub} <span className="ph__em">{subHighlight}</span>
-              </span>
-            );
-          }
-          return (
-            <span>
-              {sub.slice(0, i + 1)}
-              <br />
-              {sub.slice(i + 1).trim()} <span className="ph__em">{subHighlight}</span>
-            </span>
-          );
-        })()}
+        <span>
+          <span className="ph__sub-line">{sub}</span>
+          <span className="ph__em">{subHighlight}</span>
+        </span>
       </p>
     </section>
   );

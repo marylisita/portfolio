@@ -11,16 +11,16 @@ import {
 import { useT } from "@/i18n/LanguageContext";
 
 const SPREADS = [
-  { src: "/img/helvetica/1.png", width: 1124, height: 632 },
-  { src: "/img/helvetica/2.png", width: 1124, height: 632 },
-  { src: "/img/helvetica/3.png", width: 1124, height: 632 },
-  { src: "/img/helvetica/4.png", width: 1124, height: 632 },
-  { src: "/img/helvetica/5.png", width: 1124, height: 632 },
-  { src: "/img/helvetica/6.png", width: 1124, height: 632 },
-  { src: "/img/helvetica/7.png", width: 893, height: 632 },
-  { src: "/img/helvetica/8.png", width: 893, height: 632 },
-  { src: "/img/helvetica/9.jpg", width: 948, height: 632 },
-  { src: "/img/helvetica/10.jpg", width: 948, height: 632 },
+  { src: "/img/helvetica/1.webp", width: 1124, height: 632 },
+  { src: "/img/helvetica/2.webp", width: 1124, height: 632 },
+  { src: "/img/helvetica/3.webp", width: 1124, height: 632 },
+  { src: "/img/helvetica/4.webp", width: 1124, height: 632 },
+  { src: "/img/helvetica/5.webp", width: 1124, height: 632 },
+  { src: "/img/helvetica/6.webp", width: 1124, height: 632 },
+  { src: "/img/helvetica/7.webp", width: 893, height: 632 },
+  { src: "/img/helvetica/8.webp", width: 893, height: 632 },
+  { src: "/img/helvetica/9.webp", width: 948, height: 632 },
+  { src: "/img/helvetica/10.webp", width: 948, height: 632 },
 ] as const;
 
 export default function MagazineProject() {

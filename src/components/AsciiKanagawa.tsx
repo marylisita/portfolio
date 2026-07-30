@@ -2,9 +2,8 @@
 
 import { useEffect, useRef } from "react";
 
-// 15fps: a onda é fundo/marca d'água a 0.3 de opacidade — 25fps era desperdício.
-// Corta ~40% do trabalho por segundo sem diferença perceptível.
-const FRAME_MS = 1000 / 15;
+// 12fps bastam para a respiração lenta da gravura e mantêm o loop econômico.
+const FRAME_MS = 1000 / 12;
 
 // Ramp de caracteres delicados (removidos os glifos brutos ░ ▒ ▓ ╳)
 const SITE_GIBBON_RAMP = [
@@ -12,12 +11,7 @@ const SITE_GIBBON_RAMP = [
   "≈", "~", "⠶", "⠲", "⠴", "⠛", "⠿",
 ];
 
-const TITLE_SCRAMBLE_GLYPHS = [
-  "♡", "✦", "✧", "⋆", "≈", "°", "⊹", "·", "⠂", "⠁", "✿", "₊", "˚", "✳︎", "⠶", "⠤",
-];
-
 const UNIFIED_COLOR = "#173b58"; // Navy azul-escuro único
-const PAPER_BG = "rgba(245, 236, 219, 0.05)";
 // A última linha visível da gravura está em y=996; os 37 px restantes do
 // arquivo são transparentes. Alinhar por esse limite aproxima a tinta do
 // ticker sem recortar nenhum caractere da obra.
@@ -68,12 +62,6 @@ type MutationPoint = {
   red?: number;
   isContour?: boolean;
   frameLoop?: FrameLoop;
-};
-
-type ActiveMutation = {
-  point: MutationPoint;
-  startedAt: number;
-  phase: number;
 };
 
 type Particle = {
@@ -177,15 +165,11 @@ export default function AsciiKanagawa({
     let raf = 0;
     let isVisible = false;
     let isRunning = false;
-    let hasInteracted = false;
 
-    let mutationGrid = new Map<string, MutationPoint>();
     let contourPoints: MutationPoint[] = [];
     let mutationMapWidth = 160;
-    let mutationMapHeight = 100;
-    const activeMutations = new Map<string, ActiveMutation>();
 
-    const spray: Particle[] = Array.from({ length: 110 }, (_, index) => ({
+    const spray: Particle[] = Array.from({ length: 64 }, (_, index) => ({
       index,
       seed: hash(index, 4, 2),
       speed: 0.4 + hash(index, 9, 1) * 0.9,
@@ -199,18 +183,27 @@ export default function AsciiKanagawa({
 
     function fitImage() {
       if (!image.naturalWidth || !image.naturalHeight) return;
-      const bottomGap = Math.min(12, Math.max(6, width * 0.005));
-      const scale = Math.min(
-        width / image.naturalWidth,
-        (height - bottomGap) / (image.naturalHeight * ART_VISIBLE_BOTTOM_RATIO),
-      );
+      const mobile = width <= 860;
+      const bottomGap = mobile ? Math.min(12, Math.max(6, width * 0.005)) : 0;
+      const baseScale = mobile
+        ? Math.min(
+            width / image.naturalWidth,
+            (height - bottomGap) / (image.naturalHeight * ART_VISIBLE_BOTTOM_RATIO),
+          )
+        : Math.max(
+            width / image.naturalWidth,
+            height / (image.naturalHeight * ART_VISIBLE_BOTTOM_RATIO),
+          );
+      // Desktop: zoom uniforme e recorte. Nunca estica os eixos separadamente.
+      const scale = mobile ? baseScale : baseScale * 1.08;
       drawWidth = image.naturalWidth * scale;
       drawHeight = image.naturalHeight * scale;
       drawX = (width - drawWidth) / 2;
-      drawY =
-        height -
-        bottomGap -
-        image.naturalHeight * ART_VISIBLE_BOTTOM_RATIO * scale;
+      drawY = mobile
+        ? height -
+          bottomGap -
+          image.naturalHeight * ART_VISIBLE_BOTTOM_RATIO * scale
+        : 0;
     }
 
     // Gerador do mapa de ruído de GibbonJoyeux focado na crista marcada da onda
@@ -219,7 +212,6 @@ export default function AsciiKanagawa({
       const mapWidth = 160;
       const mapHeight = Math.max(10, Math.round(mapWidth / (image.naturalWidth / image.naturalHeight)));
       mutationMapWidth = mapWidth;
-      mutationMapHeight = mapHeight;
       sampleCanvas.width = mapWidth;
       sampleCanvas.height = mapHeight;
       sampleCtx.drawImage(image, 0, 0, mapWidth, mapHeight);
@@ -253,7 +245,6 @@ export default function AsciiKanagawa({
       }
 
       // 3. FINALIZE MAP (FrameLoops de GibbonJoyeux)
-      const points: MutationPoint[] = [];
       const waveRidgePoints: MutationPoint[] = [];
       // Movimento lento e editorial: visível aos poucos, sem deixar a gravura
       // com aparência de glitch ou superfície nervosa.
@@ -301,8 +292,6 @@ export default function AsciiKanagawa({
             frameLoop: loopObj,
           };
 
-          points.push(pt);
-
           // O movimento vive principalmente nas bordas. Alguns raros pontos
           // internos mantêm continuidade sem descaracterizar a impressão.
           const sparseInterior =
@@ -314,7 +303,6 @@ export default function AsciiKanagawa({
       }
 
       contourPoints = waveRidgePoints;
-      mutationGrid = new Map(points.map((pt) => [`${pt.col}:${pt.row}`, pt]));
     }
 
     function resize() {
@@ -396,38 +384,6 @@ export default function AsciiKanagawa({
       ctx.drawImage(image, drawX, drawY, drawWidth, drawHeight);
     }
 
-    function drawMutations(time: number) {
-      if (!activeMutations.size) return;
-      const patchWidth = Math.max(7, (drawWidth / 150) * 0.95);
-      const patchHeight = Math.max(8, (drawHeight / 100) * 0.92);
-
-      for (const [key, entry] of activeMutations) {
-        const elapsed = time - entry.startedAt;
-        if (elapsed >= 360) {
-          activeMutations.delete(key);
-          continue;
-        }
-        entry.phase = Math.floor(elapsed / 60);
-
-        const { point, phase } = entry;
-        const x = drawX + point.x * drawWidth;
-        const y = drawY + point.y * drawHeight;
-
-        const glyphIdx = Math.floor(
-          hash(point.col, point.row, phase + 19) * TITLE_SCRAMBLE_GLYPHS.length
-        );
-        const glyph = TITLE_SCRAMBLE_GLYPHS[glyphIdx];
-
-        ctx.globalAlpha = 0.92;
-        ctx.fillStyle = PAPER_BG;
-        ctx.fillRect(x - patchWidth / 2, y - patchHeight / 2, patchWidth, patchHeight);
-
-        ctx.globalAlpha = 0.9;
-        ctx.fillStyle = UNIFIED_COLOR;
-        ctx.fillText(glyph, x, y);
-      }
-    }
-
     function drawSpray(seconds: number) {
       ctx.save();
       ctx.globalAlpha = 0.65;
@@ -477,36 +433,6 @@ export default function AsciiKanagawa({
       ctx.restore();
     }
 
-    function activateHover(clientX: number, clientY: number, startedAt: number) {
-      if (reduceMotion) return;
-      const rect = canvas!.getBoundingClientRect();
-      const relX = clientX - rect.left;
-      const relY = clientY - rect.top;
-
-      if (
-        relX < drawX || relX > drawX + drawWidth ||
-        relY < drawY || relY > drawY + drawHeight
-      ) return;
-
-      const col = Math.round(((relX - drawX) / drawWidth) * mutationMapWidth);
-      const row = Math.round(((relY - drawY) / drawHeight) * mutationMapHeight);
-
-      let activated = 0;
-      for (let rowOffset = -1; rowOffset <= 1 && activated < 8; rowOffset += 1) {
-        for (let offset = -2; offset <= 2; offset += 1) {
-          const point = mutationGrid.get(`${col + offset}:${row + rowOffset}`);
-          if (!point) continue;
-          const key = `${point.col}:${point.row}`;
-          activeMutations.set(key, {
-            point,
-            startedAt,
-            phase: -1,
-          });
-          activated += 1;
-        }
-      }
-    }
-
     function draw(time: number) {
       if (!image.complete || !image.naturalWidth) return;
       const seconds = time * 0.001;
@@ -518,9 +444,8 @@ export default function AsciiKanagawa({
       // 2. FLUXO DE CARACTERES DELICADOS COM FrameLoop DE GIBBONJOYEUX
       drawGibbonContourLoop();
 
-      // 3. ESPUMA E HOVER MUTATIONS
+      // 3. ESPUMA ASCII — loop autônomo, sem interação.
       drawSpray(seconds);
-      drawMutations(time);
     }
 
     function loop(time: number) {
@@ -531,22 +456,9 @@ export default function AsciiKanagawa({
       draw(time);
     }
 
-    const handlePointerMove = (e: PointerEvent) => {
-      if (!isVisible) return;
-      hasInteracted = true;
-      activateHover(e.clientX, e.clientY, performance.now());
-      startLoop();
-    };
-
-    const handlePointerDown = () => {
-      hasInteracted = true;
-      startLoop();
-    };
-
     const startLoop = () => {
       if (
         reduceMotion ||
-        !hasInteracted ||
         document.visibilityState === "hidden" ||
         isRunning ||
         !isVisible ||
@@ -604,8 +516,6 @@ export default function AsciiKanagawa({
     };
 
     window.addEventListener("resize", handleResize);
-    window.addEventListener("pointermove", handlePointerMove, { passive: true });
-    window.addEventListener("pointerdown", handlePointerDown, { passive: true });
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
@@ -613,36 +523,23 @@ export default function AsciiKanagawa({
       visibilityObserver.disconnect();
       image.removeEventListener("load", handleImageLoad);
       window.removeEventListener("resize", handleResize);
-      window.removeEventListener("pointermove", handlePointerMove);
-      window.removeEventListener("pointerdown", handlePointerDown);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [src]);
 
   return (
-    <>
-      <style>{`
-        @media (max-width: 860px), (hover: none), (pointer: coarse) {
-          .ak-canvas {
-            pointer-events: none !important;
-            cursor: default !important;
-          }
-        }
-      `}</style>
-      <canvas
-        ref={canvasRef}
-        className={`${className ?? ""} ak-canvas`}
-        style={{
-          display: "block",
-          width: "100%",
-          height: "100%",
-          pointerEvents: "auto",
-          cursor: "crosshair",
-          opacity,
-          ...style,
-        }}
-        aria-hidden="true"
-      />
-    </>
+    <canvas
+      ref={canvasRef}
+      className={`${className ?? ""} ak-canvas`}
+      style={{
+        display: "block",
+        width: "100%",
+        height: "100%",
+        pointerEvents: "none",
+        opacity,
+        ...style,
+      }}
+      aria-hidden="true"
+    />
   );
 }

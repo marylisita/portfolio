@@ -12,42 +12,6 @@ export function useProjects(): IndexItem[] {
   return [
     {
       num: "01",
-      title: "isadora ruppert press kit",
-      tags: `${t("cat_freela")} / ${t("p01_tag1")} / ${t("p01_tag2")}`,
-      href: "/work/isadora",
-      impact: impact("/work/isadora"),
-      ratio: 0.5625,
-      img: "/img/previews/isadora.webp",
-    },
-    {
-      num: "02",
-      title: flat(t("p02_title")),
-      tags: `${t("cat_college")} / ${t("p02_tag1")} / ${t("p02_tag2")}`,
-      href: "/work/magazine",
-      impact: impact("/work/magazine"),
-      ratio: 0.667,
-      img: "/img/previews/magazine.webp",
-    },
-    {
-      num: "03",
-      title: "genlab",
-      tags: `${t("cat_collab")} / ${t("p03_tag1")} / ${t("p03_tag2")}`,
-      href: "/work/genlab",
-      impact: impact("/work/genlab"),
-      ratio: 598 / 1200,
-      img: "/img/previews/genlab.webp",
-    },
-    {
-      num: "04",
-      title: flat(t("p04_title")),
-      tags: `${t("cat_client")} / ${t("p04_tag1")} / ${t("p04_tag2")}`,
-      href: "/work/ebat",
-      impact: impact("/work/ebat"),
-      ratio: 0.5625,
-      img: "/img/previews/ebat.webp",
-    },
-    {
-      num: "05",
       title: "apple academy: graduation",
       tags: `${t("cat_collab")} / ` + t("p05_tags").replace(", ", " / "),
       href: "/work/graduation",
@@ -56,25 +20,47 @@ export function useProjects(): IndexItem[] {
       img: "/img/graduation/animacao-poster.webp",
     },
     {
-      num: "06",
-      title: "devs no pilotis",
-      tags: `${t("cat_collab")} / ` + t("p06_tags").replace(", ", " / "),
-      href: "/work/pilotis",
-      impact: impact("/work/pilotis"),
-      ratio: 0.319,
-      img: "/img/previews/pilotis.webp",
+      num: "02",
+      title: flat(t("p04_title")),
+      tags: `${t("cat_client")} / ${t("p04_tag1")} / ${t("p04_tag2")}`,
+      href: "/work/ebat",
+      impact: impact("/work/ebat"),
+      ratio: 0.5625,
+      img: "/img/previews/ebat.webp",
     },
     {
-      num: "07",
-      title: "china–rio: pontes para inovação",
-      tags: `${t("cat_client")} / ` + t("p07_tags").replace(", ", " / "),
-      href: "/work/chinario",
-      impact: impact("/work/chinario"),
+      num: "03",
+      title: "cyber marinum",
+      tags: `${t("cat_collab")} / ${
+        lang === "pt"
+          ? "arte interespécies / instalação interativa"
+          : "interspecies art / interactive installation"
+      }`,
+      href: "/work/cyber-marinum",
+      impact: impact("/work/cyber-marinum"),
+      ratio: 1,
+      img: "/img/cyber-marinum/11-aquario-magenta-hero.webp",
+    },
+    {
+      num: "04",
+      title: flat(t("p02_title")),
+      tags: `${t("cat_college")} / ${t("p02_tag1")} / ${t("p02_tag2")}`,
+      href: "/work/magazine",
+      impact: impact("/work/magazine"),
       ratio: 0.667,
-      img: "/img/previews/chinario.webp",
+      img: "/img/previews/magazine.webp",
     },
     {
-      num: "08",
+      num: "05",
+      title: "isadora ruppert press kit",
+      tags: `${t("cat_freela")} / ${t("p01_tag1")} / ${t("p01_tag2")}`,
+      href: "/work/isadora",
+      impact: impact("/work/isadora"),
+      ratio: 0.5625,
+      img: "/img/previews/isadora.webp",
+    },
+    {
+      num: "06",
       title: "hologlam: fashion reloaded",
       tags: `${t("cat_college")} / ` + t("p08_tags").replace(", ", " / "),
       href: "/work/hologlam",
@@ -83,7 +69,20 @@ export function useProjects(): IndexItem[] {
       img: "/img/previews/hologlam.webp",
     },
     {
-      num: "09",
+      num: "07",
+      title: "oficina de touchdesigner",
+      tags: `${t("cat_collab")} / ${
+        lang === "pt"
+          ? "educação / arte e tecnologia"
+          : "education / art & technology"
+      }`,
+      href: "/work/touchdesigner-workshop",
+      impact: impact("/work/touchdesigner-workshop"),
+      ratio: 880 / 675,
+      img: "/img/touchdesigner-workshop/cartaz-oficina-v2.webp",
+    },
+    {
+      num: "08",
       title: "vegcoz",
       tags: `${t("cat_college")} / ` + t("p09_tags").replace(", ", " / "),
       href: "/work/vegcoz",
@@ -92,7 +91,7 @@ export function useProjects(): IndexItem[] {
       img: "/img/previews/vegcoz.webp",
     },
     {
-      num: "10",
+      num: "09",
       title: "ondularis",
       tags: `${t("cat_collab")} / ${
         lang === "pt" ? "arte, ciência e tecnologia / exposição" : "art, science & technology / exhibition"
@@ -101,6 +100,33 @@ export function useProjects(): IndexItem[] {
       impact: impact("/work/ondularis"),
       ratio: 1.25,
       img: "/img/previews/ondularis.webp",
+    },
+    {
+      num: "10",
+      title: "devs no pilotis",
+      tags: `${t("cat_collab")} / ` + t("p06_tags").replace(", ", " / "),
+      href: "/work/pilotis",
+      impact: impact("/work/pilotis"),
+      ratio: 0.319,
+      img: "/img/previews/pilotis.webp",
+    },
+    {
+      num: "11",
+      title: "china–rio: pontes para inovação",
+      tags: `${t("cat_collab")} / ` + t("p07_tags").replace(", ", " / "),
+      href: "/work/chinario",
+      impact: impact("/work/chinario"),
+      ratio: 0.667,
+      img: "/img/previews/chinario.webp",
+    },
+    {
+      num: "12",
+      title: "genlab",
+      tags: `${t("cat_autoral")} / ${t("p03_tag1")} / ${t("p03_tag2")}`,
+      href: "/work/genlab",
+      impact: impact("/work/genlab"),
+      ratio: 598 / 1200,
+      img: "/img/previews/genlab.webp",
     },
   ];
 }

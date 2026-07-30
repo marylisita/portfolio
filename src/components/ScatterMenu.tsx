@@ -1,7 +1,8 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import HeroButton from "./HeroButton";
+import { useCreativeStudio } from "./CreativeStudio";
 
 /**
  * Menu criativo (referência: os rótulos soltos do barbianaliu.com, na NOSSA
@@ -26,6 +27,14 @@ const styles = `
     position: absolute;
     z-index: 10;
     display: inline-block;
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+    will-change: translate;
+  }
+  .sm__tag-wrapper[data-dragging="true"] {
+    z-index: 30;
+    cursor: grabbing;
   }
   .sm__tag-wrapper:focus-within {
     outline: 2px dotted var(--site-ink);
@@ -223,6 +232,138 @@ function go(e: React.MouseEvent<HTMLElement>, href: string) {
   // rotas ("/experiments") seguem o fluxo normal (transição do Curtains)
 }
 
+function DraggableHeroTag({
+  item,
+  index,
+  pinned,
+}: {
+  item: MenuItem;
+  index: number;
+  pinned: boolean;
+}) {
+  const elementRef = useRef<HTMLDivElement>(null);
+  const offsetRef = useRef({ x: 0, y: 0 });
+  const dragRef = useRef<{
+    pointerId: number;
+    startX: number;
+    startY: number;
+    minX: number;
+    maxX: number;
+    minY: number;
+    maxY: number;
+    moved: boolean;
+  } | null>(null);
+  const suppressClickRef = useRef(false);
+  const { markMoved, playSound, resetToken } = useCreativeStudio();
+
+  useEffect(() => {
+    offsetRef.current = { x: 0, y: 0 };
+    if (elementRef.current) elementRef.current.style.translate = "";
+  }, [resetToken]);
+
+  const finishDrag = (event: React.PointerEvent<HTMLDivElement>) => {
+    const drag = dragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+    dragRef.current = null;
+    event.currentTarget.dataset.dragging = "false";
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+    if (drag.moved) {
+      suppressClickRef.current = true;
+      markMoved();
+      playSound("drag");
+    }
+  };
+
+  return (
+    <div
+      ref={elementRef}
+      className="sm__tag-wrapper sm__tag--hero"
+      data-pinned={pinned ? "true" : "false"}
+      data-dragging="false"
+      data-no-stamp
+      style={{
+        left: item.left,
+        top: item.top,
+        "--tag-opacity": item.priority === "primary" ? 1 : item.priority === "secondary" ? .92 : .78,
+        "--tag-rotate": `${item.rotate}deg`,
+        "--tag-delay": `${1.3 + index * .12}s`,
+      } as React.CSSProperties}
+      onPointerDown={(event) => {
+        if (pinned || event.button !== 0 || window.innerWidth <= 720) return;
+        const element = elementRef.current;
+        const hero = element?.closest<HTMLElement>(".ph");
+        if (!element || !hero) return;
+        const rect = element.getBoundingClientRect();
+        const bounds = hero.getBoundingClientRect();
+        dragRef.current = {
+          pointerId: event.pointerId,
+          startX: event.clientX,
+          startY: event.clientY,
+          minX: bounds.left - rect.left,
+          maxX: bounds.right - rect.right,
+          minY: bounds.top - rect.top,
+          maxY: bounds.bottom - rect.bottom,
+          moved: false,
+        };
+        element.dataset.dragging = "true";
+        element.setPointerCapture(event.pointerId);
+      }}
+      onPointerMove={(event) => {
+        const drag = dragRef.current;
+        const element = elementRef.current;
+        if (!drag || drag.pointerId !== event.pointerId || !element) return;
+        const deltaX = event.clientX - drag.startX;
+        const deltaY = event.clientY - drag.startY;
+        if (!drag.moved && Math.hypot(deltaX, deltaY) < 4) return;
+        drag.moved = true;
+        const x = offsetRef.current.x + Math.min(drag.maxX, Math.max(drag.minX, deltaX));
+        const y = offsetRef.current.y + Math.min(drag.maxY, Math.max(drag.minY, deltaY));
+        element.style.translate = `${x}px ${y}px`;
+      }}
+      onPointerUp={(event) => {
+        const drag = dragRef.current;
+        if (drag?.moved) {
+          const deltaX = event.clientX - drag.startX;
+          const deltaY = event.clientY - drag.startY;
+          offsetRef.current = {
+            x: offsetRef.current.x + Math.min(drag.maxX, Math.max(drag.minX, deltaX)),
+            y: offsetRef.current.y + Math.min(drag.maxY, Math.max(drag.minY, deltaY)),
+          };
+        }
+        finishDrag(event);
+      }}
+      onPointerCancel={finishDrag}
+    >
+      <HeroButton
+        href={item.href}
+        onClick={(event) => {
+          if (suppressClickRef.current) {
+            suppressClickRef.current = false;
+            event.preventDefault();
+            event.stopPropagation();
+            return;
+          }
+          go(event, item.href);
+        }}
+        className="sm__label"
+      >
+        {`[ ${item.label} ]`}
+      </HeroButton>
+      {item.previews?.length ? (
+        <span className="sm__portal" aria-hidden="true">
+          {item.previews.slice(0, 3).map((preview) => (
+            <span className="sm__portal-frame" key={preview.src}>
+              <Image src={preview.src} alt="" fill sizes="120px" />
+            </span>
+          ))}
+        </span>
+      ) : null}
+    </div>
+  );
+}
+
 export default function ScatterMenu({ items }: { items: MenuItem[] }) {
   const [pinned, setPinned] = useState(false);
   const [footerVisible, setFooterVisible] = useState(false);
@@ -252,31 +393,12 @@ export default function ScatterMenu({ items }: { items: MenuItem[] }) {
 
       {/* etiquetas espalhadas no hero */}
       {items.map((it, i) => (
-        <div
+        <DraggableHeroTag
           key={it.label}
-          className="sm__tag-wrapper sm__tag--hero"
-          data-pinned={pinned ? "true" : "false"}
-          style={{
-            left: it.left,
-            top: it.top,
-            "--tag-opacity": it.priority === "primary" ? 1 : it.priority === "secondary" ? .92 : .78,
-            "--tag-rotate": `${it.rotate}deg`,
-            "--tag-delay": `${1.3 + i * .12}s`,
-          } as React.CSSProperties}
-        >
-          <HeroButton href={it.href} onClick={(e) => go(e, it.href)} className="sm__label">
-            {`[ ${it.label} ]`}
-          </HeroButton>
-          {it.previews?.length ? (
-            <span className="sm__portal" aria-hidden="true">
-              {it.previews.slice(0, 3).map((preview) => (
-                <span className="sm__portal-frame" key={preview.src}>
-                  <Image src={preview.src} alt="" fill sizes="120px" />
-                </span>
-              ))}
-            </span>
-          ) : null}
-        </div>
+          item={it}
+          index={i}
+          pinned={pinned}
+        />
       ))}
 
       {/* molhinho fixo no canto depois que o hero sai de cena */}

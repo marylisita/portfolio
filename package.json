@@ -6,6 +6,7 @@
     "dev": "npx cross-env NODE_OPTIONS='--max-old-space-size=4096' next dev -p 3456",
     "build": "npx cross-env NODE_OPTIONS='--max-old-space-size=4096' next build",
     "start": "next start",
+    "preview": "next start -p 3457",
     "lint": "eslint"
   },
   "dependencies": {

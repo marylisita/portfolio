@@ -1,3 +1,53 @@
+# Devlog: Graduation sem simulação de papel
+
+30 de julho de 2026
+
+O case da formatura da Apple Academy passou a ser a referência das páginas de
+projeto. A revisão começou pela escrita: o texto deixou de vender uma impressão
+abstrata de “Rio afetivo” e passou a mostrar as decisões que produziram o kit.
+A abertura nomeia a onda do calçadão, o Guaravita, o joelho de padaria e o
+mergulho antes do trabalho. O resumo apresenta os entregáveis concretos e o
+bloco `meu papel` informa que o design foi feito em equipe de três.
+
+Não foram adicionados números nem resultados de recepção porque eles ainda não
+estão documentados. Quatro fatos continuam pendentes: o sentido de `CHECKLIZT`,
+a quantidade de ícones, a tiragem e a origem da impressão em uma cor.
+
+## Do papel simulado ao grid digital
+
+As molduras de papel, fitas, dobras, sombras deslocadas e rotações saíram do
+`CaseStudyKit`. Elas faziam cada imagem parecer uma folha colada e competiam com
+a linguagem que já estava consolidada no restante do site. As imagens agora
+entram diretamente no grid, e as legendas usam linhas tracejadas como estrutura.
+Painéis viraram blocos transparentes com borda tracejada e rótulos entre
+colchetes.
+
+Os divisores do cabeçalho e dos capítulos foram unificados: um trecho curto na
+cor do projeto abre uma linha tracejada regular, com um pequeno losango na
+transição. O resultado preserva ASCII, repetição e detalhe técnico sem empilhar
+várias linhas decorativas.
+
+## Degradê full-bleed e contraste
+
+As seções `ink` agora ocupam `100vw`. O fundo escuro sangra até as bordas da
+tela, mas o conteúdo continua alinhado ao mesmo grid por um padding calculado.
+No mobile, a faixa recebe espaço superior adicional para não colidir com o
+wordmark fixo.
+
+O contraste do menu deixou de depender de uma cor única. `ProjectShell` verifica
+se o header, o grupo de atalhos e o botão de topo estão sobre uma faixa escura e
+inverte cada controle separadamente. Isso resolve o caso em que o topo da tela
+está no degradê e a parte inferior já alcançou a próxima seção clara.
+
+O padrão é compartilhado por todas as páginas que usam `CaseStudyKit`; novas
+páginas não devem recriar fita, dobra ou inclinação localmente.
+
+A rodada foi publicada na Vercel como
+`dpl_AgiiTiVVkqLzTBXaWMgEvPeTi1yX`. O alias principal foi testado em desktop e
+mobile com resposta HTTP 200, sem overflow horizontal ou erros de console.
+
+---
+
 # Devlog: recuperação seletiva após a reversão
 
 27 de julho de 2026

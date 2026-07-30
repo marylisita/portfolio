@@ -94,10 +94,8 @@ const styles = `
 
   .tc-thread {
     width: min(calc(100% - 2.5rem), var(--project-content-max));
-    height: auto;
+    height: 1px;
     margin: 0 auto clamp(2rem, 5vw, 4.5rem);
-    color: var(--tc-accent);
-    opacity: .62;
   }
 
   .tc-section {
@@ -108,17 +106,64 @@ const styles = `
     padding: 0 var(--project-gutter) clamp(2.75rem, 5vw, 4.75rem);
     position: relative;
   }
+  .tc-thread,
+  .tc-section__rule {
+    position: relative !important;
+    height: 1px;
+    overflow: visible !important;
+    background:
+      linear-gradient(
+        to right,
+        var(--tc-accent) 0 2.75rem,
+        transparent 2.75rem 100%
+      ),
+      repeating-linear-gradient(
+        to right,
+        color-mix(in srgb, currentColor 38%, transparent) 0 6px,
+        transparent 6px 12px
+      );
+    font-size: 0 !important;
+    line-height: 0 !important;
+    opacity: 1 !important;
+  }
+  .tc-thread::before,
+  .tc-section__rule::before {
+    content: "";
+    position: absolute;
+    top: -2px;
+    left: 2.75rem;
+    width: 5px;
+    height: 5px;
+    translate: -50% 0;
+    rotate: 45deg;
+    background: currentColor;
+    border: 1px solid var(--tc-accent);
+  }
+  .tc-thread {
+    color: color-mix(in srgb, var(--tc-ink) 72%, transparent);
+  }
   .tc-section__rule {
     margin-top: clamp(1.75rem, 3.5vw, 3.25rem);
     color: currentColor;
-    opacity: .52;
   }
   .tc-section--compact { width: min(100%, var(--project-compact-max)); }
   .tc-section--ink {
-    width: min(calc(100% - 2rem), var(--project-content-max));
+    width: 100vw;
+    max-width: none;
+    margin-left: 50%;
+    margin-right: 0;
     margin-bottom: clamp(2.75rem, 5vw, 4.75rem);
-    padding-top: clamp(2.25rem, 4vw, 3.75rem);
-    border: 1px dashed color-mix(in srgb, var(--tc-accent) 52%, transparent);
+    padding:
+      clamp(2.25rem, 4vw, 3.75rem)
+      max(
+        var(--project-gutter),
+        calc((100vw - var(--project-content-max)) / 2 + var(--project-gutter))
+      )
+      clamp(2.75rem, 5vw, 4.75rem);
+    translate: -50% 0;
+    border: 0;
+    border-top: 1px dashed color-mix(in srgb, var(--tc-accent) 58%, transparent);
+    border-bottom: 1px dashed color-mix(in srgb, var(--tc-accent) 58%, transparent);
     color: #f7f3e9;
     background:
       radial-gradient(
@@ -128,7 +173,7 @@ const styles = `
       ),
       var(--tc-deep);
     background-attachment: fixed;
-    box-shadow: 11px 12px 0 var(--tc-accent-soft);
+    box-shadow: none;
   }
   .tc-section--ink .tc-kicker,
   .tc-section--ink .tc-copy { color: inherit; }
@@ -198,56 +243,28 @@ const styles = `
   .tc-grid--asym { grid-template-columns: minmax(0, 1.35fr) minmax(240px, .65fr); }
   .tc-grid--asym-reverse { grid-template-columns: minmax(240px, .65fr) minmax(0, 1.35fr); }
   .tc-grid--stack { grid-template-columns: 1fr; gap: clamp(2rem, 6vw, 5.5rem); }
-  .tc-grid--offset > :nth-child(even) { margin-top: clamp(2.5rem, 8vw, 7rem); }
+  .tc-grid--offset > :nth-child(even) { margin-top: 0; }
 
   .tc-figure {
     --tc-tilt: 0deg;
     position: relative;
     min-width: 0;
     margin: 0;
-    padding: clamp(.35rem, .8vw, .55rem);
-    border: 1px solid var(--tc-line);
-    background: var(--tc-paper);
-    box-shadow: 8px 9px 0 var(--tc-accent-soft);
-    rotate: var(--tc-tilt);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    rotate: 0deg !important;
     transition:
       translate var(--duration-normal) var(--ease-out),
-      rotate var(--duration-normal) var(--ease-out),
-      box-shadow var(--duration-normal) var(--ease-out);
+      opacity var(--duration-normal) var(--ease-out);
   }
-  .tc-figure::before {
-    content: "";
-    position: absolute;
-    z-index: 2;
-    top: -.3rem;
-    left: 50%;
-    width: clamp(3.5rem, 10vw, 6.5rem);
-    height: .75rem;
-    translate: -50% 0;
-    rotate: -1.5deg;
-    border: 1px solid rgba(28, 27, 24, .12);
-    background: rgba(239, 225, 192, .68);
-    pointer-events: none;
-  }
-  .tc-figure::after {
-    content: "";
-    position: absolute;
-    z-index: 2;
-    right: .35rem;
-    bottom: .35rem;
-    width: 1.15rem;
-    height: 1.15rem;
-    border-top: 1px solid var(--tc-line);
-    border-left: 1px solid var(--tc-line);
-    background: color-mix(in srgb, var(--tc-accent) 12%, var(--tc-paper));
-    clip-path: polygon(100% 0, 0 100%, 100% 100%);
-    pointer-events: none;
-  }
+  .tc-figure::before,
+  .tc-figure::after { content: none; }
   .tc-figure:hover {
     z-index: 3;
-    translate: 0 -5px;
-    rotate: 0deg;
-    box-shadow: 12px 14px 0 var(--tc-accent-soft);
+    translate: 0 -3px;
+    box-shadow: none;
   }
   .tc-figure img {
     display: block;
@@ -259,7 +276,8 @@ const styles = `
     display: flex;
     justify-content: space-between;
     gap: 1rem;
-    padding: .65rem .25rem .15rem;
+    padding: .65rem 0 .55rem;
+    border-bottom: 1px dashed color-mix(in srgb, currentColor 34%, transparent);
     font-family: var(--font-subtitle), monospace;
     font-weight: var(--offbit-weight);
     font-size: var(--type-micro);
@@ -272,63 +290,31 @@ const styles = `
   .tc-panel {
     position: relative;
     padding: clamp(1.35rem, 2.7vw, 2rem);
-    border: 1px solid var(--tc-line);
-    background-color: var(--paper-sheet);
-    background-image:
-      repeating-linear-gradient(0deg, transparent 0 3px, rgba(28,27,24,.025) 3px 4px),
-      repeating-linear-gradient(90deg, transparent 0 4px, rgba(255,255,255,.1) 4px 5px),
-      url("/img/paper-noise.webp"),
-      linear-gradient(118deg, rgba(255,255,255,.28), transparent 58%);
-    background-size: 100% 100%, 100% 100%, 150px 150px, 100% 100%;
-    box-shadow:
-      4px 5px 0 var(--paper-shadow),
-      inset 0 0 0 1px rgba(255,255,255,.15);
-    rotate: -.25deg;
+    border: 1px dashed var(--tc-line);
+    background: transparent;
+    box-shadow: none;
+    rotate: 0deg;
   }
-  .tc-panel:nth-child(even) { rotate: .3deg; }
-  .tc-panel::before {
-    content: "";
-    position: absolute;
-    z-index: 2;
-    top: -.38rem;
-    left: clamp(1.1rem, 16%, 3.5rem);
-    width: 4rem;
-    height: .75rem;
-    border: 1px solid rgba(28,27,24,.1);
-    background:
-      repeating-linear-gradient(90deg, transparent 0 4px, rgba(28,27,24,.025) 4px 5px),
-      var(--paper-tape);
-    rotate: -2deg;
-    pointer-events: none;
-  }
-  .tc-panel::after {
-    content: "";
-    position: absolute;
-    right: .28rem;
-    bottom: .28rem;
-    width: 1.05rem;
-    height: 1.05rem;
-    border-top: 1px solid var(--tc-line);
-    border-left: 1px solid var(--tc-line);
-    background: color-mix(in srgb, var(--paper-sheet) 82%, var(--tc-accent));
-    clip-path: polygon(100% 0, 0 100%, 100% 100%);
-    pointer-events: none;
-  }
+  .tc-panel:nth-child(even) { rotate: 0deg; }
+  .tc-panel::before,
+  .tc-panel::after { content: none; }
   .tc-panel__label {
     display: inline-flex;
     align-items: center;
-    min-height: var(--tap-min);
+    min-height: 0;
     margin: 0 0 1rem;
-    padding: .55rem .75rem;
-    color: var(--tc-label-text);
-    background: var(--tc-accent);
-    box-shadow: 2px 2px 0 color-mix(in srgb, var(--tc-ink) 15%, transparent);
+    padding: 0;
+    color: var(--tc-accent-text);
+    background: transparent;
+    box-shadow: none;
     font-family: var(--font-subtitle), monospace;
     font-weight: var(--offbit-weight);
     font-size: var(--type-label);
     letter-spacing: var(--offbit-letter-spacing);
     text-transform: lowercase;
   }
+  .tc-panel__label::before { content: "[ "; }
+  .tc-panel__label::after { content: " ]"; }
 
   .tc-manifest {
     position: relative;
@@ -352,16 +338,17 @@ const styles = `
     max-width: 100%;
     margin: 0 auto;
     padding: .7rem 1.1rem;
-    border: 1px solid var(--tc-line);
+    border-top: 1px dashed var(--tc-line);
+    border-bottom: 1px dashed var(--tc-line);
     color: var(--tc-ink);
-    background: var(--tc-paper);
-    box-shadow: 5px 6px 0 var(--tc-accent-soft);
-    font-family: var(--font-head);
-    font-style: italic;
-    font-size: clamp(1.2rem, 3vw, 2rem);
+    background: transparent;
+    box-shadow: none;
+    font-family: var(--font-subtitle), monospace;
+    font-style: normal;
+    font-size: var(--type-label);
     line-height: 1.2;
     text-align: center;
-    rotate: -.6deg;
+    rotate: 0deg;
   }
 
   .tc-action {
@@ -488,7 +475,11 @@ const styles = `
     }
     .tc-grid--offset > :nth-child(even) { margin-top: 0; }
     .tc-credits { grid-template-columns: 1fr; }
-    .tc-section--ink { width: calc(100% - 1rem); }
+    .tc-section.tc-section--ink {
+      width: 100vw;
+      padding-top: 5rem;
+      padding-inline: 1.25rem;
+    }
     .tc-impact__block--outcome {
       padding-left: 0;
       padding-top: 2.5rem;
@@ -507,7 +498,7 @@ const styles = `
     .tc-action { transition: none; }
     .tc-figure:hover,
     .tc-action:hover,
-    .tc-action:focus-visible { translate: 0; rotate: var(--tc-tilt); }
+    .tc-action:focus-visible { translate: 0; rotate: 0deg; }
   }
 `;
 
@@ -583,8 +574,6 @@ export function CaseFigure({
   caption,
   index,
   tilt = 0,
-  priority = false,
-  sizes = "(max-width: 780px) 100vw, 50vw",
   className = "",
 }: {
   src: string;
@@ -600,10 +589,8 @@ export function CaseFigure({
 }) {
   const reducedMotion = useReducedMotion();
   const [isOpen, setIsOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === "Escape") setIsOpen(false);
     };
@@ -616,8 +603,8 @@ export function CaseFigure({
       <motion.figure
         className={`tc-figure ${className}`}
         style={{ "--tc-tilt": `${tilt}deg`, cursor: "zoom-in" } as CSSProperties}
-        initial={reducedMotion ? false : { opacity: 0, y: 34, rotate: tilt * 1.8 }}
-        whileInView={{ opacity: 1, y: 0, rotate: tilt }}
+        initial={reducedMotion ? false : { opacity: 0, y: 34 }}
+        whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-50px" }}
         transition={{ duration: reducedMotion ? 0 : .78, ease }}
         onClick={() => setIsOpen(true)}
@@ -638,7 +625,7 @@ export function CaseFigure({
         ) : null}
       </motion.figure>
 
-      {mounted &&
+      {typeof document !== "undefined" &&
         createPortal(
           <AnimatePresence>
             {isOpen && (

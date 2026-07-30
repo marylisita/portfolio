@@ -608,18 +608,24 @@ img { max-width:100%; display:block; }
 .scramble-text__emoji[data-emoji=":3"],
 .scramble-text__emoji[data-emoji=":)"] { font-size: 0.9em; }
 .scramble-text__emoji[data-emoji="^_^"] { font-size: 1em; }
-.scramble-text__emoji[data-emoji=":D"],
-.scramble-text__emoji[data-emoji=":P"] {
-  font-size: 0.56em;
-  vertical-align: 0.11em;
+/* Tamanho aparente igualado ao do rostinho (0.585em), medido pela média
+   geométrica da caixa de tinta — largura × altura. Igualar só a altura fazia
+   os glifos compactos, como a rosa e o bichinho, parecerem menores. */
+.scramble-text__emoji[data-emoji=":D"] {   /* K, rosa */
+  font-size: 0.60em;
+  vertical-align: 0.14em;
 }
-.scramble-text__emoji[data-emoji=";)"] {
-  font-size: 0.54em;
-  vertical-align: 0.12em;
+.scramble-text__emoji[data-emoji=";)"] {   /* W, borboleta */
+  font-size: 0.75em;
+  vertical-align: 0.01em;
 }
-.scramble-text__emoji[data-emoji="<3"] {
-  font-size: 0.66em;
-  vertical-align: 0.08em;
+.scramble-text__emoji[data-emoji=":P"] {   /* q, bichinho */
+  font-size: 0.67em;
+  vertical-align: 0.10em;
+}
+.scramble-text__emoji[data-emoji="<3"] {   /* C, coração */
+  font-size: 0.94em;
+  vertical-align: 0.03em;
 }
 
 /* Qualidade adaptativa: mantém cor, foco e feedback, mas remove deslocamentos,

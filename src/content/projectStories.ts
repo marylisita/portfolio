@@ -9,122 +9,154 @@ type LocalizedStory = Record<"pt" | "en", ProjectStory>;
 const stories: Record<string, LocalizedStory> = {
   isadora: {
     pt: {
-      impact: "Um press kit que transforma o universo da artista em uma presença editorial coesa, feita para circular entre curadoria, imprensa e parcerias.",
-      shortImpact: "presença editorial para circular",
-      challenge: "Como apresentar uma prática artística múltipla sem a reduzir a uma estética única?",
+      impact: "Um press kit editorial que se lê numa passada de scroll: capa, sequência e ritmo, do jeito que diretor de casting realmente lê.",
+      shortImpact: "press kit que se lê numa passada",
+      challenge: "Ela tinha foto boa e nenhum material que as organizasse.",
     },
     en: {
-      impact: "A press kit that turns the artist's universe into a cohesive editorial presence, made to travel across curators, press and partnerships.",
-      shortImpact: "an editorial presence that travels",
-      challenge: "How might a multifaceted artistic practice be introduced without reducing it to a single aesthetic?",
+      impact: "An editorial press kit you can read in one scroll: cover, sequence and pacing, the way casting directors actually read.",
+      shortImpact: "a press kit read in one scroll",
+      challenge: "She had good photographs and nothing that organised them.",
     },
   },
   magazine: {
     pt: {
-      impact: "Uma revista-objeto que tira a Helvetica da neutralidade e a transforma em matéria, gesto e leitura espacial.",
-      shortImpact: "tipo como matéria e espaço",
-      challenge: "Como contar a história de uma fonte tão conhecida sem repetir a sua versão mais previsível?",
+      impact: "Uma revista em que a diagramação faz o argumento: a Helvetica aparece rasgada e fora de eixo, e continua legível.",
+      shortImpact: "layout que carrega o argumento",
+      challenge: "Se der só ruído, ninguém lê. Se der só grid, não sobra tese.",
     },
     en: {
-      impact: "A magazine-object that takes Helvetica out of neutrality and turns it into material, gesture and spatial reading.",
-      shortImpact: "type as material and space",
-      challenge: "How might the story of such a familiar typeface be told without repeating its most predictable version?",
+      impact: "A magazine where the layout makes the case: Helvetica shows up torn and off-axis, and stays readable.",
+      shortImpact: "layout that carries the argument",
+      challenge: "All noise and nobody reads it. All grid and there's no argument left.",
     },
   },
   genlab: {
     pt: {
-      impact: "Um laboratório aberto no navegador que torna a experimentação com IA generativa mais direta, visual e compartilhável.",
-      shortImpact: "IA generativa para experimentar",
-      challenge: "Como fazer da IA uma ferramenta de investigação, e não uma caixa-preta que apenas entrega imagens?",
+      impact: "Um laboratório aberto no navegador, onde a análise de algoritmo vem com o olho de quem desenha.",
+      shortImpact: "algoritmo com olho de designer",
+      challenge: "Todo texto sobre algoritmo vira tutorial ou vira manifesto. Queria um terceiro caminho.",
     },
     en: {
-      impact: "An open browser-based lab that makes experimenting with generative AI more direct, visual and shareable.",
-      shortImpact: "generative AI to explore",
-      challenge: "How might AI become a tool for inquiry rather than a black box that simply delivers images?",
+      impact: "An open browser-based lab where algorithm analysis comes with a designer's eye.",
+      shortImpact: "algorithms with a designer's eye",
+      challenge: "Every piece about algorithms becomes a tutorial or a manifesto. I wanted a third option.",
     },
   },
   ebat: {
     pt: {
-      impact: "Uma identidade-sistema que aproxima pesquisa, repertório e comunicação da escola por meio da linguagem de um caderno em uso.",
-      shortImpact: "pesquisa em linguagem de caderno",
-      challenge: "Como dar unidade a uma instituição em movimento sem apagar a diversidade das suas disciplinas?",
+      impact: "Um manual de 22 páginas transformou logo, paleta, tipografia e tom de voz em ferramenta de trabalho. O sistema acompanhou um ciclo de cerca de 190 inscrições e 100 aprovados.",
+      shortImpact: "manual de 22 páginas, 190 inscrições",
+      challenge: "A EBAT é gratuita e presencial. A identidade precisava mostrar o nível do programa e continuar simples de aplicar na rotina.",
     },
     en: {
-      impact: "A system identity that brings the school's research, repertoire and communication closer through the language of a working notebook.",
-      shortImpact: "research in a notebook language",
-      challenge: "How might an evolving institution gain coherence without flattening the diversity of its disciplines?",
+      impact: "A 22-page manual turned the logo, palette, typography and tone of voice into a working tool. The system accompanied a cycle of around 190 applications and 100 accepted students.",
+      shortImpact: "22-page manual, 190 applications",
+      challenge: "EBAT is free and in person. The identity had to show the programme's level and remain simple to apply in daily work.",
     },
   },
   graduation: {
     pt: {
-      impact: "A formatura vira um sistema de celebração: objetos, sinalização e memória compartilham o mesmo gesto visual.",
-      shortImpact: "uma celebração que vira sistema",
-      challenge: "Como desenhar uma festa coletiva que ainda deixasse espaço para o afeto e as memórias individuais?",
+      impact: "Um kit bilíngue em que ícones, checklist e objetos impressos apresentam o Rio por hábitos de praia, comida de balcão e objetos de todo dia.",
+      shortImpact: "o Rio por hábito e objeto",
+      challenge: "O que um convidado de fora reconhece no Rio — e o que só alguém daqui poderia incluir?",
     },
     en: {
-      impact: "Graduation becomes a celebration system: objects, signage and memory share the same visual gesture.",
-      shortImpact: "a celebration turned system",
-      challenge: "How might a collective celebration still leave space for affection and individual memory?",
+      impact: "A bilingual kit where icons, a checklist and printed objects introduce Rio through beach habits, counter food and everyday objects.",
+      shortImpact: "Rio through habits and objects",
+      challenge: "What does a guest from abroad recognise as Rio — and what could only someone from here include?",
     },
   },
   pilotis: {
     pt: {
-      impact: "Uma comunicação digital que prolonga a energia do encontro físico e torna a iniciativa reconhecível antes, durante e depois do evento.",
-      shortImpact: "o encontro continua nas redes",
-      challenge: "Como traduzir a presença espontânea de um espaço de encontro para uma linguagem social contínua?",
+      impact: "Uma comunicação que puxou referência de placa de rua em vez de dashboard, e cobriu gente em vez de tela.",
+      shortImpact: "placa de rua, não dashboard",
+      challenge: "Evento de tecnologia costuma ser azul, escuro e cheio de linha de circuito.",
     },
     en: {
-      impact: "A digital communication system that extends the energy of a physical gathering and makes the initiative recognisable before, during and after the event.",
-      shortImpact: "the gathering continues online",
-      challenge: "How might the spontaneous presence of a gathering space translate into an ongoing social language?",
+      impact: "Communication that took its cues from street signage instead of dashboards, and covered people instead of screens.",
+      shortImpact: "street signs, not dashboards",
+      challenge: "Tech events tend to be dark, blue and full of circuit lines.",
     },
   },
   chinario: {
     pt: {
-      impact: "Uma identidade que constrói pontes visuais entre Brasil e China para tornar a colaboração acadêmica mais próxima e legível.",
-      shortImpact: "uma ponte visual entre culturas",
-      challenge: "Como representar o encontro entre duas culturas sem recorrer a símbolos prontos ou simplificações?",
+      impact: "Um sistema modular que aguentou o programa mudar até a semana do evento, em impresso, sinalização e social.",
+      shortImpact: "sistema que aguentou remanejo",
+      challenge: "Dragão, bandeira e verde-amarelo estavam fora. Sobrava o quê?",
     },
     en: {
-      impact: "An identity that builds visual bridges between Brazil and China, making academic collaboration feel closer and easier to read.",
-      shortImpact: "a visual bridge between cultures",
-      challenge: "How might two cultures meet visually without relying on ready-made symbols or simplifications?",
+      impact: "A modular system that survived a programme still changing the week of the event, across print, signage and social.",
+      shortImpact: "a system that survived the reshuffle",
+      challenge: "Dragons, flags and green-and-yellow were out. So what was left?",
     },
   },
   hologlam: {
     pt: {
-      impact: "Uma experiência editorial que torna visíveis as contradições da moda rápida e convida o público a olhar o consumo de outro jeito.",
-      shortImpact: "moda rápida em outra perspectiva",
-      challenge: "Como falar de excesso e descarte sem transformar uma crítica à moda em uma estética vazia?",
+      impact: "Um artefato especulativo que fica mais interessante nas objeções do que nas promessas — e o case dá o mesmo peso às duas.",
+      shortImpact: "as objeções com o mesmo peso",
+      challenge: "Falar de excesso e descarte sem que a crítica virasse estética bonita.",
     },
     en: {
-      impact: "An editorial experience that makes fast-fashion contradictions visible and invites the audience to look at consumption differently.",
-      shortImpact: "fast fashion, reframed",
-      challenge: "How might excess and disposal be addressed without turning a critique of fashion into an empty aesthetic?",
+      impact: "A speculative artefact that gets more interesting in its objections than in its promises — and the case gives both the same weight.",
+      shortImpact: "objections given equal weight",
+      challenge: "Talking about excess and disposal without the critique turning into a pretty aesthetic.",
     },
   },
   vegcoz: {
     pt: {
-      impact: "Uma proposta de experiência que torna escolhas de alimentação vegetal mais claras, desejáveis e acionáveis no cotidiano.",
-      shortImpact: "escolhas vegetais mais acionáveis",
-      challenge: "Como tornar a alimentação vegetal uma possibilidade concreta, sem simplificar escolhas pessoais e de contexto?",
+      impact: "Um app que fecha a volta que ninguém fecha: receita, ingrediente, lista, preço e despensa no mesmo fluxo.",
+      shortImpact: "a volta que ninguém fecha",
+      challenge: "Cada concorrente é bom em um pedaço do problema e ignora o resto.",
     },
     en: {
-      impact: "An experience proposal that makes plant-based choices clearer, more desirable and more actionable in everyday life.",
-      shortImpact: "plant-based choices made actionable",
-      challenge: "How might plant-based eating become a concrete option without oversimplifying personal and contextual choices?",
+      impact: "An app that closes the loop nobody closes: recipe, ingredient, list, price and pantry in one flow.",
+      shortImpact: "the loop nobody closes",
+      challenge: "Every competitor is good at one piece of the problem and ignores the rest.",
     },
   },
   ondularis: {
     pt: {
-      impact: "Uma experiência expositiva que aproxima arte, ciência e tecnologia por meio de um percurso espacial, sensorial e coletivo.",
-      shortImpact: "arte, ciência e tecnologia em percurso",
-      challenge: "Como transformar pesquisa complexa em uma experiência que o corpo também pudesse compreender?",
+      impact: "Uma instalação em que escultura, resíduo industrial e projeção negociam entre si e com quem atravessa a sala.",
+      shortImpact: "um oceano inventado",
+      challenge: "Como fazer pesquisa densa virar coisa que o corpo entende antes da cabeça?",
     },
     en: {
-      impact: "An exhibition experience that brings art, science and technology together through a spatial, sensory and collective journey.",
-      shortImpact: "art, science and technology in motion",
-      challenge: "How might complex research become an experience the body can understand too?",
+      impact: "An installation where sculpture, industrial waste and projection negotiate with each other and with whoever crosses the room.",
+      shortImpact: "an invented ocean",
+      challenge: "How do you make dense research into something the body understands before the head does?",
+    },
+  },
+  "cyber-marinum": {
+    pt: {
+      impact:
+        "Um aquário plantado que virou interface: a câmera lê a aproximação do público, o sistema traduz em luz e imagem, e as plantas seguem no ritmo delas. Obra coletiva de sete autores, pelo NANO/UFRJ.",
+      shortImpact: "aquário vivo como interface",
+      challenge:
+        "Uma obra que depende de organismo vivo não para quando a galeria fecha.",
+    },
+    en: {
+      impact:
+        "A planted aquarium turned into an interface: a camera reads the audience approaching, the system translates that into light and image, and the plants keep their own pace. A collective work by seven authors, through NANO/UFRJ.",
+      shortImpact: "a living aquarium as interface",
+      challenge:
+        "A work that depends on living organisms doesn't stop when the gallery closes.",
+    },
+  },
+  "touchdesigner-workshop": {
+    pt: {
+      impact:
+        "Oficina introdutória de quatro horas: do node vazio ao primeiro patch rodando, com a lógica nodal apresentada na prática em vez de no slide.",
+      shortImpact: "do node vazio ao primeiro patch",
+      challenge:
+        "Quatro horas é pouco para a ferramenta e muito para aula expositiva.",
+    },
+    en: {
+      impact:
+        "A four-hour introductory workshop: from an empty node to a first working patch, with node logic taught by doing rather than by slide.",
+      shortImpact: "from empty node to first patch",
+      challenge:
+        "Four hours is too little for the software and too much for a lecture.",
     },
   },
 };

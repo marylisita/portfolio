@@ -7,25 +7,36 @@ import {
   CaseFigure,
   CasePanel,
   CaseSection,
-  CaseImpact,
 } from "@/components/CaseStudyKit";
 import { useT } from "@/i18n/LanguageContext";
 
-const MANUAL = Array.from({ length: 22 }, (_, index) => `ebat/manual/${index + 1}.jpg`);
-const CAROUSEL_ONE = Array.from({ length: 7 }, (_, index) => `ebat/carrossel/${index + 1}.jpg`);
-const CAROUSEL_TWO = Array.from({ length: 4 }, (_, index) => `ebat/carrossel 2/${index + 1}.jpg`);
+const MANUAL = Array.from({ length: 22 }, (_, index) => `ebat/manual/${index + 1}.webp`);
+const CAROUSEL_ONE = Array.from({ length: 7 }, (_, index) => `ebat/carrossel/${index + 1}.webp`);
+const CAROUSEL_TWO = Array.from({ length: 4 }, (_, index) => `ebat/carrossel 2/${index + 1}.webp`);
 
 const SPIW = [
-  { src: "/img/ebat/mockup outer.webp", alt: "SPIW outer page mockup" },
-  { src: "/img/ebat/mockup inner.webp", alt: "SPIW inner page mockup" },
-  { src: "/img/ebat/Outer Page.png", alt: "SPIW outer page" },
-  { src: "/img/ebat/Inner Page.png", alt: "SPIW inner page" },
+  { src: "/img/ebat/mockup outer.webp", altPt: "Folder da EBAT aberto em mockup", altEn: "Open EBAT brochure mockup" },
+  { src: "/img/ebat/mockup inner.webp", altPt: "Verso do folder da EBAT em mockup", altEn: "Back of the EBAT brochure mockup" },
+  { src: "/img/ebat/Outer Page.webp", altPt: "Arte externa do folder da EBAT", altEn: "EBAT brochure outer artwork" },
+  { src: "/img/ebat/Inner Page.webp", altPt: "Arte interna do folder da EBAT", altEn: "EBAT brochure inner artwork" },
 ] as const;
 
 const POSTS = [
-  { src: "/img/ebat/post.jpg", label: "post_convite.jpg" },
-  { src: "/img/ebat/artes instagram/livro.png", label: "post_livro.png" },
-  { src: "/img/ebat/artes instagram/modulo1.png", label: "post_modulo01.png" },
+  {
+    src: "/img/ebat/post.webp",
+    captionPt: "calendário do processo seletivo",
+    captionEn: "application calendar",
+  },
+  {
+    src: "/img/ebat/artes instagram/livro.webp",
+    captionPt: "conteúdo editorial",
+    captionEn: "editorial content",
+  },
+  {
+    src: "/img/ebat/artes instagram/modulo1.webp",
+    captionPt: "comunicação de módulo",
+    captionEn: "module communication",
+  },
 ] as const;
 
 export default function EbatProject() {
@@ -33,16 +44,24 @@ export default function EbatProject() {
   const pt = lang !== "en";
 
   return (
-    <ProjectShell accent="#3158d7"
+    <ProjectShell
+      accent="#3158d7"
       title={
         <>
-          <strong style={{ color: "#3158d7", fontWeight: 700 }}>EBAT</strong> - Escola de Arte e Tecnologia
+          <strong style={{ color: "#3158d7", fontWeight: 700 }}>EBAT:</strong>{" "}
+          {pt ? "arte & tecnologia" : "art & technology"}
         </>
       }
       desc={
         <>
-          {t("ebat_desc")} <span className="pj-em">{t("ebat_desc_highlight")}</span> {t("ebat_desc_rest")}
+          {t("ebat_desc")} <span className="pj-em">{t("ebat_desc_highlight")}</span>{" "}
+          {t("ebat_desc_rest")}
         </>
+      }
+      role={
+        pt
+          ? "Designer da escola: identidade, redes sociais, peças impressas e campanha audiovisual."
+          : "School designer: identity, social media, print pieces and an audiovisual campaign."
       }
       meta={[
         { label: t("ebat_meta_client"), value: "EBAT" },
@@ -52,72 +71,107 @@ export default function EbatProject() {
     >
       <CaseCanvas variant="ebat">
         <CaseSection
-          label={pt ? "01 / identidade como caderno" : "01 / identity as a workbook"}
-          title={t("ebat_manual_title")}
-          intro={t("ebat_manual_desc")}
+          ink
+          label={pt ? "01 / o sistema" : "01 / the system"}
+          title={pt ? "a identidade precisava ser ensinável" : "the identity had to be teachable"}
+          intro={
+            pt
+              ? "Reuni logo, paleta, tipografia, tom de voz e aplicações em 22 páginas. O manual é operacional: registra as decisões de base para que outra pessoa da equipe consiga montar uma peça sem começar do zero."
+              : "I brought the logo, palette, typography, tone of voice and applications together in 22 pages. The manual is operational: it records the base decisions so someone else on the team can build a piece without starting from scratch."
+          }
         >
           <CaseFigure
-            src="/img/ebat/capa-ebat.png"
+            src="/img/ebat/capa-ebat.webp"
             width={1280}
             height={720}
-            alt={pt ? "Capa do sistema visual da EBAT" : "EBAT visual system cover"}
+            alt={pt ? "Assinatura visual da EBAT" : "EBAT visual signature"}
             caption={pt ? "abertura do manual" : "brand manual opening"}
-            index="caderno 01"
+            index={pt ? "imagem 01" : "image 01"}
             priority
-            tilt={-0.4}
             sizes="(max-width: 1260px) 92vw, 1180px"
           />
           <div style={{ marginTop: "clamp(2rem, 5vw, 4rem)" }}>
-            <CasePanel label={pt ? "manual de marca · folheável" : "brand manual · browsable"}>
+            <CasePanel label={pt ? "manual de marca · 22 páginas" : "brand manual · 22 pages"}>
               <FlipBook images={MANUAL} aspectRatio="56.25%" />
             </CasePanel>
           </div>
         </CaseSection>
 
-        <CaseImpact
-          challengeLabel={t("ebat_chal_kicker")}
-          challengeTitle={t("ebat_chal_title")}
-          challengeDesc={t("ebat_chal_desc")}
-          impactLabel={t("ebat_imp_kicker")}
-          impactTitle={t("ebat_imp_title")}
-          impactDesc={t("ebat_imp_desc")}
-        />
+        <CaseSection
+          label={pt ? "02 / a rotina" : "02 / the routine"}
+          title={pt ? "um sistema que precisa publicar toda semana" : "a system that has to publish every week"}
+          intro={
+            pt
+              ? "Nas redes, a identidade sustenta o calendário do processo seletivo, os módulos e os encontros presenciais. Os carrosséis organizam sequência; as peças avulsas resolvem data, convocação e serviço."
+              : "On social media, the identity carries the application calendar, modules and in-person meetings. Carousels organise sequence; individual posts handle dates, calls and practical information."
+          }
+        >
+          <div className="tc-grid tc-grid--two">
+            <CasePanel label={pt ? "carrossel · processo seletivo" : "carousel · applications"}>
+              <FlipBook images={CAROUSEL_ONE} aspectRatio="125%" />
+            </CasePanel>
+            <CasePanel label={pt ? "carrossel · módulos" : "carousel · modules"}>
+              <FlipBook images={CAROUSEL_TWO} aspectRatio="125%" />
+            </CasePanel>
+          </div>
+
+          <div
+            className="tc-grid tc-grid--three"
+            style={{ marginTop: "clamp(3rem, 7vw, 6rem)" }}
+          >
+            {POSTS.map((post, index) => (
+              <CaseFigure
+                key={post.src}
+                src={post.src}
+                width={1080}
+                height={1350}
+                alt={pt ? post.captionPt : post.captionEn}
+                caption={pt ? post.captionPt : post.captionEn}
+                index={`${pt ? "imagem" : "image"} 0${index + 2}`}
+              />
+            ))}
+          </div>
+        </CaseSection>
 
         <CaseSection
-          label={pt ? "02 / campanha editorial" : "02 / editorial campaign"}
-          title={t("ebat_spiw_title")}
+          ink
+          label={pt ? "03 / fora da escola" : "03 / outside the school"}
+          title={pt ? "caber no SPIW sem virar startup" : "fitting into SPIW without becoming a startup"}
           intro={t("ebat_spiw_desc")}
         >
-          <div className="tc-grid tc-grid--two tc-grid--offset">
+          <div className="tc-grid tc-grid--two">
             {SPIW.slice(0, 2).map((image, index) => (
               <CaseFigure
                 key={image.src}
                 src={image.src}
                 width={2000}
                 height={1414}
-                alt={image.alt}
-                caption={pt ? "mockup impresso" : "printed mockup"}
-                index={`lâmina 0${index + 2}`}
-                tilt={index === 0 ? -0.65 : 0.65}
+                alt={pt ? image.altPt : image.altEn}
+                caption={pt ? "folder em contexto" : "brochure in context"}
+                index={`${pt ? "imagem" : "image"} 0${index + 5}`}
               />
             ))}
           </div>
-          <div className="tc-grid tc-grid--two" style={{ marginTop: "clamp(2rem, 5vw, 4rem)" }}>
+
+          <div
+            className="tc-grid tc-grid--two"
+            style={{ marginTop: "clamp(2rem, 5vw, 4rem)" }}
+          >
             {SPIW.slice(2).map((image, index) => (
               <CaseFigure
                 key={image.src}
                 src={image.src}
                 width={2000}
                 height={1414}
-                alt={image.alt}
-                caption={pt ? "arquivo aberto" : "flat artwork"}
-                index={`lâmina 0${index + 4}`}
-                tilt={index === 0 ? 0.35 : -0.35}
+                alt={pt ? image.altPt : image.altEn}
+                caption={pt ? "arquivo para impressão" : "print-ready artwork"}
+                index={`${pt ? "imagem" : "image"} 0${index + 7}`}
               />
             ))}
           </div>
+
           <div style={{ marginTop: "clamp(2rem, 5vw, 4rem)" }}>
-            <CasePanel label="spiw_recap.mp4">
+            <CasePanel label={pt ? "campanha audiovisual · recap" : "audiovisual campaign · recap"}>
               <video
                 src="/img/ebat/video-ebat.mp4"
                 controls
@@ -128,40 +182,6 @@ export default function EbatProject() {
                 style={{ width: "100%", display: "block" }}
               />
             </CasePanel>
-          </div>
-        </CaseSection>
-
-        <CaseSection
-          label={pt ? "03 / comunicação em circulação" : "03 / communication in circulation"}
-          title={t("ebat_social_title")}
-          intro={
-            pt
-              ? "Os carrosséis são tratados como pequenos cadernos editoriais. As peças avulsas aparecem abaixo como impressos presos à mesma mesa."
-              : "Carousels are treated as small editorial booklets. Individual posts sit below like prints pinned to the same table."
-          }
-        >
-          <div className="tc-grid tc-grid--two tc-grid--offset">
-            <CasePanel label={pt ? "carrossel · boas-vindas" : "carousel · welcome"}>
-              <FlipBook images={CAROUSEL_ONE} aspectRatio="125%" />
-            </CasePanel>
-            <CasePanel label={pt ? "carrossel · módulos" : "carousel · modules"}>
-              <FlipBook images={CAROUSEL_TWO} aspectRatio="125%" />
-            </CasePanel>
-          </div>
-
-          <div className="tc-grid tc-grid--three tc-grid--offset" style={{ marginTop: "clamp(3rem, 7vw, 6rem)" }}>
-            {POSTS.map((post, index) => (
-              <CaseFigure
-                key={post.src}
-                src={post.src}
-                width={1080}
-                height={1350}
-                alt={post.label}
-                caption={post.label}
-                index={`post 0${index + 1}`}
-                tilt={[-0.8, 0.65, -0.35][index]}
-              />
-            ))}
           </div>
         </CaseSection>
       </CaseCanvas>

@@ -11,14 +11,20 @@ const COLORS = ["#d8b4fe", "#f472b6", "#a3e635", "#fef08a", "#99f6e4", "#1c1b18"
  * comum. Os atalhos continuam legíveis nas frases e são mapeados aqui para
  * uma carinha diferente em cada final.
  */
+/**
+ * Glifos da EmojiFont usados nos títulos. Os três rostinhos ficam como estavam;
+ * os outros passaram para as versões cheias, que combinam com o peso do título.
+ * A altura da tinta de cada glifo varia muito (0.56 a 1.00 do em), então o
+ * corpo é compensado em globals.css para todos renderizarem no mesmo tamanho.
+ */
 const EMOJI_GLYPHS: Record<string, string> = {
-  ":3": "j",
-  ":)": "k",
-  "^_^": "l",
-  ":D": "b",
-  ";)": "f",
-  ":P": "q",
-  "<3": "p",
+  ":3": "j",   // rostinho
+  ":)": "k",   // rostinho
+  "^_^": "l",  // rostinho
+  ":D": "K",   // rosa cheia — era "b", um passarinho de contorno
+  ";)": "W",   // borboleta cheia — era "f", um boneco de neve
+  ":P": "q",   // bichinho
+  "<3": "C",   // coração cheio — era "p", que na verdade é um peixe
 };
 
 /**
@@ -124,7 +130,12 @@ export default function ScrambleText({ text }: { text: string }) {
     <span className="scramble-text" aria-label={text.replace(/\[\[\s*(.+?)\s*\]\]/g, " carinha")}>
       {parts.map((part, partIndex) => {
         if (/^\s+$/.test(part)) {
-          return <span key={`space-${partIndex}`}>{part}</span>;
+          // Espaço antes de um emoji vira inquebrável: senão o glifo cai
+          // sozinho na linha seguinte, longe da frase que ele fecha.
+          const seguidoDeEmoji = /^\[\[\s*[^\]]+\s*\]\]$/.test(parts[partIndex + 1] ?? "");
+          return (
+            <span key={`space-${partIndex}`}>{seguidoDeEmoji ? " " : part}</span>
+          );
         }
 
         const emojiMatch = part.match(/^\[\[\s*(.+?)\s*\]\]$/);

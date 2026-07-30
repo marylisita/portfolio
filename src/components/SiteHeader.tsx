@@ -25,11 +25,41 @@ const styles = `
     text-rendering: optimizeLegibility;
     color: inherit; text-decoration: none;
   }
-  .sh__name { white-space: nowrap; }
+  .sh__mark .text-star {
+    display: inline-block;
+    transform-origin: 50% 52%;
+    transition: color .25s ease;
+  }
+  .sh__name {
+    position: relative;
+    white-space: nowrap;
+  }
   .sh__name-word { display: inline; }
   .sh__name-word--isabel { letter-spacing: -.035em; }
+  .sh__name::after {
+    content: "✦  ·  ♡  ⋆";
+    position: absolute;
+    left: 52%;
+    top: -.42rem;
+    font-family: var(--font-mono), monospace;
+    font-size: .42em;
+    font-weight: 400;
+    letter-spacing: .08em;
+    color: var(--green, #14736e);
+    opacity: 0;
+    transform: translate(-50%, .35rem) scale(.82);
+    pointer-events: none;
+  }
+  .sh__mark:hover .text-star,
+  .sh__mark:focus-visible .text-star {
+    color: var(--green, #14736e);
+    animation: sh-star-dance .72s cubic-bezier(.16, 1, .3, 1) both;
+  }
+  .sh__mark:hover .sh__name::after,
+  .sh__mark:focus-visible .sh__name::after {
+    animation: sh-symbols-float .78s cubic-bezier(.16, 1, .3, 1) both;
+  }
   .sh__mark:focus-visible { outline: 2px dotted var(--site-ink, #1C1B18); outline-offset: 4px; }
-  .sh__sub { font-size: var(--type-micro); letter-spacing: .08em; opacity: .62; color: var(--site-ink, #1C1B18); }
   .sh--r { right: clamp(1.5rem, 5vw, 5.5rem); display: flex; align-items: center; gap: 1rem; }
   .sh__status {
     display: inline-flex; align-items: center; gap: .42rem;
@@ -38,7 +68,7 @@ const styles = `
   .sh__dot {
     position: relative;
     width: 7px; height: 7px; border-radius: 50%;
-    background: var(--site-ink, #1C1B18);
+    background: var(--selection-bg, #843f3a);
   }
   .sh__dot::after {
     content: "";
@@ -54,11 +84,27 @@ const styles = `
     0% { transform: scale(1); opacity: .35; }
     70%, 100% { transform: scale(2.7); opacity: 0; }
   }
+  @keyframes sh-star-dance {
+    0% { transform: rotate(0deg) scale(1); }
+    42% { transform: rotate(110deg) scale(1.28); }
+    72% { transform: rotate(78deg) scale(.94); }
+    100% { transform: rotate(90deg) scale(1); }
+  }
+  @keyframes sh-symbols-float {
+    0% { opacity: 0; transform: translate(-50%, .35rem) scale(.82); }
+    34% { opacity: .9; }
+    72% { opacity: .68; }
+    100% { opacity: 0; transform: translate(-50%, -.8rem) scale(1.08); }
+  }
   .sh__nav { display: inline-flex; align-items: center; gap: .7rem; }
   .sh__nav a { font-size: var(--type-micro); letter-spacing: .04em; }
-  @media (prefers-reduced-motion: reduce) { .sh__dot::after { animation: none; opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) {
+    .sh__dot::after,
+    .sh__mark .text-star,
+    .sh__name::after { animation: none; }
+  }
   @media (max-width: 860px) {
-    .sh__status, .sh__nav, .sh__sub { display: none; }
+    .sh__status, .sh__nav { display: none; }
     .sh--l { max-width: calc(100vw - 8rem); }
     .sh__mark { font-size: clamp(1.15rem, 5.6vw, 1.55rem); line-height: .98; }
   }
@@ -82,11 +128,6 @@ export default function SiteHeader() {
             <span className="sh__name-word">Lisita</span>
           </span>
         </Link>
-        <span className="sh__sub">
-          <ScrambleText
-            text={pt ? "designer & tecnóloga criativa" : "designer & creative technologist"}
-          />
-        </span>
       </span>
       <span className="sh sh--r">
         <span className="sh__status">

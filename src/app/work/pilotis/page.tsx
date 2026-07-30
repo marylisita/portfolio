@@ -11,14 +11,14 @@ import {
 import { useT } from "@/i18n/LanguageContext";
 
 const GALLERY = [
-  { src: "/img/pilotis/1.jpg", width: 1600, height: 511 },
-  { src: "/img/pilotis/2.jpg", width: 1600, height: 2573 },
-  { src: "/img/pilotis/3.jpg", width: 1600, height: 949 },
-  { src: "/img/pilotis/4.jpg", width: 1600, height: 566 },
-  { src: "/img/pilotis/5.jpg", width: 1600, height: 1190 },
-  { src: "/img/pilotis/6.jpg", width: 1600, height: 900 },
-  { src: "/img/pilotis/7.jpg", width: 1600, height: 1118 },
-  { src: "/img/pilotis/8.jpg", width: 1600, height: 136 },
+  { src: "/img/pilotis/1.webp", width: 1600, height: 511 },
+  { src: "/img/pilotis/2.webp", width: 1600, height: 2573 },
+  { src: "/img/pilotis/3.webp", width: 1600, height: 949 },
+  { src: "/img/pilotis/4.webp", width: 1600, height: 566 },
+  { src: "/img/pilotis/5.webp", width: 1600, height: 1190 },
+  { src: "/img/pilotis/6.webp", width: 1600, height: 900 },
+  { src: "/img/pilotis/7.webp", width: 1600, height: 1118 },
+  { src: "/img/pilotis/8.webp", width: 1600, height: 136 },
 ] as const;
 
 const CREDIT_NAMES = [

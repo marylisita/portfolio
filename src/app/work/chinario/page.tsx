@@ -11,12 +11,12 @@ import {
 import { useT } from "@/i18n/LanguageContext";
 
 const IMAGES = [
-  { n: "01", src: "/img/chinario/1.jpg", width: 1600, height: 1068 },
-  { n: "02", src: "/img/chinario/2.jpg", width: 1600, height: 1236 },
-  { n: "03", src: "/img/chinario/3.jpg", width: 1600, height: 1651 },
-  { n: "04", src: "/img/chinario/4.jpg", width: 1600, height: 1848 },
-  { n: "05", src: "/img/chinario/5.jpg", width: 1600, height: 2689 },
-  { n: "06", src: "/img/chinario/6.jpg", width: 1600, height: 2857 },
+  { n: "01", src: "/img/chinario/1.webp", width: 1600, height: 1068 },
+  { n: "02", src: "/img/chinario/2.webp", width: 1600, height: 1236 },
+  { n: "03", src: "/img/chinario/3.webp", width: 1600, height: 1651 },
+  { n: "04", src: "/img/chinario/4.webp", width: 1600, height: 1848 },
+  { n: "05", src: "/img/chinario/5.webp", width: 1600, height: 2689 },
+  { n: "06", src: "/img/chinario/6.webp", width: 1600, height: 2857 },
 ] as const;
 
 export default function ChinaRioProject() {

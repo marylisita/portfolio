@@ -1,6 +1,6 @@
 # Backlog
 
-Atualizado em 27 de julho de 2026.
+Atualizado em 30 de julho de 2026.
 
 ## Alta prioridade
 
@@ -26,8 +26,28 @@ Atualizado em 27 de julho de 2026.
 - [ ] **Preservar a Seratonin como ativo de identidade.** Qualquer otimização de
   fontes deve manter `--font-hand` e validar visualmente o wordmark e os títulos
   que dependem dela.
+- [ ] **Completar os quatro fatos do Graduation.** Confirmar se `CHECKLIZT` é
+  piada com o chiado carioca, número de ícones desenhados/aplicados, tiragem do
+  kit e se a impressão em uma cor foi restrição ou escolha. Não preencher por
+  inferência.
+- [ ] **Revisar os demais cases que usam `CaseStudyKit`.** A retirada de fita,
+  dobra, sombra e inclinação é um padrão compartilhado aprovado. Conferir se
+  painéis e legendas específicas continuam legíveis em cada variante, sem
+  reintroduzir papel por página.
 
 ## Concluído nesta rodada
+
+- [x] O case Graduation passou a explicar decisão, entregáveis e colaboração,
+  sem alegação de impacto não medido.
+- [x] O cabeçalho dos projetos ganhou uma hierarquia única para resultado,
+  pergunta, papel e ficha técnica.
+- [x] Fita, dobra, moldura de papel, sombra deslocada e inclinação saíram do
+  `CaseStudyKit`; imagens e painéis agora usam o vocabulário digital do site.
+- [x] Seções escuras/degradê agora ocupam a largura inteira da viewport.
+- [x] Header, atalhos flutuantes e botão de topo invertem contraste de forma
+  independente quando cruzam uma seção escura.
+- [x] O `HANDOFF.md` corrompido por saída de ferramenta foi substituído por um
+  handoff legível com o padrão aprovado.
 
 - [x] `ProjectShell.title` aceita `ReactNode`.
 - [x] O modal de `CaseStudyKit` não passa `false` para a propriedade `exit`.

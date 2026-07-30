@@ -49,3 +49,21 @@ public/img/sprites/*_backup/
 .claude/
 outfit_1_ascii_map.txt
 
+.backup-copy/
+
+# Relatórios, capturas e caches locais das sessões de validação
+.codex-*
+.conv-tmp.mjs
+.rw-tmp.mjs
+.st-tmp.mjs
+.tom-tmp.mjs
+.bp-tmp.mjs
+.gd-tmp.mjs
+.gr-tmp.mjs
+.keys-tmp.mjs
+.cur-tmp.mjs
+.dup-tmp.mjs
+.fix-tmp.mjs
+.ps2-tmp.mjs
+.dbg.mjs
+test-results/

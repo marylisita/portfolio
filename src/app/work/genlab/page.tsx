@@ -44,7 +44,7 @@ export default function GenLabProject() {
           }
         >
           <CaseFigure
-            src="/img/genlab.png"
+            src="/img/genlab.webp"
             width={1743}
             height={868}
             alt="GenLab Experimental"

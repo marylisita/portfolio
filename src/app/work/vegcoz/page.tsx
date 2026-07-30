@@ -250,7 +250,7 @@ export default function VegCozProject() {
         <section className="vz-sec">
           <motion.figure className="vz-fig" {...reveal()}>
             <Image
-              src="/img/vegcoz/capa.png"
+              src="/img/vegcoz/capa.webp"
               width={1400}
               height={991}
               sizes="(max-width: 1180px) 92vw, 1120px"

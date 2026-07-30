@@ -1,6 +1,5 @@
 "use client";
 import { motion, useReducedMotion } from "framer-motion";
-import Image from "next/image";
 import PixelReveal from "./PixelReveal";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -14,8 +13,8 @@ import { EDGE_RIGHT, FILLER_COLUMN, FILLER_GROUP } from "./foundBrailleArt";
 import { useProjects } from "./useProjects";
 import { getProjectStory } from "@/content/projectStories";
 import { useT } from "@/i18n/LanguageContext";
-import UnderlineButton from "./UnderlineButton";
-import { useEffect, useRef, type CSSProperties, type ReactNode, useState } from "react";
+import HeroButton from "./HeroButton";
+import { useEffect, useRef, type CSSProperties } from "react";
 
 const PROJECT_GLOWS = [
   "rgba(199, 155, 57, .26)",
@@ -132,25 +131,56 @@ const styles = `
     .pj-tag { padding: .55rem .72rem; }
   }
   .pj-tag {
-    display: inline-flex;
-    align-items: center;
+    --btn-bg: var(--ink);
+    --btn-border: var(--ink);
+    --btn-text: var(--paper);
+    --btn-hover-bg: var(--acid);
+    --btn-hover-text: var(--ink);
     min-height: var(--tap-min);
-    font-family: var(--font-body); font-size: var(--type-label);
-    text-transform: lowercase; letter-spacing: .08em;
-    background: var(--ink); color: var(--paper);
-    --primary-color: var(--paper);
-    --hovered-color: var(--ink);
-    padding: .58rem .82rem; text-decoration: none;
-    box-shadow: 3px 3px 0 color-mix(in srgb, var(--ink) 16%, transparent);
-    transition:
-      background var(--duration-fast) var(--ease-default),
-      translate var(--duration-fast) var(--ease-out),
-      box-shadow var(--duration-fast) var(--ease-out);
+    padding: .58rem .75rem;
+    font-family: var(--font-subtitle), monospace;
+    font-size: var(--type-micro);
+    font-weight: var(--offbit-weight-active);
+    line-height: 1;
+    letter-spacing: var(--offbit-letter-spacing);
+    text-transform: lowercase;
+    box-shadow:
+      0 0 0 4px color-mix(in srgb, var(--paper) 74%, transparent),
+      3px 3px 0 color-mix(in srgb, var(--ink) 14%, transparent);
   }
-  .pj-tag:hover {
-    background: var(--acid);
-    translate: 1px 1px;
-    box-shadow: 1px 1px 0 color-mix(in srgb, var(--ink) 16%, transparent);
+  .sh,
+  .pj-tag,
+  .btt {
+    transition:
+      color var(--duration-fast) var(--ease-default),
+      background-color var(--duration-fast) var(--ease-default),
+      border-color var(--duration-fast) var(--ease-default);
+  }
+  html[data-project-ink-header="true"] .sh {
+    --site-ink: #f7f3e9;
+    --green: var(--pj-accent, #fb4c2f);
+    color: #f7f3e9;
+  }
+  html[data-project-ink-header="true"] .lang-toggle {
+    color: #f7f3e9 !important;
+    background: rgba(20, 14, 28, .88) !important;
+    border-color: color-mix(in srgb, #f7f3e9 62%, transparent) !important;
+    box-shadow: 2px 2px 0 rgba(247, 243, 233, .16) !important;
+  }
+  html[data-project-ink-cluster="true"] .pj-tag {
+    --btn-bg: #f7f3e9;
+    --btn-border: #f7f3e9;
+    --btn-text: var(--ink);
+    --btn-hover-bg: var(--pj-accent, var(--acid));
+    --btn-hover-text: var(--ink);
+    box-shadow:
+      0 0 0 4px rgba(20, 14, 28, .72),
+      3px 3px 0 rgba(247, 243, 233, .16);
+  }
+  html[data-project-ink-btt="true"] .btt {
+    color: var(--ink);
+    background: #f7f3e9;
+    border-color: rgba(247, 243, 233, .7);
   }
 
   .pj-head {
@@ -168,12 +198,40 @@ const styles = `
     text-transform: lowercase;
   }
   .pj-rule {
+    position: relative !important;
+    height: 1px;
+    overflow: visible !important;
     color: var(--ink);
-    opacity: .58;
+    background:
+      linear-gradient(
+        to right,
+        var(--pj-accent, var(--acid)) 0 2.75rem,
+        transparent 2.75rem 100%
+      ),
+      repeating-linear-gradient(
+        to right,
+        color-mix(in srgb, var(--ink) 42%, transparent) 0 6px,
+        transparent 6px 12px
+      );
+    font-size: 0 !important;
+    line-height: 0 !important;
+    opacity: 1 !important;
+  }
+  .pj-rule::before {
+    content: "";
+    position: absolute;
+    top: -2px;
+    left: 2.75rem;
+    width: 5px;
+    height: 5px;
+    translate: -50% 0;
+    rotate: 45deg;
+    background: var(--paper);
+    border: 1px solid var(--pj-accent, var(--acid));
   }
   .pj-rule--head { margin: 0 0 2.4rem; }
-  .pj-rule--meta { margin: .6rem 0 1.15rem; }
-  .pj-rule--meta:last-child { margin: 1.15rem 0 0; }
+  .pj-rule--meta { margin: .6rem 0 0; }
+  .pj-rule--meta:last-child { margin: 0; }
   .pj-rule--turn { margin: -.85rem 0 1.6rem; }
   .pj-folio {
     position: absolute; z-index: -1;
@@ -216,7 +274,21 @@ const styles = `
   }
   .pj-desc .pj-em { font-family: var(--font-head); font-style: italic; font-weight: 700; color: var(--pj-accent, var(--acid)); }
   .pj-impact { margin-top: 3.5rem; }
-  .pj-impact__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: clamp(1.5rem, 4vw, 3rem); margin: 1.5rem 0 2rem; }
+  .pj-impact__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    margin: 0;
+  }
+  .pj-impact__col {
+    min-width: 0;
+    padding: clamp(1.25rem, 2.5vw, 2rem) clamp(1.25rem, 3vw, 2.5rem) clamp(1.5rem, 3vw, 2.25rem);
+    border-left: 1px solid color-mix(in srgb, var(--ink) 18%, transparent);
+  }
+  .pj-impact__col:first-child {
+    padding-left: 0;
+    border-left: 0;
+  }
+  .pj-impact__col:last-child { padding-right: 0; }
   .pj-impact__label { font-family: var(--font-subtitle), monospace; font-weight: var(--offbit-weight-active); font-size: var(--type-micro); letter-spacing: var(--offbit-letter-spacing); text-transform: lowercase; color: var(--gray-600); margin-bottom: 1rem; }
   .pj-impact__body { font-family: var(--font-body); font-size: 1.05rem; line-height: 1.6; color: var(--ink); text-wrap: pretty; }
   /* O Outcome/Resultado ganha destaque tipográfico com a fonte display (acid) */
@@ -226,19 +298,26 @@ const styles = `
   }
   .pj-meta__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: clamp(1rem, 2.2vw, 1.6rem);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
   }
   .pj-meta__label {
     font-family: var(--font-body); font-size: var(--type-micro);
     text-transform: lowercase; letter-spacing: .1em;
     color: var(--gray-600); margin-bottom: .55rem;
   }
+  .pj-meta__label::before { content: "[ "; color: var(--pj-accent, var(--ink)); }
+  .pj-meta__label::after { content: " ]"; color: var(--pj-accent, var(--ink)); }
   .pj-meta__value {
     font-family: var(--font-body);
     font-size: var(--type-body);
     line-height: 1.5;
     color: var(--ink);
+  }
+  .pj-meta__value::before {
+    content: "> ";
+    color: var(--pj-accent, var(--ink));
+    font-family: var(--font-subtitle), monospace;
   }
   .pj-notes {
     display: flex; flex-wrap: wrap; gap: .75rem;
@@ -246,107 +325,42 @@ const styles = `
     margin-top: 1.35rem;
   }
   .pj-meta__card {
-    --meta-r: -.55deg;
     position: relative;
     min-width: 0;
-    padding: 1.45rem 1.35rem 1.3rem;
-    border: 1px solid var(--paper-edge);
-    background-color: var(--paper-sheet);
-    background-image:
-      repeating-linear-gradient(0deg, transparent 0 3px, rgba(28,27,24,.025) 3px 4px),
-      url("/img/paper-noise.webp"),
-      linear-gradient(120deg, rgba(255,255,255,.3), transparent 62%);
-    background-size: 100% 100%, 150px 150px, 100% 100%;
-    box-shadow:
-      3px 4px 0 var(--paper-shadow),
-      inset 0 0 0 1px rgba(255,255,255,.17);
-    transform: rotate(var(--meta-r));
-    transition:
-      transform var(--duration-normal) var(--ease-out),
-      box-shadow var(--duration-normal) var(--ease-default),
-      background-color var(--duration-normal) var(--ease-default);
+    padding: 1.35rem clamp(1.25rem, 3vw, 2.5rem) 1.45rem;
+    border: 0;
+    border-left: 1px solid color-mix(in srgb, var(--ink) 18%, transparent);
+    background: transparent;
+    box-shadow: none;
   }
-  .pj-meta__card::before {
-    content: "";
-    position: absolute;
-    z-index: 2;
-    top: -.32rem;
-    left: clamp(1.2rem, 25%, 3.2rem);
-    width: 3.6rem;
-    height: .72rem;
-    border: 1px solid rgba(28,27,24,.1);
-    background:
-      repeating-linear-gradient(90deg, transparent 0 4px, rgba(28,27,24,.025) 4px 5px),
-      var(--paper-tape);
-    rotate: -2deg;
-    pointer-events: none;
+  .pj-meta__card:first-child {
+    padding-left: 0;
+    border-left: 0;
   }
-  .pj-meta__card::after {
-    content: "";
-    position: absolute;
-    right: .22rem;
-    bottom: .22rem;
-    width: 1rem;
-    height: 1rem;
-    border-top: 1px solid rgba(28,27,24,.2);
-    border-left: 1px solid rgba(28,27,24,.2);
-    background: color-mix(in srgb, var(--paper-sheet) 84%, var(--pj-glow));
-    clip-path: polygon(100% 0, 0 100%, 100% 100%);
-    pointer-events: none;
-  }
-  .pj-meta__card:nth-child(2n) { --meta-r: .7deg; }
-  .pj-meta__card:nth-child(3n) { --meta-r: -1deg; }
-  .pj-meta__card:hover,
-  .pj-meta__card:focus-visible {
-    z-index: 2;
-    outline: none;
-    transform: translate(-2px, -2px) rotate(0deg);
-    background-color: rgba(250,247,239,.96);
-    box-shadow:
-      6px 7px 0 var(--paper-shadow),
-      0 0 0 1px rgba(28,27,24,.1);
-  }
+  .pj-meta__card:last-child { padding-right: 0; }
   .pj-note {
-    --note-r: -.4deg;
-    position: relative;
     display: inline-flex; align-items: center;
     min-height: var(--tap-min);
-    padding: .68rem .9rem .68rem 1.65rem;
-    border: 1px solid var(--paper-edge);
-    background-color: var(--paper-sheet);
-    background-image:
-      repeating-linear-gradient(0deg, transparent 0 3px, rgba(28,27,24,.025) 3px 4px),
-      url("/img/paper-noise.webp");
-    background-size: 100% 100%, 130px 130px;
-    box-shadow: 3px 3px 0 var(--paper-shadow);
+    padding: .35rem 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
     font-family: var(--font-subtitle), monospace;
-    font-weight: var(--offbit-weight);
+    font-weight: var(--offbit-weight-active);
     font-size: var(--type-label);
     line-height: 1.25;
     letter-spacing: var(--offbit-letter-spacing); text-transform: lowercase;
     max-width: 100%; overflow-wrap: anywhere;
-    transform: rotate(var(--note-r));
-    transition: transform var(--duration-normal) var(--ease-out), box-shadow var(--duration-normal) var(--ease-default), background-color var(--duration-normal) var(--ease-default);
   }
   .pj-note::before {
-    content: "";
-    position: absolute;
-    left: .62rem;
-    top: 50%;
-    width: .38rem;
-    height: .38rem;
-    translate: 0 -50%;
-    border: 1px solid rgba(28,27,24,.4);
-    border-radius: 50%;
-    background: var(--paper);
-    box-shadow: inset 1px 1px 1px rgba(28,27,24,.12);
+    content: "[ ";
+    margin-right: .18rem;
+    color: var(--pj-accent, var(--ink));
   }
-  .pj-note:nth-child(2n) { --note-r: 1deg; }
-  .pj-note:nth-child(3n) { --note-r: -1.2deg; }
-  .pj-note:hover {
-    transform: translate(-2px, -2px) rotate(0deg);
-    background-color: rgba(250,247,239,.97);
-    box-shadow: 5px 5px 0 var(--paper-shadow);
+  .pj-note::after {
+    content: " ]";
+    margin-left: .18rem;
+    color: var(--pj-accent, var(--ink));
   }
   .pj-kicker > span,
   .pj-folio,
@@ -461,7 +475,24 @@ const styles = `
     .pj-folio { top: 4.1rem; right: .7rem; }
     .pj-title { max-width: min(100%, 16ch); }
     .pj-desc { max-width: 100%; overflow-wrap: anywhere; }
-    .pj-meta__grid { grid-template-columns: 1fr; gap: 1rem; width: 100%; }
+    .pj-impact__grid,
+    .pj-meta__grid { grid-template-columns: 1fr; width: 100%; }
+    .pj-impact__col,
+    .pj-impact__col:first-child,
+    .pj-impact__col:last-child {
+      padding: 1.35rem 0 1.5rem;
+      border-left: 0;
+      border-top: 1px solid color-mix(in srgb, var(--ink) 18%, transparent);
+    }
+    .pj-impact__col:first-child { border-top: 0; }
+    .pj-meta__card,
+    .pj-meta__card:first-child,
+    .pj-meta__card:last-child {
+      padding: 1.2rem 0 1.3rem;
+      border-left: 0;
+      border-top: 1px solid color-mix(in srgb, var(--ink) 18%, transparent);
+    }
+    .pj-meta__card:first-child { border-top: 0; }
     .pj-meta__grid > div { min-width: 0; }
     .pj-notes { padding-left: 0; }
     .pj-tag { min-height: 44px; display: inline-flex; align-items: center; flex: 0 0 auto; }
@@ -479,8 +510,6 @@ const styles = `
     .pj-progress { display: none; }
     .pj-turn__card, .pj-turn__card::before, .pj-turn__image img { transition: none; }
     .pj-turn__num { transition: none; }
-    .pj-meta__card, .pj-note { transition: none; }
-    .pj-meta__card:hover, .pj-meta__card:focus-visible, .pj-note:hover { transform: none; }
     .pj-ornament { animation: none; translate: none; }
     .pj-turn__card:hover, .pj-turn__card:focus-visible,
     .pj-turn__card:nth-child(2) { transform: none; }
@@ -529,7 +558,6 @@ export default function ProjectShell({
   const notesLabel = lang === "pt" ? "etiquetas do projeto" : "project labels";
   const turnLabel = lang === "pt" ? "continue folheando" : "keep browsing";
   const directions = lang === "pt" ? ["projeto anterior", "próximo projeto"] : ["previous project", "next project"];
-  const entrance = reduceMotion ? false : { opacity: 0, y: 26 };
   const projectOrnaments = [
     FILLER_COLUMN,
     QUIMERA,
@@ -596,6 +624,56 @@ export default function ProjectShell({
     };
   }, [reduceMotion]);
 
+  useEffect(() => {
+    const shell = shellRef.current;
+    if (!shell) return;
+
+    const root = document.documentElement;
+    let frame = 0;
+
+    const isInkAt = (y: number) =>
+      Array.from(shell.querySelectorAll<HTMLElement>(".tc-section--ink")).some((section) => {
+        const rect = section.getBoundingClientRect();
+        return rect.top <= y && rect.bottom >= y;
+      });
+
+    const syncContrast = () => {
+      frame = 0;
+      const cluster = shell.querySelector<HTMLElement>(".pj-cluster");
+      const backToTop = document.querySelector<HTMLElement>(".btt");
+      const headerY = Math.max(28, window.innerHeight * 0.05);
+      const clusterRect = cluster?.getBoundingClientRect();
+      const backToTopRect = backToTop?.getBoundingClientRect();
+      const clusterY = clusterRect
+        ? clusterRect.top + clusterRect.height / 2
+        : window.innerHeight - 110;
+      const backToTopY = backToTopRect
+        ? backToTopRect.top + backToTopRect.height / 2
+        : window.innerHeight - 36;
+
+      root.dataset.projectInkHeader = String(isInkAt(headerY));
+      root.dataset.projectInkCluster = String(isInkAt(clusterY));
+      root.dataset.projectInkBtt = String(isInkAt(backToTopY));
+    };
+
+    const requestSync = () => {
+      if (!frame) frame = requestAnimationFrame(syncContrast);
+    };
+
+    syncContrast();
+    window.addEventListener("scroll", requestSync, { passive: true });
+    window.addEventListener("resize", requestSync, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", requestSync);
+      window.removeEventListener("resize", requestSync);
+      cancelAnimationFrame(frame);
+      delete root.dataset.projectInkHeader;
+      delete root.dataset.projectInkCluster;
+      delete root.dataset.projectInkBtt;
+    };
+  }, []);
+
   return (
     <div
       ref={shellRef}
@@ -620,15 +698,15 @@ export default function ProjectShell({
 
       {/* molhinho de navegação fixo */}
       <nav className="pj-cluster" aria-label="menu">
-        <UnderlineButton className="pj-tag" href="/">[ {t("pj_home")} ]</UnderlineButton>
-        <UnderlineButton className="pj-tag" href="/work">[ {t("nav_work").toLowerCase()} ]</UnderlineButton>
-        <UnderlineButton className="pj-tag" href="#contact">[ {t("rm_menu_contact")} ]</UnderlineButton>
+        <HeroButton className="pj-tag" href="/">[ {t("pj_home")} ]</HeroButton>
+        <HeroButton className="pj-tag" href="/work">[ {t("nav_work").toLowerCase()} ]</HeroButton>
+        <HeroButton className="pj-tag" href="#contact">[ {t("rm_menu_contact")} ]</HeroButton>
       </nav>
 
       <header className="pj-head">
         <div className="pj-folio" aria-hidden="true">{current?.num ?? "—"}</div>
         <motion.div
-          initial={entrance}
+          initial={false}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: reduceMotion ? 0 : MOTION_SLOW, ease: MOTION_EASE_OUT }}
         >
@@ -673,7 +751,7 @@ export default function ProjectShell({
             <AsciiDivider className="pj-rule pj-rule--meta" />
             <div className="pj-meta__grid">
               {meta.map((m) => (
-                <div className="pj-meta__card" tabIndex={0} key={m.label}>
+                <div className="pj-meta__card" key={m.label}>
                   <div className="pj-meta__label">{m.label}</div>
                   <div className="pj-meta__value">{m.value}</div>
                 </div>

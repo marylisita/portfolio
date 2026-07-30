@@ -34,19 +34,28 @@ export default function StaticKanagawa({
       context.setTransform(dpr, 0, 0, dpr, 0, 0);
       context.clearRect(0, 0, width, height);
 
-      const bottomGap = Math.min(12, Math.max(6, width * .005));
-      const scale = Math.min(
-        width / image.naturalWidth,
-        (height - bottomGap) /
-          (image.naturalHeight * ART_VISIBLE_BOTTOM_RATIO),
-      );
+      const mobile = width <= 860;
+      const bottomGap = mobile ? Math.min(12, Math.max(6, width * .005)) : 0;
+      const baseScale = mobile
+        ? Math.min(
+            width / image.naturalWidth,
+            (height - bottomGap) /
+              (image.naturalHeight * ART_VISIBLE_BOTTOM_RATIO),
+          )
+        : Math.max(
+            width / image.naturalWidth,
+            height / (image.naturalHeight * ART_VISIBLE_BOTTOM_RATIO),
+          );
+      // Desktop: zoom uniforme e recorte. Nunca estica os eixos separadamente.
+      const scale = mobile ? baseScale : baseScale * 1.08;
       const drawWidth = image.naturalWidth * scale;
       const drawHeight = image.naturalHeight * scale;
       const drawX = (width - drawWidth) / 2;
-      const drawY =
-        height -
-        bottomGap -
-        image.naturalHeight * ART_VISIBLE_BOTTOM_RATIO * scale;
+      const drawY = mobile
+        ? height -
+          bottomGap -
+          image.naturalHeight * ART_VISIBLE_BOTTOM_RATIO * scale
+        : 0;
 
       context.drawImage(image, drawX, drawY, drawWidth, drawHeight);
     };
