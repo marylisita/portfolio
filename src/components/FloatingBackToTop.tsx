@@ -15,7 +15,9 @@ const styles = `
     z-index: 900;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: .38rem;
+    min-height: var(--tap-min);
     padding: .45rem .7rem;
     font-family: var(--font-mono), monospace;
     font-size: var(--type-micro, .68rem);

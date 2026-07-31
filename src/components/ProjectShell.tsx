@@ -123,12 +123,20 @@ const styles = `
     /* em tela estreita vira fita horizontal, como na landing */
     .pj-cluster {
       flex-direction: row; align-items: center; flex-wrap: nowrap;
-      left: 4.5rem; right: .6rem; bottom: 1rem; gap: .28rem;
-      justify-content: flex-start;
+      /* Uma faixa acima dos dois botões fixos do rodapé (o redondo à esquerda
+         e o "topo" à direita) — a 1rem a fita ficava atrás do "topo" e a
+         última etiqueta sumia. Mesma solução da fita da home (.sm__cluster). */
+      left: .5rem; right: .5rem; bottom: 4.4rem; gap: .28rem;
+      justify-content: center;
       overflow-x: auto; scrollbar-width: none;
+      /* Se ainda assim não couber, a máscara transforma o corte em sinal de
+         "tem mais para o lado" em vez de cortar no meio da palavra. */
+      -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 1.6rem), transparent);
+      mask-image: linear-gradient(to right, #000 calc(100% - 1.6rem), transparent);
+      padding-right: 1.6rem;
     }
     .pj-cluster::-webkit-scrollbar { display: none; }
-    .pj-tag { padding: .55rem .72rem; }
+    .pj-tag { padding: .55rem .6rem; letter-spacing: .02em; }
   }
   .pj-tag {
     --btn-bg: var(--ink);
@@ -181,6 +189,15 @@ const styles = `
     color: var(--ink);
     background: #f7f3e9;
     border-color: rgba(247, 243, 233, .7);
+  }
+  /* O halo de papel da assinatura (SiteHeader, telas estreitas) precisa
+     inverter junto com o cabeçalho nas seções escuras, senão vira um
+     retângulo claro com texto claro em cima. */
+  @media (max-width: 860px) {
+    html[data-project-ink-header="true"] .sh__mark {
+      background: rgba(20, 14, 28, .82) !important;
+      box-shadow: 0 0 0 .3rem rgba(20, 14, 28, .82) !important;
+    }
   }
 
   .pj-head {
@@ -244,7 +261,11 @@ const styles = `
     user-select: none; pointer-events: none;
   }
   .pj-back {
-    display: inline-block;
+    /* inline-flex + min-height para o alvo de toque chegar aos 44px do
+       --tap-min; antes o link tinha 33px de altura no celular */
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap-min);
     font-family: var(--font-hand); font-size: 1.25rem;
     text-transform: lowercase; letter-spacing: .01em;
     color: var(--acid); text-decoration: none;

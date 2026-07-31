@@ -175,15 +175,24 @@ const styles = `
     .sm__cluster {
       flex-direction: row;
       align-items: center;
+      /* Uma faixa acima dos dois botões fixos do rodapé (o redondo à esquerda
+         e o "topo" à direita), usando a largura inteira: assim os três links
+         cabem sem scroll e sem cair em cima da legenda dos trabalhos, que era
+         o problema que este bloco queria resolver. */
       left: .5rem;
       right: .5rem;
-      bottom: 7.2rem;
+      bottom: 4.4rem;
       gap: .28rem;
       /* uma linha só: quebrando em duas ele tapava a legenda dos projetos */
       flex-wrap: nowrap;
       justify-content: center;
       overflow-x: auto;
       scrollbar-width: none;
+      /* a fita rola: a máscara sinaliza "tem mais para o lado" em vez de
+         cortar a última etiqueta no meio da palavra */
+      -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 1.6rem), transparent);
+      mask-image: linear-gradient(to right, #000 calc(100% - 1.6rem), transparent);
+      padding-right: 1.6rem;
     }
     .sm__cluster::-webkit-scrollbar { display: none; }
     .sm__cluster .sm__tag {
@@ -200,18 +209,24 @@ const styles = `
       visibility: visible !important;
       animation: none !important;
     }
+    /* Sem nowrap as etiquetas quebravam em três linhas ("[ ver / projetos / ]")
+       e ainda assim vazavam pela direita da tela. Com uma linha só, as
+       posições abaixo mantêm a etiqueta inteira dentro da viewport. */
+    /* O elemento renderizado é .sm__label (.sm__tag não existe no HTML), e sem
+       nowrap toda etiqueta quebrava em três linhas — no hero e na fita. */
+    .sm__label { white-space: nowrap; }
     .sm__tag--hero[data-priority="primary"] {
-      left: 48% !important; top: 64% !important;
+      left: 44% !important; top: 64% !important;
       opacity: 1 !important; transform: rotate(2deg) !important;
       font-size: .92rem;
     }
     .sm__tag--hero[data-priority="secondary"] {
-      left: 9% !important; top: 76% !important;
+      left: 7% !important; top: 76% !important;
       opacity: .95 !important; transform: rotate(-2deg) !important;
       font-size: .88rem;
     }
     .sm__tag--hero[data-priority="tertiary"] {
-      left: 55% !important; top: 81% !important;
+      left: 44% !important; top: 81% !important;
       opacity: .88 !important; transform: rotate(1deg) !important;
       font-size: .84rem;
     }
@@ -280,6 +295,10 @@ function DraggableHeroTag({
     <div
       ref={elementRef}
       className="sm__tag-wrapper sm__tag--hero"
+      /* Sem este atributo as regras .sm__tag--hero[data-priority=…] do bloco
+         @media (max-width: 720px) não casavam com nada: no celular as
+         etiquetas ficavam nas coordenadas de desktop e vazavam pela direita. */
+      data-priority={item.priority}
       data-pinned={pinned ? "true" : "false"}
       data-dragging="false"
       data-no-stamp

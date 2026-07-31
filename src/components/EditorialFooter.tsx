@@ -67,7 +67,13 @@ const styles = `
   .ef__mail {
     font-family: var(--font-pixelscript, cursive);
     font-weight: 400;
-    font-size: clamp(2.4rem, 7.8vw, 5.8rem);
+    /* O piso de 2.4rem não cabia em tela de celular: o endereço era cortado
+       no meio ("lisita.medeiros@g…"). Como a caixa também acompanha a
+       largura da tela, o tamanho em vw mantém o endereço numa linha só em
+       qualquer celular; o overflow-wrap fica só como rede de segurança. */
+    font-size: clamp(1rem, 5.3vw, 5.8rem);
+    max-width: 100%;
+    overflow-wrap: anywhere;
     line-height: 1;
     letter-spacing: -0.02em;
     color: var(--acid);
