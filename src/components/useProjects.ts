@@ -128,5 +128,16 @@ export function useProjects(): IndexItem[] {
       ratio: 598 / 1200,
       img: "/img/previews/genlab.webp",
     },
+    {
+      num: "13",
+      title: "juízo: dinheiro sem sermão",
+      tags: `${t("cat_autoral")} / ${t("card_uxui_title")} / ${
+        lang === "pt" ? "desenvolvimento de produto" : "product development"
+      }`,
+      href: "/work/juizo",
+      impact: impact("/work/juizo"),
+      ratio: 675 / 1200, // previews/juizo.webp 1200x675
+      img: "/img/previews/juizo.webp",
+    },
   ];
 }

@@ -159,6 +159,22 @@ const stories: Record<string, LocalizedStory> = {
         "Four hours is too little for the software and too much for a lecture.",
     },
   },
+  juizo: {
+    pt: {
+      impact:
+        "Um app de finanças que roda inteiro no aparelho, testado contra 285 lançamentos reais de extrato e desenhado para quem ganha diferente todo mês.",
+      shortImpact: "finanças para renda variável",
+      challenge:
+        "Os apps de finanças que testei partem de um salário fixo e de um tom de cobrança — nenhum dos dois combina com quem vive de renda variável.",
+    },
+    en: {
+      impact:
+        "A finance app that runs entirely on device, tested against 285 real statement entries and designed for people whose income changes every month.",
+      shortImpact: "finance for variable income",
+      challenge:
+        "The finance apps I tried assume a fixed salary and a scolding tone — neither fits someone living on variable income.",
+    },
+  },
 };
 
 export function getProjectStory(pathname: string, lang: string): ProjectStory | undefined {

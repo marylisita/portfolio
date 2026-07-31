@@ -17,6 +17,7 @@ interface ProjectCardProps {
   desc: string;
   ratio: number;
   index: number;
+  total: string;
 }
 
 const DIVIDER_SYMBOLS = [
@@ -72,6 +73,7 @@ function ProjectCard({
   desc,
   ratio,
   index,
+  total,
 }: ProjectCardProps) {
   const { t } = useT();
   const headingId = `project-title-${num}`;
@@ -101,7 +103,7 @@ function ProjectCard({
       <div className="wk-project__copy">
         <AsciiDivider vertical />
         <span className="wk-project__count">
-          {num} / 07
+          {num} / {total}
           <AsciiDivider />
         </span>
         <h2 className="wk-project__title" id={headingId}>
@@ -124,6 +126,7 @@ function ProjectCard({
  * que nenhum outro cobre. Os demais continuam na fonte completa porque as
  * páginas de case dependem dela para tags e navegação anterior/próximo. */
 const CORE_HREFS = [
+  "/work/juizo",
   "/work/graduation",
   "/work/ebat",
   "/work/cyber-marinum",
@@ -135,6 +138,7 @@ const CORE_HREFS = [
 
 /** O eixo das abas é área, nunca contexto. Um projeto pode estar em mais de uma. */
 const AREAS: Record<string, string[]> = {
+  "/work/juizo": ["grafico", "pesquisa"],
   "/work/graduation": ["grafico"],
   "/work/ebat": ["grafico"],
   "/work/isadora": ["grafico"],
@@ -176,6 +180,11 @@ export default function Work() {
       : all.filter((item) => AREAS[item.href]?.includes(id)).length;
 
   const getDesc = (href: string) => {
+    if (href.endsWith("juizo")) {
+      return pt
+        ? "App autoral de finanças para renda variável: roda inteiro no aparelho e foi testado contra 285 lançamentos reais de extrato."
+        : "A self-initiated finance app for variable income: it runs entirely on device and was tested against 285 real statement entries.";
+    }
     if (href.endsWith("isadora")) return t("work_isadora_desc");
     if (href.endsWith("magazine")) return t("work_helvetica_desc");
     if (href.endsWith("genlab")) return t("work_genlab_desc");
@@ -768,7 +777,7 @@ export default function Work() {
           {projects.map((project, index) => (
             <ProjectCard
               key={project.href}
-              num={project.num}
+              num={String(index + 1).padStart(2, "0")}
               title={project.title}
               tags={project.tags}
               href={project.href}
@@ -776,6 +785,7 @@ export default function Work() {
               desc={getDesc(project.href)}
               ratio={project.ratio}
               index={index}
+              total={String(projects.length).padStart(2, "0")}
             />
           ))}
         </section>

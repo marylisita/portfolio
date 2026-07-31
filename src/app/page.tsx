@@ -19,6 +19,7 @@ import SkillConstellation from "@/components/SkillConstellation";
 const STITCH_DIVIDER = "------  ";
 
 const FEATURED_PROJECT_HREFS = [
+  "/work/juizo",
   "/work/graduation",
   "/work/ebat",
   "/work/cyber-marinum",

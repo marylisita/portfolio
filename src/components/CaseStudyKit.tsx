@@ -14,6 +14,7 @@ export type CaseVariant =
   | "graduation"
   | "hologlam"
   | "isadora"
+  | "juizo"
   | "magazine"
   | "pilotis"
   | "vegcoz";
@@ -72,6 +73,12 @@ const styles = `
     --tc-accent-soft: rgba(227, 32, 38, .16);
     --tc-paper: rgba(248, 244, 235, .95);
     --tc-deep: #171717;
+  }
+  .tc--juizo {
+    --tc-accent: #9e2f4f;
+    --tc-accent-soft: rgba(158, 47, 79, .14);
+    --tc-paper: rgba(250, 242, 240, .94);
+    --tc-deep: #2a1220;
   }
   .tc--magazine {
     --tc-accent: #CC181E;
