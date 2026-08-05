@@ -3,6 +3,9 @@
 import { useEffect, useRef } from "react";
 
 const ART_VISIBLE_BOTTOM_RATIO = 996 / 1034;
+const MOBILE_MAX_WIDTH = 860;
+const MOBILE_ART_ZOOM = 1.45;
+const MOBILE_OPACITY_BOOST = 1.7;
 
 export default function StaticKanagawa({
   className,
@@ -34,11 +37,14 @@ export default function StaticKanagawa({
       context.setTransform(dpr, 0, 0, dpr, 0, 0);
       context.clearRect(0, 0, width, height);
 
-      const mobile = width <= 860;
+      const mobile = width <= MOBILE_MAX_WIDTH;
       const bottomGap = mobile ? Math.min(12, Math.max(6, width * .005)) : 0;
+      canvas.style.opacity = String(
+        mobile ? Math.min(1, opacity * MOBILE_OPACITY_BOOST) : opacity,
+      );
       const baseScale = mobile
         ? Math.min(
-            width / image.naturalWidth,
+            (width / image.naturalWidth) * MOBILE_ART_ZOOM,
             (height - bottomGap) /
               (image.naturalHeight * ART_VISIBLE_BOTTOM_RATIO),
           )
@@ -68,7 +74,7 @@ export default function StaticKanagawa({
       image.removeEventListener("load", draw);
       window.removeEventListener("resize", draw);
     };
-  }, []);
+  }, [opacity]);
 
   return (
     <canvas
