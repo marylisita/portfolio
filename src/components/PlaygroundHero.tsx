@@ -29,7 +29,7 @@ const CLOCK_GREETINGS: Record<
       "tecnicamente ainda é dia útil",
       "meio do expediente, moralmente falando",
     ],
-    evening: ["a luz ficou acesa"],
+    evening: ["a luz dormiu acesa"],
   },
   en: {
     late: [

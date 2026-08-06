@@ -4,8 +4,9 @@ import { useEffect, useRef } from "react";
 
 const ART_VISIBLE_BOTTOM_RATIO = 996 / 1034;
 const MOBILE_MAX_WIDTH = 860;
-const MOBILE_ART_ZOOM = 1.45;
-const MOBILE_OPACITY_BOOST = 1.7;
+const MOBILE_ART_ZOOM = 1.06;
+const MOBILE_OPACITY_BOOST = 1.45;
+const MOBILE_HORIZONTAL_FOCUS = .48;
 
 export default function StaticKanagawa({
   className,
@@ -43,8 +44,8 @@ export default function StaticKanagawa({
         mobile ? Math.min(1, opacity * MOBILE_OPACITY_BOOST) : opacity,
       );
       const baseScale = mobile
-        ? Math.min(
-            (width / image.naturalWidth) * MOBILE_ART_ZOOM,
+        ? Math.max(
+            width / image.naturalWidth,
             (height - bottomGap) /
               (image.naturalHeight * ART_VISIBLE_BOTTOM_RATIO),
           )
@@ -52,11 +53,14 @@ export default function StaticKanagawa({
             width / image.naturalWidth,
             height / (image.naturalHeight * ART_VISIBLE_BOTTOM_RATIO),
           );
-      // Desktop: zoom uniforme e recorte. Nunca estica os eixos separadamente.
-      const scale = mobile ? baseScale : baseScale * 1.08;
+      // A gravura funciona como background cover: preenche a tela, aceita
+      // recorte e mantém a crista como ponto focal sem distorcer a imagem.
+      const scale = baseScale * (mobile ? MOBILE_ART_ZOOM : 1.08);
       const drawWidth = image.naturalWidth * scale;
       const drawHeight = image.naturalHeight * scale;
-      const drawX = (width - drawWidth) / 2;
+      const drawX = mobile
+        ? width / 2 - drawWidth * MOBILE_HORIZONTAL_FOCUS
+        : (width - drawWidth) / 2;
       const drawY = mobile
         ? height -
           bottomGap -
