@@ -7,8 +7,8 @@ informada em vez de redescobrir tudo. Leia isto antes de mexer em
 
 ## Estado atual de `/work`
 
-A página mostra **7 projetos** (não 12) e tem um **filtro por área** em coluna
-vertical na borda direita.
+A página abre com os **9 projetos** do núcleo (não os 13 da fonte) e tem um
+**filtro por área** em abas, na linha logo abaixo do título.
 
 Base da decisão dos 7: Barnes et al. (2022), *Portfolio Literacy and the
 Transition to Work for Graphic Design Graduates*, iJADE 41(2) — survey com 53
@@ -30,12 +30,20 @@ Cada um cobre um território que nenhum outro cobre:
 | 06 | hologlam | pesquisa especulativa + autocrítica |
 | 07 | touchdesigner-workshop | ensino — prova facilitação e tradução de conhecimento |
 
-A home usa uma seleção menor, com cinco entradas, nesta ordem:
-`graduation · ebat · cyber-marinum · magazine · isadora`. Ela apresenta o
-recorte mais direto de identidade, cliente, arte-tech, tipografia e direção de
-arte. A lista vive em `FEATURED_PROJECT_HREFS`, em `src/app/page.tsx`.
+Atualização de 6 de agosto de 2026: o núcleo tem **nove** entradas. O juízo
+abre a página (produto autoral, o único case de interface) e a ondularis fecha
+(exposição, credencial de arte-tech ao lado da cyber-marinum). A contagem
+passou do teto de sete do Barnes por decisão dela — os dois estavam fora dos
+destaques e ela queria os dois à vista. Se voltar a apertar, tirar antes o que
+repete território, não o que entrou por último.
 
-Fora do núcleo: vegcoz, ondularis, pilotis, chinario, genlab. **Continuam na
+A home usa uma seleção menor, com sete entradas, nesta ordem:
+`juizo · graduation · ebat · cyber-marinum · magazine · isadora · ondularis`.
+Ela apresenta o recorte mais direto de produto, identidade, cliente, arte-tech,
+tipografia, direção de arte e exposição. A lista vive em
+`FEATURED_PROJECT_HREFS`, em `src/app/page.tsx`.
+
+Fora do núcleo: vegcoz, pilotis, chinario, genlab. **Continuam na
 fonte (`useProjects`) de propósito** — o `ProjectShell` usa a lista completa
 para as tags e a navegação anterior/próximo. Se você filtrar a fonte, essas 5
 páginas abrem sem tag e sem navegação. Já foi verificado; não "otimize" isso.
@@ -48,7 +56,7 @@ ter nenhum trabalho de produto é pior que ter um com visual datado.
 Eixo é **área**, nunca contexto. Cliente / acadêmico / colaboração / autoral
 seguem como etiqueta na linha de tags, não como aba.
 
-- **destaques** — os 7 do núcleo, na ordem de `CORE_HREFS`
+- **destaques** — os 9 do núcleo, na ordem de `CORE_HREFS`
 - **design gráfico** — graduation, ebat, isadora, magazine, pilotis, chinario
 - **arte & tecnologia** — cyber-marinum, ondularis, hologlam, touchdesigner, genlab
 - **pesquisa & educação** — hologlam, touchdesigner, genlab, vegcoz

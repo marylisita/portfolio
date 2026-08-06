@@ -25,6 +25,7 @@ const FEATURED_PROJECT_HREFS = [
   "/work/cyber-marinum",
   "/work/magazine",
   "/work/isadora",
+  "/work/ondularis",
 ];
 
 const HERO_HEADLINES = {

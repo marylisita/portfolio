@@ -20,7 +20,17 @@ type DragState = {
   pointerId: number;
   startX: number;
   startScrollLeft: number;
+  lastX: number;
+  lastTime: number;
+  velocity: number;
 };
+
+/** Quanto tempo de deslize o impulso do arraste projeta à frente, em ms. */
+const GLIDE_PROJECTION = 210;
+/** Abaixo disso o gesto conta como parado: só encaixa no cartão mais próximo. */
+const FLICK_THRESHOLD = .05;
+/** Folga em px antes de um clique virar arraste. */
+const DRAG_THRESHOLD = 3;
 
 const styles = `
   .sw-gallery {
@@ -125,9 +135,15 @@ const styles = `
     background: color-mix(in srgb, var(--ink) 72%, transparent);
     border-radius: 0;
   }
+  /* Enquanto o arraste ou o deslize estão no comando, o encaixe do navegador
+     sai da frente: quem posiciona é o JS, e ele termina em cima do ponto de
+     encaixe — assim ligar o snap de volta não puxa a fita de repente. */
+  .sw__viewport[data-dragging="true"],
+  .sw__viewport[data-gliding="true"] {
+    scroll-snap-type: none;
+  }
   .sw__viewport[data-dragging="true"] {
     cursor: grabbing;
-    scroll-snap-type: none;
     user-select: none;
   }
   .sw__viewport:focus-visible {
@@ -167,10 +183,16 @@ const styles = `
     opacity: 0;
     transition: opacity var(--duration-slow) var(--ease-out);
   }
+  /* Moldura única para todos os cartões: as capas têm proporções diferentes
+     (do pôster em pé da ondularis ao cartaz deitado do graduation) e, soltas,
+     deixavam as legendas em alturas diferentes. Aqui cada capa entra inteira,
+     como gravura em passe-partout, e a fita corre com uma linha de base só. */
   .sw__media {
     position: relative;
     display: block;
     overflow: hidden;
+    aspect-ratio: 3 / 2;
+    padding: clamp(.5rem, .85vw, .8rem);
     border: 1px solid color-mix(in srgb, var(--ink) 32%, transparent);
     background: color-mix(in srgb, var(--paper) 90%, var(--ink));
   }
@@ -338,6 +360,7 @@ export default function ScatteredWorks({ items }: { items: IndexItem[] }) {
   const { lang } = useT();
   const viewportRef = useRef<HTMLDivElement>(null);
   const controlsRafRef = useRef(0);
+  const glideRafRef = useRef(0);
   const suppressClickRef = useRef(false);
   const dragRef = useRef<DragState>({
     active: false,
@@ -345,6 +368,9 @@ export default function ScatteredWorks({ items }: { items: IndexItem[] }) {
     pointerId: -1,
     startX: 0,
     startScrollLeft: 0,
+    lastX: 0,
+    lastTime: 0,
+    velocity: 0,
   });
   const [dragging, setDragging] = useState(false);
   const [canPrevious, setCanPrevious] = useState(false);
@@ -393,21 +419,93 @@ export default function ScatteredWorks({ items }: { items: IndexItem[] }) {
     return () => {
       observer.disconnect();
       cancelAnimationFrame(controlsRafRef.current);
+      cancelAnimationFrame(glideRafRef.current);
     };
   }, [items.length, updateControls]);
 
+  // `data-gliding` fica fora do JSX de propósito: o deslize roda dentro de um
+  // requestAnimationFrame e o atributo precisa valer no mesmo quadro, antes do
+  // navegador tentar encaixar a fita por conta própria.
+  const stopGlide = useCallback(() => {
+    if (viewportRef.current) viewportRef.current.dataset.gliding = "false";
+    if (!glideRafRef.current) return;
+    cancelAnimationFrame(glideRafRef.current);
+    glideRafRef.current = 0;
+  }, []);
+
+  /** Onde cada cartão encosta na borda esquerda da janela. */
+  const snapPoints = useCallback(() => {
+    const viewport = viewportRef.current;
+    if (!viewport) return [];
+    const origin = viewport.getBoundingClientRect().left;
+    const end = Math.max(0, viewport.scrollWidth - viewport.clientWidth);
+    return Array.from(
+      viewport.querySelectorAll<HTMLElement>(".sw__item"),
+      (item) => {
+        const offset =
+          viewport.scrollLeft + item.getBoundingClientRect().left - origin;
+        return Math.min(Math.max(offset, 0), end);
+      },
+    );
+  }, []);
+
+  const nearestSnap = useCallback((position: number) => {
+    const points = snapPoints();
+    if (!points.length) return position;
+    return points.reduce((closest, point) =>
+      Math.abs(point - position) < Math.abs(closest - position) ? point : closest,
+    );
+  }, [snapPoints]);
+
+  /** Leva a fita até o destino com desaceleração — nada de corte seco. */
+  const glideTo = useCallback((target: number, duration: number) => {
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+    stopGlide();
+    const from = viewport.scrollLeft;
+    const distance = target - from;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduceMotion || Math.abs(distance) < 1) {
+      viewport.scrollLeft = target;
+      scheduleControlsUpdate();
+      return;
+    }
+    viewport.dataset.gliding = "true";
+    let start = 0;
+    const step = (now: number) => {
+      if (!start) start = now;
+      const progress = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      viewport.scrollLeft = from + distance * eased;
+      if (progress < 1) {
+        glideRafRef.current = requestAnimationFrame(step);
+        return;
+      }
+      glideRafRef.current = 0;
+      viewport.dataset.gliding = "false";
+      scheduleControlsUpdate();
+    };
+    glideRafRef.current = requestAnimationFrame(step);
+  }, [scheduleControlsUpdate, stopGlide]);
+
+  /** Um cartão por clique, em vez de uma distância arbitrária. */
   const scrollGallery = (direction: -1 | 1) => {
     const viewport = viewportRef.current;
     if (!viewport) return;
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    viewport.scrollBy({
-      left: direction * Math.min(viewport.clientWidth * .78, 620),
-      behavior: reduceMotion ? "auto" : "smooth",
-    });
+    stopGlide();
+    const points = snapPoints();
+    const current = viewport.scrollLeft;
+    const end = Math.max(0, viewport.scrollWidth - viewport.clientWidth);
+    const target =
+      direction === 1
+        ? points.find((point) => point > current + 4) ?? end
+        : [...points].reverse().find((point) => point < current - 4) ?? 0;
+    glideTo(target, 520);
   };
 
   const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (event.pointerType !== "mouse" || event.button !== 0) return;
+    stopGlide();
     const viewport = event.currentTarget;
     dragRef.current = {
       active: true,
@@ -415,6 +513,9 @@ export default function ScatteredWorks({ items }: { items: IndexItem[] }) {
       pointerId: event.pointerId,
       startX: event.clientX,
       startScrollLeft: viewport.scrollLeft,
+      lastX: event.clientX,
+      lastTime: event.timeStamp,
+      velocity: 0,
     };
     viewport.setPointerCapture(event.pointerId);
     setDragging(true);
@@ -423,11 +524,25 @@ export default function ScatteredWorks({ items }: { items: IndexItem[] }) {
   const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
     const drag = dragRef.current;
     if (!drag.active || drag.pointerId !== event.pointerId) return;
-    const delta = event.clientX - drag.startX;
-    if (Math.abs(delta) > 5) drag.moved = true;
-    if (!drag.moved) return;
+    const viewport = event.currentTarget;
+    if (!drag.moved) {
+      const delta = event.clientX - drag.startX;
+      if (Math.abs(delta) <= DRAG_THRESHOLD) return;
+      // Reancorar na borda da folga: o gesto vira arraste sem salto, e um
+      // primeiro movimento largo não perde o caminho que já andou.
+      drag.moved = true;
+      drag.startX = drag.startX + Math.sign(delta) * DRAG_THRESHOLD;
+      drag.startScrollLeft = viewport.scrollLeft;
+    }
     event.preventDefault();
-    event.currentTarget.scrollLeft = drag.startScrollLeft - delta;
+    const elapsed = event.timeStamp - drag.lastTime;
+    if (elapsed > 0) {
+      const instant = (event.clientX - drag.lastX) / elapsed;
+      drag.velocity = drag.velocity * .7 + instant * .3;
+      drag.lastX = event.clientX;
+      drag.lastTime = event.timeStamp;
+    }
+    viewport.scrollLeft = drag.startScrollLeft - (event.clientX - drag.startX);
   };
 
   const finishDrag = (event: ReactPointerEvent<HTMLDivElement>, cancelled = false) => {
@@ -439,7 +554,6 @@ export default function ScatteredWorks({ items }: { items: IndexItem[] }) {
     }
     drag.active = false;
     setDragging(false);
-    scheduleControlsUpdate();
 
     if (!cancelled && drag.moved) {
       suppressClickRef.current = true;
@@ -447,6 +561,22 @@ export default function ScatteredWorks({ items }: { items: IndexItem[] }) {
         suppressClickRef.current = false;
       }, 0);
     }
+
+    if (cancelled || !drag.moved) {
+      scheduleControlsUpdate();
+      return;
+    }
+
+    // Quem soltou parado não merece arremesso: só conta o impulso de quem
+    // ainda estava movendo a mão no instante em que soltou.
+    const stale = event.timeStamp - drag.lastTime > 70;
+    const velocity = stale || Math.abs(drag.velocity) < FLICK_THRESHOLD
+      ? 0
+      : drag.velocity;
+    const projected = viewport.scrollLeft - velocity * GLIDE_PROJECTION;
+    const target = nearestSnap(projected);
+    const distance = Math.abs(target - viewport.scrollLeft);
+    glideTo(target, Math.min(760, Math.max(320, 260 + distance * .55)));
   };
 
   const handleClickCapture = (event: ReactMouseEvent<HTMLDivElement>) => {
@@ -501,6 +631,7 @@ export default function ScatteredWorks({ items }: { items: IndexItem[] }) {
           tabIndex={0}
           data-dragging={dragging ? "true" : "false"}
           onScroll={scheduleControlsUpdate}
+          onWheel={stopGlide}
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={(event) => finishDrag(event)}
@@ -518,10 +649,7 @@ export default function ScatteredWorks({ items }: { items: IndexItem[] }) {
                   draggable={false}
                   data-cursor-label={`↗ ${item.num}`}
                 >
-                  <span
-                    className="sw__media"
-                    style={{ aspectRatio: `${1 / item.ratio} / 1` }}
-                  >
+                  <span className="sw__media">
                     <Image
                       className="sw__image"
                       src={item.img}

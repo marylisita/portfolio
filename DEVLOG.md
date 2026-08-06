@@ -1,3 +1,31 @@
+# Devlog: ondularis nos destaques e a fita da home
+
+6 de agosto de 2026
+
+A ondularis não aparecia nem na home nem na aba de abertura de `/work`: ela
+estava só na aba de arte e tecnologia. Entrou em `FEATURED_PROJECT_HREFS` e em
+`CORE_HREFS`, fechando as duas listas — sétimo cartão na home, 09/09 na página
+de trabalhos.
+
+A capa dela é o pôster em pé, 1080×1350, e foi isso que expôs o problema da
+galeria: cada cartão herdava a proporção da própria capa, então a fita ia de
+275px a 495px de altura e as legendas caíam em linhas diferentes, com um vão
+morto embaixo dos cartões baixos. Agora a moldura é única — 3:2, com margem
+interna e a capa inteira dentro dela, sem corte. Os sete cartões têm a mesma
+altura e uma linha de base só.
+
+O arraste também foi refeito. Antes, o encaixe do CSS era `mandatory` o tempo
+todo: ao soltar o mouse, o navegador cortava para o cartão mais próximo em um
+quadro, sem transição. Agora o arraste guarda a velocidade dos últimos
+movimentos, projeta cerca de 210ms de deslize, escolhe o ponto de encaixe mais
+próximo dessa projeção e vai até lá com desaceleração — o encaixe do navegador
+fica desligado durante o gesto e volta quando a fita já está parada em cima do
+ponto, sem puxão. Quem solta com a mão parada não é arremessado: aí vale só o
+cartão mais próximo de onde parou. As setas e o teclado passaram a andar um
+cartão exato por vez, em vez de uma distância arbitrária.
+
+---
+
 # Devlog: home alinhada à curadoria
 
 30 de julho de 2026

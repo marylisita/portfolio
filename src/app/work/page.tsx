@@ -134,6 +134,7 @@ const CORE_HREFS = [
   "/work/isadora",
   "/work/hologlam",
   "/work/touchdesigner-workshop",
+  "/work/ondularis",
 ];
 
 /** O eixo das abas é área, nunca contexto. Um projeto pode estar em mais de uma. */
