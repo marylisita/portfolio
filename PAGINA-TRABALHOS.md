@@ -57,6 +57,7 @@ Eixo é **área**, nunca contexto. Cliente / acadêmico / colaboração / autora
 seguem como etiqueta na linha de tags, não como aba.
 
 - **destaques** — os 9 do núcleo, na ordem de `CORE_HREFS`
+- **UX/UI & web design** — juízo, vegcoz, genlab, hologlam
 - **design gráfico** — graduation, ebat, isadora, magazine, pilotis, chinario
 - **arte & tecnologia** — cyber-marinum, ondularis, hologlam, touchdesigner, genlab
 - **pesquisa & educação** — hologlam, touchdesigner, genlab, vegcoz
@@ -65,8 +66,10 @@ Um projeto pode estar em mais de uma área. "Destaques" mostra só o núcleo; as
 outras abas consultam os 12 — assim a curadoria segue sendo a primeira
 impressão e nada fica inacessível.
 
-**Não criar aba de UX/UI ainda:** só o vegcoz cairia nela. Quando existir um
-segundo case forte de interface, "produto & interfaces" passa a fazer sentido.
+**UX/UI & web design agora é uma aba própria e prioritária.** O juízo virou o
+segundo case forte de interface e resolveu a condição anterior. A aba também
+reúne o processo completo do vegcoz, a experiência web do genlab e a interface
+de app do hologlam; sua ordem é curada em `DIGITAL_HREFS`.
 
 **Não usar braille como contagem.** Foi tentado e descartado: os pontos
 levantados eram o número, ficou bonito e ilegível. Braille segue como ornamento

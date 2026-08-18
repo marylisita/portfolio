@@ -137,9 +137,18 @@ const CORE_HREFS = [
   "/work/ondularis",
 ];
 
+/** Recorte de produto digital, UX/UI e web. A ordem começa pelos dois cases
+ * com processo de produto mais completo e termina nos experimentos de interface. */
+const DIGITAL_HREFS = [
+  "/work/juizo",
+  "/work/vegcoz",
+  "/work/genlab",
+  "/work/hologlam",
+];
+
 /** O eixo das abas é área, nunca contexto. Um projeto pode estar em mais de uma. */
 const AREAS: Record<string, string[]> = {
-  "/work/juizo": ["grafico", "pesquisa"],
+  "/work/juizo": ["digital", "grafico", "pesquisa"],
   "/work/graduation": ["grafico"],
   "/work/ebat": ["grafico"],
   "/work/isadora": ["grafico"],
@@ -148,14 +157,15 @@ const AREAS: Record<string, string[]> = {
   "/work/chinario": ["grafico"],
   "/work/cyber-marinum": ["arte"],
   "/work/ondularis": ["arte"],
-  "/work/hologlam": ["arte", "pesquisa"],
+  "/work/hologlam": ["digital", "arte", "pesquisa"],
   "/work/touchdesigner-workshop": ["arte", "pesquisa"],
-  "/work/genlab": ["arte", "pesquisa"],
-  "/work/vegcoz": ["pesquisa"],
+  "/work/genlab": ["digital", "arte", "pesquisa"],
+  "/work/vegcoz": ["digital", "pesquisa"],
 };
 
 const TABS = [
   { id: "destaques", key: "wk_tab_featured" },
+  { id: "digital", key: "wk_tab_digital", priority: true },
   { id: "grafico", key: "wk_tab_graphic" },
   { id: "arte", key: "wk_tab_art" },
   { id: "pesquisa", key: "wk_tab_research" },
@@ -173,11 +183,18 @@ export default function Work() {
           const found = all.find((item) => item.href === href);
           return found ? [found] : [];
         })
+      : area === "digital"
+        ? DIGITAL_HREFS.flatMap((href) => {
+            const found = all.find((item) => item.href === href);
+            return found ? [found] : [];
+          })
       : all.filter((item) => AREAS[item.href]?.includes(area));
 
   const countFor = (id: string) =>
     id === "destaques"
       ? CORE_HREFS.length
+      : id === "digital"
+        ? DIGITAL_HREFS.length
       : all.filter((item) => AREAS[item.href]?.includes(id)).length;
 
   const getDesc = (href: string) => {
@@ -343,6 +360,54 @@ export default function Work() {
       color: var(--wk-wine);
       font-variant-numeric: tabular-nums;
       letter-spacing: 0;
+    }
+
+    .wk-tab--priority {
+      min-height: var(--tap-min);
+      padding: .55rem .9rem;
+      color: var(--wk-paper);
+      background: var(--wk-wine);
+      box-shadow: 0 0 0 1px var(--wk-wine);
+      transition:
+        color 180ms cubic-bezier(.2, 0, 0, 1),
+        background-color 180ms cubic-bezier(.2, 0, 0, 1),
+        box-shadow 180ms cubic-bezier(.2, 0, 0, 1),
+        transform 180ms cubic-bezier(.2, 0, 0, 1);
+    }
+
+    .wk-tab--priority::after {
+      inset: .28rem;
+      height: auto;
+      border: 1px dashed currentColor;
+      background: transparent;
+      opacity: 0;
+      transform: none;
+      transition: opacity 180ms cubic-bezier(.2, 0, 0, 1);
+      pointer-events: none;
+    }
+
+    .wk-tab--priority .wk-tab__count {
+      color: inherit;
+      opacity: .72;
+    }
+
+    .wk-tab--priority:hover,
+    .wk-tab--priority:focus-visible,
+    .wk-tab--priority[data-active="true"] {
+      color: var(--wk-paper);
+      background: var(--wk-ink);
+      box-shadow: 0 0 0 1px var(--wk-ink);
+    }
+
+    .wk-tab--priority:hover::after,
+    .wk-tab--priority:focus-visible::after,
+    .wk-tab--priority[data-active="true"]::after {
+      opacity: .42;
+      transform: none;
+    }
+
+    .wk-tab--priority:active {
+      transform: scale(.96);
     }
 
     .wk-filter-dot {
@@ -714,6 +779,10 @@ export default function Work() {
         transition: none;
       }
 
+      .wk-tab--priority:active {
+        transform: none;
+      }
+
       .wk-project:hover .wk-project__visual,
       .wk-project:focus-within .wk-project__visual,
       .wk-project:hover .wk-project__visual::before,
@@ -760,7 +829,9 @@ export default function Work() {
               ) : null}
               <button
                 type="button"
-                className="wk-tab hover-trigger"
+                className={`wk-tab hover-trigger${
+                  "priority" in tab && tab.priority ? " wk-tab--priority" : ""
+                }`}
                 aria-pressed={area === tab.id}
                 data-active={area === tab.id ? "true" : undefined}
                 onClick={() => setArea(tab.id)}
