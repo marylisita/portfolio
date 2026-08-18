@@ -326,8 +326,7 @@ function DraggableHeroTag({
           maxY: bounds.bottom - rect.bottom,
           moved: false,
         };
-        element.dataset.dragging = "true";
-        element.setPointerCapture(event.pointerId);
+        suppressClickRef.current = false;
       }}
       onPointerMove={(event) => {
         const drag = dragRef.current;
@@ -336,7 +335,15 @@ function DraggableHeroTag({
         const deltaX = event.clientX - drag.startX;
         const deltaY = event.clientY - drag.startY;
         if (!drag.moved && Math.hypot(deltaX, deltaY) < 4) return;
-        drag.moved = true;
+        if (!drag.moved) {
+          /* A captura so entra depois que o arrasto passa do limiar. Se ela
+             fosse ligada ja no pointerdown, o pointerup e o click seriam
+             redirecionados para este wrapper e a ancora dentro dele nunca
+             receberia o clique - os botoes do hero paravam de navegar. */
+          drag.moved = true;
+          element.dataset.dragging = "true";
+          element.setPointerCapture(event.pointerId);
+        }
         const x = offsetRef.current.x + Math.min(drag.maxX, Math.max(drag.minX, deltaX));
         const y = offsetRef.current.y + Math.min(drag.maxY, Math.max(drag.minY, deltaY));
         element.style.translate = `${x}px ${y}px`;
