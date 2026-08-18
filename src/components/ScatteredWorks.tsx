@@ -517,8 +517,6 @@ export default function ScatteredWorks({ items }: { items: IndexItem[] }) {
       lastTime: event.timeStamp,
       velocity: 0,
     };
-    viewport.setPointerCapture(event.pointerId);
-    setDragging(true);
   };
 
   const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
@@ -533,6 +531,17 @@ export default function ScatteredWorks({ items }: { items: IndexItem[] }) {
       drag.moved = true;
       drag.startX = drag.startX + Math.sign(delta) * DRAG_THRESHOLD;
       drag.startScrollLeft = viewport.scrollLeft;
+      // A captura so entra aqui, depois do limiar. Ligada ja no pointerdown,
+      // ela redirecionaria o pointerup e o click para este viewport e os
+      // <Link> dos cards nunca receberiam o clique - a galeria parava de abrir
+      // os projetos. Mesmo motivo do arrasto das etiquetas do hero.
+      viewport.setPointerCapture(event.pointerId);
+      // O atributo vai no DOM aqui mesmo, e nao so pelo estado do React: e ele
+      // que desliga o scroll-snap: inline mandatory, e o snap precisa ja estar
+      // desligado quando o scrollLeft logo abaixo for escrito. Esperando o
+      // proximo render, o primeiro passo do arrasto voltava para o snap.
+      viewport.dataset.dragging = "true";
+      setDragging(true);
     }
     event.preventDefault();
     const elapsed = event.timeStamp - drag.lastTime;
