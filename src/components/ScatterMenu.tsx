@@ -233,6 +233,11 @@ const styles = `
     .sm__cluster .sm__tag[data-priority="primary"]::after { content: ""; }
     .sm__portal { display: none; }
   }
+  /* A navegação persistente passa para o menu do cabeçalho no celular.
+     O antigo trilho no rodapé sobrepunha títulos e legendas durante a leitura. */
+  @media (max-width: 860px) {
+    .sm__cluster { display: none !important; }
+  }
   @media (prefers-reduced-motion: reduce) {
     .sm__tag { transition: none; }
   }

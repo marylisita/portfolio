@@ -175,6 +175,10 @@ const styles = `
     border-color: color-mix(in srgb, #f7f3e9 62%, transparent) !important;
     box-shadow: 2px 2px 0 rgba(247, 243, 233, .16) !important;
   }
+  html[data-project-ink-header="true"] .sh--r {
+    background: rgba(20, 14, 28, .86);
+    box-shadow: 0 0 0 .25rem rgba(20, 14, 28, .7);
+  }
   html[data-project-ink-cluster="true"] .pj-tag {
     --btn-bg: #f7f3e9;
     --btn-border: #f7f3e9;
@@ -194,9 +198,21 @@ const styles = `
      inverter junto com o cabeçalho nas seções escuras, senão vira um
      retângulo claro com texto claro em cima. */
   @media (max-width: 860px) {
+    .pj-cluster { display: none; }
     html[data-project-ink-header="true"] .sh__mark {
       background: rgba(20, 14, 28, .82) !important;
       box-shadow: 0 0 0 .3rem rgba(20, 14, 28, .82) !important;
+    }
+    html[data-project-ink-header="true"] .sh__menu-toggle {
+      background: rgba(20, 14, 28, .9);
+    }
+    html[data-project-ink-header="true"] .sh__mobile-menu {
+      background: #140e1c;
+      border-color: rgba(247, 243, 233, .42);
+      box-shadow: 5px 5px 0 rgba(247, 243, 233, .16);
+    }
+    html[data-project-ink-header="true"] .sh__mobile-menu .lang-toggle {
+      color: #f7f3e9 !important;
     }
   }
 
