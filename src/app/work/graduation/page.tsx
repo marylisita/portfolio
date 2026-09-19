@@ -27,6 +27,8 @@ export default function GraduationProject() {
 
   return (
     <ProjectShell
+      /* a primeira figura do case ja e esta mesma arte, em movimento */
+      cover={false}
       accent="#fb4c2f"
       title={
         <>

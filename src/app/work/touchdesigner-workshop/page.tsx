@@ -841,6 +841,8 @@ export default function TouchDesignerWorkshopProject() {
 
   return (
     <ProjectShell
+      /* o case ja abre com este mesmo arquivo */
+      cover={false}
       accent="#735cff"
       title={
         <>

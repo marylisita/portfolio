@@ -31,7 +31,7 @@ const styles = `
   .cf__voltar:hover { opacity: 1; text-decoration: underline; text-underline-offset: 3px; }
   .cf__voltar:focus-visible { outline: 2px dotted var(--site-ink); outline-offset: 4px; }
   .cf__titulo {
-    font-family: var(--font-pixelscript), var(--font-hand), cursive;
+    font-family: var(--font-pixelscript), cursive;
     font-weight: 400;
     font-size: clamp(2.6rem, 8vw, 4.2rem);
     line-height: 1.05;

@@ -8,6 +8,7 @@ export function useProjects(): IndexItem[] {
   const { t, lang } = useT();
   const flat = (s: string) => s.replace(/\n/g, " ");
   const impact = (href: string) => getProjectStory(href, lang)?.shortImpact ?? "";
+  const blurb = (href: string) => getProjectStory(href, lang)?.impact ?? "";
 
   return [
     {
@@ -16,6 +17,7 @@ export function useProjects(): IndexItem[] {
       tags: `${t("cat_collab")} / ` + t("p05_tags").replace(", ", " / "),
       href: "/work/graduation",
       impact: impact("/work/graduation"),
+      blurb: blurb("/work/graduation"),
       ratio: 0.494,
       img: "/img/graduation/animacao-poster.webp",
     },
@@ -25,6 +27,7 @@ export function useProjects(): IndexItem[] {
       tags: `${t("cat_client")} / ${t("p04_tag1")} / ${t("p04_tag2")}`,
       href: "/work/ebat",
       impact: impact("/work/ebat"),
+      blurb: blurb("/work/ebat"),
       ratio: 0.5625,
       img: "/img/previews/ebat.webp",
     },
@@ -38,6 +41,7 @@ export function useProjects(): IndexItem[] {
       }`,
       href: "/work/cyber-marinum",
       impact: impact("/work/cyber-marinum"),
+      blurb: blurb("/work/cyber-marinum"),
       ratio: 1,
       img: "/img/cyber-marinum/11-aquario-magenta-hero.webp",
     },
@@ -47,6 +51,7 @@ export function useProjects(): IndexItem[] {
       tags: `${t("cat_college")} / ${t("p02_tag1")} / ${t("p02_tag2")}`,
       href: "/work/magazine",
       impact: impact("/work/magazine"),
+      blurb: blurb("/work/magazine"),
       ratio: 0.667,
       img: "/img/previews/magazine.webp",
     },
@@ -56,6 +61,7 @@ export function useProjects(): IndexItem[] {
       tags: `${t("cat_freela")} / ${t("p01_tag1")} / ${t("p01_tag2")}`,
       href: "/work/isadora",
       impact: impact("/work/isadora"),
+      blurb: blurb("/work/isadora"),
       ratio: 0.5625,
       img: "/img/previews/isadora.webp",
     },
@@ -65,6 +71,7 @@ export function useProjects(): IndexItem[] {
       tags: `${t("cat_college")} / ` + t("p08_tags").replace(", ", " / "),
       href: "/work/hologlam",
       impact: impact("/work/hologlam"),
+      blurb: blurb("/work/hologlam"),
       ratio: 0.562, // trio.webp 1600x900 (recorte dela, 2026-07-23)
       img: "/img/previews/hologlam.webp",
     },
@@ -78,6 +85,7 @@ export function useProjects(): IndexItem[] {
       }`,
       href: "/work/touchdesigner-workshop",
       impact: impact("/work/touchdesigner-workshop"),
+      blurb: blurb("/work/touchdesigner-workshop"),
       ratio: 1227 / 941,
       img: "/img/touchdesigner-workshop/busto-colorido-capa.webp",
     },
@@ -87,6 +95,7 @@ export function useProjects(): IndexItem[] {
       tags: `${t("cat_college")} / ` + t("p09_tags").replace(", ", " / "),
       href: "/work/vegcoz",
       impact: impact("/work/vegcoz"),
+      blurb: blurb("/work/vegcoz"),
       ratio: 849 / 1200, // preview.webp 1200x849
       img: "/img/previews/vegcoz.webp",
     },
@@ -98,6 +107,7 @@ export function useProjects(): IndexItem[] {
       }`,
       href: "/work/ondularis",
       impact: impact("/work/ondularis"),
+      blurb: blurb("/work/ondularis"),
       ratio: 1.25,
       img: "/img/previews/ondularis.webp",
     },
@@ -107,6 +117,7 @@ export function useProjects(): IndexItem[] {
       tags: `${t("cat_collab")} / ` + t("p06_tags").replace(", ", " / "),
       href: "/work/pilotis",
       impact: impact("/work/pilotis"),
+      blurb: blurb("/work/pilotis"),
       ratio: 0.319,
       img: "/img/previews/pilotis.webp",
     },
@@ -116,6 +127,7 @@ export function useProjects(): IndexItem[] {
       tags: `${t("cat_collab")} / ` + t("p07_tags").replace(", ", " / "),
       href: "/work/chinario",
       impact: impact("/work/chinario"),
+      blurb: blurb("/work/chinario"),
       ratio: 0.667,
       img: "/img/previews/chinario.webp",
     },
@@ -125,6 +137,7 @@ export function useProjects(): IndexItem[] {
       tags: `${t("cat_autoral")} / ${t("p03_tag1")} / ${t("p03_tag2")}`,
       href: "/work/genlab",
       impact: impact("/work/genlab"),
+      blurb: blurb("/work/genlab"),
       ratio: 598 / 1200,
       img: "/img/previews/genlab.webp",
     },
@@ -136,6 +149,7 @@ export function useProjects(): IndexItem[] {
       }`,
       href: "/work/juizo",
       impact: impact("/work/juizo"),
+      blurb: blurb("/work/juizo"),
       ratio: 675 / 1200, // previews/juizo.webp 1200x675
       img: "/img/previews/juizo.webp",
     },

@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import PlaygroundHero from "@/components/PlaygroundHero";
-import ScatteredWorks from "@/components/ScatteredWorks";
+import ScatteredWorks, { type WorkShape } from "@/components/ScatteredWorks";
 import { useProjects } from "@/components/useProjects";
 import Marquee from "@/components/Marquee";
 import AdaptiveKanagawa from "@/components/AdaptiveKanagawa";
@@ -18,14 +18,24 @@ import SkillConstellation from "@/components/SkillConstellation";
 
 const STITCH_DIVIDER = "------  ";
 
-const FEATURED_PROJECT_HREFS = [
-  "/work/juizo",
-  "/work/graduation",
-  "/work/ebat",
-  "/work/cyber-marinum",
-  "/work/magazine",
-  "/work/isadora",
-  "/work/ondularis",
+/* A seleção da home e a forma de cada peça dentro dela. O `shape` não é
+   decoração de layout: é a resposta a "por que este projeto precisa deste
+   espaço". Se um projeto sair da lista, o motivo do vizinho muda junto — não
+   trocar por ordem alfabética nem por data. */
+const FEATURED_PROJECTS: { href: string; shape: WorkShape }[] = [
+  // Produto autoral com pesquisa, protótipo e desenvolvimento: é o que aguenta
+  // a leitura mais longa. Abre a seção e leva o resultado por extenso.
+  { href: "/work/juizo", shape: "lead" },
+  // Duas identidades gráficas na mesma linha, em proporções diferentes.
+  // Comparar as duas é o ponto: cartaz deitado x capa de campanha.
+  { href: "/work/graduation", shape: "half" },
+  { href: "/work/ebat", shape: "half" },
+  // Instalação: o que interessa é a obra montada na sala, então faixa larga.
+  { href: "/work/cyber-marinum", shape: "band" },
+  { href: "/work/magazine", shape: "half" },
+  { href: "/work/isadora", shape: "half" },
+  // Cartaz em pé: coluna estreita, ao lado da saída para o arquivo inteiro.
+  { href: "/work/ondularis", shape: "column" },
 ];
 
 const HERO_HEADLINES = {
@@ -63,7 +73,12 @@ const rmStyles = `
     --acid: var(--site-accent);
     --hero-highlight: #75332f;
     --hero-art-lift: 0rem;
-    --font-grotesk: Arial, "Helvetica Neue", Helvetica, sans-serif;
+    /* Aeonik — a grotesca dela, que ja esta carregada em 400/700. O Arial daqui
+       era o placeholder do "lowercase grotesque display type" do redesign e
+       nunca foi trocado pela fonte real. Pior: a pilha tinha dois desenhos
+       diferentes (Arial no Windows, Helvetica Neue no Mac), entao o bloco
+       mudava de cara conforme a maquina de quem abria. */
+    --font-grotesk: var(--font-body);
     /* degradê profundo: roxo/azul da id EBAT respirando por baixo do preto */
     background:
       radial-gradient(1100px 700px at 18% -5%, var(--site-tint-a) 0%, transparent 60%),
@@ -196,10 +211,10 @@ const rmStyles = `
   .rm-thread {
     position: absolute;
     z-index: 2;
-    top: 100svh;
+    top: var(--hero-h, 94svh);
     left: .85rem;
     width: 4.1rem;
-    height: calc(100% - 100svh - 22rem);
+    height: calc(100% - var(--hero-h, 94svh) - 22rem);
     color: var(--ink);
     opacity: .24;
     pointer-events: none;
@@ -244,18 +259,18 @@ const rmStyles = `
     line-height: 1;
     box-shadow: 2px 2px 0 color-mix(in srgb, var(--ink) 8%, transparent);
   }
+  /* Marca de secao, parada. Ela girava e crescia em looping de 9s, e junto
+     com a faixa do Marquee, o pulso do "disponivel" e o relogio davam quatro
+     movimentos continuos ao mesmo tempo na mesma tela — densidade de showreel.
+     O simbolo continua; o movimento continuo ficou com a faixa. */
   .rm-guide {
     position: absolute;
     z-index: 4;
     font-family: var(--font-mono), monospace;
     font-size: 1.15rem;
     color: var(--ink);
-    opacity: .46;
-    animation: rm-guide 9s ease-in-out infinite;
-  }
-  @keyframes rm-guide {
-    0%, 100% { rotate: 0deg; scale: 1; }
-    50% { rotate: 70deg; scale: 1.14; }
+    opacity: .4;
+    rotate: 12deg;
   }
   @media (prefers-reduced-motion: reduce) {
     .rm-status__dot { animation: none; }
@@ -280,7 +295,23 @@ const rmStyles = `
     padding: 6rem 5.5rem;
     scroll-margin-top: 6.5rem;
     content-visibility: auto;
-    contain-intrinsic-size: auto 900px;
+  }
+  /* As duas secoes tinham a mesma altura (~1 tela cada) e o mesmo padding.
+     Duas unidades identicas em sequencia sao lidas como slides, por melhor
+     que cada uma seja isolada. #work e o motivo do site existir e agora tem
+     folego; #about e coda e termina antes de encher a tela. Se um dia as
+     duas voltarem a medir igual, o efeito slide volta junto. */
+  /* padding-top curto de proposito: a seção que justifica o site inteiro nao
+     precisa de mais uma abertura cerimoniosa depois do herói. */
+  #work.rm-sec {
+    padding-top: 3.5rem;
+    padding-bottom: 11rem;
+    contain-intrinsic-size: auto 3200px;
+  }
+  #about.rm-sec {
+    padding-top: 3.5rem;
+    padding-bottom: 5rem;
+    contain-intrinsic-size: auto 620px;
   }
   .rm-label {
     font-family: var(--font-body);
@@ -307,6 +338,7 @@ const rmStyles = `
   .rm-about { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 4rem; align-items: start; }
   .rm-about-copy { min-width: 0; }
   .rm-tools { display: flex; flex-direction: column; min-width: 0; }
+  .rm-tools__label { display: none; }
   .rm-tool-row {
     display: grid; grid-template-columns: 40% 1fr; gap: 1.5rem;
     padding: .85rem 0;
@@ -316,10 +348,25 @@ const rmStyles = `
   .rm-tool-row span:last-child { font-family: var(--font-body); text-transform: none; letter-spacing: 0; font-size: var(--type-body); }
 
   @media (max-width: 900px) {
-    .rm-about { grid-template-columns: 1fr; gap: 2.5rem; }
+    .rm-about { grid-template-columns: 1fr; gap: 3rem; }
+    .rm-label__aside { display: none; }
+    .rm-tools__label {
+      display: block;
+      margin: 0 0 1.1rem;
+      font-family: var(--font-body);
+      font-size: var(--type-label);
+      font-weight: 400;
+      text-transform: lowercase;
+      letter-spacing: .08em;
+      opacity: .7;
+    }
   }
   @media (max-width: 720px) {
     .rm-sec { padding: 4rem 1.25rem; }
+    /* No mobile tudo ja e uma coluna longa: o ritmo assimetrico do desktop
+       so criaria buraco. Volta ao padding uniforme. */
+    #work.rm-sec { padding-top: 2.5rem; padding-bottom: 5.5rem; }
+    #about.rm-sec { padding-top: 3rem; padding-bottom: 4rem; }
     .rm-label { margin-bottom: 2rem; }
   }
 
@@ -407,13 +454,14 @@ function HomeContent() {
 
   // lista única de projetos (mesma fonte da página /work)
   const projects = useProjects();
-  const featuredProjects = FEATURED_PROJECT_HREFS.flatMap((href) => {
+  // O número é o do arquivo, não a posição na seleção. Antes a home
+  // renumerava de 01 a 07 e o mesmo projeto aparecia como "01" aqui e "13/13"
+  // na própria página — dois nomes para a mesma coisa. Agora um número vale um
+  // projeto no site inteiro.
+  const featuredProjects = FEATURED_PROJECTS.flatMap(({ href, shape }) => {
     const project = projects.find((item) => item.href === href);
-    return project ? [project] : [];
-  }).map((project, index) => ({
-    ...project,
-    num: String(index + 1).padStart(2, "0"),
-  }));
+    return project ? [{ ...project, shape }] : [];
+  });
 
   const marquee = [
     t("p04_tag1"), t("p01_tag1"), t("about_cat_web"),
@@ -508,7 +556,12 @@ function HomeContent() {
           <span className="rm-guide" aria-hidden="true" style={{ left: "51%", top: "3.4rem" }}>✳︎</span>
           <div className="rm-label">
             <span>{t("selected_work")}</span>
-            <span>{featuredProjects.length.toString().padStart(2, "0")} —</span>
+            {/* sete escolhidos dentro de um arquivo de treze — o número do
+                cartão é o do arquivo, e este par diz de onde ele vem */}
+            <span>
+              {featuredProjects.length.toString().padStart(2, "0")} /{" "}
+              {projects.length.toString().padStart(2, "0")}
+            </span>
           </div>
           <AsciiDivider className="rm-divider" pattern={STITCH_DIVIDER} fullWidth opacity={0.52} />
           <ScatteredWorks items={featuredProjects} />
@@ -519,7 +572,10 @@ function HomeContent() {
           <span className="rm-guide" aria-hidden="true" style={{ right: "7%", top: "4.5rem", animationDelay: "-3s" }}>✳︎</span>
           <div className="rm-label">
             <span>{t("about_title")}</span>
-            <span>{t("rm_tools_label")}</span>
+            {/* No desktop este rótulo encabeça a coluna da direita. No celular
+                a coluna vem depois da minibio inteira, e o rótulo ficava
+                anunciando o texto errado — lá ele reaparece junto da lista. */}
+            <span className="rm-label__aside">{t("rm_tools_label")}</span>
           </div>
           <AsciiDivider className="rm-divider" pattern={STITCH_DIVIDER} fullWidth opacity={0.52} />
           <div className="rm-about">
@@ -529,6 +585,7 @@ function HomeContent() {
               </h2>
             </div>
             <div className="rm-tools">
+              <h3 className="rm-tools__label">{t("rm_tools_label")}</h3>
               <SkillConstellation nodes={constellation} />
               <div className="rm-tool-row">
                 <span>{t("about_nano_sub")}</span>

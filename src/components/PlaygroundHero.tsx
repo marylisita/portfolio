@@ -133,9 +133,12 @@ const styles = `
     position: relative;
     background: transparent; /* deixa o degradê+ruído do .rm aparecer */
     color: var(--ink);
-    /* Uma tela exata: a gravura é enquadrada e recortada, não exibida inteira. */
-    height: 100svh;
-    min-height: 100svh;
+    /* A gravura é enquadrada e recortada, não exibida inteira. Fica ABAIXO de
+       uma tela de propósito (--hero-h): a faixa do Marquee aparece cortada na
+       borda inferior e, por estar em movimento, diz "continua" antes de
+       qualquer scroll. Em 100svh exatos o heroi virava slide de abertura. */
+    height: var(--hero-h, 94svh);
+    min-height: var(--hero-h, 94svh);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -218,7 +221,10 @@ const styles = `
     text-align: left;
     text-transform: lowercase;
     font-family: var(--font-subtitle);
-    font-size: clamp(.78rem, 1.2vw, 1.3rem);
+    /* Esta e a unica linha do herói que diz o que ela faz. No celular estava
+       em 12,5px, menor que a piada logo acima. O desktop nao muda: la o valor
+       ja vinha do 1.2vw. */
+    font-size: clamp(.95rem, 1.2vw, 1.3rem);
     line-height: 1.35;
     letter-spacing: .01em;
     z-index: 1;
@@ -298,8 +304,11 @@ const styles = `
   }
   @media (max-width: 720px) {
     .ph {
+      /* No mobile a altura e ditada pelo conteudo, nao pela tela. O valor de
+         --hero-h para este breakpoint vive no :root (globals.css) porque o
+         .rm-thread da home e irmao do heroi, nao descendente. */
       height: auto;
-      min-height: max(100svh, 54rem);
+      min-height: var(--hero-h);
       padding: 7rem 1.25rem 1.5rem;
     }
     .ph__meta span:nth-child(2) { display: none; }

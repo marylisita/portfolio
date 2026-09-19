@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import HeroButton from "./HeroButton";
 import { useCreativeStudio } from "./CreativeStudio";
+import { useNavTucked } from "./useScrollDirection";
 
 /**
  * Menu criativo (referência: os rótulos soltos do barbianaliu.com, na NOSSA
@@ -139,6 +140,14 @@ const styles = `
     align-items: flex-end;
     gap: .45rem;
     animation: sm-cluster-in .4s cubic-bezier(.16, 1, .3, 1) both;
+    transition: opacity .3s var(--ease-out), translate .38s var(--ease-out);
+  }
+  /* Mesma regra da assinatura fixa: descendo, a fita sai da frente das
+     legendas e das capas; subindo, ela volta. */
+  .sm__cluster[data-tucked="true"] {
+    opacity: 0;
+    translate: .9rem 0;
+    pointer-events: none;
   }
   .sm__cluster > .sm__tag-wrapper {
     animation: sm-cluster-item-in .3s cubic-bezier(.16, 1, .3, 1) var(--tag-delay, 0s) both;
@@ -233,11 +242,14 @@ const styles = `
     .sm__cluster .sm__tag[data-priority="primary"]::after { content: ""; }
     .sm__portal { display: none; }
   }
-  /* A navegação persistente passa para o menu do cabeçalho no celular.
-     O antigo trilho no rodapé sobrepunha títulos e legendas durante a leitura. */
-  @media (max-width: 860px) {
-    .sm__cluster { display: none !important; }
-  }
+  /* A navegação persistente mora no cabeçalho, em qualquer largura.
+     O molhinho fixo no canto sobrepunha títulos, legendas e capas durante a
+     leitura: o texto da página vai até 88px da borda e a fita pede ~155px,
+     então em nenhuma largura ela cabe na margem — ela sempre come conteúdo.
+     O cabeçalho já leva os mesmos três destinos (trabalhos / sobre /
+     contato), então não se perde navegação. As etiquetas espalhadas seguem
+     no herói, que é onde elas são a brincadeira. */
+  .sm__cluster { display: none !important; }
   @media (prefers-reduced-motion: reduce) {
     .sm__tag { transition: none; }
   }
@@ -397,6 +409,7 @@ function DraggableHeroTag({
 
 export default function ScatterMenu({ items }: { items: MenuItem[] }) {
   const [pinned, setPinned] = useState(false);
+  const tucked = useNavTucked();
   const [footerVisible, setFooterVisible] = useState(false);
 
   // além do hero (~1 tela), o menu vira molhinho fixo no canto
@@ -436,6 +449,7 @@ export default function ScatterMenu({ items }: { items: MenuItem[] }) {
       {pinned && !footerVisible && (
           <div
             className="sm__cluster"
+            data-tucked={tucked ? "true" : "false"}
           >
             {items.map((it, i) => (
               <div

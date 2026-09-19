@@ -77,11 +77,16 @@ function ProjectCard({
 }: ProjectCardProps) {
   const { t } = useT();
   const headingId = `project-title-${num}`;
+  /* A forma sai da proporcao do arquivo, nao da posicao na lista. */
+  const orient = ratio >= 0.9 ? "portrait" : ratio <= 0.55 ? "wide" : "landscape";
+  const feature = index === 0 && ratio <= 0.7;
 
   return (
     <article
       className="wk-project"
-      data-reverse={index % 2 === 1 ? "true" : undefined}
+      data-orient={orient}
+      data-feature={feature ? "true" : undefined}
+      data-reverse={!feature && index % 2 === 1 ? "true" : undefined}
       aria-labelledby={headingId}
     >
       <Link
@@ -95,7 +100,11 @@ function ProjectCard({
           src={img}
           alt=""
           fill
-          sizes="(max-width: 900px) calc(100vw - 2.5rem), 66vw"
+          sizes={
+            feature
+              ? "(max-width: 900px) calc(100vw - 2.5rem), 92vw"
+              : "(max-width: 900px) calc(100vw - 2.5rem), 66vw"
+          }
           loading={index === 0 ? "eager" : "lazy"}
         />
       </Link>
@@ -248,18 +257,20 @@ export default function Work() {
     .wk-main {
       width: min(1380px, calc(100% - 5rem));
       margin: 0 auto;
-      padding: clamp(7.8rem, 11vh, 9rem) 0 clamp(5rem, 9vw, 9rem);
+      padding: clamp(6.5rem, 9vh, 7.5rem) 0 clamp(5rem, 9vw, 9rem);
       position: relative;
       z-index: 10;
     }
 
+    /* A abertura era quase uma tela inteira de titulo antes de qualquer
+       imagem. Continua sendo uma capa de secao, mas do tamanho do titulo. */
     .wk-intro {
       position: relative;
-      min-height: clamp(23rem, 37vw, 31rem);
+      min-height: clamp(14rem, 22vw, 19rem);
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
-      padding: clamp(3.5rem, 7vw, 6.4rem) 0 clamp(2.8rem, 4.5vw, 4rem);
+      padding: clamp(1.5rem, 3vw, 3rem) 0 clamp(2rem, 3vw, 2.75rem);
       border-bottom: 1px solid var(--wk-line);
     }
 
@@ -297,8 +308,8 @@ export default function Work() {
     .wk-filters {
       display: flex;
       align-items: center;
-      gap: clamp(1rem, 2.2vw, 2rem);
-      padding: 1.4rem 0 clamp(4rem, 7vw, 6.6rem);
+      gap: clamp(.6rem, 1.4vw, 1.2rem);
+      padding: 1.4rem 0 clamp(2.5rem, 4vw, 4rem);
       overflow-x: auto;
       scrollbar-width: none;
     }
@@ -307,11 +318,14 @@ export default function Work() {
       display: none;
     }
 
+    /* Regra unica dos filtros: preenchido = selecionado.
+       O padding e igual em todos os estados, entao trocar de aba nao empurra a
+       fita para o lado. */
     .wk-tab {
       position: relative;
       flex: 0 0 auto;
       min-height: var(--tap-min);
-      padding: .55rem 0;
+      padding: .55rem .85rem;
       border: 0;
       background: transparent;
       color: var(--wk-muted);
@@ -327,9 +341,9 @@ export default function Work() {
     .wk-tab::after {
       content: "";
       position: absolute;
-      right: 0;
+      right: .85rem;
       bottom: .28rem;
-      left: 0;
+      left: .85rem;
       height: 2px;
       background: var(--wk-wine);
       transform: scaleX(0);
@@ -338,16 +352,28 @@ export default function Work() {
     }
 
     .wk-tab:hover,
-    .wk-tab:focus-visible,
-    .wk-tab[data-active="true"] {
+    .wk-tab:focus-visible {
       color: var(--wk-ink);
     }
 
     .wk-tab:hover::after,
-    .wk-tab:focus-visible::after,
-    .wk-tab[data-active="true"]::after {
+    .wk-tab:focus-visible::after {
       transform: scaleX(1);
       transform-origin: left;
+    }
+
+    .wk-tab[data-active="true"] {
+      color: var(--wk-paper);
+      background: var(--wk-ink);
+      box-shadow: 0 0 0 1px var(--wk-ink);
+    }
+
+    /* Sublinhado e preenchimento juntos viram dois sinais para a mesma coisa. */
+    .wk-tab[data-active="true"]::after { display: none; }
+
+    .wk-tab[data-active="true"] .wk-tab__count {
+      color: inherit;
+      opacity: .72;
     }
 
     .wk-tab:focus-visible {
@@ -362,28 +388,19 @@ export default function Work() {
       letter-spacing: 0;
     }
 
+    /* Esta aba tem destaque porque e o recorte que ela quer mostrar primeiro,
+       nao porque esteja selecionada. Antes ela vinha preenchida de vinho e
+       parecia a aba ativa mesmo com "destaques" ligado: contorno tracejado
+       chama atencao sem imitar selecao. */
     .wk-tab--priority {
-      min-height: var(--tap-min);
-      padding: .55rem .9rem;
-      color: var(--wk-paper);
-      background: var(--wk-wine);
-      box-shadow: 0 0 0 1px var(--wk-wine);
+      color: var(--wk-wine);
+      background: transparent;
+      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--wk-wine) 55%, transparent);
       transition:
         color 180ms cubic-bezier(.2, 0, 0, 1),
         background-color 180ms cubic-bezier(.2, 0, 0, 1),
         box-shadow 180ms cubic-bezier(.2, 0, 0, 1),
         transform 180ms cubic-bezier(.2, 0, 0, 1);
-    }
-
-    .wk-tab--priority::after {
-      inset: .28rem;
-      height: auto;
-      border: 1px dashed currentColor;
-      background: transparent;
-      opacity: 0;
-      transform: none;
-      transition: opacity 180ms cubic-bezier(.2, 0, 0, 1);
-      pointer-events: none;
     }
 
     .wk-tab--priority .wk-tab__count {
@@ -392,21 +409,23 @@ export default function Work() {
     }
 
     .wk-tab--priority:hover,
-    .wk-tab--priority:focus-visible,
-    .wk-tab--priority[data-active="true"] {
-      color: var(--wk-paper);
-      background: var(--wk-ink);
-      box-shadow: 0 0 0 1px var(--wk-ink);
+    .wk-tab--priority:focus-visible {
+      color: var(--wk-wine);
+      box-shadow: inset 0 0 0 1px var(--wk-wine);
     }
 
     .wk-tab--priority:hover::after,
-    .wk-tab--priority:focus-visible::after,
-    .wk-tab--priority[data-active="true"]::after {
-      opacity: .42;
-      transform: none;
+    .wk-tab--priority:focus-visible::after {
+      background: var(--wk-wine);
     }
 
-    .wk-tab--priority:active {
+    .wk-tab--priority[data-active="true"] {
+      color: var(--wk-paper);
+      background: var(--wk-wine);
+      box-shadow: 0 0 0 1px var(--wk-wine);
+    }
+
+    .wk-tab:active {
       transform: scale(.96);
     }
 
@@ -418,6 +437,10 @@ export default function Work() {
       background: var(--wk-wine);
     }
 
+    /* A alternancia esquerda/direita sozinha muda a posicao e nao muda a
+       leitura. O que varia de verdade aqui e o espaco, e ele vem da peca: um
+       cartaz deitado ganha coluna larga, um formato em pe ganha coluna estreita
+       e devolve a sobra para o texto. */
     .wk-project {
       display: grid;
       grid-template-columns: minmax(0, 1.55fr) minmax(22rem, .75fr);
@@ -428,6 +451,51 @@ export default function Work() {
 
     .wk-project[data-reverse="true"] {
       grid-template-columns: minmax(22rem, .75fr) minmax(0, 1.55fr);
+    }
+
+    .wk-project[data-orient="wide"] {
+      grid-template-columns: minmax(0, 1.95fr) minmax(19rem, .6fr);
+    }
+
+    .wk-project[data-orient="wide"][data-reverse="true"] {
+      grid-template-columns: minmax(19rem, .6fr) minmax(0, 1.95fr);
+    }
+
+    .wk-project[data-orient="portrait"] {
+      grid-template-columns: minmax(0, 1fr) minmax(21rem, 1fr);
+    }
+
+    .wk-project[data-orient="portrait"][data-reverse="true"] {
+      grid-template-columns: minmax(21rem, 1fr) minmax(0, 1fr);
+    }
+
+    /* O primeiro da lista abre em largura inteira, com a ficha em duas colunas
+       embaixo. So vale para capa deitada: em formato em pe isso viraria uma
+       imagem de tela e meia. */
+    .wk-project[data-feature="true"] {
+      grid-template-columns: minmax(0, 1fr);
+      gap: clamp(1.4rem, 2.5vw, 2.25rem);
+      align-items: start;
+      margin-bottom: clamp(9rem, 16vw, 15rem);
+    }
+
+    .wk-project[data-feature="true"] .wk-project__copy {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+      gap: 0 clamp(2rem, 4vw, 4.5rem);
+      align-items: start;
+      padding-left: 1.65rem;
+    }
+
+    .wk-project[data-feature="true"] .wk-ascii-divider--vertical { left: 0; }
+    .wk-project[data-feature="true"] .wk-project__count { grid-column: 1; }
+    .wk-project[data-feature="true"] .wk-project__title { grid-column: 1; margin: .9rem 0 1.1rem; }
+    .wk-project[data-feature="true"] .wk-project__tags { grid-column: 1; }
+    .wk-project[data-feature="true"] .wk-project__cta { grid-column: 1; margin-top: 1.8rem; }
+    .wk-project[data-feature="true"] .wk-project__desc {
+      grid-column: 2;
+      grid-row: 1 / -1;
+      margin: .2rem 0 0;
     }
 
     .wk-project[data-reverse="true"] .wk-project__visual {
@@ -706,9 +774,24 @@ export default function Work() {
       }
 
       .wk-project,
-      .wk-project[data-reverse="true"] {
+      .wk-project[data-reverse="true"],
+      .wk-project[data-orient="wide"],
+      .wk-project[data-orient="wide"][data-reverse="true"],
+      .wk-project[data-orient="portrait"],
+      .wk-project[data-orient="portrait"][data-reverse="true"] {
         grid-template-columns: minmax(0, 1fr);
         gap: 2rem;
+      }
+
+      .wk-project[data-feature="true"] .wk-project__copy {
+        grid-template-columns: minmax(0, 1fr);
+        padding-left: 1.65rem;
+      }
+
+      .wk-project[data-feature="true"] .wk-project__desc {
+        grid-column: 1;
+        grid-row: auto;
+        margin: 1.8rem 0 2rem;
       }
 
       .wk-project[data-reverse="true"] .wk-project__visual,
@@ -779,7 +862,7 @@ export default function Work() {
         transition: none;
       }
 
-      .wk-tab--priority:active {
+      .wk-tab:active {
         transform: none;
       }
 
@@ -849,7 +932,7 @@ export default function Work() {
           {projects.map((project, index) => (
             <ProjectCard
               key={project.href}
-              num={String(index + 1).padStart(2, "0")}
+              num={project.num}
               title={project.title}
               tags={project.tags}
               href={project.href}
@@ -857,7 +940,7 @@ export default function Work() {
               desc={getDesc(project.href)}
               ratio={project.ratio}
               index={index}
-              total={String(projects.length).padStart(2, "0")}
+              total={String(all.length).padStart(2, "0")}
             />
           ))}
         </section>

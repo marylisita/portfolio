@@ -1,6 +1,7 @@
 "use client";
 import { motion, useReducedMotion } from "framer-motion";
 import PixelReveal from "./PixelReveal";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import EditorialFooter from "./EditorialFooter";
@@ -14,6 +15,7 @@ import { useProjects } from "./useProjects";
 import { getProjectStory } from "@/content/projectStories";
 import { useT } from "@/i18n/LanguageContext";
 import HeroButton from "./HeroButton";
+import { useNavTucked } from "./useScrollDirection";
 import { useEffect, useRef, type CSSProperties } from "react";
 
 const PROJECT_GLOWS = [
@@ -45,7 +47,12 @@ const styles = `
     --ink: var(--site-ink);
     --paper: var(--site-paper);
     --acid: var(--site-accent);
-    --font-grotesk: Arial, "Helvetica Neue", Helvetica, sans-serif;
+    /* Aeonik — a grotesca dela, que ja esta carregada em 400/700. O Arial daqui
+       era o placeholder do "lowercase grotesque display type" do redesign e
+       nunca foi trocado pela fonte real. Pior: a pilha tinha dois desenhos
+       diferentes (Arial no Windows, Helvetica Neue no Mac), entao o bloco
+       mudava de cara conforme a maquina de quem abria. */
+    --font-grotesk: var(--font-body);
     /* tokens globais re-mapeados p/ dark (FlipBook, textos antigos) */
     --fg: var(--site-ink);
     --gray-400: #8b8578;
@@ -118,6 +125,13 @@ const styles = `
     /* acima do botão flutuante de voltar ao topo, que cobria a etiqueta do meio */
     position: fixed; right: 1.2rem; bottom: 5.5rem; z-index: 900;
     display: flex; flex-direction: column; align-items: flex-end; gap: .45rem;
+    transition: opacity .3s var(--ease-out), translate .38s var(--ease-out);
+  }
+  /* Mesma regra da assinatura: descendo, quem manda e o conteudo. */
+  .pj-cluster[data-tucked="true"] {
+    opacity: 0;
+    translate: .9rem 0;
+    pointer-events: none;
   }
   @media (max-width: 720px) {
     /* em tela estreita vira fita horizontal, como na landing */
@@ -310,6 +324,24 @@ const styles = `
     text-wrap: pretty;
   }
   .pj-desc .pj-em { font-family: var(--font-head); font-style: italic; font-weight: 700; color: var(--pj-accent, var(--acid)); }
+  /* A primeira imagem do projeto entra aqui, antes do resumo em colunas. Antes
+     dela vinham titulo, descricao, tres colunas de resumo e a ficha tecnica
+     inteira: no celular a primeira figura so aparecia depois de dois mil pixels
+     de texto, num portfolio visual. */
+  .pj-cover {
+    position: relative;
+    display: block;
+    height: clamp(16rem, 42vw, 31rem);
+    margin: 2.9rem 0 0;
+    padding: clamp(.5rem, .8vw, .9rem);
+    overflow: hidden;
+    background: color-mix(in srgb, var(--paper) 88%, var(--ink));
+    border: 1px solid color-mix(in srgb, var(--ink) 24%, transparent);
+  }
+  /* A capa entra inteira, como gravura em passe-partout — o mesmo tratamento
+     dos cartões da seleção. Recortar em faixa cortava o topo dos prints e o
+     título dos cartazes. */
+  .pj-cover img { object-fit: contain; object-position: center; }
   .pj-impact { margin-top: 3.5rem; }
   .pj-impact__grid {
     display: grid;
@@ -370,7 +402,10 @@ const styles = `
     background: transparent;
     box-shadow: none;
   }
-  .pj-meta__card:first-child {
+  /* A grade tem tres colunas: quem abre linha nao leva filete a esquerda.
+     Com quatro itens, o quarto caia na segunda linha ainda recuado. */
+  .pj-meta__card:first-child,
+  .pj-meta__card:nth-child(3n + 1) {
     padding-left: 0;
     border-left: 0;
   }
@@ -445,6 +480,27 @@ const styles = `
   }
   .pj-main > section:nth-child(even)::before { left: auto; right: .65rem; transform: rotate(1deg); }
 
+  /* Ficha tecnica e etiquetas terminam a leitura em vez de atrasar a entrada:
+     no topo ficam "o que mudou", "a pergunta" e "meu papel", que sao o
+     argumento; tipo de projeto, data e status sao credito. */
+  .pj-colophon {
+    max-width: var(--project-content-max);
+    margin: 0 auto 3.5rem;
+    padding: 0 var(--project-gutter);
+    position: relative;
+    z-index: 10;
+  }
+  .pj-colophon__head {
+    display: flex; justify-content: space-between; gap: 1rem;
+    margin-bottom: .2rem;
+    font-family: var(--font-subtitle), monospace;
+    font-weight: var(--offbit-weight);
+    font-size: var(--type-micro);
+    letter-spacing: var(--offbit-letter-spacing);
+    text-transform: lowercase;
+  }
+  .pj-colophon .pj-meta { margin-top: 0; }
+
   .pj-turn {
     max-width: var(--project-content-max); margin: 2rem auto 7rem; padding: 0 var(--project-gutter);
     position: relative; z-index: 10;
@@ -510,6 +566,8 @@ const styles = `
     .pj-head { width: 100%; max-width: 100%; min-width: 0; padding: 5.5rem 1.25rem 2.5rem; }
     .pj-head > :not(.pj-folio) { width: calc(100vw - 2.5rem); max-width: calc(100vw - 2.5rem); min-width: 0; }
     .pj-folio { top: 4.1rem; right: .7rem; }
+    .pj-cover { height: clamp(12rem, 52vw, 17rem); margin-top: 2rem; }
+    .pj-colophon { padding: 0 1.25rem; }
     .pj-title { max-width: min(100%, 16ch); }
     .pj-desc { max-width: 100%; overflow-wrap: anywhere; }
     .pj-impact__grid,
@@ -545,6 +603,8 @@ const styles = `
   }
   @media (prefers-reduced-motion: reduce) {
     .pj-progress { display: none; }
+    .pj-cluster { transition: opacity .2s linear; }
+    .pj-cluster[data-tucked="true"] { translate: none; }
     .pj-turn__card, .pj-turn__card::before, .pj-turn__image img { transition: none; }
     .pj-turn__num { transition: none; }
     .pj-ornament { animation: none; translate: none; }
@@ -564,6 +624,7 @@ export default function ProjectShell({
   meta = [],
   children,
   accent,
+  cover,
 }: {
   title: React.ReactNode;
   desc: React.ReactNode;
@@ -573,6 +634,9 @@ export default function ProjectShell({
   meta?: ProjectMeta[];
   children: React.ReactNode;
   accent?: string;
+  /** Abertura visual do case. Por padrão é a capa do arquivo; passar `false`
+   *  nas páginas que já abrem com essa mesma imagem, para não repetir. */
+  cover?: false;
 }) {
   const { t, lang } = useT();
   const pathname = usePathname();
@@ -591,7 +655,11 @@ export default function ProjectShell({
   const story = getProjectStory(pathname, lang);
   const impactOutcome = outcome ?? story?.impact;
   const impactChallenge = challenge ?? story?.challenge;
+  const tucked = useNavTucked();
   const archiveLabel = lang === "pt" ? "arquivo de projeto" : "project archive";
+  const colophonLabel = lang === "pt" ? "ficha técnica" : "project details";
+  const total = projects.length.toString().padStart(2, "0");
+  const showCover = cover !== false && Boolean(current);
   const notesLabel = lang === "pt" ? "etiquetas do projeto" : "project labels";
   const turnLabel = lang === "pt" ? "continue folheando" : "keep browsing";
   const directions = lang === "pt" ? ["projeto anterior", "próximo projeto"] : ["previous project", "next project"];
@@ -734,7 +802,7 @@ export default function ProjectShell({
       <SiteHeader />
 
       {/* molhinho de navegação fixo */}
-      <nav className="pj-cluster" aria-label="menu">
+      <nav className="pj-cluster" aria-label="menu" data-tucked={tucked ? "true" : "false"}>
         <HeroButton className="pj-tag" href="/">[ {t("pj_home")} ]</HeroButton>
         <HeroButton className="pj-tag" href="/work">[ {t("nav_work").toLowerCase()} ]</HeroButton>
         <HeroButton className="pj-tag" href="#contact">[ {t("rm_menu_contact")} ]</HeroButton>
@@ -749,12 +817,27 @@ export default function ProjectShell({
         >
           <Link href="/work" className="pj-back hover-trigger">← {t("pj_back")}</Link>
           <div className="pj-kicker">
-            <span>{current?.num ?? "—"} / {projects.length.toString().padStart(2, "0")}</span>
+            <span>{current?.num ?? "—"} / {total}</span>
             <span>{archiveLabel}</span>
           </div>
           <AsciiDivider className="pj-rule pj-rule--head" />
           <h1 className="pj-title">{title}</h1>
           <p className="pj-desc">{desc}</p>
+          {showCover && current ? (
+            <span className="pj-cover">
+              <Image
+                src={current.img}
+                alt={
+                  lang === "pt"
+                    ? `Capa do projeto ${current.title}`
+                    : `Cover image for ${current.title}`
+                }
+                fill
+                priority
+                sizes="(max-width: 720px) 100vw, (max-width: 1440px) 92vw, 1360px"
+              />
+            </span>
+          ) : null}
         </motion.div>
 
         {(impactChallenge || impactOutcome || role) && (
@@ -783,36 +866,45 @@ export default function ProjectShell({
           </div>
         )}
 
-        {meta.length > 0 && (
-          <div className="pj-meta">
-            <AsciiDivider className="pj-rule pj-rule--meta" />
-            <div className="pj-meta__grid">
-              {meta.map((m) => (
-                <div className="pj-meta__card" key={m.label}>
-                  <div className="pj-meta__label">{m.label}</div>
-                  <div className="pj-meta__value">{m.value}</div>
-                </div>
-              ))}
-            </div>
-            <AsciiDivider className="pj-rule pj-rule--meta" />
-          </div>
-        )}
-
-        {current && (
-          <aside className="pj-notes" aria-label={notesLabel}>
-            <span className="pj-note">{archiveLabel} {current.num}/{projects.length.toString().padStart(2, "0")}</span>
-            {notes.map((note) => <span className="pj-note" key={note}>{note}</span>)}
-          </aside>
-        )}
       </header>
 
       <main className="pj-main" style={{ position: "relative", zIndex: 10 }}>{children}</main>
+
+      {(meta.length > 0 || current) && (
+        <section className="pj-colophon" aria-label={colophonLabel}>
+          <div className="pj-colophon__head">
+            <span>{colophonLabel}</span>
+            <span>{current?.num ?? "—"} / {total}</span>
+          </div>
+          {meta.length > 0 && (
+            <div className="pj-meta">
+              <AsciiDivider className="pj-rule pj-rule--meta" />
+              <div className="pj-meta__grid">
+                {meta.map((m) => (
+                  <div className="pj-meta__card" key={m.label}>
+                    <div className="pj-meta__label">{m.label}</div>
+                    <div className="pj-meta__value">{m.value}</div>
+                  </div>
+                ))}
+              </div>
+              <AsciiDivider className="pj-rule pj-rule--meta" />
+            </div>
+          )}
+
+          {current && (
+            <aside className="pj-notes" aria-label={notesLabel}>
+              <span className="pj-note">{archiveLabel} {current.num}/{total}</span>
+              {notes.map((note) => <span className="pj-note" key={note}>{note}</span>)}
+            </aside>
+          )}
+        </section>
+      )}
 
       {neighbours.length === 2 && (
         <nav className="pj-turn" aria-label={turnLabel}>
           <div className="pj-turn__heading">
             <span>{turnLabel}</span>
-            <span>{current?.num} / {projects.length.toString().padStart(2, "0")}</span>
+            <span>{current?.num} / {total}</span>
           </div>
           <AsciiDivider className="pj-rule pj-rule--turn" />
           <div className="pj-turn__grid">

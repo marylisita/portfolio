@@ -6,7 +6,8 @@ import ScrambleText from "./ScrambleText";
 import UnderlineButton from "./UnderlineButton";
 import { useT } from "@/i18n/LanguageContext";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavTucked } from "./useScrollDirection";
 
 const styles = `
   .sh {
@@ -15,6 +16,14 @@ const styles = `
     font-size: var(--type-micro); text-transform: lowercase; letter-spacing: .1em;
     color: var(--site-ink, #1C1B18);
     pointer-events: auto;
+    transition: opacity .3s var(--ease-out, ease), translate .38s var(--ease-out, ease);
+  }
+  /* Descendo, a assinatura sai da frente do texto; subindo, ela volta. Antes
+     ela acompanhava a rolagem inteira e cruzava imagem e paragrafo dos cases. */
+  .sh[data-tucked="true"] {
+    opacity: 0;
+    translate: 0 -.85rem;
+    pointer-events: none;
   }
   .sh--l { left: clamp(1.5rem, 5vw, 5.5rem); display: flex; flex-direction: column; gap: .12rem; line-height: 1.1; }
   .sh__mark {
@@ -61,6 +70,24 @@ const styles = `
     animation: sh-symbols-float .78s cubic-bezier(.16, 1, .3, 1) both;
   }
   .sh__mark:focus-visible { outline: 2px dotted var(--site-ink, #1C1B18); outline-offset: 4px; }
+  /* No heroi a assinatura faz parte da composicao e fica grande. Passado o
+     heroi ela vira chrome: encolhe e ganha o halo de papel (o mesmo
+     tratamento que o celular ja usava) para nao se misturar com o titulo da
+     secao que passa por baixo -- "trabalhos selecionados" era atropelado por
+     uma faixa de texto de quase 500px de largura. */
+  @media (min-width: 861px) {
+    .sh__mark { transition: font-size .3s var(--ease-out, ease), padding .3s var(--ease-out, ease); }
+    .sh--l[data-floating="true"] .sh__mark {
+      font-size: 1.35rem;
+      padding: .2rem .5rem;
+      /* 96%: o titulo da secao passa POR TRAS da etiqueta sem vazar. No
+         celular o halo e 88% porque la ele cobre corpo de texto, nao titulo. */
+      background: color-mix(in srgb, var(--site-paper, #ede7da) 96%, transparent);
+      box-shadow: 0 0 0 .3rem color-mix(in srgb, var(--site-paper, #ede7da) 96%, transparent);
+      -webkit-backdrop-filter: blur(6px);
+      backdrop-filter: blur(6px);
+    }
+  }
   .sh--r {
     right: clamp(1.5rem, 5vw, 5.5rem);
     display: flex; align-items: center; gap: 1rem;
@@ -142,13 +169,15 @@ const styles = `
   .sh__menu-toggle[data-open="true"] .sh__menu-icon::after { opacity: 1; }
   .sh__menu-toggle[data-open="true"] .sh__menu-icon::before { transform: rotate(45deg); }
   .sh__menu-toggle[data-open="true"] .sh__menu-icon::after { transform: rotate(-45deg); }
-  }
   .sh__menu-toggle:focus-visible,
   .sh__mobile-menu a:focus-visible { outline: 2px dotted currentColor; outline-offset: 3px; }
   @media (prefers-reduced-motion: reduce) {
     .sh__dot::after,
     .sh__mark .text-star,
     .sh__name::after { animation: none; }
+    .sh__mark { transition: none; }
+    .sh { transition: opacity .2s linear; }
+    .sh[data-tucked="true"] { translate: none; }
   }
   @media (max-width: 860px) {
     .sh--r {
@@ -210,6 +239,16 @@ export default function SiteHeader() {
   const pathname = usePathname();
   const isHome = pathname === "/" || pathname === "";
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  // Com o menu aberto a barra fica: some no meio de um toque seria pior.
+  const tucked = useNavTucked(!mobileMenuOpen);
+  // Mesmo limiar do useNavTucked: ate 240px a assinatura ainda e composicao.
+  const [floating, setFloating] = useState(false);
+  useEffect(() => {
+    const sync = () => setFloating(window.scrollY > 240);
+    sync();
+    window.addEventListener("scroll", sync, { passive: true });
+    return () => window.removeEventListener("scroll", sync);
+  }, []);
   const mobileLinks = [
     { href: isHome ? "/work" : "/", label: isHome ? t("nav_work").toLowerCase() : t("pj_home").toLowerCase() },
     { href: "/#about", label: t("rm_menu_about") },
@@ -219,7 +258,11 @@ export default function SiteHeader() {
   return (
     <>
       <style>{styles}</style>
-      <span className="sh sh--l">
+      <span
+        className="sh sh--l"
+        data-tucked={tucked ? "true" : "false"}
+        data-floating={floating ? "true" : "false"}
+      >
         <Link href="/" className="sh__mark">
           <span className="text-star" aria-hidden="true">✳︎</span>{" "}
           <span className="sh__name" aria-label="Maria Isabel Lisita">
@@ -229,7 +272,7 @@ export default function SiteHeader() {
           </span>
         </Link>
       </span>
-      <span className="sh sh--r">
+      <span className="sh sh--r" data-tucked={tucked ? "true" : "false"}>
         <span className="sh__status">
           <span className="sh__dot" aria-hidden="true" />
           <ScrambleText

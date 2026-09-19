@@ -11,33 +11,50 @@ interface Props {
   nodes: ConstellationNode[];
 }
 
+/**
+ * Índice de atuação — cada linha abre um detalhe.
+ *
+ * A abertura por mouse é CSS puro (`:hover` em ponteiro fino) e a abertura por
+ * toque/teclado é estado. Antes as duas moravam no mesmo `useState`: o `focus`
+ * do toque já marcava a linha como aberta e o `click` seguinte a fechava, então
+ * o primeiro toque no celular não fazia nada visível. Manter as duas separadas.
+ */
 export default function SkillConstellation({ nodes }: Props) {
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
     <div className="rm-skills-index">
       <style>{`
         .rm-skills-index {
+          position: relative;
           display: flex;
           flex-direction: column;
           width: 100%;
           font-family: var(--font-body);
           color: var(--ink);
         }
-        
+
         .rm-skill-row {
           position: relative;
           display: flex;
           flex-direction: column;
-          padding: 1.2rem 0;
-          cursor: crosshair;
+          width: 100%;
+          min-height: var(--tap-min);
+          padding: 1.1rem 0;
+          border: 0;
+          background: transparent;
+          color: inherit;
+          font: inherit;
+          text-align: left;
+          cursor: pointer;
         }
 
         .rm-skill-header {
           display: flex;
           justify-content: space-between;
           align-items: baseline;
-          font-size: clamp(.65rem, .9vw, .95rem);
+          gap: 1rem;
+          font-size: var(--type-label);
           text-transform: uppercase;
           letter-spacing: .08em;
           z-index: 2;
@@ -46,38 +63,33 @@ export default function SkillConstellation({ nodes }: Props) {
         .rm-skill-title {
           display: flex;
           align-items: baseline;
+          min-width: 0;
         }
 
         .rm-skill-number {
-          opacity: 0.4;
+          flex: 0 0 auto;
           margin-right: 1.5rem;
+          opacity: .5;
           font-family: var(--font-subtitle), monospace;
           font-variant-numeric: tabular-nums;
         }
 
         .rm-skill-label {
-          font-weight: 600;
-          transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
           display: inline-block;
-        }
-        
-        .rm-skill-row:hover .rm-skill-label {
-          transform: translateX(8px);
+          font-weight: 600;
+          transition: transform .3s cubic-bezier(.23, 1, .32, 1);
         }
 
         .rm-skill-icon {
+          flex: 0 0 auto;
           opacity: 0;
+          font-size: .8rem;
           transform: rotate(-90deg);
-          transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-          font-size: 0.8rem;
-        }
-
-        .rm-skill-row:hover .rm-skill-icon {
-          opacity: 1;
-          transform: rotate(0deg);
+          transition: all .4s cubic-bezier(.23, 1, .32, 1);
         }
 
         .rm-skill-detail-wrapper {
+          display: block;
           overflow: hidden;
           max-height: 0;
           opacity: 0;
@@ -86,24 +98,53 @@ export default function SkillConstellation({ nodes }: Props) {
             opacity .3s ease;
         }
 
-        .rm-skill-row[data-open="true"] .rm-skill-detail-wrapper {
-          max-height: 8rem;
+        .rm-skill-row[data-open="true"] .rm-skill-detail-wrapper,
+        .rm-skill-row:focus-visible .rm-skill-detail-wrapper {
+          max-height: 9rem;
           opacity: 1;
         }
 
+        .rm-skill-row[data-open="true"] .rm-skill-icon,
+        .rm-skill-row:focus-visible .rm-skill-icon {
+          opacity: 1;
+          transform: rotate(0deg);
+        }
+
+        /* Só onde existe ponteiro fino: no toque, quem manda é o estado. */
+        @media (hover: hover) and (pointer: fine) {
+          .rm-skill-row:hover .rm-skill-detail-wrapper {
+            max-height: 9rem;
+            opacity: 1;
+          }
+          .rm-skill-row:hover .rm-skill-label {
+            transform: translateX(8px);
+          }
+          .rm-skill-row:hover .rm-skill-icon {
+            opacity: 1;
+            transform: rotate(0deg);
+          }
+        }
+
+        .rm-skill-row:focus-visible {
+          outline: 2px solid var(--ink);
+          outline-offset: 4px;
+        }
+
         .rm-skill-detail {
-          padding-top: 0.8rem;
+          display: block;
+          padding-top: .8rem;
           padding-left: 3rem;
           font-family: var(--font-serif), serif;
-          font-size: clamp(.9rem, 1.2vw, 1.15rem);
-          text-transform: none;
-          letter-spacing: normal;
-          opacity: 0.75;
+          font-size: clamp(.95rem, 1.2vw, 1.15rem);
           font-style: italic;
           line-height: 1.5;
+          letter-spacing: normal;
+          text-transform: none;
+          opacity: .8;
         }
 
         .rm-skill-divider {
+          display: block;
           position: absolute;
           bottom: 0;
           left: 0;
@@ -117,43 +158,51 @@ export default function SkillConstellation({ nodes }: Props) {
             transparent 8px
           );
         }
+
+        @media (prefers-reduced-motion: reduce) {
+          .rm-skill-label,
+          .rm-skill-icon,
+          .rm-skill-detail-wrapper {
+            transition: none;
+          }
+          .rm-skill-row:hover .rm-skill-label {
+            transform: none;
+          }
+        }
       `}</style>
-      
+
       {/* Top divider */}
-      <div className="rm-skill-divider" style={{ top: 0, bottom: 'auto' }} />
+      <div className="rm-skill-divider" style={{ top: 0, bottom: "auto" }} />
 
       {nodes.map((node, i) => {
-        const isHovered = hoveredIndex === i;
+        const isOpen = openIndex === i;
         const number = (i + 1).toString().padStart(2, "0");
-        
+        const detailId = `rm-skill-detail-${i}`;
+
         return (
-          <div 
-            key={i} 
+          <button
+            key={node.label}
+            type="button"
             className="rm-skill-row"
-            data-open={isHovered ? "true" : "false"}
-            tabIndex={0}
-            onMouseEnter={() => setHoveredIndex(i)}
-            onMouseLeave={() => setHoveredIndex(null)}
-            onFocus={() => setHoveredIndex(i)}
-            onBlur={() => setHoveredIndex(null)}
-            onClick={() => setHoveredIndex(isHovered ? null : i)}
+            data-open={isOpen ? "true" : "false"}
+            aria-expanded={isOpen}
+            aria-controls={detailId}
+            onClick={() => setOpenIndex(isOpen ? null : i)}
           >
-            <div className="rm-skill-header">
-              <div className="rm-skill-title">
+            <span className="rm-skill-header">
+              <span className="rm-skill-title">
                 <span className="rm-skill-number">{number} /</span>
                 <span className="rm-skill-label">{node.label}</span>
-              </div>
-              <span className="rm-skill-icon">✳︎</span>
-            </div>
+              </span>
+              <span className="rm-skill-icon" aria-hidden="true">✳︎</span>
+            </span>
 
-            <div className="rm-skill-detail-wrapper" aria-hidden={!isHovered}>
-              <div className="rm-skill-detail">
-                {node.detail}
-              </div>
-            </div>
+            <span className="rm-skill-detail-wrapper" id={detailId}>
+              <span className="rm-skill-detail">{node.detail}</span>
+            </span>
 
-            <div className="rm-skill-divider" />
-          </div>
+            <span className="rm-skill-divider" />
+          </button>
         );
       })}
     </div>

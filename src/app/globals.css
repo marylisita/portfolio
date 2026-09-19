@@ -1,6 +1,9 @@
 /* PF Pixelscript (caligrafia pixelada, escolha dela) — servida pelo Adobe Fonts
    (web project dela); o visitante NÃO precisa ter a fonte. Se a assinatura
-   Adobe expirar, cai no fallback definido em --font-pixelscript. */
+   Adobe expirar, cai no fallback definido em --font-pixelscript.
+   A Seratonin (--font-hand) está FORA dessa cadeia de propósito: por ser fonte
+   local ela pintava primeiro e o wordmark trocava de desenho na frente de quem
+   estava lendo. Ela continua viva onde é escolha, não acidente. */
 @import "tailwindcss";
 
 @keyframes miniAsciiPulse {
@@ -15,7 +18,16 @@
    ========================================== */
 :root {
     --font-subtitle: var(--font-offbit), monospace;
-    --font-pixelscript: "pf-pixelscript", var(--font-hand), var(--font-body), sans-serif;
+    --font-pixelscript: "pf-pixelscript", var(--font-body), sans-serif;
+    /* Altura do heroi. NAO voltar para 100svh: uma tela exata faz o heroi
+       coincidir com a moldura e a home passa a ser lida como sequencia de
+       slides. Abaixo de uma tela, a faixa do Marquee aparece cortada no pe
+       e o movimento dela sinaliza que ha mais. O .rm-thread da home tambem
+       depende desta variavel para saber onde comecar.
+       88svh em vez de 94: a faixa do Marquee inteira e o comeco da secao de
+       trabalhos entram na primeira tela, entao a abertura le como topo de
+       pagina e nao como capa. */
+    --hero-h: 88svh;
     --offbit-condense: 1;
     --offbit-weight: 700;
     --offbit-weight-active: 700;
@@ -58,6 +70,13 @@
     --paper-edge: rgba(28, 27, 24, .28);
     --paper-shadow: rgba(28, 27, 24, .13);
     --paper-tape: rgba(231, 216, 185, .72);
+}
+
+/* No mobile o heroi cresce com o conteudo em vez de acompanhar a tela.
+   O valor precisa estar aqui, e nao no .ph, porque o .rm-thread da home e
+   irmao do heroi: declarado no .ph a variavel nao chegaria nele. */
+@media (max-width: 720px) {
+    :root { --hero-h: max(100svh, 54rem); }
 }
 
 
