@@ -6,7 +6,7 @@ import ScrambleText from "./ScrambleText";
 import UnderlineButton from "./UnderlineButton";
 import { useT } from "@/i18n/LanguageContext";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavTucked } from "./useScrollDirection";
 
 const styles = `
@@ -240,7 +240,10 @@ export default function SiteHeader() {
   const isHome = pathname === "/" || pathname === "";
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   // Com o menu aberto a barra fica: some no meio de um toque seria pior.
-  const tucked = useNavTucked(!mobileMenuOpen);
+  // .rm-label e o rotulo de secao do site ("Trabalhos Selecionados", "Sobre"):
+  // quando um deles entra na faixa da assinatura, ela recolhe mesmo subindo.
+  const markRef = useRef<HTMLSpanElement>(null);
+  const tucked = useNavTucked(!mobileMenuOpen, markRef, ".rm-label");
   // Mesmo limiar do useNavTucked: ate 240px a assinatura ainda e composicao.
   const [floating, setFloating] = useState(false);
   useEffect(() => {
@@ -259,6 +262,7 @@ export default function SiteHeader() {
     <>
       <style>{styles}</style>
       <span
+        ref={markRef}
         className="sh sh--l"
         data-tucked={tucked ? "true" : "false"}
         data-floating={floating ? "true" : "false"}
