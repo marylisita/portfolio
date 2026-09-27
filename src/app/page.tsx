@@ -11,6 +11,7 @@ import EditorialFooter from "@/components/EditorialFooter";
 import SiteHeader from "@/components/SiteHeader";
 import { useT } from "@/i18n/LanguageContext";
 import {
+  CreativeStudioControls,
   CreativeStudioProvider,
   useCreativeStudio,
 } from "@/components/CreativeStudio";
@@ -323,39 +324,6 @@ const rmStyles = `
     .rm-label { margin-bottom: 2rem; }
   }
 
-  /* --- cards brutas (Readymag / Brutalist style) --- */
-  .rm .hero-card {
-    background: #000000 !important;
-    color: var(--ink) !important;
-    border: 3px solid var(--ink) !important;
-    border-radius: 0px !important;
-    box-shadow: 8px 8px 0px var(--acid) !important;
-    position: relative;
-    top: 0;
-    left: 0;
-    transition: top 0.15s ease, left 0.15s ease, box-shadow 0.15s ease !important;
-  }
-  .rm .hero-card:hover {
-    top: 8px !important;
-    left: 8px !important;
-    box-shadow: 0px 0px 0px var(--acid) !important;
-  }
-  .rm .hero-card__icon {
-    border-radius: 0px !important;
-    border: 2px solid var(--ink) !important;
-    background: #111 !important;
-    color: var(--acid) !important;
-  }
-  .rm .hero-card__icon svg {
-    stroke: var(--ink) !important;
-  }
-  .rm .hero-card__desc {
-    color: var(--ink) !important;
-    opacity: 0.85;
-  }
-  .rm .hero-card__arrow {
-    display: none !important;
-  }
 `;
 
 export default function Home() {
@@ -475,6 +443,11 @@ function HomeContent() {
       </div>
 
       <SiteHeader />
+
+      {/* Painel do ateliê: trocar o papel do site, carimbar e reorganizar a
+          mesa. Ele mesmo se esconde quando o hero sai da tela, por isso fica
+          aqui fora do <main> e não junto do hero. */}
+      <CreativeStudioControls />
 
       <main>
         <PlaygroundHero
