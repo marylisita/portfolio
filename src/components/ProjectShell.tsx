@@ -142,7 +142,9 @@ const styles = `
     --btn-bg: var(--ink);
     --btn-border: var(--ink);
     --btn-text: var(--paper);
-    --btn-hover-bg: var(--acid);
+    /* Rosa quente, não o accent: aqui a cor é FUNDO com a tinta por cima, e
+       nessa inversão o accent daria 2.95:1. O quente dá 5.01:1. */
+    --btn-hover-bg: var(--site-accent-hot, var(--acid));
     --btn-hover-text: var(--ink);
     min-height: var(--tap-min);
     padding: .58rem .75rem;

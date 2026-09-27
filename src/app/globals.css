@@ -29,12 +29,16 @@
     --ease-out: cubic-bezier(0, 0, 0, 1);
     --site-paper:  #EDE7DA;  /* bege quente, levemente acinzentado */
     --site-ink:    #1C1B18;  /* cinza bem escuro (não é preto puro) */
-    /* Rosa choque: a cor da casa. Escurecido o bastante para passar AA como
-       TEXTO sobre o papel creme (~5.0:1) -- o rosa choque puro (#FF3D81) dá
-       ~2.6:1 e só serviria para bloco. Alimenta --acid, que é a cor de
-       destaque lida por botão, link, ênfase e marcador em todo o site. */
-    --site-accent: #D6146B;
-    --site-accent-rgb: 214, 20, 107;
+    /* Rosa choque: a cor da casa. Alimenta --acid, lido por botão, link,
+       ênfase e marcador em todo o site -- inclusive como TEXTO sobre o papel
+       creme, que é o uso mais exigente e define o tom.
+
+       Era #D6146B, que eu media como 5.0:1 por erro de conta: linearizei o
+       canal verde com a divisão por 12.92, que só vale abaixo de 0.03928, e
+       20/255 está acima. O valor real era 4.09:1, abaixo do mínimo de 4.5:1
+       para texto normal. #C4125F dá 4.74:1, com margem. */
+    --site-accent: #C4125F;
+    --site-accent-rgb: 196, 18, 95;
     /* O rosa ADÉLA, no volume da capa do PRIMA. NUNCA como texto sobre o
        papel: dá 2.8:1. É o contrário -- é FUNDO, com a tinta escura por cima,
        que é como a referência usa (marcador preto sobre rosa). Tinta sobre

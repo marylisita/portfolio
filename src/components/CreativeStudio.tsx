@@ -133,7 +133,7 @@ const PAPER_TOKENS: Record<PaperMode, Record<string, string>> = {
     "--site-ink": "#1C1B18",
     /* Precisa espelhar --site-accent do globals.css: este objeto reescreve o
        token ao voltar para o creme, e um preto aqui apagaria o rosa. */
-    "--site-accent": "#D6146B",
+    "--site-accent": "#C4125F",
   },
   cyanotype: {
     "--site-paper": "#12344d",
