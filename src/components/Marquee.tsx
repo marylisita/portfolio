@@ -73,9 +73,7 @@ const styles = `
     display: inline-grid;
     place-items: center;
     margin-inline: clamp(1.05rem, 1.45vw, 1.45rem);
-    /* As estrelas entre as palavras: rosa quente sobre a faixa preta, 5.0:1.
-       É também a cor de base do glitter e o estado final se o recorte em
-       texto não existir. */
+    /* As estrelas entre as palavras: rosa quente sobre a faixa preta, 5.0:1. */
     color: var(--site-accent-hot, var(--acid));
     font-size: .82em;
     line-height: 1;
@@ -83,111 +81,79 @@ const styles = `
     transform: translateY(.02em);
   }
 
-  /* --- Glitter -------------------------------------------------------------
-     Glitter é material especular: só lê como brilho quando um ponto de luz
-     PASSA por ele. A esta escala (14-26px, traço fino) textura parada vira
-     sujeira, então o efeito é um facho claro viajando pelo glifo, recortado
-     no texto, sobre a base rosa. A camada de ruído em "overlay" é o mesmo
-     feTurbulence que o site já usa no grão de filme -- sem asset novo.
-
-     Seletor com dois níveis para vencer o ".text-star" do globals.css, que
-     força "color: currentColor" no mesmo peso. */
-  .mq__item .mq__star {
-    /* Sem camada de ruído: a esta escala o feTurbulence em overlay vira cinza
-       sujo dentro do traço em vez de brilho -- conferido a 4x. O que lê como
-       glitter aqui é só o facho especular viajando. */
-    background-image:
-      linear-gradient(
-        /* Horizontal, não inclinado: a estrela é um glifo quase quadrado, e
-           num ladrilho desses a inclinação faz a emenda desencontrar entre o
-           topo e a base. Na palavra 100deg funciona porque ela é muito mais
-           larga que alta. */
-        90deg,
-        var(--site-accent-hot) 0%,
-        var(--site-accent-hot) 36%,
-        #FFE3F1 45%,
-        #FFFFFF 50%,
-        #FFE3F1 55%,
-        var(--site-accent-hot) 64%,
-        var(--site-accent-hot) 100%
-      );
-    /* Ladrilhado, não recortado. Com no-repeat os extremos do percurso mostram
-       trechos DIFERENTES do gradiente, e a volta ao inicio vira um salto
-       visivel. Repetindo, e deslocando exatamente um ladrilho por ciclo, o
-       quadro final é identico ao inicial por construção.
-       A conta: com background-size 200%, a imagem tem 2x a largura da caixa,
-       então o deslocamento de background-position X% vale (W - 2W)*X/100 =
-       -W*X/100. Em X=200% isso dá -2W, exatamente um ladrilho. */
-    background-size: 200% 100%;
-    background-position: 0 0;
-    background-repeat: repeat;
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    -webkit-text-fill-color: transparent;
-    animation: mq-glint 4.2s ease-in-out infinite;
-  }
-
-  /* Glitter de verdade não pisca em uníssono: as estrelas entram defasadas. */
-  .mq__item:nth-child(3n) .mq__star { animation-delay: -1.4s; }
-  .mq__item:nth-child(3n + 1) .mq__star { animation-delay: -2.8s; }
-
-  @keyframes mq-glint {
-    to { background-position: 200% 0; }
-  }
+  /* A estrela volta ao rosa chapado. O glitter agora vive nos pontos da
+     fonte, e o ✳︎ (Arial, traço contínuo) não tem ponto nenhum para acender --
+     insistir nele só competia com as palavras. Some de quebra o loop que eu
+     não conseguia medir no tamanho dela. */
 
   /* --- Glitter das palavras ------------------------------------------------
-     A OffBit DotBold é desenhada em pontos, então cada ponto funciona como
-     uma lantejoula: o facho atravessando as fileiras acende alguns e deixa
-     outros no rosa. É o suporte que a estrela, de traço fino, não tinha.
+     Faíscas do tamanho de um ponto da fonte, espalhadas sobre a base rosa,
+     mais duas camadas largas de fumaça por baixo.
 
-     O gradiente traz TRÊS brilhos em vez de um: numa palavra longa mais de um
-     ponto acende ao mesmo tempo, que é o que separa paetê de reflexo.
+     Não é preciso mirar os pontos: o recorte é no texto e a OffBit DotBold JÁ
+     é desenhada em pontos, então cada faísca que cai dentro de um ponto
+     acende AQUELE ponto e o resto é aparado pelo glifo. É como glitter se
+     comporta de fato -- ponto isolado pegando luz, não faixa varrendo.
 
-     Contraste: a base é o rosa quente (5.0:1 sobre a faixa) e os picos vão
-     para o branco (16:1), então a palavra nunca cai abaixo de AA. */
+     As faíscas têm queda suave em vez de borda dura: borda dura vira pixel
+     aceso, queda suave vira brasa. A fumaça são blobs grandes, de alfa baixo,
+     que passam por trás e adensam o brilho em trechos da palavra.
+
+     Ladrilho em PIXEL, nunca em porcentagem: assim cada camada anda
+     exatamente um ladrilho por ciclo e o fecho é exato, independente da
+     largura da palavra -- que foi o defeito do facho anterior. Direções
+     opostas evitam que o conjunto pareça deslizar para um lado só.
+
+     Contraste: a base é o rosa quente (5.0:1 sobre a faixa preta) e TODAS as
+     camadas por cima são claras -- branco ou rosa pálido. O contraste só
+     sobe, nunca desce. Fumaça escura aqui derrubaria a palavra abaixo de AA,
+     por isso não existe. */
   .mq__word {
     background-image:
-      linear-gradient(
-        /* Ângulo quase horizontal: quanto mais inclinado, mais a emenda do
-           ladrilho desencontra entre o topo e a base da linha. */
-        100deg,
-        var(--site-accent-hot) 0%,
-        var(--site-accent-hot) 8%,
-        #FFD9EC 13%,
-        #FFFFFF 16%,
-        #FFD9EC 19%,
-        var(--site-accent-hot) 25%,
-        var(--site-accent-hot) 41%,
-        #FFE8F4 46%,
-        #FFFFFF 49%,
-        #FFE8F4 52%,
-        var(--site-accent-hot) 58%,
-        var(--site-accent-hot) 74%,
-        #FFD9EC 79%,
-        #FFFFFF 82%,
-        #FFD9EC 85%,
-        var(--site-accent-hot) 92%,
-        var(--site-accent-hot) 100%
-      );
-    /* Ladrilhado pelo mesmo motivo da estrela. As pontas do gradiente são as
-       duas rosa cheio, então a emenda entre ladrilhos não aparece. */
-    background-size: 200% 100%;
-    background-position: 0 0;
+      radial-gradient(circle at 22% 34%, rgba(255,255,255,.95) 0 2%, rgba(255,255,255,.5) 6%, rgba(255,255,255,0) 14%),
+      radial-gradient(circle at 71% 66%, rgba(255,255,255,.9) 0 2%, rgba(255,255,255,.45) 5%, rgba(255,255,255,0) 12%),
+      radial-gradient(circle at 44% 18%, rgba(255,232,244,.9) 0 2%, rgba(255,232,244,.4) 6%, rgba(255,232,244,0) 13%),
+      radial-gradient(circle at 88% 82%, rgba(255,255,255,.85) 0 2%, rgba(255,255,255,.4) 5%, rgba(255,255,255,0) 11%),
+      radial-gradient(circle at 34% 58%, rgba(255,255,255,.26) 0 12%, rgba(255,255,255,0) 58%),
+      radial-gradient(circle at 76% 32%, rgba(255,217,236,.3) 0 14%, rgba(255,217,236,0) 62%),
+      linear-gradient(var(--site-accent-hot), var(--site-accent-hot));
+    background-size:
+      43px 43px,
+      67px 67px,
+      37px 37px,
+      59px 59px,
+      97px 97px,
+      113px 113px,
+      100% 100%;
+    background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0;
     background-repeat: repeat;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
     -webkit-text-fill-color: transparent;
-    animation: mq-glint 5.6s linear infinite;
+    animation: mq-sparkle 9s linear infinite;
+  }
+
+  /* Cada camada percorre exatamente o seu proprio ladrilho. */
+  @keyframes mq-sparkle {
+    to {
+      background-position:
+        43px -43px,
+        -67px 67px,
+        37px 37px,
+        -59px -59px,
+        97px 97px,
+        -113px 113px,
+        0 0;
+    }
   }
 
   /* Palavras vizinhas fora de fase, senão a faixa inteira pulsa junto. */
-  .mq__item:nth-child(2n) .mq__word { animation-delay: -1.9s; }
-  .mq__item:nth-child(3n) .mq__word { animation-delay: -3.7s; }
+  .mq__item:nth-child(2n) .mq__word { animation-delay: -3s; }
+  .mq__item:nth-child(3n) .mq__word { animation-delay: -6s; }
 
   /* Sem recorte em texto a palavra sumiria: volta ao creme, que é o estado
-     mais legível (16.3:1) e o que a faixa usava antes do teste. */
+     mais legível (16.3:1) e o que a faixa usava antes. */
   @supports not ((background-clip: text) or (-webkit-background-clip: text)) {
     .mq__word {
       background-image: none;
@@ -197,15 +163,6 @@ const styles = `
     }
   }
 
-  /* Sem o recorte em texto o glifo ficaria invisível: volta para o rosa chapado. */
-  @supports not ((background-clip: text) or (-webkit-background-clip: text)) {
-    .mq__item .mq__star {
-      background-image: none;
-      color: var(--site-accent-hot, var(--acid));
-      -webkit-text-fill-color: currentColor;
-      animation: none;
-    }
-  }
   @keyframes mq-roll {
     to { transform: translate3d(-50%, 0, 0); }
   }
@@ -220,15 +177,8 @@ const styles = `
     .mq__ornament { font-size: .46rem; }
     .mq { padding-block: .78rem .75rem; }
   }
-  /* Em aparelho fraco o glitter sai inteiro, não só a animação: um facho
-     parado no meio do glifo não é glitter, é um borrão claro. */
-  html[data-motion="lite"] .mq__item .mq__star {
-    background-image: none;
-    color: var(--site-accent-hot, var(--acid));
-    -webkit-text-fill-color: currentColor;
-    animation: none;
-  }
-
+  /* Em aparelho fraco o glitter sai inteiro, não só a animação: faísca parada
+     não é faísca, é uma mancha clara na letra. */
   html[data-motion="lite"] .mq__word {
     background-image: none;
     color: var(--paper);
@@ -237,12 +187,6 @@ const styles = `
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .mq__item .mq__star {
-      background-image: none;
-      color: var(--site-accent-hot, var(--acid));
-      -webkit-text-fill-color: currentColor;
-      animation: none;
-    }
     .mq__word {
       background-image: none;
       color: var(--paper);
