@@ -73,12 +73,70 @@ const styles = `
     display: inline-grid;
     place-items: center;
     margin-inline: clamp(1.05rem, 1.45vw, 1.45rem);
-    /* As estrelas entre as palavras: rosa quente sobre a faixa preta, 5.0:1. */
+    /* As estrelas entre as palavras: rosa quente sobre a faixa preta, 5.0:1.
+       É também a cor de base do glitter e o estado final se o recorte em
+       texto não existir. */
     color: var(--site-accent-hot, var(--acid));
     font-size: .82em;
     line-height: 1;
     opacity: .92;
     transform: translateY(.02em);
+  }
+
+  /* --- Glitter -------------------------------------------------------------
+     Glitter é material especular: só lê como brilho quando um ponto de luz
+     PASSA por ele. A esta escala (14-26px, traço fino) textura parada vira
+     sujeira, então o efeito é um facho claro viajando pelo glifo, recortado
+     no texto, sobre a base rosa. A camada de ruído em "overlay" é o mesmo
+     feTurbulence que o site já usa no grão de filme -- sem asset novo.
+
+     Seletor com dois níveis para vencer o ".text-star" do globals.css, que
+     força "color: currentColor" no mesmo peso. */
+  .mq__item .mq__star {
+    /* Sem camada de ruído: a esta escala o feTurbulence em overlay vira cinza
+       sujo dentro do traço em vez de brilho -- conferido a 4x. O que lê como
+       glitter aqui é só o facho especular viajando. */
+    background-image:
+      linear-gradient(
+        115deg,
+        var(--site-accent-hot) 0%,
+        var(--site-accent-hot) 36%,
+        #FFE3F1 45%,
+        #FFFFFF 50%,
+        #FFE3F1 55%,
+        var(--site-accent-hot) 64%,
+        var(--site-accent-hot) 100%
+      );
+    /* O gradiente tem 3.2x a largura do glifo e o percurso fica entre 100% e
+       0%: nessa faixa a imagem sempre cobre a caixa inteira. Passar disso
+       (130%, -30%) deixa parte do traço SEM fundo, e com o recorte em texto
+       isso não é "sem brilho", é invisível -- a estrela some. */
+    background-size: 320% 100%;
+    background-position: 100% 0;
+    background-repeat: no-repeat;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    animation: mq-glint 4.2s ease-in-out infinite;
+  }
+
+  /* Glitter de verdade não pisca em uníssono: as estrelas entram defasadas. */
+  .mq__item:nth-child(3n) .mq__star { animation-delay: -1.4s; }
+  .mq__item:nth-child(3n + 1) .mq__star { animation-delay: -2.8s; }
+
+  @keyframes mq-glint {
+    to { background-position: 0 0; }
+  }
+
+  /* Sem o recorte em texto o glifo ficaria invisível: volta para o rosa chapado. */
+  @supports not ((background-clip: text) or (-webkit-background-clip: text)) {
+    .mq__item .mq__star {
+      background-image: none;
+      color: var(--site-accent-hot, var(--acid));
+      -webkit-text-fill-color: currentColor;
+      animation: none;
+    }
   }
   @keyframes mq-roll {
     to { transform: translate3d(-50%, 0, 0); }
@@ -94,7 +152,22 @@ const styles = `
     .mq__ornament { font-size: .46rem; }
     .mq { padding-block: .78rem .75rem; }
   }
+  /* Em aparelho fraco o glitter sai inteiro, não só a animação: um facho
+     parado no meio do glifo não é glitter, é um borrão claro. */
+  html[data-motion="lite"] .mq__item .mq__star {
+    background-image: none;
+    color: var(--site-accent-hot, var(--acid));
+    -webkit-text-fill-color: currentColor;
+    animation: none;
+  }
+
   @media (prefers-reduced-motion: reduce) {
+    .mq__item .mq__star {
+      background-image: none;
+      color: var(--site-accent-hot, var(--acid));
+      -webkit-text-fill-color: currentColor;
+      animation: none;
+    }
     .mq__track { animation: none; transform: none; }
     .mq__group:nth-child(2) { display: none; }
   }
