@@ -8,6 +8,7 @@ import FloatingBackToTop from "@/components/FloatingBackToTop";
 import AdaptiveCursor from "@/components/AdaptiveCursor";
 import { PageTransitionProvider } from "@/components/Curtains";
 import { LanguageProvider } from "@/i18n/LanguageContext";
+import { SITE_NAME, SITE_TAGLINE_PT, SITE_URL } from "@/content/site";
 
 const aeonik = localFont({
   src: [
@@ -141,8 +142,48 @@ const performanceTierScript = `
 `;
 
 export const metadata: Metadata = {
-  title: "Mary Lisita | Portfolio",
-  description: "Designer multidisciplinar. Projetos em Design Gráfico, Web Design, UX/UI e Programação Criativa.",
+  /* Sem metadataBase, todo campo de URL relativo (openGraph.images, canonical)
+     quebra a build. Com ele, os cases só precisam passar o caminho. */
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: `${SITE_NAME} | Portfólio`,
+    /* Cada case já termina o próprio título com o nome dela, então o template
+       só vale para rotas que definem um título curto. */
+    template: `%s | ${SITE_NAME}`,
+  },
+  description: SITE_TAGLINE_PT,
+  applicationName: SITE_NAME,
+  authors: [{ name: SITE_NAME }],
+  creator: SITE_NAME,
+  keywords: [
+    "design gráfico",
+    "web design",
+    "ux/ui",
+    "programação criativa",
+    "identidade visual",
+    "direção de arte",
+    "portfólio",
+    SITE_NAME,
+  ],
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    locale: "pt_BR",
+    alternateLocale: ["en_US"],
+    url: "/",
+    title: `${SITE_NAME} — designer multidisciplinar`,
+    description: SITE_TAGLINE_PT,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${SITE_NAME} — designer multidisciplinar`,
+    description: SITE_TAGLINE_PT,
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
@@ -152,7 +193,9 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      /* Estado inicial do LanguageProvider é "pt"; o toggle atualiza este
+         atributo em tempo de execução. */
+      lang="pt-BR"
       suppressHydrationWarning
       className={`${aeonik.variable} ${instrumentSerif.variable} ${spaceMono.variable} ${seratonin.variable} ${braille.variable} ${offBit.variable} ${emoji.variable} ${editorialNew.variable}`}
     >

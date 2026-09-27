@@ -22,6 +22,13 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     if (saved === "en" || saved === "pt") setLang(saved);
   }, []);
 
+  /* O <html lang> precisa acompanhar o toggle: sem isso o leitor de tela lê
+     português com voz inglesa e o buscador indexa o idioma errado. O valor
+     inicial vem do layout (pt-BR), então aqui só corrige a troca. */
+  useEffect(() => {
+    document.documentElement.lang = lang === "en" ? "en" : "pt-BR";
+  }, [lang]);
+
   const toggleLang = useCallback(() => {
     setLang((prev) => {
       const next = prev === "pt" ? "en" : "pt";

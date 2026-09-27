@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Cyber Marinum — arte interespécies | Maria Isabel Lisita",
+  title: "Cyber Marinum — arte interespécies",
   description:
     "Instalação interativa em que um aquário vivo, sensores e imagens generativas respondem à presença do público. Em exibição na Meta Gallery, Rio de Janeiro.",
   openGraph: {

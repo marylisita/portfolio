@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Oficina de TouchDesigner — vídeo mapping | Maria Isabel Lisita",
+  title: "Oficina de TouchDesigner — vídeo mapping",
   description:
     "Oficina introdutória de programação visual, gráficos em tempo real e vídeo mapping com TouchDesigner, realizada no LAID/UFRJ.",
   openGraph: {
