@@ -62,7 +62,10 @@ const rmStyles = `
     --ink: var(--site-ink);
     --paper: var(--site-paper);
     --acid: var(--site-accent);
-    --hero-highlight: #75332f;
+    /* Segue o accent: um terracota fixo aqui brigaria com o rosa a dois
+       centímetros de distância. Os papéis cianótipo e vellum continuam com
+       realce próprio, calibrado para os fundos deles. */
+    --hero-highlight: var(--site-accent);
     --hero-art-lift: 0rem;
     --font-grotesk: Arial, "Helvetica Neue", Helvetica, sans-serif;
     /* degradê profundo: roxo/azul da id EBAT respirando por baixo do preto */
@@ -117,7 +120,7 @@ const rmStyles = `
     opacity: .07;
     mix-blend-mode: multiply;
   }
-  .rm *::selection { background: #843f3a; color: #fff8ec; }
+  .rm *::selection { background: color-mix(in srgb, var(--acid) 88%, var(--ink)); color: #fff8ec; }
   .px-line {
     background-image: repeating-linear-gradient(90deg, var(--ink) 0 6px, transparent 6px 12px);
     background-size: 100% 2px;

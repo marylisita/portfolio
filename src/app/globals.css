@@ -29,13 +29,19 @@
     --ease-out: cubic-bezier(0, 0, 0, 1);
     --site-paper:  #EDE7DA;  /* bege quente, levemente acinzentado */
     --site-ink:    #1C1B18;  /* cinza bem escuro (não é preto puro) */
-    --site-accent: #1C1B18;  /* agora usa o preto da fonte como destaque, elegante e editorial */
-    --site-accent-rgb: 28, 27, 24;
+    /* Rosa choque: a cor da casa. Escurecido o bastante para passar AA como
+       TEXTO sobre o papel creme (~5.0:1) -- o rosa choque puro (#FF3D81) dá
+       ~2.6:1 e só serviria para bloco. Alimenta --acid, que é a cor de
+       destaque lida por botão, link, ênfase e marcador em todo o site. */
+    --site-accent: #D6146B;
+    --site-accent-rgb: 214, 20, 107;
     /* tintas quentes de fundo */
     --site-tint-a: #F6F1E6;
     --site-tint-b: #E6DCCB;
     --site-tint-c: #F1E7D6;
-    --selection-bg: #843f3a;
+    /* Seleção na cor da casa, escurecida como no marquee para o texto claro
+       continuar legível em cima dela. */
+    --selection-bg: color-mix(in srgb, var(--site-accent) 88%, var(--site-ink));
     --selection-fg: #fff8ec;
     /* Escala mínima compartilhada: nenhum metadado funcional volta a 8–10px. */
     --type-micro: clamp(.78rem, .74rem + .14vw, .9rem);
@@ -81,7 +87,7 @@
     --r-xl: 40px;
 }
 
-*::selection { background: #843f3a; color: #fff8ec; }
+*::selection { background: var(--selection-bg); color: var(--selection-fg); }
 html { scroll-behavior:smooth; }
 
 body {

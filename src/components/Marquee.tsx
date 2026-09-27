@@ -9,7 +9,11 @@ const styles = `
     position: relative;
     z-index: 3;
     overflow: hidden;
-    background: var(--acid);
+    /* Único ponto em que o destaque é fundo, não texto: o papel sobre o rosa
+       puro dá 4.1:1, e .mq__item começa em 17.6px, abaixo do limiar de texto
+       grande. Escurecer 12% com a tinta leva a ~4.9:1 e continua derivado do
+       accent, então acompanha qualquer troca futura de cor. */
+    background: color-mix(in srgb, var(--acid) 88%, var(--ink));
     color: var(--paper);
     margin-top: calc(0px - var(--hero-art-lift, 0px));
     padding: .72rem 0;
