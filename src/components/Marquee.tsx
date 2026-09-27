@@ -163,55 +163,8 @@ const styles = `
     }
   }
 
-  /* --- Partículas de estrela ------------------------------------------------
-     Estrela de quatro pontas em clip-path, surgindo e sumindo em escala e
-     rotação. Ficam no FRAME, não no track: assim piscam paradas enquanto o
-     texto desliza por baixo, como no referencial.
-
-     Duas correções à receita comum que circula por aí:
-
-     1. box-shadow para o brilho NÃO funciona aqui -- o clip-path recorta a
-        sombra junto, e ela some. O halo tem que vir de filter: drop-shadow,
-        que se aplica depois do recorte.
-     2. O filtro fica estático e só transform/opacity animam. Animar
-        drop-shadow força o navegador a refazer o filtro a cada quadro.
-
-     São treze, pequenas e esparsas: densidade de GIF por cima de texto
-     tornaria a faixa ilegível. */
-  .mq__sparks {
-    position: absolute;
-    inset: 0;
-    z-index: 4;
-    pointer-events: none;
-  }
-  .mq__spark {
-    position: absolute;
-    display: block;
-    background: #FFFFFF;
-    /* A "cintura" do polígono é o que define a leitura: 59/41 dava uma estrela
-       atarracada, que nesse tamanho vira só um ponto. 53/47 afina os raios e
-       alonga as pontas, que é o desenho clássico de faísca. */
-    clip-path: polygon(
-      50% 0%, 53% 47%, 100% 50%, 53% 53%,
-      50% 100%, 47% 53%, 0% 50%, 47% 47%
-    );
-    filter: drop-shadow(0 0 7px rgba(255, 255, 255, .9));
-    opacity: 0;
-    will-change: transform, opacity;
-    animation-name: mq-twinkle;
-    animation-timing-function: ease-in-out;
-    animation-iteration-count: infinite;
-  }
-  @keyframes mq-twinkle {
-    0%, 100% { transform: scale(0) rotate(0deg); opacity: 0; }
-    50%      { transform: scale(1) rotate(90deg); opacity: 1; }
-  }
-
   @keyframes mq-roll {
     to { transform: translate3d(-50%, 0, 0); }
-  }
-  @media (hover: hover) {
-    .mq-frame:hover .mq__track { animation-play-state: paused; }
   }
   .mq-frame[data-visible="false"] .mq__track {
     animation-play-state: paused;
@@ -223,8 +176,6 @@ const styles = `
   }
   /* Em aparelho fraco o glitter sai inteiro, não só a animação: faísca parada
      não é faísca, é uma mancha clara na letra. */
-  html[data-motion="lite"] .mq__sparks { display: none; }
-
   html[data-motion="lite"] .mq__word {
     background-image: none;
     color: var(--paper);
@@ -233,7 +184,6 @@ const styles = `
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .mq__sparks { display: none; }
     .mq__word {
       background-image: none;
       color: var(--paper);
@@ -244,27 +194,6 @@ const styles = `
     .mq__group:nth-child(2) { display: none; }
   }
 `;
-
-/* Posições fixas, nunca Math.random() no render: valores sorteados a cada
-   render divergem entre servidor e cliente e quebram a hidratação. Escolhidas
-   a dedo para espalhar sem alinhar, com tamanhos e tempos desencontrados. */
-const SPARKS = [
-  { l: 3,  t: 20, s: 20, d: -0.4, r: 3.4 },
-  { l: 9,  t: 72, s: 13, d: -2.1, r: 4.2 },
-  { l: 16, t: 36, s: 26, d: -1.2, r: 3.9 },
-  { l: 23, t: 86, s: 15, d: -3.0, r: 4.6 },
-  { l: 30, t: 12, s: 22, d: -0.9, r: 3.6 },
-  { l: 37, t: 64, s: 14, d: -2.6, r: 4.0 },
-  { l: 44, t: 26, s: 28, d: -1.7, r: 3.3 },
-  { l: 51, t: 82, s: 17, d: -0.2, r: 4.4 },
-  { l: 58, t: 42, s: 15, d: -3.3, r: 3.8 },
-  { l: 65, t: 15, s: 24, d: -1.0, r: 4.1 },
-  { l: 72, t: 70, s: 13, d: -2.4, r: 3.5 },
-  { l: 79, t: 31, s: 21, d: -1.5, r: 4.3 },
-  { l: 86, t: 78, s: 16, d: -0.7, r: 3.7 },
-  { l: 93, t: 40, s: 25, d: -2.9, r: 4.0 },
-  { l: 97, t: 66, s: 14, d: -1.9, r: 3.6 },
-] as const;
 
 export default function Marquee({ items }: { items: string[] }) {
   const rootRef = useRef<HTMLDivElement>(null);
@@ -304,22 +233,6 @@ export default function Marquee({ items }: { items: string[] }) {
           </div>
         </div>
         <div className="mq__ornament mq__ornament--bottom">{ORNAMENT}</div>
-        <div className="mq__sparks">
-          {SPARKS.map((sp, i) => (
-            <span
-              key={i}
-              className="mq__spark"
-              style={{
-                left: `${sp.l}%`,
-                top: `${sp.t}%`,
-                width: `${sp.s}px`,
-                height: `${sp.s}px`,
-                animationDelay: `${sp.d}s`,
-                animationDuration: `${sp.r}s`,
-              }}
-            />
-          ))}
-        </div>
       </div>
     </>
   );
