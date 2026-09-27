@@ -129,6 +129,65 @@ const styles = `
     to { background-position: 0 0; }
   }
 
+  /* --- Glitter das palavras ------------------------------------------------
+     A OffBit DotBold é desenhada em pontos, então cada ponto funciona como
+     uma lantejoula: o facho atravessando as fileiras acende alguns e deixa
+     outros no rosa. É o suporte que a estrela, de traço fino, não tinha.
+
+     O gradiente traz TRÊS brilhos em vez de um: numa palavra longa mais de um
+     ponto acende ao mesmo tempo, que é o que separa paetê de reflexo.
+
+     Contraste: a base é o rosa quente (5.0:1 sobre a faixa) e os picos vão
+     para o branco (16:1), então a palavra nunca cai abaixo de AA. */
+  .mq__word {
+    background-image:
+      linear-gradient(
+        104deg,
+        var(--site-accent-hot) 0%,
+        var(--site-accent-hot) 11%,
+        #FFD9EC 16%,
+        #FFFFFF 19%,
+        #FFD9EC 22%,
+        var(--site-accent-hot) 29%,
+        var(--site-accent-hot) 45%,
+        #FFE8F4 50%,
+        #FFFFFF 53%,
+        #FFE8F4 56%,
+        var(--site-accent-hot) 63%,
+        var(--site-accent-hot) 79%,
+        #FFD9EC 84%,
+        #FFFFFF 87%,
+        #FFD9EC 90%,
+        var(--site-accent-hot) 97%,
+        var(--site-accent-hot) 100%
+      );
+    /* Mesma regra da estrela: com no-repeat, sair de 0%..100% deixa parte do
+       traço sem fundo, e com recorte em texto isso apaga a letra. */
+    background-size: 240% 100%;
+    background-position: 100% 0;
+    background-repeat: no-repeat;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    animation: mq-glint 5.6s linear infinite;
+  }
+
+  /* Palavras vizinhas fora de fase, senão a faixa inteira pulsa junto. */
+  .mq__item:nth-child(2n) .mq__word { animation-delay: -1.9s; }
+  .mq__item:nth-child(3n) .mq__word { animation-delay: -3.7s; }
+
+  /* Sem recorte em texto a palavra sumiria: volta ao creme, que é o estado
+     mais legível (16.3:1) e o que a faixa usava antes do teste. */
+  @supports not ((background-clip: text) or (-webkit-background-clip: text)) {
+    .mq__word {
+      background-image: none;
+      color: var(--paper);
+      -webkit-text-fill-color: currentColor;
+      animation: none;
+    }
+  }
+
   /* Sem o recorte em texto o glifo ficaria invisível: volta para o rosa chapado. */
   @supports not ((background-clip: text) or (-webkit-background-clip: text)) {
     .mq__item .mq__star {
@@ -161,10 +220,23 @@ const styles = `
     animation: none;
   }
 
+  html[data-motion="lite"] .mq__word {
+    background-image: none;
+    color: var(--paper);
+    -webkit-text-fill-color: currentColor;
+    animation: none;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .mq__item .mq__star {
       background-image: none;
       color: var(--site-accent-hot, var(--acid));
+      -webkit-text-fill-color: currentColor;
+      animation: none;
+    }
+    .mq__word {
+      background-image: none;
+      color: var(--paper);
       -webkit-text-fill-color: currentColor;
       animation: none;
     }
@@ -202,7 +274,8 @@ export default function Marquee({ items }: { items: string[] }) {
               <div className="mq__group" key={group}>
                 {items.map((item, index) => (
                   <span className="mq__item" key={`${group}-${item}-${index}`}>
-                    {item}<span className="text-star mq__star">✳︎</span>
+                    <span className="mq__word">{item}</span>
+                    <span className="text-star mq__star">✳︎</span>
                   </span>
                 ))}
               </div>
