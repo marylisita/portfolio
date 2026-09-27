@@ -9,12 +9,12 @@ const styles = `
     position: relative;
     z-index: 3;
     overflow: hidden;
-    /* Único ponto em que o destaque é fundo, não texto -- então aqui entra o
-       rosa quente, com a tinta escura por cima: 5.0:1, passa AA, e é mais
-       alto que a versão anterior (papel creme sobre rosa escurecido dava
-       4.9:1 e um volume bem menor). */
-    background: var(--site-accent-hot, var(--acid));
-    color: var(--ink);
+    /* Faixa preta com a fonte em creme (16.3:1) e as estrelas em rosa quente.
+       O rosa entra como pontuação entre as palavras, não como fundo: sobre a
+       tinta escura ele rende 5.0:1 e fica mais alto do que quando era o
+       fundo inteiro. */
+    background: var(--ink);
+    color: var(--paper);
     margin-top: calc(0px - var(--hero-art-lift, 0px));
     padding: .72rem 0;
     isolation: isolate;
@@ -31,7 +31,8 @@ const styles = `
     letter-spacing: .08em;
     text-align: center;
     white-space: nowrap;
-    opacity: .58;
+    color: var(--ascii-edge, var(--site-accent-hot));
+    opacity: .5;
     pointer-events: none;
     user-select: none;
   }
@@ -72,7 +73,8 @@ const styles = `
     display: inline-grid;
     place-items: center;
     margin-inline: clamp(1.05rem, 1.45vw, 1.45rem);
-    color: var(--hero-highlight, #75332f);
+    /* As estrelas entre as palavras: rosa quente sobre a faixa preta, 5.0:1. */
+    color: var(--site-accent-hot, var(--acid));
     font-size: .82em;
     line-height: 1;
     opacity: .92;

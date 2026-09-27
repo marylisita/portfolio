@@ -11,7 +11,16 @@ const SITE_GIBBON_RAMP = [
   "≈", "~", "⠶", "⠲", "⠴", "⠛", "⠿",
 ];
 
-const UNIFIED_COLOR = "#173b58"; // Navy azul-escuro único
+const UNIFIED_COLOR_FALLBACK = "#FF2E9A";
+
+/** Lê --ascii-ink do elemento; assim a gravura acompanha a troca de papel. */
+function asciiInk(element: Element | null): string {
+  if (!element) return UNIFIED_COLOR_FALLBACK;
+  const value = getComputedStyle(element)
+    .getPropertyValue("--ascii-ink")
+    .trim();
+  return value || UNIFIED_COLOR_FALLBACK;
+}
 // A última linha visível da gravura está em y=996; os 37 px restantes do
 // arquivo são transparentes. Alinhar por esse limite aproxima a tinta do
 // ticker sem recortar nenhum caractere da obra.
@@ -101,6 +110,39 @@ export default function AsciiKanagawa({
     const image = new Image();
     image.src = src;
 
+    /* A gravura é um WebP com a tinta já assada no arquivo, então recolorir
+       exige repintar o alpha: desenha uma vez num canvas fora de tela e
+       preenche com `source-in`, que mantém o recorte e troca a cor. Feito
+       UMA vez por cor -- nunca dentro do laço de animação. */
+    let inkColor = asciiInk(canvas);
+    let tintedArt: HTMLCanvasElement | null = null;
+
+    function artSource(): CanvasImageSource {
+      if (!image.naturalWidth || !image.naturalHeight) return image;
+      if (tintedArt) return tintedArt;
+      const sheet = document.createElement("canvas");
+      sheet.width = image.naturalWidth;
+      sheet.height = image.naturalHeight;
+      const c = sheet.getContext("2d");
+      if (!c) return image;
+      c.drawImage(image, 0, 0);
+      c.globalCompositeOperation = "source-in";
+      c.fillStyle = inkColor;
+      c.fillRect(0, 0, sheet.width, sheet.height);
+      tintedArt = sheet;
+      return tintedArt;
+    }
+
+    /* Chamado no resize: a troca de papel muda --ascii-ink, e o material
+       derivado (gravura tingida e atlas de contorno) precisa cair junto. */
+    function refreshInk() {
+      const next = asciiInk(canvas);
+      if (next === inkColor) return false;
+      inkColor = next;
+      tintedArt = null;
+      return true;
+    }
+
     // No mobile a obra continua visível, mas é desenhada uma única vez. Canvas
     // não vira candidato de LCP e evita todo o mapa, partículas e loop animado.
     if (!interactivePointer.matches) {
@@ -133,8 +175,9 @@ export default function AsciiKanagawa({
           bottomGap -
           image.naturalHeight * ART_VISIBLE_BOTTOM_RATIO * scale;
 
+        refreshInk();
         ctx.drawImage(
-          image,
+          artSource(),
           staticDrawX,
           staticDrawY,
           staticDrawWidth,
@@ -306,6 +349,7 @@ export default function AsciiKanagawa({
     }
 
     function resize() {
+      if (refreshInk()) gibbonAtlasKey = 0;
       const rect = parent.getBoundingClientRect();
       width = rect.width || window.innerWidth;
       height = rect.height || window.innerHeight;
@@ -336,7 +380,7 @@ export default function AsciiKanagawa({
       c.font = `bold ${patchSize * dpr}px "Courier New", monospace`;
       c.textAlign = "center";
       c.textBaseline = "middle";
-      c.fillStyle = UNIFIED_COLOR;
+      c.fillStyle = inkColor;
       for (let i = 0; i < SITE_GIBBON_RAMP.length; i += 1) {
         const ch = SITE_GIBBON_RAMP[i];
         if (ch && ch !== " ") c.fillText(ch, i * tile + tile / 2, tile / 2);
@@ -381,13 +425,13 @@ export default function AsciiKanagawa({
     }
 
     function drawBase() {
-      ctx.drawImage(image, drawX, drawY, drawWidth, drawHeight);
+      ctx.drawImage(artSource(), drawX, drawY, drawWidth, drawHeight);
     }
 
     function drawSpray(seconds: number) {
       ctx.save();
       ctx.globalAlpha = 0.65;
-      ctx.fillStyle = UNIFIED_COLOR;
+      ctx.fillStyle = inkColor;
 
       for (const particle of spray) {
         let x = 0;

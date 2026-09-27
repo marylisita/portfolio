@@ -8,6 +8,16 @@ const MOBILE_ART_ZOOM = 1.06;
 const MOBILE_OPACITY_BOOST = 1.45;
 const MOBILE_HORIZONTAL_FOCUS = .48;
 
+const ASCII_INK_FALLBACK = "#FF2E9A";
+
+/** Mesma leitura de --ascii-ink do AsciiKanagawa, para as duas versões da
+ *  gravura ficarem na mesma cor. */
+function asciiInk(element: Element | null): string {
+  if (!element) return ASCII_INK_FALLBACK;
+  const value = getComputedStyle(element).getPropertyValue("--ascii-ink").trim();
+  return value || ASCII_INK_FALLBACK;
+}
+
 export default function StaticKanagawa({
   className,
   opacity = .3,
@@ -67,7 +77,14 @@ export default function StaticKanagawa({
           image.naturalHeight * ART_VISIBLE_BOTTOM_RATIO * scale
         : 0;
 
+      /* A tinta está assada no WebP: repinta o alpha com `source-in` depois
+         de desenhar, recortando pelo próprio traço da gravura. */
       context.drawImage(image, drawX, drawY, drawWidth, drawHeight);
+      context.save();
+      context.globalCompositeOperation = "source-in";
+      context.fillStyle = asciiInk(canvas);
+      context.fillRect(0, 0, width, height);
+      context.restore();
     };
 
     image.addEventListener("load", draw);

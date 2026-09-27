@@ -97,8 +97,13 @@ const styles = `
       transform var(--duration-fast) var(--ease-out),
       opacity var(--duration-fast) var(--ease-out);
   }
-  .sw__button:hover,
-  .sw__button:focus-visible {
+  .sw__button:not(:disabled):hover,
+  .sw__button:not(:disabled):focus-visible {
+    /* Preto no repouso, rosa quente no hover. A tinta por cima do rosa dá
+       5.0:1, então o rótulo continua legível na troca. */
+    background: var(--site-accent-hot, var(--acid));
+    border-color: var(--site-accent-hot, var(--acid));
+    color: var(--ink);
     transform: translateY(-2px);
   }
   .sw__button:focus-visible {

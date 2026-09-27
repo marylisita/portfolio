@@ -214,7 +214,14 @@ export default function RootLayout({
           @font-face {
             font-family: "pf-pixelscript";
             src: url("https://use.typekit.net/af/c7c109/0000000000000000774f2b0a/31/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("woff2");
-            font-display: optional;
+            /* Era "optional", e e por isso que o wordmark caia na Seratonin.
+               Com "optional" o navegador so usa a fonte se ela estiver pronta
+               na primeira centena de milissegundos; perdido esse instante ele
+               fixa o fallback e NUNCA troca. Como --font-pixelscript cai em
+               --font-hand, o fallback era a Seratonin, em toda visita.
+               "swap" mantem o fallback so ate o arquivo chegar, e entao troca
+               para a Pixelscript. */
+            font-display: swap;
             font-style: normal;
             font-weight: 400;
             font-stretch: normal;

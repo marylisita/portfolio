@@ -468,7 +468,7 @@ function HomeContent() {
           subHighlight={t("hero_sub_highlight")}
           scrollLabel={t("rm_scroll")}
         >
-          <AdaptiveKanagawa className="rm-field" opacity={0.3} />
+          <AdaptiveKanagawa className="rm-field" opacity={0.2} />
           <ScatterMenu
             items={[
               {
