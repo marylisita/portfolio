@@ -98,7 +98,11 @@ const styles = `
        glitter aqui é só o facho especular viajando. */
     background-image:
       linear-gradient(
-        115deg,
+        /* Horizontal, não inclinado: a estrela é um glifo quase quadrado, e
+           num ladrilho desses a inclinação faz a emenda desencontrar entre o
+           topo e a base. Na palavra 100deg funciona porque ela é muito mais
+           larga que alta. */
+        90deg,
         var(--site-accent-hot) 0%,
         var(--site-accent-hot) 36%,
         #FFE3F1 45%,
@@ -107,13 +111,16 @@ const styles = `
         var(--site-accent-hot) 64%,
         var(--site-accent-hot) 100%
       );
-    /* O gradiente tem 3.2x a largura do glifo e o percurso fica entre 100% e
-       0%: nessa faixa a imagem sempre cobre a caixa inteira. Passar disso
-       (130%, -30%) deixa parte do traço SEM fundo, e com o recorte em texto
-       isso não é "sem brilho", é invisível -- a estrela some. */
-    background-size: 320% 100%;
-    background-position: 100% 0;
-    background-repeat: no-repeat;
+    /* Ladrilhado, não recortado. Com no-repeat os extremos do percurso mostram
+       trechos DIFERENTES do gradiente, e a volta ao inicio vira um salto
+       visivel. Repetindo, e deslocando exatamente um ladrilho por ciclo, o
+       quadro final é identico ao inicial por construção.
+       A conta: com background-size 200%, a imagem tem 2x a largura da caixa,
+       então o deslocamento de background-position X% vale (W - 2W)*X/100 =
+       -W*X/100. Em X=200% isso dá -2W, exatamente um ladrilho. */
+    background-size: 200% 100%;
+    background-position: 0 0;
+    background-repeat: repeat;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -126,7 +133,7 @@ const styles = `
   .mq__item:nth-child(3n + 1) .mq__star { animation-delay: -2.8s; }
 
   @keyframes mq-glint {
-    to { background-position: 0 0; }
+    to { background-position: 200% 0; }
   }
 
   /* --- Glitter das palavras ------------------------------------------------
@@ -142,30 +149,32 @@ const styles = `
   .mq__word {
     background-image:
       linear-gradient(
-        104deg,
+        /* Ângulo quase horizontal: quanto mais inclinado, mais a emenda do
+           ladrilho desencontra entre o topo e a base da linha. */
+        100deg,
         var(--site-accent-hot) 0%,
-        var(--site-accent-hot) 11%,
-        #FFD9EC 16%,
-        #FFFFFF 19%,
-        #FFD9EC 22%,
-        var(--site-accent-hot) 29%,
-        var(--site-accent-hot) 45%,
-        #FFE8F4 50%,
-        #FFFFFF 53%,
-        #FFE8F4 56%,
-        var(--site-accent-hot) 63%,
-        var(--site-accent-hot) 79%,
-        #FFD9EC 84%,
-        #FFFFFF 87%,
-        #FFD9EC 90%,
-        var(--site-accent-hot) 97%,
+        var(--site-accent-hot) 8%,
+        #FFD9EC 13%,
+        #FFFFFF 16%,
+        #FFD9EC 19%,
+        var(--site-accent-hot) 25%,
+        var(--site-accent-hot) 41%,
+        #FFE8F4 46%,
+        #FFFFFF 49%,
+        #FFE8F4 52%,
+        var(--site-accent-hot) 58%,
+        var(--site-accent-hot) 74%,
+        #FFD9EC 79%,
+        #FFFFFF 82%,
+        #FFD9EC 85%,
+        var(--site-accent-hot) 92%,
         var(--site-accent-hot) 100%
       );
-    /* Mesma regra da estrela: com no-repeat, sair de 0%..100% deixa parte do
-       traço sem fundo, e com recorte em texto isso apaga a letra. */
-    background-size: 240% 100%;
-    background-position: 100% 0;
-    background-repeat: no-repeat;
+    /* Ladrilhado pelo mesmo motivo da estrela. As pontas do gradiente são as
+       duas rosa cheio, então a emenda entre ladrilhos não aparece. */
+    background-size: 200% 100%;
+    background-position: 0 0;
+    background-repeat: repeat;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
