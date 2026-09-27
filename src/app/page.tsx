@@ -99,6 +99,15 @@ const rmStyles = `
     --site-accent-rgb: 85, 96, 91;
     --hero-highlight: #914d48;
   }
+  .rm[data-paper="vinyl"] {
+    --site-paper: #FFC7E0;
+    --site-ink: #1A0710;
+    --site-accent: #A3005A;
+    --site-tint-a: #FFDCEC;
+    --site-tint-b: #F7AFD0;
+    --site-tint-c: #FFD2E6;
+    --site-accent-rgb: 163, 0, 90;
+  }
   .rm[data-paper="cyanotype"]::after {
     opacity: .11;
     mix-blend-mode: screen;

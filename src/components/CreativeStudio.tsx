@@ -11,7 +11,7 @@ import {
 } from "react";
 import { useT } from "@/i18n/LanguageContext";
 
-export type PaperMode = "cream" | "cyanotype" | "vellum";
+export type PaperMode = "cream" | "cyanotype" | "vellum" | "vinyl";
 export type StudioSound = "stamp" | "paper" | "drag" | "hover" | "flip";
 
 type Stamp = {
@@ -120,11 +120,12 @@ const STAMPS = [
   "✿",
 ] as const;
 
-const PAPER_ORDER: PaperMode[] = ["cream", "cyanotype", "vellum"];
+const PAPER_ORDER: PaperMode[] = ["cream", "cyanotype", "vellum", "vinyl"];
 const PAPER_GLYPH: Record<PaperMode, string> = {
   cream: "▧",
   cyanotype: "▩",
   vellum: "▨",
+  vinyl: "◉",
 };
 const PAPER_TOKENS: Record<PaperMode, Record<string, string>> = {
   cream: {
@@ -143,6 +144,15 @@ const PAPER_TOKENS: Record<PaperMode, Record<string, string>> = {
     "--site-paper": "#e6e9e6",
     "--site-ink": "#242725",
     "--site-accent": "#55605b",
+  },
+  /* Papel "vinil": o quarto rosa das referências, não o rosa quente puro --
+     uma página inteira em #FF2E9A não sustenta leitura. O tom quente fica
+     para o destaque; o papel é o bubblegum de fundo. Tinta 13.4:1, destaque
+     5.4:1 sobre ele. */
+  vinyl: {
+    "--site-paper": "#FFC7E0",
+    "--site-ink": "#1A0710",
+    "--site-accent": "#A3005A",
   },
 };
 

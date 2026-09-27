@@ -35,6 +35,12 @@
        destaque lida por botão, link, ênfase e marcador em todo o site. */
     --site-accent: #D6146B;
     --site-accent-rgb: 214, 20, 107;
+    /* O rosa ADÉLA, no volume da capa do PRIMA. NUNCA como texto sobre o
+       papel: dá 2.8:1. É o contrário -- é FUNDO, com a tinta escura por cima,
+       que é como a referência usa (marcador preto sobre rosa). Tinta sobre
+       ele dá 5.0:1, passa AA. Por isso existe separado de --site-accent, que
+       é o rosa que pode virar texto. */
+    --site-accent-hot: #FF2E9A;
     /* tintas quentes de fundo */
     --site-tint-a: #F6F1E6;
     --site-tint-b: #E6DCCB;

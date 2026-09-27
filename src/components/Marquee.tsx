@@ -9,12 +9,12 @@ const styles = `
     position: relative;
     z-index: 3;
     overflow: hidden;
-    /* Único ponto em que o destaque é fundo, não texto: o papel sobre o rosa
-       puro dá 4.1:1, e .mq__item começa em 17.6px, abaixo do limiar de texto
-       grande. Escurecer 12% com a tinta leva a ~4.9:1 e continua derivado do
-       accent, então acompanha qualquer troca futura de cor. */
-    background: color-mix(in srgb, var(--acid) 88%, var(--ink));
-    color: var(--paper);
+    /* Único ponto em que o destaque é fundo, não texto -- então aqui entra o
+       rosa quente, com a tinta escura por cima: 5.0:1, passa AA, e é mais
+       alto que a versão anterior (papel creme sobre rosa escurecido dava
+       4.9:1 e um volume bem menor). */
+    background: var(--site-accent-hot, var(--acid));
+    color: var(--ink);
     margin-top: calc(0px - var(--hero-art-lift, 0px));
     padding: .72rem 0;
     isolation: isolate;
