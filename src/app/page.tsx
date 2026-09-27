@@ -11,7 +11,6 @@ import EditorialFooter from "@/components/EditorialFooter";
 import SiteHeader from "@/components/SiteHeader";
 import { useT } from "@/i18n/LanguageContext";
 import {
-  CreativeStudioControls,
   CreativeStudioProvider,
   useCreativeStudio,
 } from "@/components/CreativeStudio";
@@ -62,10 +61,11 @@ const rmStyles = `
     --ink: var(--site-ink);
     --paper: var(--site-paper);
     --acid: var(--site-accent);
-    /* Segue o accent: um terracota fixo aqui brigaria com o rosa a dois
-       centímetros de distância. Os papéis cianótipo e vellum continuam com
-       realce próprio, calibrado para os fundos deles. */
-    --hero-highlight: var(--site-accent);
+    /* Segue o accent, mas um passo mais fechado: a segunda linha do hero é o
+       maior bloco de rosa da página e no tom cheio ficava estridente. Sai de
+       color-mix para continuar acompanhando qualquer troca do accent.
+       Contraste sobre o papel creme sobe de 5.0:1 para ~5.4:1. */
+    --hero-highlight: color-mix(in srgb, var(--site-accent) 82%, var(--ink));
     --hero-art-lift: 0rem;
     --font-grotesk: Arial, "Helvetica Neue", Helvetica, sans-serif;
     /* degradê profundo: roxo/azul da id EBAT respirando por baixo do preto */
@@ -456,10 +456,12 @@ function HomeContent() {
 
       <SiteHeader />
 
-      {/* Painel do ateliê: trocar o papel do site, carimbar e reorganizar a
-          mesa. Ele mesmo se esconde quando o hero sai da tela, por isso fica
-          aqui fora do <main> e não junto do hero. */}
-      <CreativeStudioControls />
+      {/* O painel do ateliê (CreativeStudioControls) saiu daqui a pedido dela.
+          Consequência registrada: sem ele os papéis cianótipo, vellum e rosa
+          não têm porta de entrada e o site fica só no creme; os carimbos
+          também ficam sem gatilho. O componente e os tokens continuam no
+          repositório, prontos para voltar, e como ninguém mais o importa ele
+          sai do bundle do cliente. */}
 
       <main>
         <PlaygroundHero

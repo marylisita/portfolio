@@ -41,11 +41,15 @@
        ele dá 5.0:1, passa AA. Por isso existe separado de --site-accent, que
        é o rosa que pode virar texto. */
     --site-accent-hot: #FF2E9A;
-    /* Tinta da gravura em ASCII. Separada do accent porque a arte é fundo
-       decorativo, sempre em opacidade baixa -- não precisa passar contraste
-       de texto, e por isso pode usar o rosa quente cheio. Os canvases leem
-       este valor em runtime, então trocar aqui troca a onda inteira. */
-    --ascii-ink: #FF2E9A;
+    /* Tinta da gravura em ASCII. Rosa fechado, não o quente: a onda é fundo e
+       precisa ser o rosa mais quieto da página, senão compete com o texto em
+       destaque, que deveria ser o ponto mais alto. O quente a 20% sobre o
+       creme virava bubblegum.
+
+       PRECISA ser uma cor literal, nunca color-mix() com var() dentro: os
+       canvases leem este token por getComputedStyle e jogam direto no
+       fillStyle, fora do contexto do elemento, onde var() não resolve. */
+    --ascii-ink: #A81B55;
     /* Rosa pastel: só para o ASCII de moldura -- as fileiras de ornamento que
        fazem a borda da faixa. Ali o rosa quente competia com as estrelas e
        com as palavras; o pastel recua e vira moldura. Decorativo, aria-hidden,
