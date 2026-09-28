@@ -80,12 +80,23 @@ export default function SkillConstellation({ nodes }: Props) {
           transition: transform .3s cubic-bezier(.23, 1, .32, 1);
         }
 
+        /* O sinal fica visivel em repouso: antes ele so aparecia depois da
+           interacao, entao a linha parecia texto estatico e nada dizia que
+           havia conteudo atras dela. E um "+", nao o asterisco da casa, porque
+           aqui o glifo precisa cumprir funcao antes de decorar -- "+" anuncia
+           que abre; o asterisco, nao.
+           A transicao declara opacity e transform em vez de "all", para uma
+           propriedade nova adicionada aqui no futuro nao entrar animando
+           sozinha, sem ninguem decidir isso. */
         .rm-skill-icon {
           flex: 0 0 auto;
-          opacity: 0;
-          font-size: .8rem;
-          transform: rotate(-90deg);
-          transition: all .4s cubic-bezier(.23, 1, .32, 1);
+          opacity: .5;
+          font-size: 1rem;
+          line-height: 1;
+          transform: rotate(0deg);
+          transition:
+            opacity .25s cubic-bezier(.23, 1, .32, 1),
+            transform .4s cubic-bezier(.23, 1, .32, 1);
         }
 
         .rm-skill-detail-wrapper {
@@ -107,7 +118,7 @@ export default function SkillConstellation({ nodes }: Props) {
         .rm-skill-row[data-open="true"] .rm-skill-icon,
         .rm-skill-row:focus-visible .rm-skill-icon {
           opacity: 1;
-          transform: rotate(0deg);
+          transform: rotate(45deg);
         }
 
         /* Só onde existe ponteiro fino: no toque, quem manda é o estado. */
@@ -121,7 +132,7 @@ export default function SkillConstellation({ nodes }: Props) {
           }
           .rm-skill-row:hover .rm-skill-icon {
             opacity: 1;
-            transform: rotate(0deg);
+            transform: rotate(45deg);
           }
         }
 
@@ -168,6 +179,15 @@ export default function SkillConstellation({ nodes }: Props) {
           .rm-skill-row:hover .rm-skill-label {
             transform: none;
           }
+          /* O giro do sinal cai, mas o estado precisa continuar legivel: sem
+             transform o "+" e o "x" ficariam identicos, entao quem marca
+             aberto aqui e a opacidade cheia. */
+          .rm-skill-row[data-open="true"] .rm-skill-icon,
+          .rm-skill-row:hover .rm-skill-icon,
+          .rm-skill-row:focus-visible .rm-skill-icon {
+            transform: none;
+            opacity: 1;
+          }
         }
       `}</style>
 
@@ -194,7 +214,7 @@ export default function SkillConstellation({ nodes }: Props) {
                 <span className="rm-skill-number">{number} /</span>
                 <span className="rm-skill-label">{node.label}</span>
               </span>
-              <span className="rm-skill-icon" aria-hidden="true">✳︎</span>
+              <span className="rm-skill-icon" aria-hidden="true">+</span>
             </span>
 
             <span className="rm-skill-detail-wrapper" id={detailId}>

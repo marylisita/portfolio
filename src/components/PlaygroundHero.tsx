@@ -322,7 +322,11 @@ const styles = `
       font-size: clamp(2rem, 10.6vw, 2.75rem);
       line-height: 1.08;
       letter-spacing: -.015em;
-      margin: 7.5rem 0 10rem;
+      /* Era 10rem. O heroi e flex column com justify-content: space-between e
+         altura fixa, entao a margem larga somada a sobra empurrava a frase de
+         apresentacao para o rodape da primeira tela -- ela aparecia DEPOIS das
+         tres etiquetas, longe da chamada que deveria completar. */
+      margin: 7.5rem 0 2rem;
       translate: 0 -6svh;
     }
     .ph__title[data-compact="true"] {
@@ -334,15 +338,24 @@ const styles = `
       width: auto;
       max-width: 100%;
       margin-top: 1.25rem;
+      /* A sobra do space-between vai toda para BAIXO da frase, em vez de se
+         abrir entre ela e o titulo. E o que a mantem colada na chamada. */
+      margin-bottom: auto;
+      /* Ela e a unica linha do heroi que diz o que ela faz, e estava no menor
+         corpo do bloco: sobe um degrau. */
+      font-size: clamp(1.05rem, 4vw, 1.3rem);
       translate: 0 -4svh;
     }
     .ph__sub-line { white-space: normal; }
     .ph__sticker--desk { display: none; }
     .ph__sticker { cursor: default; }
+    /* Sobe de 23% para 12%. Com a frase de apresentacao colada na chamada, o
+       bloco de texto inteiro subiu e o titulo passou a cruzar o relogio. Aqui
+       em cima ele ainda fica abaixo da faixa do menu, com folga dos dois lados. */
     .ph__sticker--clock {
       left: auto !important;
       right: 1.25rem;
-      top: 23% !important;
+      top: 12% !important;
       text-align: right;
     }
     .ph__greet { font-size: 1.2rem; }

@@ -26,15 +26,29 @@ const styles = `
   font-size: 16px;
   cursor: pointer;
   text-decoration: none;
-  transition: transform 0.3s ease-in-out, background-color 0.3s ease-in-out, border-color 0.3s ease-in-out, color 0.3s ease-in-out;
+  /* 140ms: o retorno de cor precisa chegar junto com o ponteiro. Em 300ms o
+     botao parecia responder depois do gesto. */
+  transition:
+    transform .12s var(--ease-out, ease-out),
+    background-color .14s ease-out,
+    border-color .14s ease-out,
+    color .14s ease-out;
   overflow: visible;
 }
 
+/* O hover era scale(1.1) rotate(5deg) em 300ms. A inclinacao ja vem do pai
+   (--tag-rotate), entao girar mais 5deg desmanchava a composicao da abertura,
+   e o gesto se repetia em controle comum demais para chamar tanta atencao.
+   Quem responde agora e a cor; o movimento fica para o clique. */
 .hero-btn:hover, .hero-btn:focus-visible {
-  transform: scale(1.1) rotate(5deg);
   background-color: var(--btn-hover-bg);
   border-color: var(--btn-hover-bg);
   color: var(--btn-hover-text);
+}
+
+/* Pressao discreta: confirma o toque sem deslocar o que esta em volta. */
+.hero-btn:active {
+  transform: scale(.97);
 }
 
 .hero-btn p {
@@ -52,13 +66,18 @@ const styles = `
   bottom: -2px; 
   background: var(--btn-hover-text);
   height: 2px; 
-  transition: 0.3s ease-out;
+  transition: width .16s ease-out;
 }.hero-btn:hover p::after, .hero-btn:focus-visible p::after {
   width: 100%;
 }
 
 .hero-btn:focus-visible {
   outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-btn { transition: background-color .14s ease-out, border-color .14s ease-out, color .14s ease-out; }
+  .hero-btn:active { transform: none; }
 }
 `;
 
