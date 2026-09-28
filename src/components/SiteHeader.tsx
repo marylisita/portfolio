@@ -6,8 +6,7 @@ import ScrambleText from "./ScrambleText";
 import UnderlineButton from "./UnderlineButton";
 import { useT } from "@/i18n/LanguageContext";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
-import { useNavTucked } from "./useScrollDirection";
+import { useEffect, useState } from "react";
 
 const styles = `
   .sh {
@@ -16,14 +15,16 @@ const styles = `
     font-size: var(--type-micro); text-transform: lowercase; letter-spacing: .1em;
     color: var(--site-ink, #1C1B18);
     pointer-events: auto;
-    transition: opacity .3s var(--ease-out, ease), translate .38s var(--ease-out, ease);
-  }
-  /* Descendo, a assinatura sai da frente do texto; subindo, ela volta. Antes
-     ela acompanhava a rolagem inteira e cruzava imagem e paragrafo dos cases. */
-  .sh[data-tucked="true"] {
-    opacity: 0;
-    translate: 0 -.85rem;
-    pointer-events: none;
+    /* Um so material de vidro para o menu inteiro: a assinatura a esquerda e
+       o bloco de navegacao a direita usam estes mesmos valores, para lerem
+       como duas partes da mesma peca e nao como dois tratamentos diferentes. */
+    --sh-glass-bg: color-mix(in srgb, var(--site-paper, #ede7da) 55%, transparent);
+    --sh-glass-edge: color-mix(in srgb, var(--site-paper, #ede7da) 80%, transparent);
+    --sh-glass-shadow:
+      0 .5rem 1.5rem -.6rem color-mix(in srgb, var(--site-ink, #1C1B18) 18%, transparent),
+      inset 0 1px 0 color-mix(in srgb, #fff 55%, transparent);
+    --sh-glass-blur: blur(14px) saturate(1.6);
+    --sh-glass-fade: .32s var(--ease-out, ease);
   }
   .sh--l { left: clamp(1.5rem, 5vw, 5.5rem); display: flex; flex-direction: column; gap: .12rem; line-height: 1.1; }
   .sh__mark {
@@ -74,21 +75,32 @@ const styles = `
   }
   .sh__mark:focus-visible { outline: 2px dotted var(--site-ink, #1C1B18); outline-offset: 4px; }
   /* No heroi a assinatura faz parte da composicao e fica grande. Passado o
-     heroi ela vira chrome: encolhe e ganha o halo de papel (o mesmo
-     tratamento que o celular ja usava) para nao se misturar com o titulo da
-     secao que passa por baixo -- "trabalhos selecionados" era atropelado por
-     uma faixa de texto de quase 500px de largura. */
+     heroi ela vira chrome: encolhe e recebe o mesmo vidro do bloco da
+     direita, para o titulo da secao passar por tras dela sem se misturar --
+     "trabalhos selecionados" era atropelado por uma faixa de texto de quase
+     500px de largura. Antes aqui havia papel a 96%, quase opaco; agora e o
+     proprio blur que segura a leitura, e o menu inteiro tem um material so. */
+  .sh__mark {
+    border: 1px solid transparent;
+    border-radius: 999px;
+    transition:
+      font-size .3s var(--ease-out, ease),
+      padding .3s var(--ease-out, ease),
+      background-color var(--sh-glass-fade),
+      border-color var(--sh-glass-fade),
+      box-shadow var(--sh-glass-fade),
+      -webkit-backdrop-filter var(--sh-glass-fade),
+      backdrop-filter var(--sh-glass-fade);
+  }
   @media (min-width: 861px) {
-    .sh__mark { transition: font-size .3s var(--ease-out, ease), padding .3s var(--ease-out, ease); }
     .sh--l[data-floating="true"] .sh__mark {
       font-size: 1.35rem;
-      padding: .2rem .5rem;
-      /* 96%: o titulo da secao passa POR TRAS da etiqueta sem vazar. No
-         celular o halo e 88% porque la ele cobre corpo de texto, nao titulo. */
-      background: color-mix(in srgb, var(--site-paper, #ede7da) 96%, transparent);
-      box-shadow: 0 0 0 .3rem color-mix(in srgb, var(--site-paper, #ede7da) 96%, transparent);
-      -webkit-backdrop-filter: blur(6px);
-      backdrop-filter: blur(6px);
+      padding: .2rem .7rem;
+      background: var(--sh-glass-bg);
+      border-color: var(--sh-glass-edge);
+      box-shadow: var(--sh-glass-shadow);
+      -webkit-backdrop-filter: var(--sh-glass-blur);
+      backdrop-filter: var(--sh-glass-blur);
     }
   }
   /* No topo a navegacao e so texto sobre o papel do heroi -- nada de moldura.
@@ -111,17 +123,15 @@ const styles = `
       -webkit-backdrop-filter .32s var(--ease-out, ease),
       backdrop-filter .32s var(--ease-out, ease);
   }
+  /* A borda clara em cima e a sombra difusa embaixo dao a espessura do vidro;
+     sem elas a pilula some em fundos claros. O saturate compensa o
+     desbotamento que o blur causa no que passa atras. */
   .sh--r[data-floating="true"] {
-    background: color-mix(in srgb, var(--site-paper, #ede7da) 55%, transparent);
-    /* A borda clara em cima e a sombra difusa embaixo dao a espessura do
-       vidro; sem elas a pilula some em fundos claros. */
-    border-color: color-mix(in srgb, var(--site-paper, #ede7da) 80%, transparent);
-    box-shadow:
-      0 .5rem 1.5rem -.6rem color-mix(in srgb, var(--site-ink, #1C1B18) 18%, transparent),
-      inset 0 1px 0 color-mix(in srgb, #fff 55%, transparent);
-    /* saturate compensa o desbotamento que o blur causa no que passa atras. */
-    -webkit-backdrop-filter: blur(14px) saturate(1.6);
-    backdrop-filter: blur(14px) saturate(1.6);
+    background: var(--sh-glass-bg);
+    border-color: var(--sh-glass-edge);
+    box-shadow: var(--sh-glass-shadow);
+    -webkit-backdrop-filter: var(--sh-glass-blur);
+    backdrop-filter: var(--sh-glass-blur);
   }
   .sh__status {
     display: inline-flex; align-items: center; gap: .42rem;
@@ -201,9 +211,8 @@ const styles = `
     .sh__dot::after,
     .sh__mark .text-star,
     .sh__name::after { animation: none; }
-    .sh__mark { transition: none; }
-    .sh, .sh--r { transition: opacity .2s linear; }
-    .sh[data-tucked="true"] { translate: none; }
+    /* O vidro continua; o que cai e so a coreografia da entrada. */
+    .sh__mark, .sh--r { transition: none; }
   }
   @media (max-width: 860px) {
     .sh--r,
@@ -256,15 +265,16 @@ const styles = `
     .sh--l { max-width: calc(100vw - 8rem); }
     .sh__mark { font-size: clamp(1.15rem, 5.6vw, 1.55rem); line-height: .98; }
     /* Em tela estreita o conteúdo passa por baixo do cabeçalho fixo e a
-       assinatura ficava ilegível sobre o texto. O halo de papel é o mesmo
-       idioma já usado em .pj-tag e .lang-toggle — resolve a leitura sem
-       fechar o topo da página com uma barra sólida. */
+       assinatura ficava ilegível sobre o texto. Aqui o vidro vale desde o
+       topo, e não a partir dos 240px: no celular não existe herói em que a
+       assinatura fique sobre papel limpo. Mesmo material dos dois lados. */
     .sh__mark {
-      padding: .2rem .45rem;
-      background: color-mix(in srgb, var(--site-paper, #ede7da) 88%, transparent);
-      box-shadow: 0 0 0 .3rem color-mix(in srgb, var(--site-paper, #ede7da) 88%, transparent);
-      -webkit-backdrop-filter: blur(5px);
-      backdrop-filter: blur(5px);
+      padding: .2rem .55rem;
+      background: var(--sh-glass-bg);
+      border-color: var(--sh-glass-edge);
+      box-shadow: var(--sh-glass-shadow);
+      -webkit-backdrop-filter: var(--sh-glass-blur);
+      backdrop-filter: var(--sh-glass-blur);
     }
   }
 `;
@@ -275,12 +285,10 @@ export default function SiteHeader() {
   const pathname = usePathname();
   const isHome = pathname === "/" || pathname === "";
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  // Com o menu aberto a barra fica: some no meio de um toque seria pior.
-  // .rm-label e o rotulo de secao do site ("Trabalhos Selecionados", "Sobre"):
-  // quando um deles entra na faixa da assinatura, ela recolhe mesmo subindo.
-  const markRef = useRef<HTMLSpanElement>(null);
-  const tucked = useNavTucked(!mobileMenuOpen, markRef, ".rm-label");
-  // Mesmo limiar do useNavTucked: ate 240px a assinatura ainda e composicao.
+  // O menu nao recolhe mais ao descer: pedido dela. O que resolvia a leitura
+  // era tirar a barra da frente do texto, e agora quem resolve e o vidro --
+  // o conteudo passa por tras dela borrado, entao nao ha motivo para sumir.
+  // Ate 240px a assinatura ainda e composicao do heroi; dali em diante e chrome.
   const [floating, setFloating] = useState(false);
   useEffect(() => {
     const sync = () => setFloating(window.scrollY > 240);
@@ -297,12 +305,7 @@ export default function SiteHeader() {
   return (
     <>
       <style>{styles}</style>
-      <span
-        ref={markRef}
-        className="sh sh--l"
-        data-tucked={tucked ? "true" : "false"}
-        data-floating={floating ? "true" : "false"}
-      >
+      <span className="sh sh--l" data-floating={floating ? "true" : "false"}>
         <Link href="/" className="sh__mark">
           <span className="text-star" aria-hidden="true">✳︎</span>{" "}
           <span className="sh__name" aria-label="Maria Isabel Lisita">
@@ -312,11 +315,7 @@ export default function SiteHeader() {
           </span>
         </Link>
       </span>
-      <span
-        className="sh sh--r"
-        data-tucked={tucked ? "true" : "false"}
-        data-floating={floating ? "true" : "false"}
-      >
+      <span className="sh sh--r" data-floating={floating ? "true" : "false"}>
         <span className="sh__status">
           <span className="sh__dot" aria-hidden="true" />
           <ScrambleText
