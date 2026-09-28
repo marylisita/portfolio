@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import PlaygroundHero from "@/components/PlaygroundHero";
-import ScatteredWorks, { type WorkShape } from "@/components/ScatteredWorks";
+import ScatteredWorks from "@/components/ScatteredWorks";
 import { useProjects } from "@/components/useProjects";
 import Marquee from "@/components/Marquee";
 import AdaptiveKanagawa from "@/components/AdaptiveKanagawa";
@@ -22,20 +22,14 @@ const STITCH_DIVIDER = "------  ";
    decoração de layout: é a resposta a "por que este projeto precisa deste
    espaço". Se um projeto sair da lista, o motivo do vizinho muda junto — não
    trocar por ordem alfabética nem por data. */
-const FEATURED_PROJECTS: { href: string; shape: WorkShape }[] = [
-  // Produto autoral com pesquisa, protótipo e desenvolvimento: é o que aguenta
-  // a leitura mais longa. Abre a seção e leva o resultado por extenso.
-  { href: "/work/juizo", shape: "lead" },
-  // Duas identidades gráficas na mesma linha, em proporções diferentes.
-  // Comparar as duas é o ponto: cartaz deitado x capa de campanha.
-  { href: "/work/graduation", shape: "half" },
-  { href: "/work/ebat", shape: "half" },
-  // Instalação: o que interessa é a obra montada na sala, então faixa larga.
-  { href: "/work/cyber-marinum", shape: "band" },
-  { href: "/work/magazine", shape: "half" },
-  { href: "/work/isadora", shape: "half" },
-  // Cartaz em pé: coluna estreita, ao lado da saída para o arquivo inteiro.
-  { href: "/work/ondularis", shape: "column" },
+const FEATURED_PROJECT_HREFS = [
+  "/work/juizo",
+  "/work/graduation",
+  "/work/ebat",
+  "/work/cyber-marinum",
+  "/work/magazine",
+  "/work/isadora",
+  "/work/ondularis",
 ];
 
 const HERO_HEADLINES = {
@@ -438,10 +432,13 @@ function HomeContent() {
   // renumerava de 01 a 07 e o mesmo projeto aparecia como "01" aqui e "13/13"
   // na própria página — dois nomes para a mesma coisa. Agora um número vale um
   // projeto no site inteiro.
-  const featuredProjects = FEATURED_PROJECTS.flatMap(({ href, shape }) => {
+  const featuredProjects = FEATURED_PROJECT_HREFS.flatMap((href) => {
     const project = projects.find((item) => item.href === href);
-    return project ? [{ ...project, shape }] : [];
-  });
+    return project ? [project] : [];
+  }).map((project, index) => ({
+    ...project,
+    num: String(index + 1).padStart(2, "0"),
+  }));
 
   const marquee = [
     t("p04_tag1"), t("p01_tag1"), t("about_cat_web"),
