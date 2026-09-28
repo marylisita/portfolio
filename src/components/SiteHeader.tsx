@@ -88,14 +88,37 @@ const styles = `
       backdrop-filter: blur(6px);
     }
   }
+  /* No topo a navegacao e so texto sobre o papel do heroi -- nada de moldura.
+     Passado o heroi ela vira chrome e ganha a pilula de vidro: o conteudo
+     rola POR BAIXO dela, entao o blur e a saturacao seguram a leitura sem
+     fechar o topo com uma barra opaca. Mesmo limiar da assinatura (240px). */
   .sh--r {
     right: clamp(1.5rem, 5vw, 5.5rem);
     display: flex; align-items: center; gap: 1rem;
     padding: .45rem .6rem .45rem .85rem;
-    background: color-mix(in srgb, var(--site-paper, #ede7da) 92%, transparent);
-    box-shadow: 0 0 0 .25rem color-mix(in srgb, var(--site-paper, #ede7da) 70%, transparent);
-    -webkit-backdrop-filter: blur(8px);
-    backdrop-filter: blur(8px);
+    border: 1px solid transparent;
+    border-radius: 999px;
+    background: transparent;
+    transition:
+      opacity .3s var(--ease-out, ease),
+      translate .38s var(--ease-out, ease),
+      background-color .32s var(--ease-out, ease),
+      border-color .32s var(--ease-out, ease),
+      box-shadow .32s var(--ease-out, ease),
+      -webkit-backdrop-filter .32s var(--ease-out, ease),
+      backdrop-filter .32s var(--ease-out, ease);
+  }
+  .sh--r[data-floating="true"] {
+    background: color-mix(in srgb, var(--site-paper, #ede7da) 55%, transparent);
+    /* A borda clara em cima e a sombra difusa embaixo dao a espessura do
+       vidro; sem elas a pilula some em fundos claros. */
+    border-color: color-mix(in srgb, var(--site-paper, #ede7da) 80%, transparent);
+    box-shadow:
+      0 .5rem 1.5rem -.6rem color-mix(in srgb, var(--site-ink, #1C1B18) 18%, transparent),
+      inset 0 1px 0 color-mix(in srgb, #fff 55%, transparent);
+    /* saturate compensa o desbotamento que o blur causa no que passa atras. */
+    -webkit-backdrop-filter: blur(14px) saturate(1.6);
+    backdrop-filter: blur(14px) saturate(1.6);
   }
   .sh__status {
     display: inline-flex; align-items: center; gap: .42rem;
@@ -176,19 +199,29 @@ const styles = `
     .sh__mark .text-star,
     .sh__name::after { animation: none; }
     .sh__mark { transition: none; }
-    .sh { transition: opacity .2s linear; }
+    .sh, .sh--r { transition: opacity .2s linear; }
     .sh[data-tucked="true"] { translate: none; }
   }
   @media (max-width: 860px) {
-    .sh--r {
+    .sh--r,
+    .sh--r[data-floating="true"] {
       padding: 0;
+      border-color: transparent;
       background: transparent;
       box-shadow: none;
       -webkit-backdrop-filter: none;
       backdrop-filter: none;
     }
     .sh__status, .sh__nav, .sh--r > .lang-toggle { display: none !important; }
-    .sh__menu-toggle { display: inline-flex; background: color-mix(in srgb, var(--site-paper, #ede7da) 94%, transparent); }
+    /* O botao e o unico chrome do celular, entao ele carrega o vidro sozinho
+       -- e sempre, porque o conteudo passa por baixo dele desde o topo. */
+    .sh__menu-toggle {
+      display: inline-flex;
+      background: color-mix(in srgb, var(--site-paper, #ede7da) 62%, transparent);
+      box-shadow: 0 .4rem 1.1rem -.5rem color-mix(in srgb, var(--site-ink, #1C1B18) 22%, transparent);
+      -webkit-backdrop-filter: blur(12px) saturate(1.6);
+      backdrop-filter: blur(12px) saturate(1.6);
+    }
     .sh__mobile-menu {
       position: absolute;
       top: calc(100% + .75rem);
@@ -276,7 +309,11 @@ export default function SiteHeader() {
           </span>
         </Link>
       </span>
-      <span className="sh sh--r" data-tucked={tucked ? "true" : "false"}>
+      <span
+        className="sh sh--r"
+        data-tucked={tucked ? "true" : "false"}
+        data-floating={floating ? "true" : "false"}
+      >
         <span className="sh__status">
           <span className="sh__dot" aria-hidden="true" />
           <ScrambleText
