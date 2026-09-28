@@ -9,8 +9,9 @@ import {
   useRef,
   useState,
 } from "react";
+import { useT } from "@/i18n/LanguageContext";
 
-export type PaperMode = "cream" | "cyanotype" | "vellum";
+export type PaperMode = "cream" | "cyanotype" | "vellum" | "vinyl";
 export type StudioSound = "stamp" | "paper" | "drag" | "hover" | "flip";
 
 type Stamp = {
@@ -119,17 +120,20 @@ const STAMPS = [
   "✿",
 ] as const;
 
-const PAPER_ORDER: PaperMode[] = ["cream", "cyanotype", "vellum"];
+const PAPER_ORDER: PaperMode[] = ["cream", "cyanotype", "vellum", "vinyl"];
 const PAPER_GLYPH: Record<PaperMode, string> = {
   cream: "▧",
   cyanotype: "▩",
   vellum: "▨",
+  vinyl: "◉",
 };
 const PAPER_TOKENS: Record<PaperMode, Record<string, string>> = {
   cream: {
     "--site-paper": "#EDE7DA",
     "--site-ink": "#1C1B18",
-    "--site-accent": "#1C1B18",
+    /* Precisa espelhar --site-accent do globals.css: este objeto reescreve o
+       token ao voltar para o creme, e um preto aqui apagaria o rosa. */
+    "--site-accent": "#C4125F",
   },
   cyanotype: {
     "--site-paper": "#12344d",
@@ -140,6 +144,15 @@ const PAPER_TOKENS: Record<PaperMode, Record<string, string>> = {
     "--site-paper": "#e6e9e6",
     "--site-ink": "#242725",
     "--site-accent": "#55605b",
+  },
+  /* Papel "vinil": o quarto rosa das referências, não o rosa quente puro --
+     uma página inteira em #FF2E9A não sustenta leitura. O tom quente fica
+     para o destaque; o papel é o bubblegum de fundo. Tinta 13.4:1, destaque
+     5.4:1 sobre ele. */
+  vinyl: {
+    "--site-paper": "#FFC7E0",
+    "--site-ink": "#1A0710",
+    "--site-accent": "#A3005A",
   },
 };
 
@@ -469,6 +482,7 @@ const controlsStyles = `
 `;
 
 export function CreativeStudioControls() {
+  const { t } = useT();
   const [open, setOpen] = useState(false);
   const [heroVisible, setHeroVisible] = useState(true);
   const {
@@ -505,7 +519,7 @@ export function CreativeStudioControls() {
   return (
     <aside
       className="cs-tools"
-      aria-label="Ateliê interativo"
+      aria-label={t("studio_label")}
       data-no-stamp
       data-open={open ? "true" : "false"}
     >
@@ -513,9 +527,9 @@ export function CreativeStudioControls() {
       <button
         type="button"
         className="cs-tool cs-tool--drawer hover-trigger"
-        aria-label={open ? "Fechar ferramentas" : "Abrir ferramentas"}
+        aria-label={open ? t("studio_close") : t("studio_open")}
         aria-expanded={open}
-        data-tip="ferramentas"
+        data-tip={t("studio_tip_tools")}
         onClick={() => setOpen((current) => !current)}
       >
         [ ⁝ ]
@@ -523,8 +537,8 @@ export function CreativeStudioControls() {
       <button
         type="button"
         className="cs-tool hover-trigger"
-        aria-label="Alternar tipo de papel"
-        data-tip="papel"
+        aria-label={t("studio_paper")}
+        data-tip={t("studio_tip_paper")}
         onClick={cyclePaper}
       >
         [ {PAPER_GLYPH[paper]} ]
@@ -532,9 +546,9 @@ export function CreativeStudioControls() {
       <button
         type="button"
         className="cs-tool hover-trigger"
-        aria-label="Ativar carimbos"
+        aria-label={t("studio_stamp")}
         aria-pressed={stampMode}
-        data-tip="carimbar"
+        data-tip={t("studio_tip_stamp")}
         onClick={toggleStampMode}
       >
         [ {stampMode ? "❀" : "✿"} ]
@@ -543,8 +557,8 @@ export function CreativeStudioControls() {
           <button
             type="button"
             className="cs-tool cs-tool--pop hover-trigger"
-            aria-label="Limpar carimbos"
-            data-tip="limpar"
+            aria-label={t("studio_clear")}
+            data-tip={t("studio_tip_clear")}
             onClick={clearStamps}
           >
             [ ✕ ]
@@ -554,8 +568,8 @@ export function CreativeStudioControls() {
           <button
             type="button"
             className="cs-tool cs-tool--pop hover-trigger"
-            aria-label="Reorganizar os objetos"
-            data-tip="reorganizar"
+            aria-label={t("studio_reset")}
+            data-tip={t("studio_tip_reset")}
             onClick={resetTable}
           >
             [ ↺ ]

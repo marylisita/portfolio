@@ -8,6 +8,7 @@ import FloatingBackToTop from "@/components/FloatingBackToTop";
 import AdaptiveCursor from "@/components/AdaptiveCursor";
 import { PageTransitionProvider } from "@/components/Curtains";
 import { LanguageProvider } from "@/i18n/LanguageContext";
+import { SITE_NAME, SITE_TAGLINE_PT, SITE_URL } from "@/content/site";
 
 const aeonik = localFont({
   src: [
@@ -141,8 +142,48 @@ const performanceTierScript = `
 `;
 
 export const metadata: Metadata = {
-  title: "Mary Lisita | Portfolio",
-  description: "Designer multidisciplinar. Projetos em Design Gráfico, Web Design, UX/UI e Programação Criativa.",
+  /* Sem metadataBase, todo campo de URL relativo (openGraph.images, canonical)
+     quebra a build. Com ele, os cases só precisam passar o caminho. */
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: `${SITE_NAME} | Portfólio`,
+    /* Cada case já termina o próprio título com o nome dela, então o template
+       só vale para rotas que definem um título curto. */
+    template: `%s | ${SITE_NAME}`,
+  },
+  description: SITE_TAGLINE_PT,
+  applicationName: SITE_NAME,
+  authors: [{ name: SITE_NAME }],
+  creator: SITE_NAME,
+  keywords: [
+    "design gráfico",
+    "web design",
+    "ux/ui",
+    "programação criativa",
+    "identidade visual",
+    "direção de arte",
+    "portfólio",
+    SITE_NAME,
+  ],
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    locale: "pt_BR",
+    alternateLocale: ["en_US"],
+    url: "/",
+    title: `${SITE_NAME} — designer multidisciplinar`,
+    description: SITE_TAGLINE_PT,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${SITE_NAME} — designer multidisciplinar`,
+    description: SITE_TAGLINE_PT,
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
@@ -152,7 +193,9 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      /* Estado inicial do LanguageProvider é "pt"; o toggle atualiza este
+         atributo em tempo de execução. */
+      lang="pt-BR"
       suppressHydrationWarning
       className={`${aeonik.variable} ${instrumentSerif.variable} ${spaceMono.variable} ${seratonin.variable} ${braille.variable} ${offBit.variable} ${emoji.variable} ${editorialNew.variable}`}
     >
@@ -171,7 +214,14 @@ export default function RootLayout({
           @font-face {
             font-family: "pf-pixelscript";
             src: url("https://use.typekit.net/af/c7c109/0000000000000000774f2b0a/31/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("woff2");
-            font-display: optional;
+            /* Era "optional", e e por isso que o wordmark caia na Seratonin.
+               Com "optional" o navegador so usa a fonte se ela estiver pronta
+               na primeira centena de milissegundos; perdido esse instante ele
+               fixa o fallback e NUNCA troca. Como --font-pixelscript cai em
+               --font-hand, o fallback era a Seratonin, em toda visita.
+               "swap" mantem o fallback so ate o arquivo chegar, e entao troca
+               para a Pixelscript. */
+            font-display: swap;
             font-style: normal;
             font-weight: 400;
             font-stretch: normal;

@@ -17,9 +17,9 @@ const styles = `
 
 .ascii-btn {
   --btn-color: var(--site-ink, #1C1B18);
-  --btn-hover-bg: var(--acid, #a3e635);
+  --btn-hover-bg: var(--acid);
   --btn-hover-color: #ffffff;
-  --btn-border: var(--acid, #a3e635); /* usa a cor acid dela */
+  --btn-border: var(--acid); /* usa a cor acid dela */
   --btn-transition: ease-in-out 0.3s;
   --btn-anim-duration: 1.2s;
   

@@ -420,7 +420,9 @@ const styles = `
     line-height: 1;
     letter-spacing: .02em;
     white-space: nowrap;
-    opacity: .38;
+    /* Crédito é texto de leitura, não ornamento: .38 dava ~2.2:1 sobre o papel
+       creme. .72 chega a ~6.1:1 sem achatar a hierarquia editorial. */
+    opacity: .72;
   }
   .tc-credit__label {
     color: var(--tc-accent);

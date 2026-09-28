@@ -54,7 +54,8 @@ const styles = `
     font-size: var(--type-micro);
     letter-spacing: .2em;
     text-transform: uppercase;
-    opacity: .4;
+    /* Mesmo motivo do .tc-credit: crédito precisa passar em AA. */
+    opacity: .72;
     margin-top: .9rem;
   }
   .ef__label {

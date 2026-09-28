@@ -8,7 +8,10 @@ const styles = `
   --btn-bg: var(--ink);
   --btn-border: var(--ink);
   --btn-text: var(--paper);
-  --btn-hover-bg: var(--blue, #DCF0FF);
+  /* Era var(--blue, #DCF0FF), sobra do sistema visual anterior: --blue nao
+     existe mais, entao caia direto no azul claro do fallback. Rosa quente com
+     a tinta escura por cima da 5.0:1. */
+  --btn-hover-bg: var(--site-accent-hot, var(--acid));
   --btn-hover-text: var(--ink);
   
   position: relative;

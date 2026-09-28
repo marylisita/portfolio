@@ -46,6 +46,9 @@ const styles = `
   }
   .sh__name-word { display: inline; }
   .sh__name-word--isabel { letter-spacing: -.035em; }
+  /* Estas duas decoracoes de hover do wordmark liam var(--green), token do
+     sistema visual anterior que saiu na limpeza do globals.css -- passaram a
+     cair no teal do fallback. Agora seguem o rosa da casa. */
   .sh__name::after {
     content: "✦  ·  ♡  ⋆";
     position: absolute;
@@ -55,14 +58,14 @@ const styles = `
     font-size: .42em;
     font-weight: 400;
     letter-spacing: .08em;
-    color: var(--green, #14736e);
+    color: var(--site-accent-hot, var(--acid));
     opacity: 0;
     transform: translate(-50%, .35rem) scale(.82);
     pointer-events: none;
   }
   .sh__mark:hover .text-star,
   .sh__mark:focus-visible .text-star {
-    color: var(--green, #14736e);
+    color: var(--site-accent-hot, var(--acid));
     animation: sh-star-dance .72s cubic-bezier(.16, 1, .3, 1) both;
   }
   .sh__mark:hover .sh__name::after,

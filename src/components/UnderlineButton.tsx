@@ -6,7 +6,7 @@ import React from "react";
 const styles = `
 .ul-btn {
   --primary-color: var(--site-ink, #1C1B18);
-  --hovered-color: var(--acid, #a3e635);
+  --hovered-color: var(--acid);
   position: relative;
   display: inline-flex;
   font-weight: 600;

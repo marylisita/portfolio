@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Ondularis — Coletivo Endosymbiosis | Maria Isabel Lisita",
+  title: "Ondularis — Coletivo Endosymbiosis",
   description:
     "Exposição coletiva na intersecção entre arte, ciência e tecnologia. Um oceano artificial, instável e fabulado na Meta Gallery, Rio de Janeiro.",
   openGraph: {

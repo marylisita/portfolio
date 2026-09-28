@@ -1,10 +1,23 @@
 "use client";
 import { useT } from "@/i18n/LanguageContext";
 
+/* O botao era o unico controle do header sem foco proprio: caia no
+   "outline: auto" do navegador, que o Chrome pinta com o azul do sistema --
+   destoando de todo o resto, que usa 2px solidos na tinta. Estilo inline nao
+   expressa :focus-visible, entao a regra vive aqui. */
+const styles = `
+  .lang-toggle:focus-visible {
+    outline: 2px solid var(--ink, #1C1B18);
+    outline-offset: 3px;
+  }
+`;
+
 export default function LangToggle() {
   const { lang, toggleLang } = useT();
 
   return (
+    <>
+    <style>{styles}</style>
     <button
       onClick={toggleLang}
       aria-label={lang === "pt" ? "Switch to English" : "Mudar para Português"}
@@ -20,7 +33,7 @@ export default function LangToggle() {
         placeItems: "center",
         padding: ".55rem .75rem",
         border: "1px solid currentColor",
-        borderRadius: "var(--r-pill, 99px)",
+        borderRadius: "99px",
         background: "color-mix(in srgb, var(--paper) 90%, transparent)",
         boxShadow: "2px 2px 0 color-mix(in srgb, currentColor 14%, transparent)",
         color: "inherit",
@@ -30,5 +43,6 @@ export default function LangToggle() {
     >
       {lang === "pt" ? "EN" : "PT"}
     </button>
+    </>
   );
 }

@@ -71,7 +71,11 @@ const rmStyles = `
     --ink: var(--site-ink);
     --paper: var(--site-paper);
     --acid: var(--site-accent);
-    --hero-highlight: #75332f;
+    /* Segue o accent, mas um passo mais fechado: a segunda linha do hero é o
+       maior bloco de rosa da página e no tom cheio ficava estridente. Sai de
+       color-mix para continuar acompanhando qualquer troca do accent.
+       Contraste sobre o papel creme sobe de 5.0:1 para ~5.4:1. */
+    --hero-highlight: color-mix(in srgb, var(--site-accent) 82%, var(--ink));
     --hero-art-lift: 0rem;
     /* Aeonik — a grotesca dela, que ja esta carregada em 400/700. O Arial daqui
        era o placeholder do "lowercase grotesque display type" do redesign e
@@ -110,6 +114,15 @@ const rmStyles = `
     --site-accent-rgb: 85, 96, 91;
     --hero-highlight: #914d48;
   }
+  .rm[data-paper="vinyl"] {
+    --site-paper: #FFC7E0;
+    --site-ink: #1A0710;
+    --site-accent: #A3005A;
+    --site-tint-a: #FFDCEC;
+    --site-tint-b: #F7AFD0;
+    --site-tint-c: #FFD2E6;
+    --site-accent-rgb: 163, 0, 90;
+  }
   .rm[data-paper="cyanotype"]::after {
     opacity: .11;
     mix-blend-mode: screen;
@@ -131,7 +144,7 @@ const rmStyles = `
     opacity: .07;
     mix-blend-mode: multiply;
   }
-  .rm *::selection { background: #843f3a; color: #fff8ec; }
+  .rm *::selection { background: color-mix(in srgb, var(--acid) 88%, var(--ink)); color: #fff8ec; }
   .px-line {
     background-image: repeating-linear-gradient(90deg, var(--ink) 0 6px, transparent 6px 12px);
     background-size: 100% 2px;
@@ -370,39 +383,6 @@ const rmStyles = `
     .rm-label { margin-bottom: 2rem; }
   }
 
-  /* --- cards brutas (Readymag / Brutalist style) --- */
-  .rm .hero-card {
-    background: #000000 !important;
-    color: var(--ink) !important;
-    border: 3px solid var(--ink) !important;
-    border-radius: 0px !important;
-    box-shadow: 8px 8px 0px var(--acid) !important;
-    position: relative;
-    top: 0;
-    left: 0;
-    transition: top 0.15s ease, left 0.15s ease, box-shadow 0.15s ease !important;
-  }
-  .rm .hero-card:hover {
-    top: 8px !important;
-    left: 8px !important;
-    box-shadow: 0px 0px 0px var(--acid) !important;
-  }
-  .rm .hero-card__icon {
-    border-radius: 0px !important;
-    border: 2px solid var(--ink) !important;
-    background: #111 !important;
-    color: var(--acid) !important;
-  }
-  .rm .hero-card__icon svg {
-    stroke: var(--ink) !important;
-  }
-  .rm .hero-card__desc {
-    color: var(--ink) !important;
-    opacity: 0.85;
-  }
-  .rm .hero-card__arrow {
-    display: none !important;
-  }
 `;
 
 export default function Home() {
@@ -524,6 +504,13 @@ function HomeContent() {
 
       <SiteHeader />
 
+      {/* O painel do ateliê (CreativeStudioControls) saiu daqui a pedido dela.
+          Consequência registrada: sem ele os papéis cianótipo, vellum e rosa
+          não têm porta de entrada e o site fica só no creme; os carimbos
+          também ficam sem gatilho. O componente e os tokens continuam no
+          repositório, prontos para voltar, e como ninguém mais o importa ele
+          sai do bundle do cliente. */}
+
       <main>
         <PlaygroundHero
           lines={[...heroLines]}
@@ -531,7 +518,7 @@ function HomeContent() {
           subHighlight={t("hero_sub_highlight")}
           scrollLabel={t("rm_scroll")}
         >
-          <AdaptiveKanagawa className="rm-field" opacity={0.3} />
+          <AdaptiveKanagawa className="rm-field" opacity={0.2} />
           <ScatterMenu
             items={[
               {

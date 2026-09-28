@@ -424,6 +424,20 @@ const dictionaries = {
     magazine_imp_title: "Helvetica como matéria",
     magazine_imp_desc: "A prova de impressão entrou como imagem, não como registro. A fonte mais neutra do mundo aparece rasgada, sobreposta e fora de eixo — e continua legível, que é o ponto.",
 
+    // Ateliê interativo (CreativeStudioControls)
+    studio_label: "Ateliê interativo",
+    studio_open: "Abrir ferramentas",
+    studio_close: "Fechar ferramentas",
+    studio_tip_tools: "ferramentas",
+    studio_paper: "Alternar tipo de papel",
+    studio_tip_paper: "papel",
+    studio_stamp: "Ativar carimbos",
+    studio_tip_stamp: "carimbar",
+    studio_clear: "Limpar carimbos",
+    studio_tip_clear: "limpar",
+    studio_reset: "Reorganizar os objetos",
+    studio_tip_reset: "reorganizar",
+
     // Metadata
     meta_description: "Designer multidisciplinar. Projetos em Design Gráfico, Web Design, UX/UI e Programação Criativa.",
   },
@@ -850,6 +864,20 @@ const dictionaries = {
     magazine_imp_kicker: "what changed",
     magazine_imp_title: "Helvetica as material",
     magazine_imp_desc: "The print proofs went in as images, not as documentation. The most neutral typeface in the world shows up torn, overlaid and off-axis — and stays readable, which is the point.",
+
+    // Interactive studio (CreativeStudioControls)
+    studio_label: "Interactive studio",
+    studio_open: "Open tools",
+    studio_close: "Close tools",
+    studio_tip_tools: "tools",
+    studio_paper: "Switch paper stock",
+    studio_tip_paper: "paper",
+    studio_stamp: "Turn on stamps",
+    studio_tip_stamp: "stamp",
+    studio_clear: "Clear stamps",
+    studio_tip_clear: "clear",
+    studio_reset: "Rearrange the objects",
+    studio_tip_reset: "rearrange",
 
     // Metadata
     meta_description: "Multidisciplinary designer. Projects in Graphic Design, Web Design, UX/UI and Creative Coding.",
