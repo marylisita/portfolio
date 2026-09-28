@@ -191,9 +191,12 @@ const styles = `
     border-color: color-mix(in srgb, #f7f3e9 62%, transparent) !important;
     box-shadow: 2px 2px 0 rgba(247, 243, 233, .16) !important;
   }
-  html[data-project-ink-header="true"] .sh--r {
-    background: rgba(20, 14, 28, .86);
-    box-shadow: 0 0 0 .25rem rgba(20, 14, 28, .7);
+  /* O SiteHeader virou uma faixa unica de vidro. Em vez de pintar cada peca,
+     basta redefinir os tokens do vidro: a faixa inteira inverte junto. */
+  html[data-project-ink-header="true"] .sh-bar {
+    --sh-glass-bg: rgba(20, 14, 28, .72);
+    --sh-glass-edge: rgba(247, 243, 233, .3);
+    --sh-glass-shadow: 0 .5rem 1.5rem -.7rem rgba(0, 0, 0, .5);
   }
   html[data-project-ink-cluster="true"] .pj-tag {
     --btn-bg: #f7f3e9;
@@ -210,18 +213,10 @@ const styles = `
     background: #f7f3e9;
     border-color: rgba(247, 243, 233, .7);
   }
-  /* O halo de papel da assinatura (SiteHeader, telas estreitas) precisa
-     inverter junto com o cabeçalho nas seções escuras, senão vira um
-     retângulo claro com texto claro em cima. */
+  /* A assinatura e o botao nao tem mais fundo proprio -- quem inverte e a
+     faixa, na regra acima. Aqui resta so esconder o cluster no celular. */
   @media (max-width: 860px) {
     .pj-cluster { display: none; }
-    html[data-project-ink-header="true"] .sh__mark {
-      background: rgba(20, 14, 28, .82) !important;
-      box-shadow: 0 0 0 .3rem rgba(20, 14, 28, .82) !important;
-    }
-    html[data-project-ink-header="true"] .sh__menu-toggle {
-      background: rgba(20, 14, 28, .9);
-    }
     html[data-project-ink-header="true"] .sh__mobile-menu {
       background: #140e1c;
       border-color: rgba(247, 243, 233, .42);
