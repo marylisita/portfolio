@@ -152,6 +152,9 @@ export function useProjects(): IndexItem[] {
       blurb: blurb("/work/juizo"),
       ratio: 675 / 1200, // previews/juizo.webp 1200x675
       img: "/img/previews/juizo.webp",
+      // A capa larga mostra tres telas lado a lado: a 300px cada uma fica com
+      // ~75px e nada nelas se le. O recorte foca a primeira tela.
+      imgPocket: "/img/previews/juizo-pocket.webp",
     },
   ];
 }

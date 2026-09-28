@@ -201,6 +201,11 @@ const styles = `
     border: 1px solid color-mix(in srgb, var(--ink) 32%, transparent);
     background: color-mix(in srgb, var(--paper) 90%, var(--ink));
   }
+  .sw__image--pocket { display: none; }
+  @media (max-width: 860px) {
+    .sw__image--wide { display: none; }
+    .sw__image--pocket { display: block; }
+  }
   .sw__media::after {
     content: "";
     position: absolute;
@@ -665,12 +670,27 @@ export default function ScatteredWorks({ items }: { items: IndexItem[] }) {
                 >
                   <span className="sw__media">
                     <Image
-                      className="sw__image"
+                      className={`sw__image${item.imgPocket ? " sw__image--wide" : ""}`}
                       src={item.img}
                       alt={item.title}
                       fill
-                      sizes="(max-width: 720px) 82vw, (max-width: 1200px) 48vw, 528px"
+                      sizes={item.imgPocket
+                        ? "(max-width: 860px) 1px, (max-width: 1200px) 48vw, 528px"
+                        : "(max-width: 720px) 82vw, (max-width: 1200px) 48vw, 528px"}
                     />
+                    {item.imgPocket ? (
+                      /* O par troca por CSS, e o `sizes` de 1px faz o navegador
+                         escolher o menor candidato para a que esta escondida --
+                         sem isso as duas seriam baixadas por inteiro. */
+                      <Image
+                        className="sw__image sw__image--pocket"
+                        src={item.imgPocket}
+                        alt=""
+                        aria-hidden="true"
+                        fill
+                        sizes="(max-width: 860px) 82vw, 1px"
+                      />
+                    ) : null}
                   </span>
                   <span className="sw__caption">
                     <span className="sw__num">{item.num}</span>

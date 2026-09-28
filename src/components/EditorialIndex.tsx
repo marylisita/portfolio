@@ -10,6 +10,10 @@ export type IndexItem = {
   tags: string;
   href: string;
   img: string;
+  /** Recorte alternativo para telas estreitas. A capa larga de um projeto com
+   *  varias telas de celular vira tres miniaturas ilegiveis a 300px; aqui
+   *  entra um detalhe unico que ainda se le nessa largura. */
+  imgPocket?: string;
   /** Resultado qualitativo resumido para leitura rápida do arquivo. */
   impact: string;
   /** O mesmo resultado por extenso — usado onde há espaço para explicar. */
