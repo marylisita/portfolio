@@ -5,7 +5,7 @@ import { SITE_URL } from "@/content/site";
  * Lista completa das rotas de case. Não é derivada de `caseMeta` de propósito:
  * aquele módulo cobre só os cases cujo OG foi centralizado, enquanto
  * cyber-marinum, ondularis e touchdesigner-workshop têm metadata próprio.
- * O sitemap precisa das treze.
+ * O sitemap precisa das doze.
  */
 const CASE_ROUTES = [
   "chinario",
@@ -13,7 +13,6 @@ const CASE_ROUTES = [
   "ebat",
   "genlab",
   "graduation",
-  "hologlam",
   "isadora",
   "juizo",
   "magazine",

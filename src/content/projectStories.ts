@@ -91,18 +91,6 @@ const stories: Record<string, LocalizedStory> = {
       challenge: "Dragons, flags and green-and-yellow were out. So what was left?",
     },
   },
-  hologlam: {
-    pt: {
-      impact: "Um artefato especulativo que fica mais interessante nas objeções do que nas promessas — e o case dá o mesmo peso às duas.",
-      shortImpact: "as objeções com o mesmo peso",
-      challenge: "Falar de excesso e descarte sem que a crítica virasse estética bonita.",
-    },
-    en: {
-      impact: "A speculative artefact that gets more interesting in its objections than in its promises — and the case gives both the same weight.",
-      shortImpact: "objections given equal weight",
-      challenge: "Talking about excess and disposal without the critique turning into a pretty aesthetic.",
-    },
-  },
   vegcoz: {
     pt: {
       impact: "Um app que fecha a volta que ninguém fecha: receita, ingrediente, lista, preço e despensa no mesmo fluxo.",

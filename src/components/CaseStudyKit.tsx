@@ -12,7 +12,6 @@ export type CaseVariant =
   | "ebat"
   | "genlab"
   | "graduation"
-  | "hologlam"
   | "isadora"
   | "juizo"
   | "magazine"
@@ -61,12 +60,6 @@ const styles = `
     --tc-accent-soft: rgba(250, 58, 92, .15);
     --tc-paper: rgba(250, 241, 224, .93);
     --tc-deep: #25122f;
-  }
-  .tc--hologlam {
-    --tc-accent: #c685ff;
-    --tc-accent-soft: rgba(173, 86, 255, .16);
-    --tc-paper: rgba(241, 233, 249, .92);
-    --tc-deep: #130b22;
   }
   .tc--isadora {
     --tc-accent: #E32026;

@@ -49,6 +49,17 @@ const styles = `
     outline: 2px dotted var(--ink);
     outline-offset: 3px;
   }
+  /* No celular a etiqueta com texto cobria links dos cards. Vira um quadrado
+     de toque (44px) só com a seta: mesma função, metade da área tapada. */
+  @media (max-width: 720px) {
+    .btt {
+      bottom: 1rem;
+      right: 1rem;
+      width: var(--tap-min, 44px);
+      padding: 0;
+    }
+    .btt__label { display: none; }
+  }
 `;
 
 export default function FloatingBackToTop() {
@@ -86,7 +97,8 @@ export default function FloatingBackToTop() {
         aria-label="Voltar ao topo"
         tabIndex={isVisible ? 0 : -1}
       >
-        ↑ topo
+        <span aria-hidden="true">↑</span>
+        <span className="btt__label" aria-hidden="true">topo</span>
       </button>
     </>
   );

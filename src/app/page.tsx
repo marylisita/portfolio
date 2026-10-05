@@ -295,6 +295,9 @@ const rmStyles = `
       opacity: .15;
     }
     .rm-thread__knot { width: .78rem; height: .78rem; font-size: .45rem; }
+    /* No celular a margem lateral é 1.25rem: a lombada em 1.8rem caía DENTRO
+       das imagens. Encostada na borda ela continua costura, sem riscar o trabalho. */
+    .rm-spine { left: .5rem; opacity: .2; }
   }
 
   /* --- seções --- */
@@ -435,10 +438,7 @@ function HomeContent() {
   const featuredProjects = FEATURED_PROJECT_HREFS.flatMap((href) => {
     const project = projects.find((item) => item.href === href);
     return project ? [project] : [];
-  }).map((project, index) => ({
-    ...project,
-    num: String(index + 1).padStart(2, "0"),
-  }));
+  });
 
   const marquee = [
     t("p04_tag1"), t("p01_tag1"), t("about_cat_web"),

@@ -141,7 +141,6 @@ const CORE_HREFS = [
   "/work/cyber-marinum",
   "/work/magazine",
   "/work/isadora",
-  "/work/hologlam",
   "/work/touchdesigner-workshop",
   "/work/ondularis",
 ];
@@ -152,7 +151,6 @@ const DIGITAL_HREFS = [
   "/work/juizo",
   "/work/vegcoz",
   "/work/genlab",
-  "/work/hologlam",
 ];
 
 /** O eixo das abas é área, nunca contexto. Um projeto pode estar em mais de uma. */
@@ -166,7 +164,6 @@ const AREAS: Record<string, string[]> = {
   "/work/chinario": ["grafico"],
   "/work/cyber-marinum": ["arte"],
   "/work/ondularis": ["arte"],
-  "/work/hologlam": ["digital", "arte", "pesquisa"],
   "/work/touchdesigner-workshop": ["arte", "pesquisa"],
   "/work/genlab": ["digital", "arte", "pesquisa"],
   "/work/vegcoz": ["digital", "pesquisa"],
@@ -219,7 +216,6 @@ export default function Work() {
     if (href.endsWith("graduation")) return t("grad_desc_2");
     if (href.endsWith("pilotis")) return t("pilotis_desc_2");
     if (href.endsWith("chinario")) return t("chinario_desc_1");
-    if (href.endsWith("hologlam")) return t("holo_question");
     if (href.endsWith("vegcoz")) return t("vegcoz_desc_1");
     if (href.endsWith("ondularis")) {
       return pt

@@ -67,16 +67,6 @@ export function useProjects(): IndexItem[] {
     },
     {
       num: "06",
-      title: "hologlam: fashion reloaded",
-      tags: `${t("cat_college")} / ` + t("p08_tags").replace(", ", " / "),
-      href: "/work/hologlam",
-      impact: impact("/work/hologlam"),
-      blurb: blurb("/work/hologlam"),
-      ratio: 0.562, // trio.webp 1600x900 (recorte dela, 2026-07-23)
-      img: "/img/previews/hologlam.webp",
-    },
-    {
-      num: "07",
       title: "oficina de touchdesigner",
       tags: `${t("cat_collab")} / ${
         lang === "pt"
@@ -90,7 +80,7 @@ export function useProjects(): IndexItem[] {
       img: "/img/touchdesigner-workshop/busto-colorido-capa.webp",
     },
     {
-      num: "08",
+      num: "07",
       title: "vegcoz",
       tags: `${t("cat_college")} / ` + t("p09_tags").replace(", ", " / "),
       href: "/work/vegcoz",
@@ -100,7 +90,7 @@ export function useProjects(): IndexItem[] {
       img: "/img/previews/vegcoz.webp",
     },
     {
-      num: "09",
+      num: "08",
       title: "ondularis",
       tags: `${t("cat_collab")} / ${
         lang === "pt" ? "arte, ciência e tecnologia / exposição" : "art, science & technology / exhibition"
@@ -112,7 +102,7 @@ export function useProjects(): IndexItem[] {
       img: "/img/previews/ondularis.webp",
     },
     {
-      num: "10",
+      num: "09",
       title: "devs no pilotis",
       tags: `${t("cat_collab")} / ` + t("p06_tags").replace(", ", " / "),
       href: "/work/pilotis",
@@ -122,7 +112,7 @@ export function useProjects(): IndexItem[] {
       img: "/img/previews/pilotis.webp",
     },
     {
-      num: "11",
+      num: "10",
       title: "china–rio: pontes para inovação",
       tags: `${t("cat_collab")} / ` + t("p07_tags").replace(", ", " / "),
       href: "/work/chinario",
@@ -132,7 +122,7 @@ export function useProjects(): IndexItem[] {
       img: "/img/previews/chinario.webp",
     },
     {
-      num: "12",
+      num: "11",
       title: "genlab",
       tags: `${t("cat_autoral")} / ${t("p03_tag1")} / ${t("p03_tag2")}`,
       href: "/work/genlab",
@@ -142,7 +132,7 @@ export function useProjects(): IndexItem[] {
       img: "/img/previews/genlab.webp",
     },
     {
-      num: "13",
+      num: "12",
       title: "juízo: dinheiro sem sermão",
       tags: `${t("cat_autoral")} / ${t("card_uxui_title")} / ${
         lang === "pt" ? "desenvolvimento de produto" : "product development"

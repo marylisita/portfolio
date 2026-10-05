@@ -61,15 +61,6 @@ const CASES: Record<string, CaseMeta> = {
     height: 632,
     alt: "Páginas abertas da revista Helvetica: Discórdia",
   },
-  hologlam: {
-    title: "HoloGlam: Fashion Reloaded",
-    description:
-      "Projeto de moda e imagem digital: identidade, peças e sistema visual para uma proposta de vestuário holográfico.",
-    image: "/img/previews/hologlam.webp",
-    width: 1200,
-    height: 675,
-    alt: "Peças visuais do projeto HoloGlam",
-  },
   vegcoz: {
     title: "VegCoz — culinária consciente",
     description:
