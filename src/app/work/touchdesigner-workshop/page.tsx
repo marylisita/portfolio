@@ -54,7 +54,7 @@ const copy = {
     description:
       "Uma oficina de quatro horas para apresentar o TouchDesigner como ambiente de programação visual e aproximar iniciantes de imagens em tempo real e vídeo mapping.",
     challenge:
-      "Quatro horas é pouco para a ferramenta e muito para aula expositiva.",
+      "Dá para apresentar programação criativa a quem vem do design sem pedir uma linha de código escrito — e usar a oficina como experimento da pesquisa do meu TCC?",
     outcome:
       "Oficina introdutória de quatro horas: do node vazio ao primeiro patch rodando, com a lógica nodal apresentada na prática em vez de no slide.",
     role:
@@ -187,7 +187,7 @@ const copy = {
     description:
       "A four-hour workshop introducing TouchDesigner as a visual programming environment and bringing beginners closer to real-time images and video mapping.",
     challenge:
-      "Four hours is too little for the software and too much for a lecture.",
+      "Can you introduce creative coding to design students without asking for a single line of written code — and use the workshop as an experiment for my thesis research?",
     outcome:
       "A four-hour introductory workshop: from an empty node to a first working patch, with node logic taught by doing rather than by slide.",
     role:

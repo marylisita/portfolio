@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
-const GLYPHS = ["♡", "✦", "✧", "⋆", "░", "▒", "▓", "≈", "°", "⊹", "·", "⠂", "⠁", "✿", "₊", "˚", "✳"];
-const COLORS = ["#d8b4fe", "#f472b6", "#a3e635", "#fef08a", "#99f6e4", "#1c1b18", "#5b564a"];
+export const GLYPHS = ["♡", "✦", "✧", "⋆", "░", "▒", "▓", "≈", "°", "⊹", "·", "⠂", "⠁", "✿", "₊", "˚", "✳"];
+export const COLORS = ["#d8b4fe", "#f472b6", "#a3e635", "#fef08a", "#99f6e4", "#1c1b18", "#5b564a"];
 
 /*
  * A EmojiFont não possui ligaturas: cada desenho vive atrás de uma tecla

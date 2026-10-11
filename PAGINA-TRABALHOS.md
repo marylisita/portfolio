@@ -1,9 +1,46 @@
 # Página de trabalhos — estado e decisões
 
-Atualizado em 30 de julho de 2026. Escrito para que uma conversa nova comece
+Atualizado em 11 de outubro de 2026. Escrito para que uma conversa nova comece
 informada em vez de redescobrir tudo. Leia isto antes de mexer em
 `src/app/work/page.tsx`, `src/components/useProjects.ts` ou
 `src/content/projectStories.ts`.
+
+## Redesenho de 11 de outubro de 2026
+
+A página saiu do sistema antigo (vinho `#843f3a`, papel `#f6f2e9`, título em
+Editorial New) e passou a ler os tokens do site: papel `--site-paper`, rosa
+`--site-accent` / `--site-accent-hot`, título em PF Pixelscript como o herói
+da home. O rodapé ganhou `--ink`/`--paper`/`--acid`, que não existiam aqui.
+
+- **O título é o filtro.** "trabalhos [selecionados]" — a palavra rosa é o
+  recorte ativo e se desmancha nos glifos do ScrambleText quando muda. As abas
+  viraram uma fileira com um único estado ligado (rosa quente). O contorno da
+  aba de UX/UI saiu: parecia uma segunda aba ativa. A prioridade dela agora é
+  só a ordem. "destaques" passou a se chamar "selecionados" para bater com o
+  título.
+- **A barra gruda** embaixo do menu e mostra "3 de 8 · nome do projeto".
+  Trocar de recorte lá embaixo volta para o começo da lista.
+- **O recorte vai na URL** (`/work?area=grafico`), para mandar já filtrado.
+  Valores: `digital`, `grafico`, `arte`, `pesquisa`; sem parâmetro é a seleção.
+- **Capítulos, não cartões.** Cada projeto mostra `[ a pergunta ]` (o
+  `challenge`) e `[ o que mudou ]` (o `impact`) de `projectStories.ts`, com
+  os mesmos rótulos do case. Nenhuma copy nova foi escrita para isso.
+- **O fio condutor.** Uma linha costurada desce pela margem esquerda; a agulha
+  fica parada no meio da tela e a página passa por baixo, como tecido na
+  máquina. A cada nó a linha troca para a cor do case (`accent` em
+  `useProjects`, a mesma do `ProjectShell`) e o papel pega 7% dela. Se a cor de
+  um case mudar, mudar nos dois lugares.
+- **O número é `nº 12`**, identificador do arquivo, não fração. A posição na
+  lista fica só na barra.
+- **A onda ASCII `*.+.*` continua** ao lado do nº e ondula no hover (pedido
+  dela). Em toque, ondula quando o capítulo passa pela agulha.
+- A lista termina num nó de arremate e vai direto para o rodapé. Houve um
+  fecho "fim da linha." listando os projetos fora da seleção: ela achou com
+  cara de rascunho e saiu. Não recriar texto de fecho que fale da própria lista.
+- A pergunta da oficina de TouchDesigner foi corrigida a partir da
+  apresentação da SIAC 2026: o ponto de partida era desmistificar o código
+  (programação criativa sem código escrito) e usar a oficina como experimento
+  da pesquisa do TCC/PIBIC, não a duração de quatro horas.
 
 ## Estado atual de `/work`
 

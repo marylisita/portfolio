@@ -137,14 +137,14 @@ const stories: Record<string, LocalizedStory> = {
         "Oficina introdutória de quatro horas: do node vazio ao primeiro patch rodando, com a lógica nodal apresentada na prática em vez de no slide.",
       shortImpact: "do node vazio ao primeiro patch",
       challenge:
-        "Quatro horas é pouco para a ferramenta e muito para aula expositiva.",
+        "Dá para apresentar programação criativa a quem vem do design sem pedir uma linha de código escrito — e usar a oficina como experimento da pesquisa do meu TCC?",
     },
     en: {
       impact:
         "A four-hour introductory workshop: from an empty node to a first working patch, with node logic taught by doing rather than by slide.",
       shortImpact: "from empty node to first patch",
       challenge:
-        "Four hours is too little for the software and too much for a lecture.",
+        "Can you introduce creative coding to design students without asking for a single line of written code — and use the workshop as an experiment for my thesis research?",
     },
   },
   juizo: {

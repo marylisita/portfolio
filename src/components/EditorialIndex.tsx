@@ -14,6 +14,9 @@ export type IndexItem = {
    *  varias telas de celular vira tres miniaturas ilegiveis a 300px; aqui
    *  entra um detalhe unico que ainda se le nessa largura. */
   imgPocket?: string;
+  /** Cor do case — a mesma que a página do projeto passa para o ProjectShell.
+   *  Em /work ela é a "linha" do capítulo: costura, nó e o tom do papel. */
+  accent?: string;
   /** Resultado qualitativo resumido para leitura rápida do arquivo. */
   impact: string;
   /** O mesmo resultado por extenso — usado onde há espaço para explicar. */

@@ -2,134 +2,30 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Fragment, useState, type CSSProperties } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+  type CSSProperties,
+} from "react";
+import {
+  motion,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+} from "framer-motion";
 import { useT } from "@/i18n/LanguageContext";
 import { useProjects } from "@/components/useProjects";
+import type { IndexItem } from "@/components/EditorialIndex";
+import { getProjectStory, type ProjectStory } from "@/content/projectStories";
 import EditorialFooter from "@/components/EditorialFooter";
 import SiteHeader from "@/components/SiteHeader";
-
-interface ProjectCardProps {
-  num: string;
-  title: string;
-  tags: string;
-  href: string;
-  img: string;
-  desc: string;
-  ratio: number;
-  index: number;
-  total: string;
-}
-
-const DIVIDER_SYMBOLS = [
-  "*",
-  ".",
-  "+",
-  ".",
-  "*",
-  ".",
-  "+",
-  ".",
-  "*",
-  ".",
-  "+",
-  ".",
-  "*",
-  ".",
-  "+",
-  ".",
-  "*",
-  ".",
-  "+",
-] as const;
-
-function AsciiDivider({ vertical = false }: { vertical?: boolean }) {
-  return (
-    <span
-      className={`wk-ascii-divider ${
-        vertical ? "wk-ascii-divider--vertical" : "wk-ascii-divider--horizontal"
-      }`}
-      aria-hidden="true"
-    >
-      {DIVIDER_SYMBOLS.map((symbol, symbolIndex) => (
-        <span
-          key={`${symbol}-${symbolIndex}`}
-          style={
-            { "--ascii-delay": `${symbolIndex * 58}ms` } as CSSProperties
-          }
-        >
-          {symbol}
-        </span>
-      ))}
-    </span>
-  );
-}
-
-function ProjectCard({
-  num,
-  title,
-  tags,
-  href,
-  img,
-  desc,
-  ratio,
-  index,
-  total,
-}: ProjectCardProps) {
-  const { t } = useT();
-  const headingId = `project-title-${num}`;
-  /* A forma sai da proporcao do arquivo, nao da posicao na lista. */
-  const orient = ratio >= 0.9 ? "portrait" : ratio <= 0.55 ? "wide" : "landscape";
-  const feature = index === 0 && ratio <= 0.7;
-
-  return (
-    <article
-      className="wk-project"
-      data-orient={orient}
-      data-feature={feature ? "true" : undefined}
-      data-reverse={!feature && index % 2 === 1 ? "true" : undefined}
-      aria-labelledby={headingId}
-    >
-      <Link
-        href={href}
-        className="wk-project__visual hover-trigger"
-        aria-label={`${t("view_project")}: ${title}`}
-        style={{ aspectRatio: `1 / ${ratio}` }}
-      >
-        <Image
-          className="wk-project__image"
-          src={img}
-          alt=""
-          fill
-          sizes={
-            feature
-              ? "(max-width: 900px) calc(100vw - 2.5rem), 92vw"
-              : "(max-width: 900px) calc(100vw - 2.5rem), 66vw"
-          }
-          loading={index === 0 ? "eager" : "lazy"}
-        />
-      </Link>
-
-      <div className="wk-project__copy">
-        <AsciiDivider vertical />
-        <span className="wk-project__count">
-          {num} / {total}
-          <AsciiDivider />
-        </span>
-        <h2 className="wk-project__title" id={headingId}>
-          {title}
-        </h2>
-        <p className="wk-project__tags">{tags}</p>
-        <p className="wk-project__desc">{desc}</p>
-        <Link href={href} className="wk-project__cta hover-trigger">
-          <span>{t("view_project")}</span>
-          <span className="wk-project__cta-icon" aria-hidden="true">
-            ↗
-          </span>
-        </Link>
-      </div>
-    </article>
-  );
-}
+import ScrambleText, {
+  COLORS as SCRAMBLE_COLORS,
+  GLYPHS as SCRAMBLE_GLYPHS,
+} from "@/components/ScrambleText";
 
 /** O núcleo do portfólio, na ordem em que aparece. Cada um cobre um território
  * que nenhum outro cobre. Os demais continuam na fonte completa porque as
@@ -153,7 +49,7 @@ const DIGITAL_HREFS = [
   "/work/genlab",
 ];
 
-/** O eixo das abas é área, nunca contexto. Um projeto pode estar em mais de uma. */
+/** O eixo dos recortes é área, nunca contexto. Um projeto pode estar em mais de um. */
 const AREAS: Record<string, string[]> = {
   "/work/juizo": ["digital", "grafico", "pesquisa"],
   "/work/graduation": ["grafico"],
@@ -169,780 +65,1196 @@ const AREAS: Record<string, string[]> = {
   "/work/vegcoz": ["digital", "pesquisa"],
 };
 
+/* O recorte completa o título. Antes havia um título fixo e uma fileira de
+   abas embaixo, com duas abas parecendo ligadas ao mesmo tempo (a prioritária
+   tinha contorno). Agora existe um único estado: a palavra que fecha a frase.
+   A ordem das opções continua dando a UX/UI o primeiro lugar depois da
+   seleção, que era o motivo do contorno. */
 const TABS = [
-  { id: "destaques", key: "wk_tab_featured" },
-  { id: "digital", key: "wk_tab_digital", priority: true },
-  { id: "grafico", key: "wk_tab_graphic" },
-  { id: "arte", key: "wk_tab_art" },
-  { id: "pesquisa", key: "wk_tab_research" },
+  { id: "destaques", key: "wk_tab_featured", pt: "selecionados", en: "selected" },
+  { id: "digital", key: "wk_tab_digital", pt: "de UX/UI & web design", en: "UX/UI & web design" },
+  { id: "grafico", key: "wk_tab_graphic", pt: "de design gráfico", en: "graphic design" },
+  { id: "arte", key: "wk_tab_art", pt: "de arte & tecnologia", en: "art & technology" },
+  { id: "pesquisa", key: "wk_tab_research", pt: "de pesquisa & educação", en: "research & teaching" },
 ] as const;
+
+type AreaId = (typeof TABS)[number]["id"];
+const DEFAULT_AREA: AreaId = "destaques";
+
+/* O recorte vive na URL (?area=grafico) para poder ir num e-mail de
+   candidatura já filtrado. Sem useSearchParams de propósito: numa página
+   pré-renderizada ele obriga um Suspense e tiraria a lista do HTML inicial.
+   O HTML sai com a seleção e o recorte do link entra na hidratação. */
+const AREA_EVENT = "wk:area";
+
+function isArea(value: string | null): value is AreaId {
+  return TABS.some((tab) => tab.id === value);
+}
+
+function readArea(): AreaId {
+  const value = new URLSearchParams(window.location.search).get("area");
+  return isArea(value) ? value : DEFAULT_AREA;
+}
+
+function subscribeArea(onChange: () => void) {
+  window.addEventListener("popstate", onChange);
+  window.addEventListener(AREA_EVENT, onChange);
+  return () => {
+    window.removeEventListener("popstate", onChange);
+    window.removeEventListener(AREA_EVENT, onChange);
+  };
+}
+
+function writeArea(next: AreaId) {
+  const url = new URL(window.location.href);
+  if (next === DEFAULT_AREA) url.searchParams.delete("area");
+  else url.searchParams.set("area", next);
+  window.history.replaceState(null, "", `${url.pathname}${url.search}${url.hash}`);
+  window.dispatchEvent(new Event(AREA_EVENT));
+}
+
+/* A troca de recorte usa a mesma grade colorida que a home mostra no hover
+   do título: cada letra que ainda não se refez vira uma grade 3×3 de glifos
+   nas cores do ScrambleText, e as letras voltam da esquerda para a direita.
+   A palavra nova ocupa o lugar desde o primeiro quadro (as letras ficam
+   transparentes por baixo da grade), então a linha não pula enquanto troca. */
+type DecodeFrame = { source: string; revealed: number; tick: number };
+
+/** Os glifos mudam a cada 85ms, o mesmo passo do ScrambleText. */
+const DECODE_SWAP = 85;
+const DECODE_LEAD = 140;
+const DECODE_STEP = 34;
+
+function useDecode(text: string, animate: boolean) {
+  const [frame, setFrame] = useState<DecodeFrame | null>(null);
+  const previous = useRef(text);
+
+  useEffect(() => {
+    if (previous.current === text) return;
+    previous.current = text;
+    if (!animate) return;
+
+    const length = Array.from(text).length;
+    const end = DECODE_LEAD + length * DECODE_STEP;
+    const start = performance.now();
+    let raf = 0;
+    let lastRevealed = -1;
+    let lastTick = -1;
+
+    const loop = (now: number) => {
+      const elapsed = now - start;
+      if (elapsed >= end) {
+        setFrame(null);
+        return;
+      }
+      const revealed =
+        elapsed < DECODE_LEAD ? 0 : Math.floor((elapsed - DECODE_LEAD) / DECODE_STEP) + 1;
+      const tick = Math.floor(elapsed / DECODE_SWAP);
+      /* Só redesenha quando algo muda: render a cada quadro para trocar
+         glifo a cada 85ms seria trabalho jogado fora. */
+      if (revealed !== lastRevealed || tick !== lastTick) {
+        lastRevealed = revealed;
+        lastTick = tick;
+        setFrame({ source: text, revealed, tick });
+      }
+      raf = requestAnimationFrame(loop);
+    };
+
+    raf = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf);
+  }, [text, animate]);
+
+  return frame && frame.source === text ? frame : null;
+}
+
+/** Aleatório estável por quadro: o mesmo seed dá o mesmo glifo, então a grade
+ *  só muda quando o passo de 85ms vira, e não a cada render. */
+function noise(seed: number) {
+  const value = Math.sin(seed * 12.9898) * 43758.5453;
+  return value - Math.floor(value);
+}
+
+function DecodingWord({ text, frame }: { text: string; frame: DecodeFrame }) {
+  return (
+    <>
+      {Array.from(text).map((char, index) => {
+        if (char === " " || index < frame.revealed) {
+          return <span key={index}>{char}</span>;
+        }
+        return (
+          <span key={index} className="wk-dl">
+            {char}
+            <span className="wk-dl__grid">
+              {Array.from({ length: 9 }, (_, cell) => {
+                const seed = frame.tick * 131 + index * 17 + cell * 5;
+                const turn = ((noise(seed + 2) - 0.5) * 36).toFixed(1);
+                const size = (0.85 + noise(seed + 3) * 0.4).toFixed(2);
+                return (
+                  <span
+                    key={cell}
+                    style={{
+                      color: SCRAMBLE_COLORS[Math.floor(noise(seed) * SCRAMBLE_COLORS.length)],
+                      opacity: 0.7 + noise(seed + 1) * 0.3,
+                      transform: `rotate(${turn}deg) scale(${size})`,
+                    }}
+                  >
+                    {SCRAMBLE_GLYPHS[Math.floor(noise(seed + 4) * SCRAMBLE_GLYPHS.length)]}
+                  </span>
+                );
+              })}
+            </span>
+          </span>
+        );
+      })}
+    </>
+  );
+}
+
+/* A fileira ASCII que ondula quando o capítulo é tocado. Era o divisor da
+   versão anterior da página e ela gosta dele: a coluna vertical saiu porque a
+   linha costurada ocupa esse lugar, a fileira horizontal ficou ao lado do nº. */
+const ASCII_ROW = ["*", ".", "+", ".", "*", ".", "+", ".", "*", ".", "+", ".", "*", ".", "+", ".", "*"];
+
+function AsciiRow() {
+  return (
+    <span className="wk-ascii" aria-hidden="true">
+      {ASCII_ROW.map((symbol, index) => (
+        <span key={index} style={{ "--ascii-delay": `${index * 58}ms` } as CSSProperties}>
+          {symbol}
+        </span>
+      ))}
+    </span>
+  );
+}
+
+type ChapterProps = {
+  project: IndexItem;
+  story?: ProjectStory;
+  sewn: boolean;
+  /** o capítulo que está na agulha agora */
+  active: boolean;
+  first: boolean;
+  still: boolean;
+  observe: (element: HTMLElement | null) => (() => void) | void;
+};
+
+/* Um capítulo: a pergunta do case, a peça, o que mudou. O texto é o mesmo
+   que abre a página do projeto (projectStories), com os mesmos rótulos, então
+   quem entra no case reconhece por onde já passou. */
+function WorkChapter({ project, story, sewn, active, first, still, observe }: ChapterProps) {
+  const { t, lang } = useT();
+  const pt = lang !== "en";
+  const chapterRef = useRef<HTMLElement | null>(null);
+
+  /* A ponta da linha fica sempre na altura da agulha, no meio da tela: o
+     trecho costurado é exatamente o que já passou por ela. */
+  const { scrollYProgress } = useScroll({
+    target: chapterRef,
+    offset: ["start center", "end center"],
+  });
+  const clipPath = useTransform(scrollYProgress, (value) =>
+    still ? "none" : `inset(0 0 ${(100 - value * 100).toFixed(2)}% 0)`,
+  );
+
+  const setRef = useCallback(
+    (element: HTMLElement | null) => {
+      chapterRef.current = element;
+      return observe(element);
+    },
+    [observe],
+  );
+
+  const headingId = `chapter-${project.href.split("/").at(-1)}`;
+  const line = project.accent ?? "var(--site-accent)";
+
+  return (
+    <article
+      ref={setRef}
+      className="wk-ch"
+      data-href={project.href}
+      data-sewn={sewn ? "true" : undefined}
+      data-active={active ? "true" : undefined}
+      aria-labelledby={headingId}
+      style={
+        {
+          "--wk-ch-line": line,
+          "--r": project.ratio,
+          ...(project.imgPocket ? { "--r-pocket": 736 / 1104 } : {}),
+        } as CSSProperties
+      }
+    >
+      <span className="wk-ch__thread" aria-hidden="true">
+        <span className="wk-ch__holes" />
+        <motion.span className="wk-ch__line" style={{ clipPath }} />
+        <span className="wk-ch__knot">╳</span>
+      </span>
+
+      <div className="wk-ch__story">
+        <header className="wk-ch__head">
+          <p className="wk-ch__kicker">
+            <span className="wk-ch__count">
+              <span className="wk-ch__num">nº {project.num}</span>
+              <AsciiRow />
+            </span>
+            <span>{project.tags}</span>
+          </p>
+          <h2 className="wk-ch__title" id={headingId}>
+            {project.title}
+          </h2>
+        </header>
+
+        {story ? (
+          <dl className="wk-ch__beats">
+            <div className="wk-ch__beat wk-ch__beat--q">
+              <dt className="wk-ch__label">{pt ? "a pergunta" : "the question"}</dt>
+              <dd className="wk-ch__question">{story.challenge}</dd>
+            </div>
+            <div className="wk-ch__beat wk-ch__beat--a">
+              <dt className="wk-ch__label">{pt ? "o que mudou" : "what changed"}</dt>
+              <dd className="wk-ch__answer">{story.impact}</dd>
+            </div>
+          </dl>
+        ) : null}
+
+        <Link
+          href={project.href}
+          className="wk-ch__cta hover-trigger"
+          aria-label={`${t("view_project")}: ${project.title}`}
+        >
+          <span>{t("view_project").toLowerCase()}</span>
+          <span aria-hidden="true">↗</span>
+        </Link>
+      </div>
+
+      {/* A imagem repete o destino do botão: fica fora da ordem do teclado
+          para o Tab não parar duas vezes no mesmo projeto. */}
+      <Link
+        href={project.href}
+        className="wk-ch__visual hover-trigger"
+        data-pocket={project.imgPocket ? "true" : undefined}
+        tabIndex={-1}
+        aria-hidden="true"
+      >
+        <Image
+          className="wk-ch__img wk-ch__img--wide"
+          src={project.img}
+          alt=""
+          fill
+          sizes="(max-width: 1050px) calc(100vw - 4.5rem), 56vw"
+          loading={first ? "eager" : "lazy"}
+          fetchPriority={first ? "high" : undefined}
+        />
+        {project.imgPocket ? (
+          <Image
+            className="wk-ch__img wk-ch__img--pocket"
+            src={project.imgPocket}
+            alt=""
+            fill
+            sizes="calc(100vw - 4.5rem)"
+          />
+        ) : null}
+      </Link>
+    </article>
+  );
+}
+
+const styles = `
+  .wk-page {
+    /* Os tokens que o rodapé e os botões leem (--ink, --paper, --acid). A home
+       declara os três no .rm; aqui eles não existiam e o rodapé caía na cor
+       padrão do navegador. */
+    --ink: var(--site-ink);
+    --paper: var(--site-paper);
+    --acid: var(--site-accent);
+    --wk-pink-text: color-mix(in srgb, var(--site-accent) 82%, var(--site-ink));
+    --wk-muted: color-mix(in srgb, var(--site-ink) 66%, var(--site-paper));
+    --wk-rule: color-mix(in srgb, var(--site-ink) 24%, transparent);
+    /* A linha do capítulo que está passando pela agulha. Fora da lista o papel
+       volta ao creme; dentro, ele pega 7% da cor do case -- o bastante para o
+       capítulo ter clima, pouco para competir com a peça. */
+    --wk-line: var(--site-accent);
+    --wk-paper-now: var(--site-paper);
+    --wk-head: 76px;
+    --wk-bar: 60px;
+    --wk-gutter: clamp(2.6rem, 4.2vw, 4rem);
+    position: relative;
+    min-height: 100vh;
+    /* clip, não hidden: hidden transforma a página num contêiner de rolagem
+       e a barra de recortes deixaria de grudar no topo. */
+    overflow-x: clip;
+    color: var(--site-ink);
+    background: var(--site-paper);
+  }
+  .wk-page[data-chapter="true"] {
+    --wk-paper-now: color-mix(in srgb, var(--wk-line) 7%, var(--site-paper));
+  }
+  .wk-page .sh-bar {
+    --sh-glass-bg: color-mix(in srgb, var(--wk-paper-now) 62%, transparent);
+  }
+
+  .wk-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-color: var(--wk-paper-now);
+    transition: background-color 900ms var(--ease-default);
+  }
+  /* O mesmo grão da home, por cima do papel e por baixo das peças. */
+  .wk-page::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: .07;
+    mix-blend-mode: multiply;
+  }
+
+  .wk-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .wk-main {
+    position: relative;
+    z-index: 10;
+    width: min(1380px, calc(100% - 5rem));
+    margin: 0 auto;
+    padding-top: clamp(7.5rem, 15vh, 10rem);
+  }
+
+  /* --- abertura: a frase que é o filtro --- */
+  .wk-intro {
+    padding: 0 0 clamp(1.4rem, 2.6vw, 2.2rem) var(--wk-gutter);
+  }
+  .wk-eyebrow {
+    margin: 0 0 1.25rem;
+    color: var(--wk-pink-text);
+    font-family: var(--font-subtitle), monospace;
+    font-size: var(--type-micro);
+    font-weight: var(--offbit-weight-active);
+    letter-spacing: .12em;
+    text-transform: lowercase;
+  }
+  .wk-title {
+    margin: 0;
+    font-family: var(--font-pixelscript);
+    font-size: clamp(2.9rem, min(7.2vw, 11.5vh), 6.6rem);
+    font-weight: 400;
+    line-height: 1.02;
+    letter-spacing: -.015em;
+    text-transform: none;
+  }
+  .wk-title__line { display: block; }
+  .wk-title__var { color: var(--wk-pink-text); }
+  /* Letra ainda não refeita: ela continua ali, transparente, segurando a
+     largura; a grade colorida fica por cima. Mesmas medidas da grade do
+     ScrambleText (globals.css), relativas ao corpo do título. */
+  .wk-dl {
+    position: relative;
+    color: transparent;
+  }
+  /* A caixa de uma letra inline é a área de conteúdo da fonte, bem mais alta
+     que a linha na Pixelscript: com inset 0 a grade invadia a linha de cima e
+     a de baixo. Aqui ela fica com a altura do corpo, centrada na letra. */
+  .wk-dl__grid {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    left: 0;
+    /* em aqui é o corpo da grade (.245 do título): 3.7em dá ~.9 da letra. */
+    height: 3.7em;
+    translate: 0 -50%;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: center;
+    justify-items: center;
+    gap: .02em .04em;
+    font-family: var(--font-mono), monospace;
+    font-size: .245em;
+    line-height: 1;
+    letter-spacing: 0;
+    pointer-events: none;
+  }
+  .wk-dl__grid > span {
+    display: inline-block;
+    text-align: center;
+  }
+
+  /* --- barra de recortes: gruda embaixo do menu e diz onde você está --- */
+  .wk-bar-sentinel { height: 1px; }
+  .wk-bar {
+    position: sticky;
+    top: var(--wk-head);
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.25rem;
+    margin-bottom: clamp(3rem, 6vw, 5.5rem);
+    padding: .45rem 0 .45rem var(--wk-gutter);
+    background-color: var(--wk-paper-now);
+    /* A sombra larga estende o fundo até as bordas da tela; o clip corta em
+       cima e embaixo. Assim a barra sangra sem sair do grid. */
+    box-shadow: 0 0 0 100vmax var(--wk-paper-now);
+    clip-path: inset(0 -100vmax);
+    border-bottom: 1px dashed transparent;
+    transition:
+      background-color 900ms var(--ease-default),
+      box-shadow 900ms var(--ease-default),
+      border-color 300ms ease;
+  }
+  .wk-bar[data-stuck="true"] { border-bottom-color: var(--wk-rule); }
+  .wk-options {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    gap: .3rem;
+    min-width: 0;
+    /* O respiro de 5px deixa o contorno de foco caber: overflow-x corta nos
+       dois eixos. A margem negativa devolve o alinhamento do texto. */
+    margin: -5px 0 -5px calc(-.8rem - 5px);
+    padding: 5px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .wk-options::-webkit-scrollbar { display: none; }
+  .wk-opt {
+    flex: 0 0 auto;
+    min-height: var(--tap-min);
+    padding: .5rem .8rem;
+    color: var(--wk-muted);
+    background: transparent;
+    cursor: pointer;
+    font-family: var(--font-subtitle), monospace;
+    font-size: var(--type-micro);
+    font-weight: var(--offbit-weight);
+    letter-spacing: .05em;
+    text-transform: lowercase;
+    white-space: nowrap;
+    /* Sem transição no fundo: no meio do fade as duas opções ficavam meio
+       rosas ao mesmo tempo, que era o defeito das abas antigas. */
+    transition:
+      color 200ms var(--ease-out),
+      transform 160ms var(--ease-out);
+  }
+  .wk-opt__n {
+    margin-left: .45rem;
+    color: var(--wk-pink-text);
+    font-variant-numeric: tabular-nums;
+  }
+  .wk-opt:hover,
+  .wk-opt:focus-visible { color: var(--site-ink); }
+  .wk-opt:hover .wk-opt__label {
+    text-decoration: underline dashed 1px;
+    text-underline-offset: .38em;
+  }
+  /* Um só sinal para "ligado": o rosa quente de fundo, com a tinta por cima
+     (5.0:1). O mesmo par dos botões da galeria da home no hover. */
+  .wk-opt[aria-pressed="true"] {
+    color: var(--site-ink);
+    background: var(--site-accent-hot);
+  }
+  .wk-opt[aria-pressed="true"] .wk-opt__label { text-decoration: none; }
+  .wk-opt[aria-pressed="true"] .wk-opt__n { color: inherit; opacity: .72; }
+  .wk-opt:focus-visible {
+    outline: 2px solid var(--site-ink);
+    outline-offset: 2px;
+  }
+  .wk-opt:active { transform: scale(.97); }
+
+  .wk-where {
+    flex: none;
+    display: flex;
+    align-items: baseline;
+    gap: .55rem;
+    min-width: 0;
+    max-width: 36%;
+    margin: 0;
+    color: var(--wk-muted);
+    font-family: var(--font-subtitle), monospace;
+    font-size: var(--type-micro);
+    font-weight: var(--offbit-weight);
+    letter-spacing: .05em;
+    text-transform: lowercase;
+    white-space: nowrap;
+  }
+  .wk-where__spool {
+    color: var(--wk-line);
+    transition: color 900ms var(--ease-default);
+  }
+  .wk-where__pos {
+    color: var(--site-ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .wk-where__slash { display: none; }
+  .wk-where__title {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* --- a lista: cada capítulo leva o próprio trecho de linha --- */
+  .wk-list {
+    position: relative;
+    margin-bottom: clamp(5rem, 9vw, 8rem);
+  }
+
+  /* A agulha fica parada no meio da tela e a página passa por baixo dela,
+     como o tecido numa máquina de costura. Sticky dentro da lista: espera
+     no primeiro nó, acompanha a leitura e para no último ponto. */
+  .wk-needle {
+    position: sticky;
+    top: 50svh;
+    z-index: 4;
+    height: 0;
+    pointer-events: none;
+  }
+  .wk-needle__body {
+    position: absolute;
+    bottom: 0;
+    left: .75rem;
+    width: 10px;
+    height: 46px;
+    margin-left: -5px;
+    color: var(--site-ink);
+  }
+  .wk-needle__body svg { display: block; width: 100%; height: 100%; overflow: visible; }
+
+  .wk-ch {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    column-gap: clamp(2rem, 4.5vw, 5rem);
+    align-items: start;
+    padding: 0 0 clamp(6.5rem, 11vw, 10rem) var(--wk-gutter);
+  }
+
+  .wk-ch__thread {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 1.5rem;
+    pointer-events: none;
+  }
+  /* Os furos são o caminho que ainda vai ser costurado. */
+  .wk-ch__holes {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 2px;
+    margin-left: -1px;
+    background: repeating-linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--site-ink) 32%, transparent) 0 2px,
+      transparent 2px 10px
+    );
+  }
+  /* A linha é um ponto corrido em onda, repetido a cada 96px. A cor sai da
+     máscara, então cada capítulo troca a linha só mudando uma variável. */
+  .wk-ch__line {
+    position: absolute;
+    inset: 0;
+    background-color: var(--wk-ch-line);
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='96' viewBox='0 0 24 96'%3E%3Cpath d='M12 0C5 32 19 64 12 96' fill='none' stroke='%23000' stroke-width='1.9' stroke-linecap='round' stroke-dasharray='7 4.6'/%3E%3C/svg%3E") top center / 24px 96px repeat-y;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='96' viewBox='0 0 24 96'%3E%3Cpath d='M12 0C5 32 19 64 12 96' fill='none' stroke='%23000' stroke-width='1.9' stroke-linecap='round' stroke-dasharray='7 4.6'/%3E%3C/svg%3E") top center / 24px 96px repeat-y;
+  }
+  .wk-ch__knot {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    display: grid;
+    place-items: center;
+    width: 1.3rem;
+    height: 1.3rem;
+    translate: -50% -50%;
+    color: color-mix(in srgb, var(--site-ink) 45%, transparent);
+    background: var(--wk-paper-now);
+    border: 1px solid color-mix(in srgb, var(--site-ink) 24%, transparent);
+    font-family: var(--font-mono), monospace;
+    font-size: .68rem;
+    line-height: 1;
+    scale: .86;
+    transition:
+      color 400ms var(--ease-out),
+      border-color 400ms var(--ease-out),
+      background-color 900ms var(--ease-default),
+      scale 520ms var(--ease-spring);
+  }
+  .wk-ch[data-sewn="true"] .wk-ch__knot {
+    color: var(--wk-ch-line);
+    border-color: var(--wk-ch-line);
+    scale: 1;
+  }
+
+  .wk-ch__story { min-width: 0; }
+  @media (min-width: 1051px) and (min-height: 760px) {
+    .wk-ch__story {
+      position: sticky;
+      top: calc(var(--wk-head) + var(--wk-bar) + 2.25rem);
+    }
+  }
+  .wk-ch__head { margin-top: -.35rem; }
+  .wk-ch__kicker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .2rem .75rem;
+    margin: 0 0 1.1rem;
+    color: var(--wk-muted);
+    font-family: var(--font-subtitle), monospace;
+    font-size: var(--type-micro);
+    font-weight: var(--offbit-weight);
+    line-height: 1.45;
+    letter-spacing: .05em;
+    text-transform: lowercase;
+  }
+  .wk-ch__count {
+    display: flex;
+    flex-basis: 100%;
+    align-items: center;
+    gap: .85rem;
+  }
+  .wk-ascii {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    width: clamp(9rem, 15vw, 13rem);
+    color: var(--wk-ch-line);
+    font-size: .88rem;
+    font-weight: var(--offbit-weight-active);
+    line-height: 1;
+    pointer-events: none;
+  }
+  .wk-ascii span {
+    display: inline-block;
+    opacity: .46;
+    transform: translateX(-.65rem) scale(.68);
+    transition:
+      opacity 520ms var(--ease-default),
+      transform 760ms var(--ease-default);
+  }
+  /* Com mouse: ondula no hover e no foco do teclado. Sem mouse não existe
+     hover, então ela ondula quando o capítulo passa pela agulha. */
+  @media (hover: hover) and (pointer: fine) {
+    .wk-ch:hover .wk-ascii span,
+    .wk-ch:focus-within .wk-ascii span {
+      animation: wk-ascii-wave 2600ms var(--ease-default) var(--ascii-delay) infinite;
+    }
+    .wk-ch:hover .wk-ch__title,
+    .wk-ch:focus-within .wk-ch__title { color: var(--wk-pink-text); }
+  }
+  @media (hover: none) {
+    .wk-ch[data-active="true"] .wk-ascii span {
+      animation: wk-ascii-wave 2600ms var(--ease-default) var(--ascii-delay) infinite;
+    }
+  }
+  @keyframes wk-ascii-wave {
+    0% { opacity: .38; transform: translateX(-.65rem) scale(.68); }
+    24%, 56% { opacity: 1; transform: translate(0, 0) scale(1); }
+    100% { opacity: .46; transform: translateX(-.65rem) scale(.76); }
+  }
+  .wk-ch__num {
+    color: var(--wk-pink-text);
+    font-variant-numeric: tabular-nums;
+  }
+  .wk-page .wk-ch__title {
+    margin: 0 0 clamp(1.6rem, 2.6vw, 2.4rem);
+    transition: color 600ms var(--ease-default);
+    font-size: clamp(2.5rem, 3.7vw, 3.75rem);
+    line-height: .92;
+    letter-spacing: -.035em !important;
+    text-transform: lowercase;
+    text-wrap: balance;
+    overflow-wrap: anywhere;
+  }
+  .wk-ch__beats {
+    display: grid;
+    gap: 1.5rem;
+    margin: 0;
+  }
+  .wk-ch__beat {
+    padding-top: .95rem;
+    border-top: 1px dashed var(--wk-rule);
+  }
+  .wk-ch__label {
+    margin: 0 0 .6rem;
+    color: var(--wk-muted);
+    font-family: var(--font-subtitle), monospace;
+    font-size: var(--type-micro);
+    font-weight: var(--offbit-weight);
+    letter-spacing: .05em;
+    text-transform: lowercase;
+  }
+  /* Os colchetes são a moldura de rótulo do site (pj-meta__label nos cases).
+     Aqui pegam a linha do capítulo. */
+  .wk-ch__label::before { content: "[ "; color: var(--wk-ch-line); }
+  .wk-ch__label::after { content: " ]"; color: var(--wk-ch-line); }
+  .wk-ch__question {
+    margin: 0;
+    color: var(--site-ink);
+    font-family: var(--font-head), serif;
+    font-size: clamp(1.3rem, 1.02rem + .78vw, 1.78rem);
+    font-style: italic;
+    line-height: 1.18;
+    letter-spacing: -.012em;
+    text-wrap: pretty;
+  }
+  .wk-ch__answer {
+    max-width: 48ch;
+    margin: 0;
+    color: color-mix(in srgb, var(--site-ink) 80%, var(--site-paper));
+    font-family: var(--font-body), sans-serif;
+    font-size: var(--type-body);
+    line-height: 1.6;
+    text-wrap: pretty;
+  }
+  .wk-ch__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: .55rem;
+    min-height: var(--tap-min);
+    margin-top: 2rem;
+    padding: .62rem .9rem;
+    color: var(--site-paper);
+    background: var(--site-ink);
+    border: 1px solid var(--site-ink);
+    font-family: var(--font-body), sans-serif;
+    font-size: var(--type-label);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: .04em;
+    text-decoration: none;
+    transition:
+      color var(--duration-fast) var(--ease-out),
+      background-color var(--duration-fast) var(--ease-out),
+      border-color var(--duration-fast) var(--ease-out),
+      transform var(--duration-fast) var(--ease-out);
+  }
+  .wk-ch__cta:hover,
+  .wk-ch__cta:focus-visible {
+    color: var(--site-ink);
+    background: var(--site-accent-hot);
+    border-color: var(--site-accent-hot);
+    transform: translateY(-2px);
+  }
+  .wk-ch__cta:focus-visible {
+    outline: 2px solid var(--site-ink);
+    outline-offset: 3px;
+  }
+
+  .wk-ch__visual {
+    position: relative;
+    display: block;
+    justify-self: end;
+    width: min(100%, calc(78svh / var(--r)));
+    aspect-ratio: 1 / var(--r);
+    overflow: hidden;
+    background: color-mix(in srgb, var(--site-ink) 8%, transparent);
+    /* Alinhavo: no hover a peça ganha um ponto tracejado em volta, por fora,
+       na linha do capítulo -- por fora porque por dentro sumia nas capas
+       escuras ou da mesma cor. */
+    outline: 2px dashed transparent;
+    outline-offset: 2px;
+    transition:
+      outline-color 380ms var(--ease-out),
+      outline-offset 520ms var(--ease-default);
+  }
+  .wk-ch__img {
+    object-fit: cover;
+    transition: transform 1000ms var(--ease-default);
+  }
+  .wk-ch__img--pocket { display: none; }
+
+  @media (hover: hover) and (pointer: fine) {
+    .wk-ch:hover .wk-ch__visual {
+      outline-color: var(--wk-ch-line);
+      outline-offset: 9px;
+    }
+    .wk-ch:hover .wk-ch__img { transform: scale(1.022); }
+  }
+
+  /* O último capítulo não precisa do vão até o próximo: a linha desce só
+     um pouco além do texto e fecha no nó de arremate. */
+  .wk-ch:last-child { padding-bottom: clamp(3.5rem, 6vw, 5.5rem); }
+  .wk-tie {
+    position: absolute;
+    bottom: 0;
+    left: .75rem;
+    display: grid;
+    place-items: center;
+    width: 1.3rem;
+    height: 1.3rem;
+    translate: -50% 50%;
+    color: var(--wk-line);
+    background: var(--wk-paper-now);
+    border: 1px solid var(--wk-line);
+    font-family: var(--font-mono), monospace;
+    font-size: .68rem;
+    line-height: 1;
+    transition:
+      color 900ms var(--ease-default),
+      border-color 900ms var(--ease-default),
+      background-color 900ms var(--ease-default);
+  }
+
+  /* Abaixo disso o nome do capítulo disputa a linha com os recortes; fica só
+     a posição, que é o que orienta. */
+  @media (max-width: 1280px) {
+    .wk-where { max-width: none; }
+    .wk-where__title { display: none; }
+  }
+
+  @media (max-width: 1050px) {
+    .wk-main { width: min(100% - 2.5rem, 1320px); }
+    .wk-ch {
+      display: flex;
+      flex-direction: column;
+      padding-bottom: 5.5rem;
+    }
+    /* No celular a peça entra entre a pergunta e a resposta: lido de cima a
+       baixo, o capítulo fica pergunta, imagem, o que mudou. */
+    .wk-ch__story,
+    .wk-ch__beats { display: contents; }
+    .wk-ch__head { order: 1; }
+    .wk-ch__beat--q { order: 2; }
+    .wk-ch__visual {
+      order: 3;
+      width: 100%;
+      margin: 1.6rem 0;
+      justify-self: auto;
+    }
+    .wk-ch__beat--a { order: 4; }
+    .wk-ch__cta { order: 5; align-self: flex-start; }
+    .wk-ch__visual[data-pocket="true"] { aspect-ratio: 1 / var(--r-pocket); }
+    .wk-ch__visual[data-pocket="true"] .wk-ch__img--wide { display: none; }
+    .wk-ch__visual[data-pocket="true"] .wk-ch__img--pocket { display: block; }
+  }
+
+  @media (max-width: 560px) {
+    .wk-main {
+      width: calc(100% - 1.75rem);
+      padding-top: 6.6rem;
+    }
+    .wk-page { --wk-gutter: 2.1rem; }
+    .wk-title { font-size: clamp(2.3rem, 10.6vw, 3.2rem); }
+    .wk-bar {
+      gap: .6rem;
+      margin-bottom: 2.6rem;
+    }
+    .wk-where__label,
+    .wk-where__spool { display: none; }
+    .wk-where__slash { display: inline; }
+    /* A fileira rola de lado; o esmaecido na borda avisa que tem mais. */
+    .wk-options {
+      -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 2.2rem), transparent);
+      mask-image: linear-gradient(90deg, #000 calc(100% - 2.2rem), transparent);
+    }
+    .wk-page .wk-ch__title { font-size: clamp(2.2rem, 10.5vw, 2.9rem); }
+    .wk-needle__body { width: 8px; height: 36px; margin-left: -4px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .wk-backdrop,
+    .wk-bar,
+    .wk-ch__knot,
+    .wk-ch__visual,
+    .wk-ch__img,
+    .wk-where__spool,
+    .wk-ascii span { transition: none; }
+    .wk-ch .wk-ascii span {
+      animation: none !important;
+      opacity: .8;
+      transform: none;
+    }
+    .wk-ch:hover .wk-ch__img { transform: none; }
+  }
+`;
 
 export default function Work() {
   const { t, lang } = useT();
-  const all = useProjects();
-  const [area, setArea] = useState<string>("destaques");
   const pt = lang !== "en";
+  const all = useProjects();
+  const reduceMotion = useReducedMotion();
+  const still = Boolean(reduceMotion);
+  /* A agulha só pica enquanto o tecido anda: o movimento vem da rolagem,
+     então página parada é agulha parada. */
+  const { scrollY } = useScroll();
+  const needleY = useTransform(scrollY, (value) => (still ? 0 : Math.sin(value / 9) * 3));
 
-  const projects =
-    area === "destaques"
-      ? CORE_HREFS.flatMap((href) => {
-          const found = all.find((item) => item.href === href);
-          return found ? [found] : [];
-        })
-      : area === "digital"
-        ? DIGITAL_HREFS.flatMap((href) => {
-            const found = all.find((item) => item.href === href);
-            return found ? [found] : [];
-          })
-      : all.filter((item) => AREAS[item.href]?.includes(area));
+  const area = useSyncExternalStore(subscribeArea, readArea, () => DEFAULT_AREA);
+  const tab = TABS.find((item) => item.id === area) ?? TABS[0];
 
-  const countFor = (id: string) =>
+  const pick = (hrefs: string[]) =>
+    hrefs.flatMap((href) => {
+      const found = all.find((item) => item.href === href);
+      return found ? [found] : [];
+    });
+  const listFor = (id: AreaId) =>
     id === "destaques"
-      ? CORE_HREFS.length
+      ? pick(CORE_HREFS)
       : id === "digital"
-        ? DIGITAL_HREFS.length
-      : all.filter((item) => AREAS[item.href]?.includes(id)).length;
+        ? pick(DIGITAL_HREFS)
+        : all.filter((item) => AREAS[item.href]?.includes(id));
+  const projects = listFor(area);
 
-  const getDesc = (href: string) => {
-    if (href.endsWith("juizo")) {
-      return pt
-        ? "App autoral de finanças para renda variável: roda inteiro no aparelho e foi testado contra 285 lançamentos reais de extrato."
-        : "A self-initiated finance app for variable income: it runs entirely on device and was tested against 285 real statement entries.";
+  /* --- qual capítulo está passando pela agulha --- */
+  const visibleRef = useRef(new Set<string>());
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const [activeHref, setActiveHref] = useState<string | null>(null);
+
+  const syncActive = useCallback(() => {
+    const [first] = visibleRef.current;
+    setActiveHref(first ?? null);
+  }, []);
+
+  const observe = useCallback(
+    (element: HTMLElement | null) => {
+      if (!element) return;
+      if (!observerRef.current) {
+        observerRef.current = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              const href = (entry.target as HTMLElement).dataset.href;
+              if (!href) continue;
+              if (entry.isIntersecting) visibleRef.current.add(href);
+              else visibleRef.current.delete(href);
+            }
+            syncActive();
+          },
+          /* uma faixa fina no meio da tela, na altura da agulha */
+          { rootMargin: "-49.5% 0px -49.5% 0px" },
+        );
+      }
+      const observer = observerRef.current;
+      const href = element.dataset.href ?? "";
+      observer.observe(element);
+      return () => {
+        observer.unobserve(element);
+        visibleRef.current.delete(href);
+        syncActive();
+      };
+    },
+    [syncActive],
+  );
+
+  useEffect(() => () => observerRef.current?.disconnect(), []);
+
+  const activeIndex = projects.findIndex((project) => project.href === activeHref);
+  const activeProject = activeIndex >= 0 ? projects[activeIndex] : null;
+
+  /* --- medidas: a barra gruda embaixo do menu fixo, e a história do
+     capítulo gruda embaixo da barra --- */
+  const pageRef = useRef<HTMLDivElement>(null);
+  const barRef = useRef<HTMLDivElement>(null);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
+  const [stuck, setStuck] = useState(false);
+  const [switched, setSwitched] = useState(false);
+
+  useEffect(() => {
+    const page = pageRef.current;
+    const bar = barRef.current;
+    const header = document.querySelector<HTMLElement>(".sh-bar");
+    if (!page || !bar) return;
+
+    const measure = () => {
+      if (header) page.style.setProperty("--wk-head", `${Math.round(header.offsetHeight)}px`);
+      page.style.setProperty("--wk-bar", `${Math.round(bar.offsetHeight)}px`);
+    };
+    measure();
+    const resize = new ResizeObserver(measure);
+    resize.observe(bar);
+    if (header) resize.observe(header);
+
+    const sentinel = sentinelRef.current;
+    let stuckObserver: IntersectionObserver | undefined;
+    if (sentinel) {
+      const headHeight = header?.offsetHeight ?? 76;
+      stuckObserver = new IntersectionObserver(
+        ([entry]) => setStuck(!entry.isIntersecting && entry.boundingClientRect.top < headHeight + 1),
+        { rootMargin: `-${headHeight + 1}px 0px 0px 0px` },
+      );
+      stuckObserver.observe(sentinel);
     }
-    if (href.endsWith("isadora")) return t("work_isadora_desc");
-    if (href.endsWith("magazine")) return t("work_helvetica_desc");
-    if (href.endsWith("genlab")) return t("work_genlab_desc");
-    if (href.endsWith("ebat")) return t("work_ebat_desc");
-    if (href.endsWith("graduation")) return t("grad_desc_2");
-    if (href.endsWith("pilotis")) return t("pilotis_desc_2");
-    if (href.endsWith("chinario")) return t("chinario_desc_1");
-    if (href.endsWith("vegcoz")) return t("vegcoz_desc_1");
-    if (href.endsWith("ondularis")) {
-      return pt
-        ? "Exposição imersiva do coletivo Endosymbiosis na intersecção entre arte, ciência e tecnologia."
-        : "An immersive exhibition by the Endosymbiosis collective at the intersection of art, science and technology.";
+
+    return () => {
+      resize.disconnect();
+      stuckObserver?.disconnect();
+    };
+  }, []);
+
+  const chooseArea = (next: AreaId) => {
+    if (next === area) return;
+    /* Quem troca de recorte lá embaixo volta para o começo da lista nova, e
+       não para o meio de um capítulo qualquer. */
+    const page = pageRef.current;
+    const list = listRef.current;
+    if (page && list) {
+      const offset =
+        Number.parseFloat(page.style.getPropertyValue("--wk-head") || "76") +
+        Number.parseFloat(page.style.getPropertyValue("--wk-bar") || "60");
+      const top = list.getBoundingClientRect().top + window.scrollY - offset - 24;
+      if (window.scrollY > top + 1) window.scrollTo({ top, behavior: "instant" });
     }
-    if (href.endsWith("cyber-marinum")) {
-      return pt
-        ? "Obra de arte interespécies em que um aquário vivo, sensores e imagens generativas respondem à presença do público."
-        : "An interspecies artwork in which a living aquarium, sensors and generative images respond to the audience's presence.";
-    }
-    if (href.endsWith("touchdesigner-workshop")) {
-      return pt
-        ? "Oficina introdutória de programação visual, gráficos em tempo real e vídeo mapping com TouchDesigner."
-        : "An introductory workshop on visual programming, real-time graphics and video mapping with TouchDesigner.";
-    }
-    return "";
+    /* O capítulo que estava na agulha pertence à lista que está saindo. Se
+       ele também existir na nova, o contador mostraria a posição dele lá
+       ("7 de 7") até a troca terminar. */
+    visibleRef.current.clear();
+    setActiveHref(null);
+    setSwitched(true);
+    writeArea(next);
   };
 
-  const localStyles = `
-    .wk-page {
-      --wk-ink: var(--site-ink, #1c1b18);
-      --wk-paper: #f6f2e9;
-      --wk-wine: #843f3a;
-      --wk-muted: #777168;
-      --wk-line: rgba(28, 27, 24, .18);
-      min-height: 100vh;
-      overflow-x: hidden;
-      color: var(--wk-ink);
-      background:
-        radial-gradient(circle at 84% 7%, rgba(132, 63, 58, .055), transparent 24rem),
-        var(--wk-paper);
-    }
+  const countFor = (id: AreaId) => listFor(id).length;
+  const word = pt ? tab.pt : tab.en;
+  const decoding = useDecode(word, !still);
+  /* Parado, o título responde ao mouse letra por letra, como o da home. */
+  const variable = decoding ? (
+    <DecodingWord text={word} frame={decoding} />
+  ) : (
+    <ScrambleText text={word} />
+  );
+  const fullTitle = pt ? `trabalhos ${tab.pt}` : `${tab.en} work`;
+  const announcement = pt
+    ? `${projects.length} trabalhos ${tab.pt}`
+    : `${projects.length} ${tab.en} projects`;
 
-    .wk-main {
-      width: min(1380px, calc(100% - 5rem));
-      margin: 0 auto;
-      padding: clamp(6.5rem, 9vh, 7.5rem) 0 clamp(5rem, 9vw, 9rem);
-      position: relative;
-      z-index: 10;
-    }
-
-    /* A abertura era quase uma tela inteira de titulo antes de qualquer
-       imagem. Continua sendo uma capa de secao, mas do tamanho do titulo. */
-    .wk-intro {
-      position: relative;
-      min-height: clamp(14rem, 22vw, 19rem);
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      padding: clamp(1.5rem, 3vw, 3rem) 0 clamp(2rem, 3vw, 2.75rem);
-      border-bottom: 1px solid var(--wk-line);
-    }
-
-    .wk-intro__eyebrow {
-      margin: 0 0 1.35rem;
-      color: var(--wk-wine);
-      font-family: var(--font-subtitle), monospace;
-      font-size: var(--type-micro);
-      font-weight: var(--offbit-weight-active);
-      letter-spacing: .14em;
-      text-transform: uppercase;
-    }
-
-    .wk-heading {
-      max-width: 8ch;
-      margin: 0;
-      font-family: var(--font-editorial), serif;
-      font-size: clamp(5.2rem, 10.4vw, 9.2rem);
-      font-weight: 400;
-      line-height: .76;
-      letter-spacing: -.055em;
-      text-transform: lowercase;
-    }
-
-    .wk-heading span,
-    .wk-heading em {
-      display: block;
-    }
-
-    .wk-heading em {
-      color: var(--wk-wine);
-      font-weight: 400;
-    }
-
-    .wk-filters {
-      display: flex;
-      align-items: center;
-      gap: clamp(.6rem, 1.4vw, 1.2rem);
-      padding: 1.4rem 0 clamp(2.5rem, 4vw, 4rem);
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
-
-    .wk-filters::-webkit-scrollbar {
-      display: none;
-    }
-
-    /* Regra unica dos filtros: preenchido = selecionado.
-       O padding e igual em todos os estados, entao trocar de aba nao empurra a
-       fita para o lado. */
-    .wk-tab {
-      position: relative;
-      flex: 0 0 auto;
-      min-height: var(--tap-min);
-      padding: .55rem .85rem;
-      border: 0;
-      background: transparent;
-      color: var(--wk-muted);
-      cursor: pointer;
-      font-family: var(--font-subtitle), monospace;
-      font-size: var(--type-micro);
-      font-weight: var(--offbit-weight);
-      letter-spacing: .09em;
-      text-transform: uppercase;
-      transition: color 500ms cubic-bezier(.16, 1, .3, 1);
-    }
-
-    .wk-tab::after {
-      content: "";
-      position: absolute;
-      right: .85rem;
-      bottom: .28rem;
-      left: .85rem;
-      height: 2px;
-      background: var(--wk-wine);
-      transform: scaleX(0);
-      transform-origin: right;
-      transition: transform 500ms cubic-bezier(.16, 1, .3, 1);
-    }
-
-    .wk-tab:hover,
-    .wk-tab:focus-visible {
-      color: var(--wk-ink);
-    }
-
-    .wk-tab:hover::after,
-    .wk-tab:focus-visible::after {
-      transform: scaleX(1);
-      transform-origin: left;
-    }
-
-    .wk-tab[data-active="true"] {
-      color: var(--wk-paper);
-      background: var(--wk-ink);
-      box-shadow: 0 0 0 1px var(--wk-ink);
-    }
-
-    /* Sublinhado e preenchimento juntos viram dois sinais para a mesma coisa. */
-    .wk-tab[data-active="true"]::after { display: none; }
-
-    .wk-tab[data-active="true"] .wk-tab__count {
-      color: inherit;
-      opacity: .72;
-    }
-
-    .wk-tab:focus-visible {
-      outline: 2px dotted var(--wk-wine);
-      outline-offset: 5px;
-    }
-
-    .wk-tab__count {
-      margin-left: .45rem;
-      color: var(--wk-wine);
-      font-variant-numeric: tabular-nums;
-      letter-spacing: 0;
-    }
-
-    /* Esta aba tem destaque porque e o recorte que ela quer mostrar primeiro,
-       nao porque esteja selecionada. Antes ela vinha preenchida de vinho e
-       parecia a aba ativa mesmo com "destaques" ligado: contorno tracejado
-       chama atencao sem imitar selecao. */
-    .wk-tab--priority {
-      color: var(--wk-wine);
-      background: transparent;
-      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--wk-wine) 55%, transparent);
-      transition:
-        color 180ms cubic-bezier(.2, 0, 0, 1),
-        background-color 180ms cubic-bezier(.2, 0, 0, 1),
-        box-shadow 180ms cubic-bezier(.2, 0, 0, 1),
-        transform 180ms cubic-bezier(.2, 0, 0, 1);
-    }
-
-    .wk-tab--priority .wk-tab__count {
-      color: inherit;
-      opacity: .72;
-    }
-
-    .wk-tab--priority:hover,
-    .wk-tab--priority:focus-visible {
-      color: var(--wk-wine);
-      box-shadow: inset 0 0 0 1px var(--wk-wine);
-    }
-
-    .wk-tab--priority:hover::after,
-    .wk-tab--priority:focus-visible::after {
-      background: var(--wk-wine);
-    }
-
-    .wk-tab--priority[data-active="true"] {
-      color: var(--wk-paper);
-      background: var(--wk-wine);
-      box-shadow: 0 0 0 1px var(--wk-wine);
-    }
-
-    .wk-tab:active {
-      transform: scale(.96);
-    }
-
-    .wk-filter-dot {
-      width: 3px;
-      height: 3px;
-      flex: 0 0 3px;
-      border-radius: 50%;
-      background: var(--wk-wine);
-    }
-
-    /* A alternancia esquerda/direita sozinha muda a posicao e nao muda a
-       leitura. O que varia de verdade aqui e o espaco, e ele vem da peca: um
-       cartaz deitado ganha coluna larga, um formato em pe ganha coluna estreita
-       e devolve a sobra para o texto. */
-    .wk-project {
-      display: grid;
-      grid-template-columns: minmax(0, 1.55fr) minmax(22rem, .75fr);
-      gap: clamp(2rem, 4vw, 4rem);
-      align-items: end;
-      margin-bottom: clamp(8rem, 15vw, 14rem);
-    }
-
-    .wk-project[data-reverse="true"] {
-      grid-template-columns: minmax(22rem, .75fr) minmax(0, 1.55fr);
-    }
-
-    .wk-project[data-orient="wide"] {
-      grid-template-columns: minmax(0, 1.95fr) minmax(19rem, .6fr);
-    }
-
-    .wk-project[data-orient="wide"][data-reverse="true"] {
-      grid-template-columns: minmax(19rem, .6fr) minmax(0, 1.95fr);
-    }
-
-    .wk-project[data-orient="portrait"] {
-      grid-template-columns: minmax(0, 1fr) minmax(21rem, 1fr);
-    }
-
-    .wk-project[data-orient="portrait"][data-reverse="true"] {
-      grid-template-columns: minmax(21rem, 1fr) minmax(0, 1fr);
-    }
-
-    /* O primeiro da lista abre em largura inteira, com a ficha em duas colunas
-       embaixo. So vale para capa deitada: em formato em pe isso viraria uma
-       imagem de tela e meia. */
-    .wk-project[data-feature="true"] {
-      grid-template-columns: minmax(0, 1fr);
-      gap: clamp(1.4rem, 2.5vw, 2.25rem);
-      align-items: start;
-      margin-bottom: clamp(9rem, 16vw, 15rem);
-    }
-
-    .wk-project[data-feature="true"] .wk-project__copy {
-      display: grid;
-      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
-      gap: 0 clamp(2rem, 4vw, 4.5rem);
-      align-items: start;
-      padding-left: 1.65rem;
-    }
-
-    .wk-project[data-feature="true"] .wk-ascii-divider--vertical { left: 0; }
-    .wk-project[data-feature="true"] .wk-project__count { grid-column: 1; }
-    .wk-project[data-feature="true"] .wk-project__title { grid-column: 1; margin: .9rem 0 1.1rem; }
-    .wk-project[data-feature="true"] .wk-project__tags { grid-column: 1; }
-    .wk-project[data-feature="true"] .wk-project__cta { grid-column: 1; margin-top: 1.8rem; }
-    .wk-project[data-feature="true"] .wk-project__desc {
-      grid-column: 2;
-      grid-row: 1 / -1;
-      margin: .2rem 0 0;
-    }
-
-    .wk-project[data-reverse="true"] .wk-project__visual {
-      grid-column: 2;
-    }
-
-    .wk-project[data-reverse="true"] .wk-project__copy {
-      grid-column: 1;
-      grid-row: 1;
-    }
-
-    .wk-project__visual {
-      display: block;
-      min-width: 0;
-      overflow: hidden;
-      position: relative;
-      color: inherit;
-      background: #111;
-      text-decoration: none;
-      transition: transform 750ms cubic-bezier(.16, 1, .3, 1);
-    }
-
-    .wk-project__visual::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      z-index: 1;
-      pointer-events: none;
-      background: linear-gradient(
-        135deg,
-        transparent 58%,
-        rgba(132, 63, 58, .3) 125%
+  const options = (ids: readonly AreaId[]) =>
+    ids.map((id) => {
+      const item = TABS.find((entry) => entry.id === id) ?? TABS[0];
+      return (
+        <button
+          key={id}
+          type="button"
+          className="wk-opt hover-trigger"
+          aria-pressed={area === id}
+          onClick={() => chooseArea(id)}
+        >
+          <span className="wk-opt__label">{t(item.key)}</span>
+          <span className="wk-opt__n">{countFor(id).toString().padStart(2, "0")}</span>
+        </button>
       );
-      opacity: 0;
-      transition: opacity 700ms cubic-bezier(.16, 1, .3, 1);
-    }
-
-    .wk-project__visual::before {
-      content: "";
-      position: absolute;
-      inset: clamp(.85rem, 1.5vw, 1.35rem);
-      z-index: 2;
-      pointer-events: none;
-      border: 2px dashed color-mix(
-        in srgb,
-        var(--wk-wine) 72%,
-        var(--wk-paper)
-      );
-      box-shadow: inset 0 0 0 1px rgba(246, 242, 233, .18);
-      opacity: 0;
-      transform: scale(.96);
-      transition:
-        opacity 580ms cubic-bezier(.16, 1, .3, 1),
-        transform 780ms cubic-bezier(.16, 1, .3, 1);
-    }
-
-    .wk-project__image {
-      object-fit: cover;
-      transition:
-        filter 900ms cubic-bezier(.16, 1, .3, 1),
-        transform 1100ms cubic-bezier(.16, 1, .3, 1);
-    }
-
-    .wk-project__visual:focus-visible {
-      outline: 2px solid var(--wk-wine);
-      outline-offset: 7px;
-    }
-
-    .wk-project__copy {
-      position: relative;
-      padding-bottom: .5rem;
-    }
-
-    .wk-ascii-divider {
-      --ascii-rest-x: 0rem;
-      --ascii-rest-y: 0rem;
-      color: var(--wk-wine);
-      font-family: var(--font-subtitle), monospace;
-      font-size: .88rem;
-      font-weight: var(--offbit-weight-active);
-      line-height: 1;
-      pointer-events: none;
-    }
-
-    .wk-ascii-divider span {
-      display: inline-block;
-      opacity: .46;
-      transition:
-        opacity 520ms cubic-bezier(.16, 1, .3, 1),
-        transform 760ms cubic-bezier(.16, 1, .3, 1);
-    }
-
-    .wk-ascii-divider--vertical {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: -1.35rem;
-      width: 1rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: space-between;
-      --ascii-rest-y: .65rem;
-    }
-
-    .wk-ascii-divider--vertical span {
-      transform: translateY(var(--ascii-rest-y)) scale(.68);
-    }
-
-    .wk-ascii-divider--horizontal {
-      width: clamp(10rem, 18vw, 14rem);
-      display: inline-flex;
-      align-items: center;
-      justify-content: space-between;
-      --ascii-rest-x: -.65rem;
-    }
-
-    .wk-ascii-divider--horizontal span {
-      transform: translateX(var(--ascii-rest-x)) scale(.68);
-    }
-
-    .wk-project__count {
-      display: flex;
-      align-items: center;
-      gap: .85rem;
-      color: var(--wk-wine);
-      font-family: var(--font-subtitle), monospace;
-      font-size: var(--type-micro);
-      font-weight: var(--offbit-weight-active);
-      letter-spacing: .1em;
-      text-transform: uppercase;
-    }
-
-    .wk-project__title {
-      margin: 1.2rem 0 1.55rem;
-      font-family: var(--font-editorial), serif;
-      font-size: clamp(3.35rem, 4.8vw, 4.75rem);
-      font-weight: 400;
-      line-height: .86;
-      letter-spacing: -.045em;
-      overflow-wrap: anywhere;
-      text-transform: lowercase;
-      transition:
-        color 600ms cubic-bezier(.16, 1, .3, 1),
-        transform 750ms cubic-bezier(.16, 1, .3, 1);
-    }
-
-    .wk-project__tags {
-      margin: 0;
-      color: var(--wk-muted);
-      font-family: var(--font-subtitle), monospace;
-      font-size: var(--type-micro);
-      font-weight: var(--offbit-weight);
-      line-height: 1.45;
-      letter-spacing: .11em;
-      text-transform: uppercase;
-    }
-
-    .wk-project__desc {
-      max-width: 46ch;
-      margin: 1.8rem 0 2rem;
-      color: color-mix(in srgb, var(--wk-ink) 72%, var(--wk-paper));
-      font-family: var(--font-body), sans-serif;
-      font-size: var(--type-body);
-      line-height: 1.65;
-      text-wrap: pretty;
-    }
-
-    .wk-project__cta {
-      display: inline-flex;
-      align-items: center;
-      gap: .8rem;
-      min-height: var(--tap-min);
-      color: var(--wk-ink);
-      font-family: var(--font-subtitle), monospace;
-      font-size: var(--type-micro);
-      font-weight: var(--offbit-weight-active);
-      letter-spacing: .08em;
-      text-decoration: none;
-      text-transform: uppercase;
-    }
-
-    .wk-project__cta-icon {
-      width: 2.2rem;
-      height: 2.2rem;
-      display: grid;
-      place-items: center;
-      border-radius: 50%;
-      color: var(--wk-paper);
-      background: var(--wk-ink);
-      transition:
-        color 500ms cubic-bezier(.16, 1, .3, 1),
-        background-color 500ms cubic-bezier(.16, 1, .3, 1),
-        transform 500ms cubic-bezier(.16, 1, .3, 1);
-    }
-
-    .wk-project__cta:hover .wk-project__cta-icon,
-    .wk-project__cta:focus-visible .wk-project__cta-icon {
-      color: var(--wk-paper);
-      background: var(--wk-wine);
-      transform: translate(.15rem, -.15rem);
-    }
-
-    .wk-project__cta:focus-visible {
-      outline: 2px dotted var(--wk-wine);
-      outline-offset: 5px;
-    }
-
-    @media (hover: hover) and (pointer: fine) {
-      .wk-project:hover .wk-project__visual,
-      .wk-project:focus-within .wk-project__visual {
-        transform: translateY(-7px);
-      }
-
-      .wk-project:hover .wk-project__visual::after,
-      .wk-project:focus-within .wk-project__visual::after {
-        opacity: 1;
-      }
-
-      .wk-project:hover .wk-project__visual::before,
-      .wk-project:focus-within .wk-project__visual::before {
-        opacity: 1;
-        transform: scale(1);
-      }
-
-      .wk-project:hover .wk-project__image,
-      .wk-project:focus-within .wk-project__image {
-        filter: saturate(.88) contrast(1.04);
-        transform: scale(1.025);
-      }
-
-      .wk-project:hover .wk-ascii-divider span,
-      .wk-project:focus-within .wk-ascii-divider span {
-        animation: wk-ascii-wave 2600ms cubic-bezier(.16, 1, .3, 1)
-          var(--ascii-delay) infinite;
-      }
-
-      .wk-project:hover .wk-project__title,
-      .wk-project:focus-within .wk-project__title {
-        color: var(--wk-wine);
-        transform: translateX(.3rem);
-      }
-    }
-
-    @keyframes wk-ascii-wave {
-      0% {
-        opacity: .38;
-        transform:
-          translate(var(--ascii-rest-x), var(--ascii-rest-y))
-          scale(.68);
-      }
-      24%,
-      56% {
-        opacity: 1;
-        transform: translate(0, 0) scale(1);
-      }
-      100% {
-        opacity: .46;
-        transform:
-          translate(var(--ascii-rest-x), var(--ascii-rest-y))
-          scale(.76);
-      }
-    }
-
-    @media (max-width: 1050px) {
-      .wk-main {
-        width: min(100% - 2.5rem, 1320px);
-      }
-
-      .wk-intro {
-        min-height: 28rem;
-      }
-
-      .wk-heading {
-        font-size: clamp(5rem, 15vw, 8rem);
-      }
-
-      .wk-project,
-      .wk-project[data-reverse="true"],
-      .wk-project[data-orient="wide"],
-      .wk-project[data-orient="wide"][data-reverse="true"],
-      .wk-project[data-orient="portrait"],
-      .wk-project[data-orient="portrait"][data-reverse="true"] {
-        grid-template-columns: minmax(0, 1fr);
-        gap: 2rem;
-      }
-
-      .wk-project[data-feature="true"] .wk-project__copy {
-        grid-template-columns: minmax(0, 1fr);
-        padding-left: 1.65rem;
-      }
-
-      .wk-project[data-feature="true"] .wk-project__desc {
-        grid-column: 1;
-        grid-row: auto;
-        margin: 1.8rem 0 2rem;
-      }
-
-      .wk-project[data-reverse="true"] .wk-project__visual,
-      .wk-project[data-reverse="true"] .wk-project__copy {
-        grid-column: 1;
-      }
-
-      .wk-project[data-reverse="true"] .wk-project__visual {
-        grid-row: 1;
-      }
-
-      .wk-project[data-reverse="true"] .wk-project__copy {
-        grid-row: 2;
-      }
-
-      .wk-project__copy {
-        max-width: 42rem;
-        padding-left: 1.65rem;
-      }
-
-      .wk-ascii-divider--vertical {
-        left: 0;
-      }
-    }
-
-    @media (max-width: 560px) {
-      .wk-main {
-        width: calc(100% - 2.25rem);
-        padding-top: 6.8rem;
-      }
-
-      .wk-intro {
-        min-height: 21rem;
-        padding-bottom: 2.5rem;
-      }
-
-      .wk-heading {
-        max-width: none;
-        font-size: clamp(4rem, 16vw, 5.6rem);
-        line-height: .8;
-      }
-
-      .wk-filters {
-        margin-right: -1.125rem;
-        padding-bottom: 3.8rem;
-      }
-
-      .wk-project {
-        margin-bottom: 7.5rem;
-      }
-
-      .wk-project__title {
-        font-size: clamp(3.2rem, 14vw, 4.35rem);
-      }
-
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .wk-tab,
-      .wk-tab::after,
-      .wk-project__visual,
-      .wk-project__visual::before,
-      .wk-project__visual::after,
-      .wk-project__image,
-      .wk-ascii-divider span,
-      .wk-project__title,
-      .wk-project__cta-icon {
-        transition: none;
-      }
-
-      .wk-tab:active {
-        transform: none;
-      }
-
-      .wk-project:hover .wk-project__visual,
-      .wk-project:focus-within .wk-project__visual,
-      .wk-project:hover .wk-project__visual::before,
-      .wk-project:focus-within .wk-project__visual::before,
-      .wk-project:hover .wk-project__image,
-      .wk-project:focus-within .wk-project__image,
-      .wk-project:hover .wk-project__title,
-      .wk-project:focus-within .wk-project__title,
-      .wk-project__cta:hover .wk-project__cta-icon,
-      .wk-project__cta:focus-visible .wk-project__cta-icon {
-        transform: none;
-      }
-
-      .wk-project:hover .wk-ascii-divider span,
-      .wk-project:focus-within .wk-ascii-divider span {
-        animation: none;
-        opacity: 1;
-        transform: none;
-      }
-    }
-  `;
+    });
 
   return (
-    <div className="wk-page">
-      <style>{localStyles}</style>
+    <div
+      ref={pageRef}
+      className="wk-page"
+      data-chapter={activeProject ? "true" : undefined}
+      style={
+        activeProject?.accent
+          ? ({ "--wk-line": activeProject.accent } as CSSProperties)
+          : undefined
+      }
+    >
+      <style>{styles}</style>
+      <div className="wk-backdrop" aria-hidden="true" />
       <SiteHeader />
 
       <main className="wk-main">
         <header className="wk-intro">
-          <p className="wk-intro__eyebrow">
-            {pt ? "portfólio" : "portfolio"} · 2026
-          </p>
-          <h1 className="wk-heading">
-            <span>{pt ? "trabalhos" : "selected"}</span>
-            <em>{pt ? "selecionados" : "work"}</em>
+          <p className="wk-eyebrow">{pt ? "portfólio" : "portfolio"} · 2026</p>
+          <h1 className="wk-title">
+            <span className="wk-sr">{fullTitle}</span>
+            {pt ? (
+              <span aria-hidden="true">
+                <span className="wk-title__line">
+                  <ScrambleText text="trabalhos" />
+                </span>
+                <span className="wk-title__line wk-title__var">{variable}</span>
+              </span>
+            ) : (
+              <span aria-hidden="true">
+                <span className="wk-title__line wk-title__var">{variable}</span>
+                <span className="wk-title__line">
+                  <ScrambleText text="work" />
+                </span>
+              </span>
+            )}
           </h1>
         </header>
 
-        <nav className="wk-filters" aria-label={t("wk_tabs_label")}>
-          {TABS.map((tab, index) => (
-            <Fragment key={tab.id}>
-              {index > 0 ? (
-                <span className="wk-filter-dot" aria-hidden="true" />
-              ) : null}
-              <button
-                type="button"
-                className={`wk-tab hover-trigger${
-                  "priority" in tab && tab.priority ? " wk-tab--priority" : ""
-                }`}
-                aria-pressed={area === tab.id}
-                data-active={area === tab.id ? "true" : undefined}
-                onClick={() => setArea(tab.id)}
-              >
-                <span>{t(tab.key)}</span>
-                <span className="wk-tab__count">
-                  {countFor(tab.id).toString().padStart(2, "0")}
+        <div ref={sentinelRef} className="wk-bar-sentinel" aria-hidden="true" />
+        <div ref={barRef} className="wk-bar" data-stuck={stuck ? "true" : undefined}>
+          <div className="wk-options" role="group" aria-label={t("wk_tabs_label")}>
+            {options(TABS.map((item) => item.id))}
+          </div>
+          <p className="wk-where" aria-hidden="true">
+            <span className="wk-where__spool">╳</span>
+            {activeProject ? (
+              <>
+                <span className="wk-where__pos">
+                  {activeIndex + 1}
+                  <span className="wk-where__label">{pt ? " de " : " of "}</span>
+                  <span className="wk-where__slash">/</span>
+                  {projects.length}
                 </span>
-              </button>
-            </Fragment>
-          ))}
-        </nav>
+                <span className="wk-where__title">{activeProject.title}</span>
+              </>
+            ) : (
+              <span className="wk-where__pos">
+                {projects.length} {pt ? "trabalhos" : "projects"}
+              </span>
+            )}
+          </p>
+        </div>
+        <p className="wk-sr" aria-live="polite">
+          {announcement}
+        </p>
 
-        <section aria-label={t("work_page_title")}>
-          {projects.map((project, index) => (
-            <ProjectCard
-              key={project.href}
-              num={project.num}
-              title={project.title}
-              tags={project.tags}
-              href={project.href}
-              img={project.img}
-              desc={getDesc(project.href)}
-              ratio={project.ratio}
-              index={index}
-              total={String(all.length).padStart(2, "0")}
-            />
-          ))}
-        </section>
+        <div ref={listRef} className="wk-list">
+          <div className="wk-needle" aria-hidden="true">
+            <motion.span className="wk-needle__body" style={{ y: needleY }}>
+              <svg viewBox="0 0 10 46">
+                <path
+                  d="M5 0C7.4 0 7.8 3.2 7.8 6.4L6.3 40.5 5 46 3.7 40.5 2.2 6.4C2.2 3.2 2.6 0 5 0Z"
+                  fill="currentColor"
+                />
+                <ellipse cx="5" cy="6.6" rx=".95" ry="2.6" fill="var(--wk-paper-now)" />
+              </svg>
+            </motion.span>
+          </div>
+
+          {/* Sem AnimatePresence: a saída da lista que chega no HTML ficava presa
+              no meio quando um link com ?area= trocava o recorte na hidratação.
+              A lista nova só anima quando foi um clique que pediu a troca. */}
+          <motion.div
+              key={area}
+              initial={switched && !still ? { opacity: 0, y: 18 } : false}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
+            >
+              {projects.map((project, index) => (
+                <WorkChapter
+                  key={project.href}
+                  project={project}
+                  story={getProjectStory(project.href, lang)}
+                  sewn={activeIndex >= index}
+                  active={activeIndex === index}
+                  first={index === 0}
+                  still={still}
+                  observe={observe}
+                />
+              ))}
+            </motion.div>
+          {/* O arremate: a costura termina num nó, como termina um ponto à mão. */}
+          <span className="wk-tie" aria-hidden="true">╳</span>
+        </div>
+
       </main>
 
-      <div id="contact">
+      <div id="contact" style={{ position: "relative", zIndex: 10 }}>
         <EditorialFooter />
       </div>
     </div>

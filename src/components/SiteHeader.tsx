@@ -84,18 +84,21 @@ const styles = `
   /* Estas duas decoracoes de hover do wordmark liam var(--green), token do
      sistema visual anterior que saiu na limpeza do globals.css -- passaram a
      cair no teal do fallback. Agora seguem o rosa da casa. */
+  /* Os símbolos saem por baixo do nome e descem. Subindo, eles nasciam
+     colados no topo da tela e sumiam pela borda: com a faixa fixa, a
+     assinatura fica a menos de 1.5rem do limite da janela. */
   .sh__name::after {
     content: "✦  ·  ♡  ⋆";
     position: absolute;
     left: 52%;
-    top: -.42rem;
+    bottom: -.5rem;
     font-family: var(--font-mono), monospace;
     font-size: .42em;
     font-weight: 400;
     letter-spacing: .08em;
     color: var(--site-accent-hot, var(--acid));
     opacity: 0;
-    transform: translate(-50%, .35rem) scale(.82);
+    transform: translate(-50%, -.35rem) scale(.82);
     pointer-events: none;
   }
   .sh__mark:hover .text-star,
@@ -151,10 +154,10 @@ const styles = `
     100% { transform: rotate(90deg) scale(1); }
   }
   @keyframes sh-symbols-float {
-    0% { opacity: 0; transform: translate(-50%, .35rem) scale(.82); }
+    0% { opacity: 0; transform: translate(-50%, -.35rem) scale(.82); }
     34% { opacity: .9; }
     72% { opacity: .68; }
-    100% { opacity: 0; transform: translate(-50%, -.8rem) scale(1.08); }
+    100% { opacity: 0; transform: translate(-50%, .8rem) scale(1.08); }
   }
   .sh__nav { display: inline-flex; align-items: center; gap: .7rem; }
   .sh__nav a { font-size: var(--type-micro); letter-spacing: .04em; }

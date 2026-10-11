@@ -218,7 +218,7 @@ const dictionaries = {
     // Work Page
     work_page_title: "Trabalhos Selecionados",
     wk_tabs_label: "áreas de trabalho",
-    wk_tab_featured: "destaques",
+    wk_tab_featured: "selecionados",
     wk_tab_digital: "UX/UI & web design",
     wk_tab_graphic: "design gráfico",
     wk_tab_art: "arte & tecnologia",
@@ -581,7 +581,7 @@ const dictionaries = {
     // Work Page
     work_page_title: "Selected Work",
     wk_tabs_label: "areas of work",
-    wk_tab_featured: "featured",
+    wk_tab_featured: "selected",
     wk_tab_digital: "UX/UI & web design",
     wk_tab_graphic: "graphic design",
     wk_tab_art: "art & technology",
