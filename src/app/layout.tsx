@@ -33,14 +33,6 @@ const spaceMono = Space_Mono({
   variable: "--font-mono",
 });
 
-/* Fontes dela (arquivos em src/app/fonts/) */
-const seratonin = localFont({
-  src: "./fonts/Seratonin.otf",
-  variable: "--font-hand",
-  display: "swap",
-  preload: false,
-});
-
 /* Só os 256 glifos do bloco braille (U+2800–U+28FF), tirados do DejaVu Sans:
    1,2 kB. NENHUMA outra fonte do site tem esses glifos — sem isso a arte dos
    ornamentos vira quadradinho de tofu fora do Windows. `display: block` porque
@@ -197,7 +189,7 @@ export default function RootLayout({
          atributo em tempo de execução. */
       lang="pt-BR"
       suppressHydrationWarning
-      className={`${aeonik.variable} ${instrumentSerif.variable} ${spaceMono.variable} ${seratonin.variable} ${braille.variable} ${offBit.variable} ${emoji.variable} ${editorialNew.variable}`}
+      className={`${aeonik.variable} ${instrumentSerif.variable} ${spaceMono.variable} ${braille.variable} ${offBit.variable} ${emoji.variable} ${editorialNew.variable}`}
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: performanceTierScript }} />
@@ -214,11 +206,10 @@ export default function RootLayout({
           @font-face {
             font-family: "pf-pixelscript";
             src: url("https://use.typekit.net/af/c7c109/0000000000000000774f2b0a/31/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("woff2");
-            /* Era "optional", e e por isso que o wordmark caia na Seratonin.
+            /* Era "optional", e e por isso que o wordmark caia no fallback.
                Com "optional" o navegador so usa a fonte se ela estiver pronta
                na primeira centena de milissegundos; perdido esse instante ele
-               fixa o fallback e NUNCA troca. Como --font-pixelscript cai em
-               --font-hand, o fallback era a Seratonin, em toda visita.
+               fixa o fallback e NUNCA troca.
                "swap" mantem o fallback so ate o arquivo chegar, e entao troca
                para a Pixelscript. */
             font-display: swap;

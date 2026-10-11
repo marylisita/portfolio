@@ -55,7 +55,7 @@ const styles = `
     opacity: .9;
   }
   .nf__nota {
-    font-family: var(--font-hand), var(--font-pixelscript), cursive;
+    font-family: var(--font-pixelscript), cursive;
     font-size: clamp(1.2rem, 3vw, 1.7rem);
     line-height: 1.35;
     margin: 0 0 .8rem;

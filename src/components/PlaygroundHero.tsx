@@ -248,7 +248,7 @@ const styles = `
     }
   }
   .ph__scroll {
-    font-family: var(--font-hand);
+    font-family: var(--font-pixelscript);
     font-size: 1.35rem;
     letter-spacing: .01em;
   }

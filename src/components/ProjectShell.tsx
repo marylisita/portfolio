@@ -293,7 +293,7 @@ const styles = `
     display: inline-flex;
     align-items: center;
     min-height: var(--tap-min);
-    font-family: var(--font-hand); font-size: 1.25rem;
+    font-family: var(--font-pixelscript); font-size: 1.25rem;
     text-transform: lowercase; letter-spacing: .01em;
     color: var(--acid); text-decoration: none;
     margin-bottom: 2.2rem;

@@ -23,9 +23,6 @@ Atualizado em 30 de julho de 2026.
 - [ ] **Revisar a arquitetura de forma incremental.** Só mover componentes
   quando houver uma fronteira clara e testes para a rota afetada. Não combinar
   reorganização de pastas com investigação de performance ou scroll.
-- [ ] **Preservar a Seratonin como ativo de identidade.** Qualquer otimização de
-  fontes deve manter `--font-hand` e validar visualmente o wordmark e os títulos
-  que dependem dela.
 - [ ] **Completar os quatro fatos do Graduation.** Confirmar se `CHECKLIZT` é
   piada com o chiado carioca, número de ícones desenhados/aplicados, tiragem do
   kit e se a impressão em uma cor foi restrição ou escolha. Não preencher por

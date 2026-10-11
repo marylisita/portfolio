@@ -162,7 +162,7 @@ export default function PixelScrollText({
       ref={wrapRef}
       className={className}
       aria-hidden="true"
-      style={{ fontFamily: "var(--font-hand)", color, ...style }}
+      style={{ fontFamily: "var(--font-pixelscript)", color, ...style }}
     >
       <canvas ref={canvasRef} style={{ width: "100%", height: "100%", display: "block", imageRendering: "pixelated" }} />
     </div>

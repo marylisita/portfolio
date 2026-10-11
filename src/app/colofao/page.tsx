@@ -89,12 +89,11 @@ const styles = `
   .cf__esp--serif { font-family: var(--font-head), serif; font-style: italic; }
   .cf__esp--body { font-family: var(--font-body), sans-serif; }
   .cf__esp--pixel { font-family: var(--font-subtitle), monospace; font-weight: 700; font-size: 1.05rem; }
-  .cf__esp--hand { font-family: var(--font-hand), cursive; font-size: 1.45rem; }
   .cf__esp--braille { font-family: var(--font-braille), monospace; font-size: 1rem; letter-spacing: 0; }
   .cf__fecho {
     margin-top: 3.4rem;
     text-align: center;
-    font-family: var(--font-hand), cursive;
+    font-family: var(--font-pixelscript), cursive;
     font-size: 1.25rem;
     opacity: .8;
   }
@@ -138,7 +137,6 @@ export default function Colofao() {
     { meta: pt ? "editorial" : "editorial", classe: "cf__esp cf__esp--serif", amostra: "ITC Garamond Condensed" },
     { meta: pt ? "texto" : "body", classe: "cf__esp cf__esp--body", amostra: "Aeonik" },
     { meta: pt ? "números & etiquetas" : "numbers & labels", classe: "cf__esp cf__esp--pixel", amostra: "OffBit DotBold" },
-    { meta: pt ? "manuscrita" : "handwriting", classe: "cf__esp cf__esp--hand", amostra: "Seratonin" },
     { meta: pt ? "gravuras" : "engravings", classe: "cf__esp cf__esp--braille", amostra: "⠎⠑⠗⠁⠋⠊⠝⠁ ⠃⠗⠁⠊⠇⠇⠑" },
   ];
 
