@@ -5,7 +5,7 @@
  * caminho relativo. Trocar o domínio aqui atualiza OG, Twitter card, canônica,
  * sitemap e robots de uma vez.
  */
-export const SITE_URL = "https://portfolio-nine-lime-73.vercel.app";
+export const SITE_URL = "https://marylisita-portfolio.vercel.app";
 
 export const SITE_NAME = "Maria Isabel Lisita";
 

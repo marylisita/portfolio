@@ -10,7 +10,7 @@ export const metadata: Metadata = {
       "Um ecossistema vivo transforma presença em dados, imagem e luz.",
     images: [
       {
-        url: "https://portfolio-nine-lime-73.vercel.app/img/cyber-marinum/11-aquario-magenta-hero.webp",
+        url: "/img/cyber-marinum/11-aquario-magenta-hero.webp",
         width: 1254,
         height: 1254,
         alt: "Cyber Marinum: aquário plantado diante de uma imagem generativa magenta e verde",

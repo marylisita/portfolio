@@ -10,7 +10,7 @@ export const metadata: Metadata = {
       "Esculturas tentaculares, resíduos industriais, atmosfera imersiva e projeções que reagem ao som.",
     images: [
       {
-        url: "https://portfolio-nine-lime-73.vercel.app/img/ondularis/capa.webp",
+        url: "/img/ondularis/capa.webp",
         width: 1080,
         height: 1350,
         alt: "Cartaz da exposição Ondularis, do coletivo Endosymbiosis",

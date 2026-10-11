@@ -10,7 +10,7 @@ export const metadata: Metadata = {
       "Um percurso de quatro horas: da lógica nodal aos primeiros patches funcionais.",
     images: [
       {
-        url: "https://portfolio-nine-lime-73.vercel.app/img/touchdesigner-workshop/cartaz-oficina-v2.webp",
+        url: "/img/touchdesigner-workshop/cartaz-oficina-v2.webp",
         width: 675,
         height: 880,
         alt: "Cartaz da Oficina de Vídeo Mapping: introdução ao TouchDesigner",
