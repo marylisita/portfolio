@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import LangToggle from "./LangToggle";
-import ScrambleText from "./ScrambleText";
+import ScrambleText, { COLORS as SCRAMBLE_COLORS } from "./ScrambleText";
 import UnderlineButton from "./UnderlineButton";
 import { useT } from "@/i18n/LanguageContext";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, type FocusEvent, type PointerEvent } from "react";
 
 const styles = `
   /* O vidro agora e uma faixa unica que atravessa a tela, e nao duas pilulas.
@@ -81,34 +81,28 @@ const styles = `
   }
   .sh__name-word { display: inline; }
   .sh__name-word--isabel { letter-spacing: -.035em; }
-  /* Estas duas decoracoes de hover do wordmark liam var(--green), token do
-     sistema visual anterior que saiu na limpeza do globals.css -- passaram a
-     cair no teal do fallback. Agora seguem o rosa da casa. */
-  /* Os símbolos saem por baixo do nome e descem. Subindo, eles nasciam
-     colados no topo da tela e sumiam pela borda: com a faixa fixa, a
-     assinatura fica a menos de 1.5rem do limite da janela. */
-  .sh__name::after {
-    content: "✦  ·  ♡  ⋆";
+  /* A explosão do hover: faíscas ASCII que saem de pontos diferentes do nome
+     e caem em arco. Antes era uma fileira fixa ("✦ · ♡ ⋆") que subia reta e
+     sumia pela borda de cima da janela. O movimento é montado em JS (burst,
+     mais abaixo); aqui fica só a forma de cada faísca. */
+  .sh__burst {
     position: absolute;
-    left: 52%;
-    bottom: -.5rem;
-    font-family: var(--font-mono), monospace;
-    font-size: .42em;
-    font-weight: 400;
-    letter-spacing: .08em;
-    color: var(--site-accent-hot, var(--acid));
-    opacity: 0;
-    transform: translate(-50%, -.35rem) scale(.82);
+    inset: 0;
     pointer-events: none;
+  }
+  .sh__spark {
+    position: absolute;
+    font-family: var(--font-mono), monospace;
+    font-weight: 400;
+    line-height: 1;
+    white-space: nowrap;
+    pointer-events: none;
+    will-change: transform, opacity;
   }
   .sh__mark:hover .text-star,
   .sh__mark:focus-visible .text-star {
     color: var(--site-accent-hot, var(--acid));
     animation: sh-star-dance .72s cubic-bezier(.16, 1, .3, 1) both;
-  }
-  .sh__mark:hover .sh__name::after,
-  .sh__mark:focus-visible .sh__name::after {
-    animation: sh-symbols-float .78s cubic-bezier(.16, 1, .3, 1) both;
   }
   .sh__mark:focus-visible { outline: 2px dotted var(--site-ink, #1C1B18); outline-offset: 4px; }
   /* No heroi a assinatura faz parte da composicao e fica grande; passada a
@@ -153,12 +147,6 @@ const styles = `
     72% { transform: rotate(78deg) scale(.94); }
     100% { transform: rotate(90deg) scale(1); }
   }
-  @keyframes sh-symbols-float {
-    0% { opacity: 0; transform: translate(-50%, -.35rem) scale(.82); }
-    34% { opacity: .9; }
-    72% { opacity: .68; }
-    100% { opacity: 0; transform: translate(-50%, .8rem) scale(1.08); }
-  }
   .sh__nav { display: inline-flex; align-items: center; gap: .7rem; }
   .sh__nav a { font-size: var(--type-micro); letter-spacing: .04em; }
   .sh__menu-toggle, .sh__mobile-menu { display: none; }
@@ -200,8 +188,7 @@ const styles = `
   .sh__mobile-menu a:focus-visible { outline: 2px dotted currentColor; outline-offset: 3px; }
   @media (prefers-reduced-motion: reduce) {
     .sh__dot::after,
-    .sh__mark .text-star,
-    .sh__name::after { animation: none; }
+    .sh__mark .text-star { animation: none; }
     /* O vidro continua; o que cai e so a coreografia da entrada. */
     .sh__mark, .sh-bar { transition: none; }
   }
@@ -254,6 +241,75 @@ const styles = `
   }
 `;
 
+/* Os glifos cheios aparecem em dobro: os miúdos (· ° +) dão textura, mas
+   sozinhos somem no creme. */
+const SPARK_GLYPHS = ["✦", "✦", "✧", "⋆", "♡", "♡", "✿", "✿", "✳", "✳", "*", "⊹", "+", "°", "·"];
+/* A paleta da grade da home, mais os dois rosas da casa: o amarelo e o
+   verde-água claros quase não aparecem sobre o papel e precisam de companhia. */
+const SPARK_COLORS = [...SCRAMBLE_COLORS, "#FF2E9A", "#C4125F", "#FF2E9A"];
+const SPARK_COUNT = 16;
+
+/**
+ * A explosão do nome. Cada faísca sai de um ponto do nome com direção,
+ * velocidade, giro e tamanho próprios, perde velocidade como se o ar
+ * segurasse e cai com peso -- por isso o caminho é curvo. Quase tudo vai para
+ * os lados e para baixo: a assinatura fica perto do topo da janela, e o que
+ * subisse muito sumiria pela borda.
+ *
+ * Só transform e opacity, pela Web Animations API: roda no compositor e não
+ * disputa a rolagem com o resto da página.
+ */
+function burst(host: HTMLElement) {
+  const size = Number.parseFloat(getComputedStyle(host).fontSize) || 22;
+  const drag = 3.2;
+  const settle = 1 - Math.exp(-drag);
+  const steps = 10;
+
+  for (let index = 0; index < SPARK_COUNT; index += 1) {
+    const spark = document.createElement("span");
+    spark.className = "sh__spark";
+    spark.textContent = SPARK_GLYPHS[Math.floor(Math.random() * SPARK_GLYPHS.length)];
+    spark.style.color = SPARK_COLORS[Math.floor(Math.random() * SPARK_COLORS.length)];
+    spark.style.left = `${6 + Math.random() * 88}%`;
+    spark.style.top = `${40 + Math.random() * 30}%`;
+    spark.style.fontSize = `${(0.42 + Math.random() * 0.5) * size}px`;
+    host.appendChild(spark);
+
+    /* -25° a 205°: em tela o y cresce para baixo, então 90° é reto para baixo
+       e as pontas da faixa sobem só um pouco antes de cair. */
+    const angle = ((-25 + Math.random() * 230) * Math.PI) / 180;
+    const speed = (1.4 + Math.random() * 2.2) * size;
+    const vx = Math.cos(angle) * speed;
+    const vy = Math.sin(angle) * speed;
+    const gravity = (0.7 + Math.random() * 0.6) * size;
+    const turnFrom = (Math.random() - 0.5) * 60;
+    const turnBy = (Math.random() - 0.5) * 420;
+
+    const frames: Keyframe[] = [];
+    for (let step = 0; step <= steps; step += 1) {
+      const t = step / steps;
+      const travel = (1 - Math.exp(-drag * t)) / settle;
+      const x = vx * travel;
+      const y = vy * travel + gravity * t * t;
+      const scale = t < 0.18 ? 0.35 + (t / 0.18) * 0.75 : 1.1 - (t - 0.18) * 0.55;
+      const opacity = t < 0.1 ? t / 0.1 : t > 0.6 ? Math.max(0, 1 - (t - 0.6) / 0.4) : 1;
+      frames.push({
+        transform: `translate(-50%, -50%) translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) rotate(${(turnFrom + turnBy * travel).toFixed(1)}deg) scale(${scale.toFixed(2)})`,
+        opacity,
+      });
+    }
+
+    const animation = spark.animate(frames, {
+      duration: 760 + Math.random() * 520,
+      delay: Math.random() * 70,
+      easing: "linear",
+      fill: "both",
+    });
+    animation.onfinish = () => spark.remove();
+    animation.oncancel = () => spark.remove();
+  }
+}
+
 export default function SiteHeader() {
   const { t, lang } = useT();
   const pt = lang !== "en";
@@ -265,6 +321,27 @@ export default function SiteHeader() {
   // o conteudo passa por tras dela borrado, entao nao ha motivo para sumir.
   // Ate 240px a assinatura ainda e composicao do heroi; dali em diante e chrome.
   const [floating, setFloating] = useState(false);
+  const burstRef = useRef<HTMLSpanElement>(null);
+  const lastBurstRef = useRef(0);
+  /* Uma explosão por entrada do ponteiro, com folga de 450ms: passar o mouse
+     indo e voltando em cima do nome não empilha dezenas de faíscas. Toque não
+     dispara (o toque já navega para a home) e movimento reduzido também não. */
+  const fireBurst = () => {
+    const host = burstRef.current;
+    if (!host) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (document.documentElement.dataset.motion === "lite") return;
+    const now = performance.now();
+    if (now - lastBurstRef.current < 450) return;
+    lastBurstRef.current = now;
+    burst(host);
+  };
+  const onMarkPointerEnter = (event: PointerEvent<HTMLAnchorElement>) => {
+    if (event.pointerType !== "touch") fireBurst();
+  };
+  const onMarkFocus = (event: FocusEvent<HTMLAnchorElement>) => {
+    if (event.currentTarget.matches(":focus-visible")) fireBurst();
+  };
   useEffect(() => {
     const sync = () => setFloating(window.scrollY > 240);
     sync();
@@ -282,12 +359,20 @@ export default function SiteHeader() {
       <style>{styles}</style>
       <header className="sh-bar" data-floating={floating ? "true" : "false"}>
       <span className="sh sh--l">
-        <Link href="/" className="sh__mark">
+        <Link
+          href="/"
+          className="sh__mark"
+          onPointerEnter={onMarkPointerEnter}
+          onFocus={onMarkFocus}
+        >
           <span className="text-star" aria-hidden="true">✳︎</span>{" "}
           <span className="sh__name" aria-label="Maria Isabel Lisita">
             <span className="sh__name-word">Maria</span>{" "}
             <span className="sh__name-word sh__name-word--isabel">Isabel</span>{" "}
             <span className="sh__name-word">Lisita</span>
+            {/* Vazio de propósito: as faíscas entram aqui pelo DOM e saem
+                sozinhas; o React não tem filhos para reconciliar neste nó. */}
+            <span ref={burstRef} className="sh__burst" aria-hidden="true" />
           </span>
         </Link>
       </span>
