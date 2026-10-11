@@ -87,7 +87,7 @@ export default function JuizoProject() {
       ]
     : [
         { num: "285", desc: "real bank-statement entries used as the test set, instead of sample data." },
-        { num: "0 → 39%", desc: "of the total auto-categorised once the app learned to read the bank's abbreviations." },
+        { num: "0 → 39%", desc: "of the total auto-categorized once the app learned to read the bank's abbreviations." },
         { num: "32%", desc: "of spending was hidden behind the credit-card bill — invisible in the account statement." },
         { num: "47%", desc: "of outflows were under R$ 20: the spending that disappears into “Other” and outweighs delivery." },
       ];
@@ -134,7 +134,7 @@ export default function JuizoProject() {
           intro={
             pt
               ? "Trabalho como freelancer e a renda muda todo mês, então esse número simplesmente não existe pra mim. Tentei adaptar alguns apps e não deu certo. No Juízo a pergunta é outra: quanto ainda cabe até o próximo pagamento. Essa resposta ficou sozinha no topo da tela, e o resto do app foi organizado em volta dela."
-              : "I work freelance and my income changes every month, so that number simply doesn't exist for me. I tried adapting a few apps and it didn't work. In Juízo the question is different: how much room is left until the next payment. That answer sits alone at the top of the screen, and the rest of the app is organised around it."
+              : "I work freelance and my income changes every month, so that number simply doesn't exist for me. I tried adapting a few apps and it didn't work. In Juízo the question is different: how much room is left until the next payment. That answer sits alone at the top of the screen, and the rest of the app is organized around it."
           }
         >
           {/* asym-reverse: a coluna estreita fica com o print de celular, a larga com o texto */}
@@ -235,7 +235,7 @@ export default function JuizoProject() {
           intro={
             pt
               ? "Fazer a conta era o mais simples. O complicado foi decidir quando o app abre a boca: cedo demais vira ruído e a gente ignora, tarde demais a compra já aconteceu. Acabei tirando quase tudo da home fixa — essas telas aparecem quando o risco existe e somem quando não existe."
-              : "The maths was the easy part. The tricky bit was deciding when the app speaks up: too early and it's noise you ignore, too late and the purchase already happened. I ended up taking almost everything off the fixed home — these screens show up when the risk is real and disappear when it isn't."
+              : "The math was the easy part. The hard part was deciding when the app speaks up: too early and it's noise you ignore, too late and the purchase already happened. I ended up taking almost everything off the fixed home — these screens show up when the risk is real and disappear when it isn't."
           }
         >
           <div className="tc-grid tc-grid--asym-reverse">
@@ -255,13 +255,13 @@ export default function JuizoProject() {
                   <strong>{pt ? "Quarentena de 24h. " : "24h quarantine. "}</strong>
                   {pt
                     ? "O desejo entra numa sala de espera com preço-alvo. Se ainda fizer sentido depois, compra."
-                    : "The want goes into a waiting room with a target price. If it still makes sense later, buy it."}
+                    : "Whatever you want goes into a waiting room with a target price. If it still makes sense later, buy it."}
                 </li>
                 <li>
                   <strong>{pt ? "Reserva viva. " : "Living reserve. "}</strong>
                   {pt
                     ? "Ao resistir, o app pergunta se quer separar aquele valor de verdade. Só o que é confirmado vira saldo — o relatório mostra dinheiro guardado, nunca economia imaginada."
-                    : "When you resist, the app asks if you want to actually set that amount aside. Only what's confirmed becomes balance — the report shows money saved, never imagined savings."}
+                    : "When you resist, the app asks if you want to actually set that amount aside. Only what you confirm counts toward the balance — the report shows money actually saved, never imagined savings."}
                 </li>
                 <li>
                   <strong>{pt ? "O gotejamento. " : "The drip. " }</strong>
@@ -273,7 +273,7 @@ export default function JuizoProject() {
                   <strong>{pt ? "Sentimento pós-compra. " : "Post-purchase feeling. "}</strong>
                   {pt
                     ? "“Olhando agora, valeu?” só aparece 24h depois — na hora, quem responde é a empolgação."
-                    : "“Looking back, was it worth it?” only appears 24h later — in the moment, excitement is the one answering."}
+                    : "“Looking back, was it worth it?” only appears 24h later — in the moment, it's the excitement talking."}
                 </li>
               </ul>
             </CasePanel>
@@ -295,7 +295,7 @@ export default function JuizoProject() {
                 <li>{pt ? "Interface em React e TypeScript, empacotada com Vite." : "Interface in React and TypeScript, bundled with Vite."}</li>
                 <li>{pt ? "Android via Capacitor, gerando APK do mesmo código." : "Android via Capacitor, producing an APK from the same code."}</li>
                 <li>{pt ? "Persistência local, com “salvar cópia” e “restaurar” em arquivo." : "Local persistence, with file-based “save a copy” and “restore”."}</li>
-                <li>{pt ? "Quatro entradas de dados misturáveis: manual, CSV/OFX, notificação do Android e Open Finance." : "Four mixable data inputs: manual, CSV/OFX, Android notifications and Open Finance."}</li>
+                <li>{pt ? "Quatro entradas de dados misturáveis: manual, CSV/OFX, notificação do Android e Open Finance." : "Four data sources that can be combined: manual entry, CSV/OFX, Android notifications and Open Finance."}</li>
               </ul>
             </CasePanel>
             <CasePanel label={pt ? "o que essa escolha me deu de trabalho" : "the work that choice created"}>
@@ -333,10 +333,10 @@ export default function JuizoProject() {
           <div className="tc-grid tc-grid--two">
             <CasePanel label={pt ? "próximo no backlog" : "next in the backlog"}>
               <ul className="jz-list">
-                <li>{pt ? "Onboarding: ainda não existe, e é o que mais faz falta na primeira sessão." : "Onboarding: doesn't exist yet, and it's what's most missed in the first session."}</li>
+                <li>{pt ? "Onboarding: ainda não existe, e é o que mais faz falta na primeira sessão." : "Onboarding: it doesn't exist yet, and it's what the first session misses most."}</li>
                 <li>{pt ? "Explicar os números — hoje nenhum valor mostra como foi calculado nem deixa corrigir." : "Explaining the numbers — right now no value shows how it was calculated or lets you fix it."}</li>
-                <li>{pt ? "Fazer a categorização lembrar da regra quando chegar um lançamento novo." : "Making categorisation remember the rule when a new entry arrives."}</li>
-                <li>{pt ? "Importar a fatura do cartão sem contar o mesmo gasto duas vezes." : "Importing the card bill without counting the same spend twice."}</li>
+                <li>{pt ? "Fazer a categorização lembrar da regra quando chegar um lançamento novo." : "Making categorization remember the rule when a new entry comes in."}</li>
+                <li>{pt ? "Importar a fatura do cartão sem contar o mesmo gasto duas vezes." : "Importing the credit card bill without counting the same purchase twice."}</li>
                 <li>{pt ? "Testes automatizados: a deduplicação foi validada na mão, contra o extrato real." : "Automated tests: deduplication was validated by hand, against the real statement."}</li>
               </ul>
             </CasePanel>
@@ -355,7 +355,7 @@ export default function JuizoProject() {
                 <li>
                   {pt
                     ? "Estou aberta a parceria e adoraria conversar sobre o produto."
-                    : "I'm open to partnership and would love to talk about the product."}
+                    : "I'm open to partnerships and would love to talk about the product."}
                 </li>
               </ul>
             </CasePanel>

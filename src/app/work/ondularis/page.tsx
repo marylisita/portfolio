@@ -76,7 +76,7 @@ const PHOTOS = {
     width: 2000,
     height: 1333,
     altPt: "Detalhe de escultura feita com resíduos e texturas orgânicas",
-    altEn: "Detail of a sculpture made with residues and organic textures",
+    altEn: "Detail of a sculpture made with industrial waste and organic textures",
   },
   hand: {
     src: "/img/ondularis/img-0066.webp",
@@ -196,7 +196,7 @@ const copy = {
   },
   en: {
     description:
-      "An invented ocean made of tentacular sculptures, industrial residues, an immersive atmosphere and projections that react to sound.",
+      "An invented ocean made of tentacular sculptures, industrial waste, an immersive atmosphere and projections that react to sound.",
     meta: [
       { label: "format", value: "group exhibition · immersive installation" },
       { label: "participation", value: "artist · Endosymbiosis collective" },
@@ -213,9 +213,9 @@ const copy = {
     sectionArchive: "archive",
     introTitle: "a territory between technique and delirium",
     intro:
-      "Born from an artist-researcher residency by NANO (EBA/UFRJ) at Meta Gallery, the Endosymbiosis collective works at the intersection of art, science and technology. Sympoiesis — making-with — guides both the creative process and the group’s way of relating.",
+      "Born from a NANO (EBA/UFRJ) artist-researcher residency at Meta Gallery, the Endosymbiosis collective works at the intersection of art, science and technology. Sympoiesis — making-with — guides both the creative process and the way the group works together.",
     introSide:
-      "Tentacular sculptures, industrial residues and responsive images do not illustrate a known ecosystem. They negotiate with one another and with those who move through the space.",
+      "Tentacular sculptures, industrial waste and responsive images do not illustrate a known ecosystem. They negotiate with one another and with those who move through the space.",
     quoteA: "Ondularis does not simulate the sea.",
     quoteB: "It creates another: artificial, unstable, fabulated.",
     interactionTitle: "an environment that listens",

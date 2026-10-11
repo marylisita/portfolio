@@ -147,7 +147,7 @@ export default function MagazineProject() {
         <CaseSection
           ink
           label={pt ? "04 / sequência final" : "04 / final sequence"}
-          title={pt ? "o ritmo fecha sem se acalmar" : "the rhythm closes without calming down"}
+          title={pt ? "o ritmo fecha sem se acalmar" : "the rhythm ends without settling down"}
           intro={
             pt
               ? "As últimas provas preservam a instabilidade da publicação, mas ganham uma hierarquia clara de leitura."

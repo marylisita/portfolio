@@ -16,7 +16,7 @@ const stories: Record<string, LocalizedStory> = {
     en: {
       impact: "An editorial press kit you can read in one scroll: cover, sequence and pacing, the way casting directors actually read.",
       shortImpact: "a press kit read in one scroll",
-      challenge: "She had good photographs and nothing that organised them.",
+      challenge: "She had good photographs and nothing that organized them.",
     },
   },
   magazine: {
@@ -50,9 +50,9 @@ const stories: Record<string, LocalizedStory> = {
       challenge: "A EBAT é gratuita e presencial. A identidade precisava mostrar o nível do programa e continuar simples de aplicar na rotina.",
     },
     en: {
-      impact: "A 22-page manual turned the logo, palette, typography and tone of voice into a working tool. The system accompanied a cycle of around 190 applications and 100 accepted students.",
+      impact: "A 22-page manual turned the logo, palette, typography and tone of voice into a working tool. The system ran alongside an admissions cycle of around 190 applications and 100 accepted students.",
       shortImpact: "22-page manual, 190 applications",
-      challenge: "EBAT is free and in person. The identity had to show the programme's level and remain simple to apply in daily work.",
+      challenge: "EBAT is free and in person. The identity had to show the program's level and stay simple to apply day to day.",
     },
   },
   graduation: {
@@ -64,7 +64,7 @@ const stories: Record<string, LocalizedStory> = {
     en: {
       impact: "A bilingual kit where icons, a checklist and printed objects introduce Rio through beach habits, counter food and everyday objects.",
       shortImpact: "Rio through habits and objects",
-      challenge: "What does a guest from abroad recognise as Rio — and what could only someone from here include?",
+      challenge: "What does a guest from abroad recognize as Rio — and what could only someone from here include?",
     },
   },
   pilotis: {
@@ -86,7 +86,7 @@ const stories: Record<string, LocalizedStory> = {
       challenge: "Dragão, bandeira e verde-amarelo estavam fora. Sobrava o quê?",
     },
     en: {
-      impact: "A modular system that survived a programme still changing the week of the event, across print, signage and social.",
+      impact: "A modular system that survived a program still changing the week of the event, across print, signage and social media.",
       shortImpact: "a system that survived the reshuffle",
       challenge: "Dragons, flags and green-and-yellow were out. So what was left?",
     },
@@ -134,14 +134,14 @@ const stories: Record<string, LocalizedStory> = {
   "touchdesigner-workshop": {
     pt: {
       impact:
-        "Oficina introdutória de quatro horas: do node vazio ao primeiro patch rodando, com a lógica nodal apresentada na prática em vez de no slide.",
+        "Sete participantes saíram da interface vazia e chegaram a protótipos próprios no fim, sem escrever código. A cadeia de áudio montada ali virou base dos testes de som e imagem do meu TCC.",
       shortImpact: "do node vazio ao primeiro patch",
       challenge:
         "Dá para apresentar programação criativa a quem vem do design sem pedir uma linha de código escrito — e usar a oficina como experimento da pesquisa do meu TCC?",
     },
     en: {
       impact:
-        "A four-hour introductory workshop: from an empty node to a first working patch, with node logic taught by doing rather than by slide.",
+        "Seven participants started from an empty interface and ended with prototypes of their own, without writing code. The audio chain built there became the basis for my thesis's sound-and-image tests.",
       shortImpact: "from empty node to first patch",
       challenge:
         "Can you introduce creative coding to design students without asking for a single line of written code — and use the workshop as an experiment for my thesis research?",
@@ -157,7 +157,7 @@ const stories: Record<string, LocalizedStory> = {
     },
     en: {
       impact:
-        "A finance app that runs entirely on device, tested against 285 real statement entries and designed for people whose income changes every month.",
+        "A finance app that runs entirely on the device, tested against 285 real statement entries and designed for people whose income changes every month.",
       shortImpact: "finance for variable income",
       challenge:
         "The finance apps I tried assume a fixed salary and a scolding tone — neither fits someone living on variable income.",

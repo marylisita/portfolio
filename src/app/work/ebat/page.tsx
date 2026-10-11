@@ -61,7 +61,7 @@ export default function EbatProject() {
       role={
         pt
           ? "Designer da escola: identidade, redes sociais, peças impressas e campanha audiovisual."
-          : "School designer: identity, social media, print pieces and an audiovisual campaign."
+          : "Designer for the school: identity, social media, print and an audiovisual campaign."
       }
       meta={[
         { label: t("ebat_meta_client"), value: "EBAT" },
@@ -77,7 +77,7 @@ export default function EbatProject() {
           intro={
             pt
               ? "Reuni logo, paleta, tipografia, tom de voz e aplicações em 22 páginas. O manual é operacional: registra as decisões de base para que outra pessoa da equipe consiga montar uma peça sem começar do zero."
-              : "I brought the logo, palette, typography, tone of voice and applications together in 22 pages. The manual is operational: it records the base decisions so someone else on the team can build a piece without starting from scratch."
+              : "I brought the logo, palette, typography, tone of voice and applications together in 22 pages. The manual is operational: it records the core decisions so someone else on the team can build a piece without starting from scratch."
           }
         >
           <CaseFigure
@@ -103,7 +103,7 @@ export default function EbatProject() {
           intro={
             pt
               ? "Nas redes, a identidade sustenta o calendário do processo seletivo, os módulos e os encontros presenciais. Os carrosséis organizam sequência; as peças avulsas resolvem data, convocação e serviço."
-              : "On social media, the identity carries the application calendar, modules and in-person meetings. Carousels organise sequence; individual posts handle dates, calls and practical information."
+              : "On social media, the identity carries the application calendar, modules and in-person meetings. Carousels set the sequence; individual posts handle dates, calls and practical information."
           }
         >
           <div className="tc-grid tc-grid--two">
@@ -136,7 +136,7 @@ export default function EbatProject() {
         <CaseSection
           ink
           label={pt ? "03 / fora da escola" : "03 / outside the school"}
-          title={pt ? "caber no SPIW sem virar startup" : "fitting into SPIW without becoming a startup"}
+          title={pt ? "caber no SPIW sem virar startup" : "fitting in at SPIW without looking like a startup"}
           intro={t("ebat_spiw_desc")}
         >
           <div className="tc-grid tc-grid--two">

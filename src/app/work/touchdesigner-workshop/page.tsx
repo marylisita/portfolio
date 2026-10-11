@@ -52,110 +52,141 @@ const workshopPhotos = {
 const copy = {
   pt: {
     description:
-      "Uma oficina de quatro horas para apresentar o TouchDesigner como ambiente de programação visual e aproximar iniciantes de imagens em tempo real e vídeo mapping.",
+      "Uma oficina de quatro horas de introdução à programação visual e à arte generativa no TouchDesigner, planejada como pesquisa experimental do meu PIBIC e do meu TCC.",
     challenge:
       "Dá para apresentar programação criativa a quem vem do design sem pedir uma linha de código escrito — e usar a oficina como experimento da pesquisa do meu TCC?",
     outcome:
-      "Oficina introdutória de quatro horas: do node vazio ao primeiro patch rodando, com a lógica nodal apresentada na prática em vez de no slide.",
+      "Sete participantes saíram da interface vazia e chegaram a protótipos próprios no fim, sem escrever código. A cadeia de áudio montada ali virou base dos testes de som e imagem do meu TCC.",
     role:
-      "Oficineira · introdução ao TouchDesigner · acompanhamento prático, em colaboração com Crisia e Plínio Hit.",
+      "Oficineira e pesquisadora (PIBIC) · condução da oficina com Crisia e Plínio Hit · orientação: Prof. Clorisval Pereira.",
     meta: [
       { label: "formato", value: "oficina presencial · inscrições gratuitas" },
       { label: "duração", value: "4 horas · 13h às 17h" },
       { label: "data", value: "02 de julho de 2026" },
       { label: "local", value: "LAID · Edifício JMM · UFRJ" },
+      { label: "vagas", value: "10 vagas · 17 inscrições" },
     ],
-    heroKicker: "programação visual · tempo real · projeção",
+    heroKicker: "programação visual · arte generativa · vídeo mapping",
     heroA: "do node vazio",
     heroB: "ao primeiro patch",
     heroNote:
-      "Uma entrada prática no TouchDesigner para quem queria entender a lógica por trás de imagens generativas, interativas e projetadas.",
-    premiseKicker: "01 / ponto de partida",
-    premiseTitle: "programar também pode ser conectar",
+      "Introdução à programação visual e à arte generativa no TouchDesigner, planejada e conduzida como pesquisa experimental do meu PIBIC e do meu TCC na EBA/UFRJ.",
+    premiseKicker: "01 / contexto",
+    premiseTitle: "a oficina dentro da pesquisa",
     premise:
-      "Em vez de começar por sintaxe, a oficina apresentou relações. No TouchDesigner, cada operador recebe, transforma e envia dados; o raciocínio se torna visível como uma rede que pode ser observada enquanto a imagem acontece.",
-    premiseSide:
-      "A interface deixa de parecer um painel técnico quando cada conexão produz uma consequência perceptível.",
-    goalsKicker: "02 / objetivo pedagógico",
-    goalsTitle: "complexidade em camadas",
+      "O TouchDesigner é um software de programação visual baseada em nós, usado para visuais em tempo real e performance audiovisual. Minha pesquisa de PIBIC e TCC investiga sistemas generativos para instalações interativas e performáticas, com elementos visuais manipulados em tempo real. A oficina entrou nesse percurso como pesquisa experimental, para apoiar o desenvolvimento de um projeto autoral.",
+    premiseFlow: [
+      { label: "pesquisa", sub: "TCC · PIBIC" },
+      { label: "oficina", sub: "pesquisa experimental" },
+      { label: "resultado", sub: "apoio à pesquisa" },
+    ],
+    goalsKicker: "02 / objetivo",
+    goalsTitle: "desmistificar o código",
     goalsIntro:
-      "O encontro foi desenhado para construir familiaridade antes de velocidade. O foco não era memorizar menus, mas reconhecer padrões e ganhar autonomia para continuar experimentando.",
+      "O objetivo era planejar e realizar uma oficina que desmistificasse o uso do código. Ele valia para dois lados ao mesmo tempo.",
     goals: [
       {
         n: "01",
-        title: "orientar-se",
-        body: "reconhecer interface, famílias de operadores e fluxo de dados",
+        title: "para a turma",
+        body: "democratizar o acesso à ferramenta e aproximar estudantes da programação criativa, sem exigir código escrito",
       },
       {
         n: "02",
-        title: "conectar",
-        body: "entender entrada, transformação e saída por meio dos nodes",
-      },
-      {
-        n: "03",
-        title: "experimentar",
-        body: "alterar parâmetros e observar gráficos reagindo em tempo real",
-      },
-      {
-        n: "04",
-        title: "construir",
-        body: "organizar um primeiro patch funcional com intenção visual",
+        title: "para a pesquisa",
+        body: "usar a experiência como aprendizado para fundamentar o TCC e o PIBIC",
       },
     ],
-    networkKicker: "03 / lógica nodal",
-    networkTitle: "a imagem como fluxo",
+    networkKicker: "03 / etapas",
+    networkTitle: "uma conexão de cada vez",
     network:
-      "O patch foi tratado como uma sequência legível. Uma fonte entra, parâmetros transformam sua aparência, camadas se encontram e o resultado segue para a projeção.",
+      "Da interface e da lógica das famílias de operadores até o desenvolvimento guiado de um sistema audiorreativo e do vídeo mapping.",
     nodes: [
-      { type: "IN", title: "entrada", sub: "imagem · vídeo · câmera" },
-      { type: "TOP", title: "transformar", sub: "posição · escala · cor" },
-      { type: "TOP", title: "compor", sub: "camadas · máscara · feedback" },
-      { type: "OUT", title: "projetar", sub: "saída · superfície · espaço" },
+      { type: "TAB", title: "interface", sub: "navegação e lógica dos nós · tecla tab · famílias de operadores" },
+      { type: "TOP", title: "imagem", sub: "TOPs: Noise e Circle animados" },
+      { type: "CHOP", title: "som", sub: "CHOPs: o microfone controla a imagem" },
+      { type: "COMP", title: "projeção", sub: "Kantan Mapper sobre o objeto" },
     ],
     networkCaption:
-      "uma conexão por vez: ver o efeito, entender a relação, seguir construindo",
-    methodKicker: "04 / facilitação",
-    methodTitle: "ver, fazer, variar",
+      "ver na projeção, refazer no próprio computador, seguir para a próxima conexão",
+    methodKicker: "04 / ementa",
+    methodTitle: "quatro horas, um encontro",
     method:
-      "Cada conceito foi aproximado da prática por um ciclo curto: demonstração, reprodução acompanhada e variação livre. Assim, o patch deixava de ser uma receita fechada e virava um sistema que podia ser desmontado, testado e reconstruído.",
+      "TouchDesigner para Videomapping: das 13h às 17h, no LAID, com 10 vagas e dois colegas de apoio. A abordagem foi teórico-prática — cada passo era demonstrado na projeção e repetido no computador de cada participante, até a mostra coletiva no fim.",
     methodSteps: [
-      {
-        label: "ver",
-        text: "uma mudança pequena e seu efeito imediato na imagem",
-      },
-      {
-        label: "fazer",
-        text: "a mesma relação reconstruída no patch de cada participante",
-      },
-      {
-        label: "variar",
-        text: "parâmetros e conexões alterados para produzir outra resposta",
-      },
+      { label: "10 min", text: "00 · abertura + checklist" },
+      { label: "30 min", text: "01 · sobrevivência básica" },
+      { label: "40 min", text: "02 · criando a tinta (imagens 2D)" },
+      { label: "15 min", text: "pausa", pause: true },
+      { label: "40 min", text: "03 · áudio-reatividade" },
+      { label: "50 min", text: "04 · Kantan Mapper" },
+      { label: "55 min", text: "05 · mostra de resultados + encerramento" },
     ],
-    processKicker: "04.1 / prática em sala",
-    processTitle: "a lógica aparece enquanto é construída",
+    processKicker: "04.1 / dentro da oficina",
+    processTitle: "prática e troca",
     process:
-      "A oficina alternou demonstração coletiva e acompanhamento próximo. Cada tela registrava uma solução diferente para o mesmo princípio, enquanto a projeção mantinha o processo visível para toda a sala.",
+      "Demonstração coletiva na projeção, acompanhamento próximo em cada computador e tempo para experimentar. A atividade foi registrada no LAID.",
     processCaptions: {
-      room: "a interface projetada transforma a sala em espaço de trabalho compartilhado",
-      patch: "experimentação individual: parâmetros, operadores e imagem em tempo real",
-      practice: "acompanhamento dos patches e troca entre participantes",
+      room: "demonstração coletiva: a interface projetada para a sala inteira",
+      patch: "experimentação visual no patch de cada participante",
+      practice: "acompanhamento próximo, computador a computador",
       collective: "da tela pessoal à projeção coletiva",
     },
-    mappingKicker: "05 / vídeo mapping",
-    mappingTitle: "a imagem encontra o espaço",
+    resultsKicker: "05 / quem veio",
+    resultsTitle: "17 inscrições para 10 vagas",
+    stats: [
+      { n: "17", label: "inscrições pelo formulário" },
+      { n: "10", label: "vagas oferecidas" },
+      { n: "07", label: "participantes efetivos + 3 tutores" },
+    ],
+    profileLabel: "perfil dos inscritos",
+    profile:
+      "Design (9), arquitetura (4) e outras áreas (4): cinema, publicidade, sistemas e matemática. Também vieram inscrições da PUC-Rio, do IFF, da Estácio e da Cruzeiro do Sul.",
+    flyerAlt: "Flyer da Oficina de Video Mapping: introdução ao TouchDesigner, 02/07, 13h às 17h, Edifício JMM",
+    flyerCaption: "flyer · divulgado no instagram do LED e do LAID",
+    mappingKicker: "06 / vídeo mapping",
+    mappingTitle: "a imagem ocupa o objeto",
     mapping:
-      "O vídeo mapping ampliou a pergunta: não apenas o que a imagem faz, mas onde ela acontece. A saída digital passou a ser pensada em relação a formato, superfície, escala e presença física.",
-    mappingQuote:
-      "Quando a projeção sai da tela, composição também vira arquitetura.",
+      "No bloco do Kantan Mapper, o patch saiu da tela e foi para um objeto: a imagem foi ajustada sobre um busto, com projeção, calibragem e montagem. Os protótipos registram o busto sem e com projeção.",
+    mappingQuote: "superfície. luz. imagem.",
     mappingCaptions: {
       mapping: "ajuste do mapeamento sobre a superfície",
       preparation: "o busto antes de receber luz",
       projection: "testes de escala, máscara e alinhamento",
       final: "resultado: imagem digital aderindo à forma escultórica",
     },
-    teamKicker: "06 / equipe & rede",
-    teamTitle: "conhecimento construído em colaboração",
+    learnKicker: "07 / aprendizados",
+    learnTitle: "como explicar o que já parece familiar?",
+    learn:
+      "Para quem já usa o software, a lógica dos nós parece óbvia. Conduzir a oficina foi traduzir essa lógica para quem estava começando.",
+    learnings: [
+      { label: "tradução", text: "traduzir termos técnicos para iniciantes" },
+      { label: "condução", text: "nervosismo na condução" },
+      { label: "turma", text: "boa receptividade do grupo" },
+      { label: "o que ficou", text: "rápida assimilação da lógica dos nós e protótipos autorais ao final" },
+    ],
+    thesisKicker: "08 / de volta à pesquisa",
+    thesisTitle: "o que a oficina devolveu ao TCC",
+    thesis:
+      "A oficina foi pensada como pesquisa experimental, e três partes dela voltaram para o projeto autoral.",
+    thesisLinks: [
+      {
+        type: "01",
+        title: "som → imagem",
+        sub: "a cadeia de áudio montada na oficina serviu de base para os testes entre som e imagem da pesquisa",
+      },
+      {
+        type: "02",
+        title: "imagem → superfície",
+        sub: "o Kantan Mapper testou projeção, calibragem e montagem sobre objetos físicos",
+      },
+      {
+        type: "03",
+        title: "pessoas → sistema",
+        sub: "tornar a experiência compreensível para quem não conhece a tecnologia",
+      },
+    ],
+    teamKicker: "09 / equipe & rede",
+    teamTitle: "quem fez junto",
     facilitatorsLabel: "oficineiros",
     facilitators: [
       {
@@ -171,6 +202,10 @@ const copy = {
         role: "artista multimídia · editor · produtor audiovisual",
       },
     ],
+    adviserLabel: "orientação",
+    adviser: "Prof. Clorisval Pereira · Escola de Belas Artes · UFRJ",
+    presentedLabel: "apresentação",
+    presented: "SIAC 2026 · Escola de Belas Artes · UFRJ",
     realizationLabel: "realização",
     realization:
       "LED — Laboratório de Experimentações em Design · LAID — Laboratório Aberto de Inovação e Design",
@@ -178,122 +213,149 @@ const copy = {
     support:
       "Inova EBA · PPGDesign · Escola de Belas Artes · Universidade Federal do Rio de Janeiro",
     creditsCaption: "realização e instituições apoiadoras",
-    closingKicker: "07 / continuidade",
-    closingTitle: "o primeiro patch não é o fim",
-    closing:
-      "A oficina encerrou uma introdução e abriu um campo de prática. O resultado mais importante não era uma imagem pronta, mas a confiança para abrir o software novamente, conectar outro node e descobrir o que muda.",
   },
   en: {
     description:
-      "A four-hour workshop introducing TouchDesigner as a visual programming environment and bringing beginners closer to real-time images and video mapping.",
+      "A four-hour introduction to visual programming and generative art in TouchDesigner, planned as experimental research for my undergraduate research grant (PIBIC) and my thesis.",
     challenge:
       "Can you introduce creative coding to design students without asking for a single line of written code — and use the workshop as an experiment for my thesis research?",
     outcome:
-      "A four-hour introductory workshop: from an empty node to a first working patch, with node logic taught by doing rather than by slide.",
+      "Seven participants started from an empty interface and ended with prototypes of their own, without writing code. The audio chain built there became the basis for my thesis's sound-and-image tests.",
     role:
-      "Workshop facilitator · TouchDesigner introduction · hands-on guidance, in collaboration with Crisia and Plínio Hit.",
+      "Workshop lead and researcher (PIBIC) · co-led with Crisia and Plínio Hit · advised by Prof. Clorisval Pereira.",
     meta: [
       { label: "format", value: "in-person workshop · free registration" },
-      { label: "duration", value: "4 hours · 1 pm to 5 pm" },
+      { label: "duration", value: "4 hours · 1 to 5 pm" },
       { label: "date", value: "July 2, 2026" },
       { label: "venue", value: "LAID · JMM Building · UFRJ" },
+      { label: "places", value: "10 places · 17 sign-ups" },
     ],
-    heroKicker: "visual programming · real time · projection",
-    heroA: "from empty node",
-    heroB: "to first patch",
+    heroKicker: "visual programming · generative art · video mapping",
+    heroA: "from an empty node",
+    heroB: "to a first patch",
     heroNote:
-      "A practical entry point into TouchDesigner for anyone curious about the logic behind generative, interactive and projected images.",
-    premiseKicker: "01 / starting point",
-    premiseTitle: "programming can also mean connecting",
+      "An introduction to visual programming and generative art in TouchDesigner, planned and run as experimental research for my undergraduate research grant and thesis at EBA/UFRJ.",
+    premiseKicker: "01 / context",
+    premiseTitle: "the workshop inside the research",
     premise:
-      "Instead of starting with syntax, the workshop introduced relationships. In TouchDesigner, each operator receives, transforms and sends data; reasoning becomes visible as a network that can be observed while the image happens.",
-    premiseSide:
-      "The interface stops looking like a technical panel when every connection produces a perceptible consequence.",
-    goalsKicker: "02 / learning goal",
-    goalsTitle: "complexity in layers",
+      "TouchDesigner is node-based visual programming software used for real-time visuals and audiovisual performance. My undergraduate research and thesis look at generative systems for interactive and performative installations, with visual elements manipulated in real time. The workshop was part of that work as experimental research, supporting the development of a personal project.",
+    premiseFlow: [
+      { label: "research", sub: "thesis · PIBIC" },
+      { label: "workshop", sub: "experimental research" },
+      { label: "result", sub: "support for the research" },
+    ],
+    goalsKicker: "02 / objective",
+    goalsTitle: "demystifying code",
     goalsIntro:
-      "The session was designed to build familiarity before speed. The aim was not to memorise menus but to recognise patterns and gain autonomy for continued experimentation.",
+      "The aim was to plan and run a workshop that would demystify code. It served two sides at once.",
     goals: [
       {
         n: "01",
-        title: "navigate",
-        body: "recognise the interface, operator families and data flow",
+        title: "for the group",
+        body: "open up access to the tool and bring students closer to creative coding, without requiring written code",
       },
       {
         n: "02",
-        title: "connect",
-        body: "understand input, transformation and output through nodes",
-      },
-      {
-        n: "03",
-        title: "experiment",
-        body: "change parameters and watch graphics react in real time",
-      },
-      {
-        n: "04",
-        title: "build",
-        body: "organise a first working patch with visual intent",
+        title: "for the research",
+        body: "use the experience as a learning process to ground my thesis and research grant work",
       },
     ],
-    networkKicker: "03 / node-based logic",
-    networkTitle: "the image as flow",
+    networkKicker: "03 / stages",
+    networkTitle: "one connection at a time",
     network:
-      "The patch was approached as a readable sequence. A source comes in, parameters transform its appearance, layers meet and the result moves towards projection.",
+      "From the interface and the logic of operator families to the guided build of an audio-reactive system and the video mapping.",
     nodes: [
-      { type: "IN", title: "input", sub: "image · video · camera" },
-      { type: "TOP", title: "transform", sub: "position · scale · colour" },
-      { type: "TOP", title: "composite", sub: "layers · mask · feedback" },
-      { type: "OUT", title: "project", sub: "output · surface · space" },
+      { type: "TAB", title: "interface", sub: "navigation and node logic · tab key · operator families" },
+      { type: "TOP", title: "image", sub: "TOPs: animated Noise and Circle" },
+      { type: "CHOP", title: "sound", sub: "CHOPs: the microphone drives the image" },
+      { type: "COMP", title: "projection", sub: "Kantan Mapper on the object" },
     ],
     networkCaption:
-      "one connection at a time: see the effect, understand the relationship, keep building",
-    methodKicker: "04 / facilitation",
-    methodTitle: "see, make, vary",
+      "see it on the projector, rebuild it on your own computer, move on to the next connection",
+    methodKicker: "04 / program",
+    methodTitle: "four hours, one session",
     method:
-      "Each concept moved closer to practice through a short cycle: demonstration, guided reproduction and free variation. The patch stopped being a closed recipe and became a system that could be dismantled, tested and rebuilt.",
+      "TouchDesigner for Video Mapping: 1 to 5 pm at LAID, with 10 places and two colleagues assisting. The approach mixed theory and practice — each step was demonstrated on the projector and repeated on every participant's computer, leading up to a group showcase at the end.",
     methodSteps: [
+      { label: "10 min", text: "00 · welcome + checklist" },
+      { label: "30 min", text: "01 · basic survival" },
+      { label: "40 min", text: "02 · making the paint (2D images)" },
+      { label: "15 min", text: "break", pause: true },
+      { label: "40 min", text: "03 · audio reactivity" },
+      { label: "50 min", text: "04 · Kantan Mapper" },
+      { label: "55 min", text: "05 · results showcase + wrap-up" },
+    ],
+    processKicker: "04.1 / inside the workshop",
+    processTitle: "practice and exchange",
+    process:
+      "A group demonstration on the projector, close guidance at each computer and time to experiment. The session was documented at LAID.",
+    processCaptions: {
+      room: "group demonstration: the interface projected for the whole room",
+      patch: "visual experiments in each participant's patch",
+      practice: "close guidance, one computer at a time",
+      collective: "from the personal screen to the shared projection",
+    },
+    resultsKicker: "05 / who came",
+    resultsTitle: "17 sign-ups for 10 places",
+    stats: [
+      { n: "17", label: "sign-ups through the form" },
+      { n: "10", label: "places offered" },
+      { n: "07", label: "participants who attended + 3 tutors" },
+    ],
+    profileLabel: "who signed up",
+    profile:
+      "Design (9), architecture (4) and other fields (4): film, advertising, information systems and mathematics. Sign-ups also came from PUC-Rio, IFF, Estácio and Cruzeiro do Sul.",
+    flyerAlt: "Flyer for the Video Mapping Workshop: introduction to TouchDesigner, July 2, 1 to 5 pm, JMM Building",
+    flyerCaption: "flyer · shared on the LED and LAID instagram accounts",
+    mappingKicker: "06 / video mapping",
+    mappingTitle: "the image takes over the object",
+    mapping:
+      "In the Kantan Mapper block, the patch left the screen and moved onto an object: the image was fitted onto a bust through projection, calibration and setup. The prototypes show the bust with and without projection.",
+    mappingQuote: "surface. light. image.",
+    mappingCaptions: {
+      mapping: "adjusting the mapping on the surface",
+      preparation: "the bust before the light",
+      projection: "scale, mask and alignment tests",
+      final: "result: the digital image wrapping the sculpted form",
+    },
+    learnKicker: "07 / what I learned",
+    learnTitle: "how do you explain what already feels familiar?",
+    learn:
+      "For anyone who already uses the software, node logic feels obvious. Leading the workshop meant translating that logic for people who were just starting.",
+    learnings: [
+      { label: "jargon", text: "translating technical terms for beginners" },
+      { label: "nerves", text: "nerves while leading the session" },
+      { label: "the group", text: "the group was receptive" },
+      { label: "what stuck", text: "the node logic sank in quickly, and there were original prototypes by the end" },
+    ],
+    thesisKicker: "08 / back to the research",
+    thesisTitle: "what the workshop gave back to the thesis",
+    thesis:
+      "The workshop was designed as experimental research, and three parts of it went back into my own project.",
+    thesisLinks: [
       {
-        label: "see",
-        text: "one small change and its immediate effect on the image",
+        type: "01",
+        title: "sound → image",
+        sub: "the audio chain built in the workshop became the basis for the research's sound-and-image tests",
       },
       {
-        label: "make",
-        text: "the same relationship rebuilt in each participant's patch",
+        type: "02",
+        title: "image → surface",
+        sub: "Kantan Mapper tested projection, calibration and setup on physical objects",
       },
       {
-        label: "vary",
-        text: "parameters and connections changed to produce another response",
+        type: "03",
+        title: "people → system",
+        sub: "making the experience understandable for people who don't know the technology",
       },
     ],
-    processKicker: "04.1 / studio practice",
-    processTitle: "the logic appears while it is being built",
-    process:
-      "The workshop alternated collective demonstrations with close guidance. Each screen recorded a different solution to the same principle, while projection kept the process visible to the whole room.",
-    processCaptions: {
-      room: "the projected interface turns the room into a shared workspace",
-      patch: "individual experimentation with parameters, operators and real-time image",
-      practice: "patch guidance and exchange between participants",
-      collective: "from the personal screen to collective projection",
-    },
-    mappingKicker: "05 / video mapping",
-    mappingTitle: "the image meets space",
-    mapping:
-      "Video mapping expanded the question: not only what the image does, but where it happens. Digital output was considered in relation to shape, surface, scale and physical presence.",
-    mappingQuote:
-      "When projection leaves the screen, composition also becomes architecture.",
-    mappingCaptions: {
-      mapping: "mapping adjustment over the surface",
-      preparation: "the bust before receiving light",
-      projection: "scale, mask and alignment tests",
-      final: "result: digital image adhering to sculptural form",
-    },
-    teamKicker: "06 / team & network",
-    teamTitle: "knowledge built collaboratively",
-    facilitatorsLabel: "facilitators",
+    teamKicker: "09 / team & network",
+    teamTitle: "who made it with me",
+    facilitatorsLabel: "workshop leads",
     facilitators: [
       {
         name: "Maria Isabel Lisita",
-        role: "designer · digital artist · creative technology",
+        role: "designer · digital artist · creative technologist",
       },
       {
         name: "Crisia (Christiane Azevedo)",
@@ -304,17 +366,17 @@ const copy = {
         role: "multimedia artist · editor · audiovisual producer",
       },
     ],
-    realizationLabel: "presented by",
+    adviserLabel: "adviser",
+    adviser: "Prof. Clorisval Pereira · School of Fine Arts · UFRJ",
+    presentedLabel: "presented at",
+    presented: "SIAC 2026 · School of Fine Arts · UFRJ",
+    realizationLabel: "organized by",
     realization:
-      "LED — Design Experimentation Laboratory · LAID — Open Laboratory for Innovation and Design",
+      "LED — Design Experimentation Lab · LAID — Open Lab for Innovation and Design",
     supportLabel: "support",
     support:
       "Inova EBA · PPGDesign · School of Fine Arts · Federal University of Rio de Janeiro",
-    creditsCaption: "presented by and supporting institutions",
-    closingKicker: "07 / continuity",
-    closingTitle: "the first patch is not the end",
-    closing:
-      "The workshop completed an introduction and opened a field of practice. The most important result was not a finished image but the confidence to open the software again, connect another node and discover what changes.",
+    creditsCaption: "organizers and supporting institutions",
   },
 } as const;
 
@@ -625,7 +687,8 @@ const styles = `
   .td-method__steps { display: grid; border-top: 1px solid rgba(28,27,24,.28); }
   .td-method__step {
     display: grid;
-    grid-template-columns: 6rem 1fr;
+    /* 8rem cabe "nervosismo" e "o que ficou" no itálico sem invadir o texto. */
+    grid-template-columns: 8rem 1fr;
     gap: 1.2rem;
     padding: 1.35rem 0;
     border-bottom: 1px solid rgba(28,27,24,.28);
@@ -785,18 +848,98 @@ const styles = `
     font-size: var(--type-body);
     line-height: 1.62;
   }
-  .td-closing {
+  /* A pausa da ementa não é um bloco de conteúdo: fica mais apagada. */
+  .td-method__step[data-pause="true"] { opacity: .5; }
+  .td-method__step[data-pause="true"] .td-method__text { font-style: italic; }
+
+  /* contexto: pesquisa -> oficina -> resultado, o diagrama do slide 2 */
+  .td-flow {
     display: grid;
-    grid-template-columns: minmax(0, .8fr) minmax(280px, 1.2fr);
-    gap: clamp(2.5rem, 8vw, 8rem);
-    align-items: end;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-left: 2px solid var(--td-pink);
   }
-  .td-closing .td-h2 { color: #7552f4; }
+  .td-flow__step {
+    position: relative;
+    display: grid;
+    gap: .2rem;
+    padding: 1rem 0 1rem 1.4rem;
+  }
+  .td-flow__step + .td-flow__step::before {
+    content: "↓";
+    position: absolute;
+    top: -.7rem;
+    left: 1.4rem;
+    color: #7552f4;
+    font-family: var(--font-mono), monospace;
+    font-size: .9rem;
+    line-height: 1;
+  }
+  .td-flow__label {
+    font-family: var(--font-head);
+    font-size: clamp(1.4rem, 2.6vw, 2.1rem);
+    font-style: italic;
+    line-height: 1.1;
+  }
+  .td-flow__sub {
+    color: #7552f4;
+    font-family: var(--font-subtitle), monospace;
+    font-size: var(--type-micro);
+    letter-spacing: var(--offbit-letter-spacing);
+    text-transform: lowercase;
+  }
+
+  .td-goals--two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .td-goals--two .td-goal { min-height: 12rem; }
+  .td-nodes--three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .td-nodes--three .td-node__sub { font-size: var(--type-body); opacity: .78; }
+
+  /* resultados: números grandes e o flyer da divulgação */
+  .td-results {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(260px, .7fr);
+    gap: clamp(2.5rem, 7vw, 7rem);
+    align-items: center;
+  }
+  .td-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1rem, 3vw, 2.5rem);
+    margin: 2.4rem 0 1rem;
+  }
+  /* dt antes de dd no código (rótulo e valor), número em cima na tela */
+  .td-stat {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+    gap: .55rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--td-line);
+  }
+  .td-stat__n {
+    margin: 0;
+    color: var(--td-cyan);
+    font-family: var(--font-head);
+    font-size: clamp(3.2rem, 7vw, 5.6rem);
+    line-height: .85;
+    letter-spacing: -.04em;
+    font-variant-numeric: tabular-nums;
+  }
+  .td-stat:last-child .td-stat__n { color: var(--td-pink); }
+  .td-stat__label {
+    font-family: var(--font-body);
+    font-size: var(--type-micro);
+    line-height: 1.45;
+    opacity: .75;
+  }
+  .td-results__profile { border-bottom: 0; }
   @media (max-width: 900px) {
     .td-cover, .td-premise, .td-goals__head, .td-network__head,
-    .td-method, .td-process__head, .td-mapping, .td-team, .td-closing {
+    .td-method, .td-process__head, .td-mapping, .td-team, .td-results {
       grid-template-columns: 1fr;
     }
+    .td-nodes--three { grid-template-columns: 1fr; }
     .td-goals { grid-template-columns: 1fr 1fr; }
     .td-nodes { grid-template-columns: 1fr 1fr; }
     .td-nodes::before { display: none; }
@@ -806,7 +949,10 @@ const styles = `
     .td-cover { min-height: auto; }
     .td-cover__copy { order: 1; }
     .td-poster { order: 2; }
-    .td-goals, .td-nodes { grid-template-columns: 1fr; }
+    .td-goals, .td-goals--two, .td-nodes { grid-template-columns: 1fr; }
+    .td-stats { grid-template-columns: 1fr; gap: 0; }
+    .td-stat { flex-direction: row-reverse; align-items: baseline; justify-content: flex-end; gap: 1rem; padding: .9rem 0; }
+    .td-stat__n { font-size: 3rem; min-width: 4.5rem; }
     .td-goal { min-height: auto; }
     .td-goal__n { margin-bottom: 1.4rem; }
     .td-method__step, .td-person { grid-template-columns: 1fr; gap: .5rem; }
@@ -846,7 +992,11 @@ export default function TouchDesignerWorkshopProject() {
       accent="#735cff"
       title={
         <>
-          oficina de <strong style={{ color: "#735cff", fontWeight: 700 }}>touchdesigner</strong>
+          {selectedLang === "pt" ? (
+            <>oficina de <strong style={{ color: "#735cff", fontWeight: 700 }}>touchdesigner</strong></>
+          ) : (
+            <><strong style={{ color: "#735cff", fontWeight: 700 }}>touchdesigner</strong> workshop</>
+          )}
         </>
       }
       desc={c.description}
@@ -861,7 +1011,7 @@ export default function TouchDesignerWorkshopProject() {
           <div className="td-cover td-inner">
             <motion.figure
               className="td-poster"
-              data-frame="output / projeção"
+              data-frame={selectedLang === "pt" ? "output / projeção" : "output / projection"}
               {...heroReveal()}
             >
               <Image
@@ -872,7 +1022,7 @@ export default function TouchDesignerWorkshopProject() {
                 alt={
                   selectedLang === "pt"
                     ? "Busto iluminado por projeções coloridas durante a oficina de TouchDesigner"
-                    : "Bust illuminated by colourful projections during the TouchDesigner workshop"
+                    : "A bust lit by colorful projections during the TouchDesigner workshop"
                 }
                 priority
               />
@@ -897,6 +1047,9 @@ export default function TouchDesignerWorkshopProject() {
           </div>
         </section>
 
+        {/* A ordem das seções segue a apresentação da SIAC 2026: contexto,
+            objetivo, etapas, ementa, registros, resultados, experimento,
+            aprendizados e o que voltou para o TCC. */}
         <section className="td-section">
           <motion.div className="td-premise td-inner" {...reveal()}>
             <div>
@@ -904,7 +1057,14 @@ export default function TouchDesignerWorkshopProject() {
               <h2 className="td-h2">{c.premiseTitle}</h2>
               <p className="td-p">{c.premise}</p>
             </div>
-            <p className="td-premise__side">{c.premiseSide}</p>
+            <ol className="td-flow">
+              {c.premiseFlow.map((step) => (
+                <li className="td-flow__step" key={step.label}>
+                  <span className="td-flow__label">{step.label}</span>
+                  <span className="td-flow__sub">{step.sub}</span>
+                </li>
+              ))}
+            </ol>
           </motion.div>
         </section>
 
@@ -917,7 +1077,7 @@ export default function TouchDesignerWorkshopProject() {
               </div>
               <p className="td-p">{c.goalsIntro}</p>
             </motion.div>
-            <div className="td-goals">
+            <div className="td-goals td-goals--two">
               {c.goals.map((goal, index) => (
                 <motion.article className="td-goal" key={goal.n} {...reveal(index * 0.07)}>
                   <span className="td-goal__n">{goal.n}</span>
@@ -960,7 +1120,11 @@ export default function TouchDesignerWorkshopProject() {
             </div>
             <div className="td-method__steps">
               {c.methodSteps.map((step) => (
-                <div className="td-method__step" key={step.label}>
+                <div
+                  className="td-method__step"
+                  key={step.text}
+                  data-pause={"pause" in step && step.pause ? "true" : undefined}
+                >
                   <span className="td-method__label">{step.label}</span>
                   <span className="td-method__text">{step.text}</span>
                 </div>
@@ -1024,6 +1188,41 @@ export default function TouchDesignerWorkshopProject() {
         </section>
 
         <section className="td-section td-dark">
+          <div className="td-inner td-results">
+            <motion.div {...reveal()}>
+              <p className="td-kicker">{c.resultsKicker}</p>
+              <h2 className="td-h2">{c.resultsTitle}</h2>
+              <dl className="td-stats">
+                {c.stats.map((stat) => (
+                  <div className="td-stat" key={stat.label}>
+                    <dt className="td-stat__label">{stat.label}</dt>
+                    <dd className="td-stat__n">{stat.n}</dd>
+                  </div>
+                ))}
+              </dl>
+              <div className="td-credit td-results__profile">
+                <span className="td-credit__label">{c.profileLabel}</span>
+                <div className="td-credit__value">{c.profile}</div>
+              </div>
+            </motion.div>
+            <motion.figure
+              className="td-poster"
+              data-frame={selectedLang === "pt" ? "input / divulgação" : "input / promotion"}
+              {...reveal(0.1)}
+            >
+              <Image
+                src="/img/touchdesigner-workshop/cartaz-oficina-v2.webp"
+                width={675}
+                height={880}
+                sizes="(max-width: 900px) 88vw, 34vw"
+                alt={c.flyerAlt}
+              />
+              <figcaption className="td-caption">{c.flyerCaption}</figcaption>
+            </motion.figure>
+          </div>
+        </section>
+
+        <section className="td-section td-dark">
           <div className="td-inner">
             <div className="td-mapping">
               <motion.figure className="td-mapping__hero" {...reveal()}>
@@ -1080,6 +1279,45 @@ export default function TouchDesignerWorkshopProject() {
           </div>
         </section>
 
+        <section className="td-section">
+          <motion.div className="td-method td-inner" {...reveal()}>
+            <div>
+              <p className="td-kicker">{c.learnKicker}</p>
+              <h2 className="td-h2">{c.learnTitle}</h2>
+              <p className="td-p">{c.learn}</p>
+            </div>
+            <div className="td-method__steps">
+              {c.learnings.map((item) => (
+                <div className="td-method__step" key={item.label}>
+                  <span className="td-method__label">{item.label}</span>
+                  <span className="td-method__text">{item.text}</span>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        </section>
+
+        <section className="td-section td-dark">
+          <div className="td-inner">
+            <motion.div className="td-network__head" {...reveal()}>
+              <div>
+                <p className="td-kicker">{c.thesisKicker}</p>
+                <h2 className="td-h2">{c.thesisTitle}</h2>
+              </div>
+              <p className="td-p">{c.thesis}</p>
+            </motion.div>
+            <div className="td-nodes td-nodes--three">
+              {c.thesisLinks.map((link, index) => (
+                <motion.article className="td-node" key={link.type} {...reveal(index * 0.1)}>
+                  <span className="td-node__type">{link.type}</span>
+                  <h3 className="td-node__title">{link.title}</h3>
+                  <p className="td-node__sub">{link.sub}</p>
+                </motion.article>
+              ))}
+            </div>
+          </div>
+        </section>
+
         <section className="td-section td-dark">
           <div className="td-inner">
             <motion.div className="td-team__head" {...reveal()}>
@@ -1099,6 +1337,14 @@ export default function TouchDesignerWorkshopProject() {
                   ))}
                 </div>
                 <div className="td-credit">
+                  <span className="td-credit__label">{c.adviserLabel}</span>
+                  <div className="td-credit__value">{c.adviser}</div>
+                </div>
+                <div className="td-credit">
+                  <span className="td-credit__label">{c.presentedLabel}</span>
+                  <div className="td-credit__value">{c.presented}</div>
+                </div>
+                <div className="td-credit">
                   <span className="td-credit__label">{c.realizationLabel}</span>
                   <div className="td-credit__value">{c.realization}</div>
                 </div>
@@ -1109,7 +1355,7 @@ export default function TouchDesignerWorkshopProject() {
               </motion.div>
               <motion.figure
                 className="td-poster"
-                data-frame="output / realizacao + apoio"
+                data-frame={selectedLang === "pt" ? "output / realizacao + apoio" : "output / organizers + support"}
                 {...reveal(0.1)}
               >
                 <Image
@@ -1123,16 +1369,6 @@ export default function TouchDesignerWorkshopProject() {
               </motion.figure>
             </div>
           </div>
-        </section>
-
-        <section className="td-section">
-          <motion.div className="td-closing td-inner" {...reveal()}>
-            <div>
-              <p className="td-kicker">{c.closingKicker}</p>
-              <h2 className="td-h2">{c.closingTitle}</h2>
-            </div>
-            <p className="td-p">{c.closing}</p>
-          </motion.div>
         </section>
       </div>
     </ProjectShell>

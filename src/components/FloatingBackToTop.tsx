@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useT } from "@/i18n/LanguageContext";
 
 /**
  * Botão "voltar ao topo" no estilo editorial do site:
@@ -63,6 +64,8 @@ const styles = `
 `;
 
 export default function FloatingBackToTop() {
+  const { lang } = useT();
+  const pt = lang !== "en";
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -94,11 +97,11 @@ export default function FloatingBackToTop() {
         className="btt hover-trigger"
         data-visible={isVisible ? "true" : "false"}
         onClick={scrollToTop}
-        aria-label="Voltar ao topo"
+        aria-label={pt ? "Voltar ao topo" : "Back to top"}
         tabIndex={isVisible ? 0 : -1}
       >
         <span aria-hidden="true">↑</span>
-        <span className="btt__label" aria-hidden="true">topo</span>
+        <span className="btt__label" aria-hidden="true">{pt ? "topo" : "top"}</span>
       </button>
     </>
   );

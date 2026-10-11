@@ -92,7 +92,7 @@ export default function IsadoraProject() {
 
         <CaseSection
           label={pt ? "02 / caderno horizontal" : "02 / landscape folio"}
-          title={pt ? "folhear para conhecer" : "browse to discover"}
+          title={pt ? "folhear para conhecer" : "flip through it"}
           intro={
             pt
               ? "As páginas vivem dentro de uma pasta escura, como material enviado para imprensa, curadoria e produção."
@@ -117,7 +117,7 @@ export default function IsadoraProject() {
 
         <CaseSection compact>
           <p className="tc-manifest">
-            {pt ? "imagem, trajetória & " : "image, trajectory & "}
+            {pt ? "imagem, trajetória & " : "image, career & "}
             <em>{pt ? "presença." : "presence."}</em>
           </p>
         </CaseSection>

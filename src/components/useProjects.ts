@@ -72,7 +72,7 @@ export function useProjects(): IndexItem[] {
     },
     {
       num: "06",
-      title: "oficina de touchdesigner",
+      title: lang === "pt" ? "oficina de touchdesigner" : "touchdesigner workshop",
       tags: `${t("cat_collab")} / ${
         lang === "pt"
           ? "educação / arte e tecnologia"
@@ -122,7 +122,7 @@ export function useProjects(): IndexItem[] {
     },
     {
       num: "10",
-      title: "china–rio: pontes para inovação",
+      title: lang === "pt" ? "china–rio: pontes para inovação" : "china–rio: bridges to innovation",
       tags: `${t("cat_collab")} / ` + t("p07_tags").replace(", ", " / "),
       href: "/work/chinario",
       accent: "#c90035",
@@ -144,7 +144,7 @@ export function useProjects(): IndexItem[] {
     },
     {
       num: "12",
-      title: "juízo: dinheiro sem sermão",
+      title: lang === "pt" ? "juízo: dinheiro sem sermão" : "juízo: money without the lecture",
       tags: `${t("cat_autoral")} / ${t("card_uxui_title")} / ${
         lang === "pt" ? "desenvolvimento de produto" : "product development"
       }`,

@@ -85,7 +85,7 @@ export default function GenLabProject() {
               <p className="tc-copy" style={{ margin: 0 }}>
                 {pt
                   ? "A experiência continua fora do portfólio: o laboratório pode ser aberto e testado diretamente no navegador."
-                  : "The experience continues beyond the portfolio: the laboratory can be opened and tested directly in the browser."}
+                  : "The experience continues beyond the portfolio: the lab can be opened and tried right in the browser."}
               </p>
               <a
                 className="tc-action hover-trigger"

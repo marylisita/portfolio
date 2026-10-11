@@ -83,7 +83,7 @@ export default function PilotisProject() {
 
         <CaseSection
           label={pt ? "02 / cobertura" : "02 / coverage"}
-          title={pt ? "um feed com ritmo de evento" : "a feed with event rhythm"}
+          title={pt ? "um feed com ritmo de evento" : "a feed that keeps the event's pace"}
           intro={
             pt
               ? "A sequência vertical é tratada como uma faixa de cobertura presa à página. Ao lado, a síntese horizontal mostra como a identidade atravessa formatos."
@@ -101,7 +101,7 @@ export default function PilotisProject() {
             <CaseFigure
               {...GALLERY[2]}
               alt={pt ? "Peças digitais do evento Devs no Pilotis" : "Devs no Pilotis digital pieces"}
-              caption={pt ? "sistema nas redes" : "social system"}
+              caption={pt ? "sistema nas redes" : "the system on social media"}
               index="folha 03"
               tilt={0.6}
             />
@@ -109,7 +109,7 @@ export default function PilotisProject() {
         </CaseSection>
 
         <CaseSection
-          label={pt ? "03 / sinais do encontro" : "03 / signals of the encounter"}
+          label={pt ? "03 / sinais do encontro" : "03 / signs of the meetup"}
           title={pt ? "pessoas primeiro, código depois" : "people first, code second"}
           intro={
             pt

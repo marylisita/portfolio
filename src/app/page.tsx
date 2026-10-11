@@ -43,13 +43,13 @@ const HERO_HEADLINES = {
     ["Eu ia deixar pra depois,", "Aí ficou bonito demais pra ignorar kk [[ <3 ]]"],
   ],
   en: [
-    ["Just a small tweak.", "lying, i redid the whole thing [[ :3 ]]"],
-    ["Not sure if it's good.", "I just can't stop looking [[ :) ]]"],
-    ["Didn't think about it much...", "just stayed up till it was done [[ ^_^ ]]"],
-    ["Had other stuff to do,", "but this one turned out better [[ :D ]]"],
-    ["Made it look casual.....", "but thought about it for three days [[ ;) ]]"],
-    ["Didn't change that much!", "Just redid everything [[ :P ]]"],
-    ["Was gonna leave it for later,", "then it got too pretty to ignore lmao [[ <3 ]]"],
+    ["Just a small tweak.", "Kidding, I redid the whole thing [[ :3 ]]"],
+    ["Not sure if it's good.", "I just can't stop looking at it [[ :) ]]"],
+    ["Didn't think about it much...", "I just stayed up till it was done [[ ^_^ ]]"],
+    ["Had other stuff to do,", "But this project turned out better [[ :D ]]"],
+    ["Made it look casual.....", "But I thought about it for three days [[ ;) ]]"],
+    ["Didn't change that much!", "I just redid everything [[ :P ]]"],
+    ["Was gonna leave it for later,", "Then it got too pretty to ignore lmao [[ <3 ]]"],
   ],
 } as const;
 
@@ -459,7 +459,7 @@ function HomeContent() {
         { label: "web", detail: "responsive interfaces, prototypes and digital experiences" },
         { label: "direction", detail: "concept, visual language and cross-media consistency" },
         { label: "strategy", detail: "research, architecture and communication decisions" },
-        { label: "motion", detail: "animation, rhythm, interaction and transforming images" },
+        { label: "motion", detail: "animation, rhythm, interaction and images that change" },
         { label: "technology", detail: "creative coding, generative AI and experimentation" },
       ];
   const heroLines = HERO_HEADLINES[lang][headlineIndex] ?? HERO_HEADLINES[lang][0];

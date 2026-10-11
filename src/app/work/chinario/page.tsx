@@ -27,7 +27,8 @@ export default function ChinaRioProject() {
     <ProjectShell accent="#c90035"
       title={
         <>
-          <strong style={{ color: "#c90035", fontWeight: 700 }}>china-rio:</strong> pontes para inovação
+          <strong style={{ color: "#c90035", fontWeight: 700 }}>china-rio:</strong>{" "}
+          {pt ? "pontes para inovação" : "bridges to innovation"}
         </>
       }
       desc={
@@ -48,7 +49,7 @@ export default function ChinaRioProject() {
           intro={
             pt
               ? "A identidade organiza encontro, diplomacia e inovação sem recorrer a uma estética institucional fria. Formas modulares constroem uma ponte visual entre Rio e China."
-              : "The identity brings together encounter, diplomacy and innovation without relying on a cold institutional aesthetic. Modular forms build a visual bridge between Rio and China."
+              : "The identity brings together meetings, diplomacy and innovation without falling back on a cold institutional look. Modular forms build a visual bridge between Rio and China."
           }
         >
           <CaseFigure
@@ -114,7 +115,7 @@ export default function ChinaRioProject() {
           intro={
             pt
               ? "Nos materiais longos, a identidade mantém coerência sem perder variação. As duas folhas são apresentadas como documentos paralelos, quase um díptico."
-              : "Across longer materials, the identity remains coherent without losing variation. The two sheets appear as parallel documents, almost a diptych."
+              : "In longer materials, the identity stays consistent without losing variety. The two sheets appear as parallel documents, almost a diptych."
           }
         >
           <div className="tc-grid tc-grid--two tc-grid--offset">

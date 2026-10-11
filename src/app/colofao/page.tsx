@@ -165,7 +165,7 @@ export default function Colofao() {
         <p className="cf__abre">
           {pt
             ? "Como nos livros de antigamente: a página que conta com o que — e com quanto carinho — esta edição foi feita."
-            : "Like in old books: the page that tells what — and with how much care — this edition was made."}
+            : "As in old books: the page that tells what this edition was made with — and how much care went into it."}
         </p>
 
         <div className="cf__fio" aria-hidden="true">{FIO}</div>

@@ -229,7 +229,7 @@ const copy = {
     exhibitionKicker: "02 / exhibition context",
     exhibitionTitle: "digital art in the ocean decade",
     exhibitionIntro:
-      "Cyber Marinum is part of the 1st National Crypto Art Exhibition — Ocean Decade, which brings Brazilian art, science and technology together to reflect on coexistence and sustainability. Conceived by Byron Mendes and curated by Marcio Harum, the exhibition places interactivity, sensoriality and emotion at the centre of its journey.",
+      "Cyber Marinum is part of the 1st National Crypto Art Exhibition — Ocean Decade, which brings Brazilian art, science and technology together to reflect on coexistence and sustainability. Conceived by Byron Mendes and curated by Marcio Harum, the exhibition puts interactivity, the senses and emotion at the center of the visit.",
     exhibitionFacts: [
       { label: "exhibition", value: "1st National Crypto Art Exhibition" },
       { label: "theme", value: "Ocean Decade · Unesco" },
@@ -238,7 +238,7 @@ const copy = {
     interactionKicker: "03 / interaction",
     interactionTitle: "presence enters the system",
     interaction:
-      "A motion-sensitive camera detects the audience approaching. This data feeds the control system and changes the colours, intensity and forms projected behind the tank in real time.",
+      "A motion-sensitive camera detects the audience approaching. This data feeds the control system and changes the colors, intensity and forms projected behind the tank in real time.",
     interactionSteps: [
       { n: "01", title: "presence", body: "the audience approaches the work" },
       { n: "02", title: "reading", body: "sensors send data to the system" },
@@ -256,7 +256,7 @@ const copy = {
     systemKicker: "05 / system",
     systemTitle: "technology appears in layers",
     system:
-      "Cables, camera, monitor, computer and lighting remain close to the aquarium. The technical apparatus is not an autonomous effect: it supports the translation between human presence and visual response.",
+      "Cables, camera, monitor, computer and lighting remain close to the aquarium. The technical setup isn't there for its own sake: it carries the translation between human presence and visual response.",
     cabinetTitle: "infrastructure",
     cabinetBody:
       "The cabinet houses power, computer and controls that keep the system running.",

@@ -196,7 +196,7 @@ const styles = `
 `;
 
 export default function VegCozProject() {
-  const { t } = useT();
+  const { t, lang } = useT();
 
   const fases = [
     { n: "01", tt: t("vz_f1"), d: t("vz_f1_d") },
@@ -220,15 +220,11 @@ export default function VegCozProject() {
     <ProjectShell accent="#4f7f3a"
       title={
         <>
-          <strong style={{ color: "#4f7f3a", fontWeight: 700 }}>vegcoz:</strong> culinária consciente
+          <strong style={{ color: "#4f7f3a", fontWeight: 700 }}>vegcoz:</strong>{" "}
+          {lang === "en" ? "conscious cooking" : "culinária consciente"}
         </>
       }
-      desc={
-        <>
-          {t("vegcoz_desc_1")} <span className="pj-em">{t("vegcoz_desc_em")}</span>
-          {t("vegcoz_desc_2")}
-        </>
-      }
+      desc={t("vegcoz_desc_1")}
       meta={[
         { label: t("vegcoz_meta_ctx"), value: t("vegcoz_meta_ctx_val") },
         { label: t("vegcoz_meta_role"), value: t("vegcoz_meta_role_val") },

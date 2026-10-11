@@ -855,7 +855,7 @@ export default function ProjectShell({
               )}
               {role && (
                 <div className="pj-impact__col">
-                  <h3 className="pj-impact__label">{lang === "pt" ? "Meu Papel" : "My Role"}</h3>
+                  <h3 className="pj-impact__label">{lang === "pt" ? "Meu Papel" : "My role"}</h3>
                   <div className="pj-impact__body">{role}</div>
                 </div>
               )}

@@ -119,7 +119,7 @@ export default function NotFound() {
             : "maybe it became a draft, maybe it never existed at all."}
         </p>
         <Link href="/" className="nf__voltar">
-          [ {pt ? "voltar pro início" : "back to start"} ]
+          [ {pt ? "voltar pro início" : "back to home"} ]
         </Link>
         <p className="nf__fio" aria-hidden="true">.・。.・゜✭・.・✫・゜・。.</p>
       </div>

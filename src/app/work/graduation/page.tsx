@@ -59,7 +59,7 @@ export default function GraduationProject() {
           intro={
             pt
               ? "Levei o cartão-postal como referência inicial: granulado de impressão barata, saturação alta e a onda do calçadão. A identidade usa um padrão que muda de cor conforme a peça; a repetição está no desenho, não numa marca fixa."
-              : "I brought the postcard in as the starting reference: cheap-print grain, high saturation and the Copacabana promenade wave. The identity uses a pattern that changes colour with each piece; the repetition sits in the drawing, not in a fixed mark."
+              : "I brought the postcard in as the starting reference: cheap-print grain, high saturation and the wave pattern of the Copacabana promenade. The identity uses a pattern that changes color with each piece; the repetition sits in the drawing, not in a fixed mark."
           }
         >
           <CaseFigure
@@ -80,7 +80,7 @@ export default function GraduationProject() {
           intro={
             pt
               ? "A seleção dos ícones foi uma decisão editorial. Cristo e Pão de Açúcar dão ao convidado uma entrada reconhecível. Guaravita, cadeira de plástico, biscoito Globo e joelho de padaria trazem o Rio que depende de alguém daqui apontar."
-              : "Choosing the icons was an editorial decision. Christ the Redeemer and Sugarloaf give guests a recognisable way in. Guaravita, a plastic chair, Globo biscuits and the corner-bakery joelho bring in the Rio that depends on someone from here pointing it out."
+              : "Choosing the icons was an editorial decision. Christ the Redeemer and Sugarloaf give guests a recognizable way in. Guaravita, a plastic chair, Globo biscuits and the corner-bakery joelho bring in the Rio that depends on someone from here pointing it out."
           }
         >
           <div className="tc-grid tc-grid--two tc-grid--offset">
@@ -133,7 +133,7 @@ export default function GraduationProject() {
           intro={
             pt
               ? "Na ecobag de linho, a impressão em uma cor reduz o sistema ao traço e ao ritmo dos ícones. Os adesivos levam o mesmo desenho para objeto pessoal — notebook, garrafa, caderno."
-              : "On the linen tote, the single-colour print strips the system down to the drawing and the rhythm of the icons. The stickers carry the same drawing onto personal objects — a laptop, a bottle, a notebook."
+              : "On the linen tote, the single-color print strips the system down to the drawing and the rhythm of the icons. The stickers carry the same drawing onto personal objects — a laptop, a bottle, a notebook."
           }
         >
           <div className="tc-grid tc-grid--two tc-grid--offset">

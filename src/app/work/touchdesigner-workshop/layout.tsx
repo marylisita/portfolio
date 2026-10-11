@@ -3,11 +3,11 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Oficina de TouchDesigner — vídeo mapping",
   description:
-    "Oficina introdutória de programação visual, gráficos em tempo real e vídeo mapping com TouchDesigner, realizada no LAID/UFRJ.",
+    "Oficina de quatro horas de introdução à programação visual e à arte generativa no TouchDesigner, realizada no LAID/UFRJ como pesquisa experimental de PIBIC e TCC.",
   openGraph: {
     title: "Oficina de TouchDesigner — vídeo mapping",
     description:
-      "Um percurso de quatro horas: da lógica nodal aos primeiros patches funcionais.",
+      "Programação criativa sem código escrito: 17 inscrições, 10 vagas e protótipos próprios no fim.",
     images: [
       {
         url: "/img/touchdesigner-workshop/cartaz-oficina-v2.webp",
