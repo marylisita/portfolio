@@ -57,57 +57,39 @@ const styles = `
     font-size: var(--type-micro); text-transform: lowercase; letter-spacing: .1em;
     color: var(--site-ink, #1C1B18);
   }
-  .sh--l { display: flex; flex-direction: column; gap: .12rem; line-height: 1.1; min-width: 0; }
+  .sh--l { display: flex; align-items: center; min-width: 0; }
   .sh__mark {
-    font-family: var(--font-pixelscript, cursive);
-    /* nowrap no bloco inteiro: dentro da faixa a assinatura divide a linha com
-       a navegacao, e sem isto o asterisco quebrava sozinho para cima do nome.
-       O tamanho de heroi tambem acompanha a largura -- em 2.3rem fixos o nome
-       tem 476px e, somado a navegacao, estourava a linha perto dos 900px. */
-    white-space: nowrap;
-    font-weight: 400; font-size: clamp(1.6rem, 2.6vw, 2.3rem); letter-spacing: 0;
-    line-height: 1; text-transform: none;
-    font-kerning: normal;
-    font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
-    text-rendering: optimizeLegibility;
-    color: inherit; text-decoration: none;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    color: inherit;
+    text-decoration: none;
+    padding: .2rem 0;
   }
-  /* A marca ML no lugar do antigo asterisco. É também onde a tela de
-     carregamento pousa a logo; enquanto ela toca, a marca fica escondida. */
+  /* A marca ML no cabeçalho. É também onde a tela de carregamento pousa a
+     logo; enquanto ela toca, a marca fica escondida. */
   .sh__logo {
-    height: 1.18em;
+    height: clamp(2rem, 3.2vw, 2.75rem);
     width: auto;
-    margin-right: .18em;
-    vertical-align: -.2em;
+    display: block;
     transform-origin: 50% 60%;
-    transition: transform .2s var(--ease-out, ease);
+    transition: transform .22s var(--ease-out, ease), height .3s var(--ease-out, ease);
+  }
+  .sh-bar[data-floating="true"] .sh__logo {
+    height: clamp(1.45rem, 2.3vw, 1.85rem);
   }
   html[data-intro="play"] .sh__logo { visibility: hidden; }
-  .sh__name {
-    position: relative;
-    white-space: nowrap;
-  }
-  .sh__name-word { display: inline; }
-  .sh__name-word--isabel { letter-spacing: -.035em; }
-  /* A explosão do hover: faíscas ASCII que saem de pontos diferentes do nome
-     e caem em arco. Antes era uma fileira fixa ("✦ · ♡ ⋆") que subia reta e
-     sumia pela borda de cima da janela. O movimento e a forma de cada faísca
-     ficam em sparkBurst.ts, compartilhado com a logo. */
+  /* A explosão do hover: faíscas ASCII que saem da logo e caem em arco festivo */
   .sh__burst {
     position: absolute;
-    inset: 0;
+    inset: -8px;
     pointer-events: none;
   }
   .sh__mark:hover .sh__logo,
-  .sh__mark:focus-visible .sh__logo { transform: rotate(-6deg) translateY(-1px); }
-  .sh__mark:focus-visible { outline: 2px dotted var(--site-ink, #1C1B18); outline-offset: 4px; }
-  /* No heroi a assinatura faz parte da composicao e fica grande; passada a
-     abertura ela vira chrome e encolhe. O fundo saiu daqui: quem carrega o
-     vidro agora e a faixa. */
-  .sh__mark { transition: font-size .3s var(--ease-out, ease); }
-  @media (min-width: 861px) {
-    .sh-bar[data-floating="true"] .sh__mark { font-size: 1.35rem; }
+  .sh__mark:focus-visible .sh__logo {
+    transform: rotate(-5deg) translateY(-2px) scale(1.08);
   }
+  .sh__mark:focus-visible { outline: 2px dotted var(--site-ink, #1C1B18); outline-offset: 4px; }
   /* position: relative ancora o menu suspenso do celular, que e absoluto. */
   .sh--r {
     position: relative;
@@ -255,7 +237,11 @@ export default function SiteHeader() {
     const now = performance.now();
     if (now - lastBurstRef.current < 450) return;
     lastBurstRef.current = now;
-    sparkBurst(host);
+    sparkBurst(host, {
+      size: 22,
+      count: 18,
+      area: { left: -10, top: -10, width: 120, height: 120 },
+    });
   };
   const onMarkPointerEnter = (event: PointerEvent<HTMLAnchorElement>) => {
     if (event.pointerType !== "touch") fireBurst();
@@ -284,18 +270,14 @@ export default function SiteHeader() {
         <Link
           href="/"
           className="sh__mark"
+          aria-label="Maria Isabel Lisita"
           onPointerEnter={onMarkPointerEnter}
           onFocus={onMarkFocus}
         >
           <MonogramMark className="sh__logo" />
-          <span className="sh__name" aria-label="Maria Isabel Lisita">
-            <span className="sh__name-word">Maria</span>{" "}
-            <span className="sh__name-word sh__name-word--isabel">Isabel</span>{" "}
-            <span className="sh__name-word">Lisita</span>
-            {/* Vazio de propósito: as faíscas entram aqui pelo DOM e saem
-                sozinhas; o React não tem filhos para reconciliar neste nó. */}
-            <span ref={burstRef} className="sh__burst" aria-hidden="true" />
-          </span>
+          {/* Vazio de propósito: as faíscas entram aqui pelo DOM e saem
+              sozinhas; o React não tem filhos para reconciliar neste nó. */}
+          <span ref={burstRef} className="sh__burst" aria-hidden="true" />
         </Link>
       </span>
       <span className="sh sh--r">
