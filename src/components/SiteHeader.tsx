@@ -69,20 +69,20 @@ const styles = `
   /* A marca ML no cabeçalho. É também onde a tela de carregamento pousa a
      logo; enquanto ela toca, a marca fica escondida. */
   .sh__logo {
-    height: clamp(2rem, 3.2vw, 2.75rem);
+    height: clamp(2.75rem, 4.4vw, 3.75rem);
     width: auto;
     display: block;
     transform-origin: 50% 60%;
     transition: transform .22s var(--ease-out, ease), height .3s var(--ease-out, ease);
   }
   .sh-bar[data-floating="true"] .sh__logo {
-    height: clamp(1.45rem, 2.3vw, 1.85rem);
+    height: clamp(1.95rem, 3.2vw, 2.5rem);
   }
   html[data-intro="play"] .sh__logo { visibility: hidden; }
   /* A explosão do hover: faíscas ASCII que saem da logo e caem em arco festivo */
   .sh__burst {
     position: absolute;
-    inset: -8px;
+    inset: -12px;
     pointer-events: none;
   }
   .sh__mark:hover .sh__logo,
@@ -238,8 +238,8 @@ export default function SiteHeader() {
     if (now - lastBurstRef.current < 450) return;
     lastBurstRef.current = now;
     sparkBurst(host, {
-      size: 22,
-      count: 18,
+      size: 26,
+      count: 20,
       area: { left: -10, top: -10, width: 120, height: 120 },
     });
   };
