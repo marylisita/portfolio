@@ -35,18 +35,26 @@ const styles = `
   background-color: transparent;
   border: 4px solid var(--btn-border);
   cursor: pointer;
-  transition: var(--btn-transition);
+  transition:
+    transform 0.16s var(--ease-out, ease-out),
+    background-color 0.18s ease-out,
+    border-color 0.18s ease-out,
+    color 0.18s ease-out;
   text-decoration: none;
   text-transform: uppercase;
   letter-spacing: 0.1rem;
 }
 
 .ascii-btn:hover, .ascii-btn:focus-visible {
-  transform: scale(1.2) rotate(10deg);
+  transform: scale(1.04);
   background-color: var(--btn-hover-bg);
   color: var(--btn-hover-color);
   border-color: var(--btn-hover-bg);
   outline: none;
+}
+
+.ascii-btn:active {
+  transform: scale(0.96);
 }
 
 .ascii-btn-inner {

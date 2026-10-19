@@ -10,6 +10,9 @@ const styles = `
     outline: 2px solid var(--ink, #1C1B18);
     outline-offset: 3px;
   }
+  .lang-toggle:active {
+    transform: scale(0.96);
+  }
 `;
 
 export default function LangToggle() {

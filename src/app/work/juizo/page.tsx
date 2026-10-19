@@ -32,6 +32,14 @@ const SHOTS = [
 
 const localStyles = `
   .jz-shot { max-width: 22rem; margin-inline: auto; }
+  .jz-shot img {
+    border-radius: clamp(1.4rem, 2.8vw, 2.2rem);
+    border: 1px solid color-mix(in srgb, var(--tc-ink) 14%, transparent);
+    box-shadow:
+      0 4px 16px -4px color-mix(in srgb, var(--tc-ink) 12%, transparent),
+      0 16px 36px -10px color-mix(in srgb, var(--tc-ink) 8%, transparent);
+    background: #ffffff;
+  }
 
   .jz-stats {
     display: grid;

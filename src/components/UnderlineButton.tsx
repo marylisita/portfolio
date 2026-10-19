@@ -18,6 +18,11 @@ const styles = `
   background: none;
   padding: 0;
   margin: 0;
+  transition: transform var(--duration-fast, 200ms) var(--ease-out, ease);
+}
+
+.ul-btn:active {
+  transform: scale(0.96);
 }
 
 .ul-btn p {
@@ -72,11 +77,15 @@ export default function UnderlineButton({
   href,
   onClick,
   className = "",
+  target,
+  rel,
 }: {
   children: React.ReactNode;
   href?: string;
   onClick?: React.MouseEventHandler<HTMLElement>;
   className?: string;
+  target?: string;
+  rel?: string;
 }) {
   const text = React.Children.toArray(children)
     .filter((child): child is string | number => typeof child === "string" || typeof child === "number")
@@ -88,14 +97,14 @@ export default function UnderlineButton({
   if (href) {
     if (href.startsWith("#")) {
       return (
-        <a href={href} onClick={onClick} className={`ul-btn hover-trigger ${className}`}>
+        <a href={href} onClick={onClick} className={`ul-btn hover-trigger ${className}`} target={target} rel={rel}>
           <style>{styles}</style>
           {content}
         </a>
       );
     }
     return (
-      <Link href={href} className={`ul-btn hover-trigger ${className}`} onClick={onClick}>
+      <Link href={href} className={`ul-btn hover-trigger ${className}`} onClick={onClick} target={target} rel={rel}>
         <style>{styles}</style>
         {content}
       </Link>

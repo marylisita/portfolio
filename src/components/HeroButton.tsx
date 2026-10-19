@@ -48,7 +48,7 @@ const styles = `
 
 /* Pressao discreta: confirma o toque sem deslocar o que esta em volta. */
 .hero-btn:active {
-  transform: scale(.97);
+  transform: scale(0.96);
 }
 
 .hero-btn p {

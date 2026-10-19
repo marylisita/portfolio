@@ -22,6 +22,7 @@ import type { IndexItem } from "@/components/EditorialIndex";
 import { getProjectStory, type ProjectStory } from "@/content/projectStories";
 import EditorialFooter from "@/components/EditorialFooter";
 import SiteHeader from "@/components/SiteHeader";
+import { useVisitedProjects } from "@/lib/visitedProjects";
 import ScrambleText, {
   COLORS as SCRAMBLE_COLORS,
   GLYPHS as SCRAMBLE_GLYPHS,
@@ -243,6 +244,8 @@ type ChapterProps = {
    quem entra no case reconhece por onde já passou. */
 function WorkChapter({ project, story, sewn, active, first, still, observe }: ChapterProps) {
   const { t, lang } = useT();
+  const visitedProjects = useVisitedProjects();
+  const isVisited = visitedProjects.has(project.href);
   const pt = lang !== "en";
   const chapterRef = useRef<HTMLElement | null>(null);
 
@@ -294,6 +297,9 @@ function WorkChapter({ project, story, sewn, active, first, still, observe }: Ch
           <p className="wk-ch__kicker">
             <span className="wk-ch__count">
               <span className="wk-ch__num">nº {project.num}</span>
+              {isVisited ? (
+                <span className="wk-ch__read">[ {pt ? "lido ✓" : "read ✓"} ]</span>
+              ) : null}
               <AsciiRow />
             </span>
             <span>{project.tags}</span>
@@ -570,7 +576,7 @@ const styles = `
     outline: 2px solid var(--site-ink);
     outline-offset: 2px;
   }
-  .wk-opt:active { transform: scale(.97); }
+  .wk-opt:active { transform: scale(0.96); }
 
   .wk-where {
     flex: none;
@@ -768,6 +774,14 @@ const styles = `
     color: var(--wk-pink-text);
     font-variant-numeric: tabular-nums;
   }
+  .wk-ch__read {
+    color: var(--wk-ch-line);
+    font-family: var(--font-subtitle), monospace;
+    font-size: var(--type-micro);
+    font-weight: var(--offbit-weight-active);
+    letter-spacing: .04em;
+    white-space: nowrap;
+  }
   .wk-page .wk-ch__title {
     margin: 0 0 clamp(1.6rem, 2.6vw, 2.4rem);
     transition: color 600ms var(--ease-default);
@@ -955,13 +969,17 @@ const styles = `
     .wk-where__label,
     .wk-where__spool { display: none; }
     .wk-where__slash { display: inline; }
-    /* A fileira rola de lado; o esmaecido na borda avisa que tem mais. */
-    .wk-options {
-      -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 2.2rem), transparent);
-      mask-image: linear-gradient(90deg, #000 calc(100% - 2.2rem), transparent);
-    }
     .wk-page .wk-ch__title { font-size: clamp(2.2rem, 10.5vw, 2.9rem); }
     .wk-needle__body { width: 8px; height: 36px; margin-left: -4px; }
+  }
+
+  @media (max-width: 860px) {
+    /* A fileira rola de lado; o esmaecido na borda avisa que tem mais. */
+    .wk-options {
+      padding-right: 2rem;
+      -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 2.4rem), transparent);
+      mask-image: linear-gradient(90deg, #000 calc(100% - 2.4rem), transparent);
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {

@@ -60,6 +60,9 @@ const styles = `
     color: var(--tc-accent);
     translate: 0 -2px;
   }
+  .flipbook__button:not(:disabled):active {
+    transform: scale(0.96);
+  }
   .flipbook__button:focus-visible {
     outline: 1px dotted currentColor;
     outline-offset: 3px;

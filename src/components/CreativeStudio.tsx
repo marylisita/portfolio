@@ -8,6 +8,7 @@ import {
   useMemo,
   useRef,
   useState,
+  useSyncExternalStore,
 } from "react";
 import { useT } from "@/i18n/LanguageContext";
 
@@ -34,6 +35,7 @@ type StudioContextValue = {
   moved: boolean;
   resetToken: number;
   cyclePaper: () => void;
+  setPaperMode: (mode: PaperMode) => void;
   toggleStampMode: () => void;
   addStamp: (x: number, y: number) => void;
   clearStamps: () => void;
@@ -120,30 +122,42 @@ const STAMPS = [
   "✿",
 ] as const;
 
-const PAPER_ORDER: PaperMode[] = ["cream", "cyanotype", "vellum", "vinyl"];
-const PAPER_GLYPH: Record<PaperMode, string> = {
+export const PAPER_ORDER: PaperMode[] = ["cream", "cyanotype", "vellum", "vinyl"];
+export const PAPER_GLYPH: Record<PaperMode, string> = {
   cream: "▧",
   cyanotype: "▩",
   vellum: "▨",
   vinyl: "◉",
 };
-const PAPER_TOKENS: Record<PaperMode, Record<string, string>> = {
+export const PAPER_TOKENS: Record<PaperMode, Record<string, string>> = {
   cream: {
     "--site-paper": "#EDE7DA",
     "--site-ink": "#1C1B18",
     /* Precisa espelhar --site-accent do globals.css: este objeto reescreve o
        token ao voltar para o creme, e um preto aqui apagaria o rosa. */
     "--site-accent": "#C4125F",
+    "--site-accent-rgb": "196, 18, 95",
+    "--site-tint-a": "#F6F1E6",
+    "--site-tint-b": "#E6DCCB",
+    "--site-tint-c": "#F1E7D6",
   },
   cyanotype: {
     "--site-paper": "#12344d",
     "--site-ink": "#c8eff2",
     "--site-accent": "#8edbe5",
+    "--site-accent-rgb": "142, 219, 229",
+    "--site-tint-a": "#173e59",
+    "--site-tint-b": "#0c263d",
+    "--site-tint-c": "#1a4961",
   },
   vellum: {
     "--site-paper": "#e6e9e6",
     "--site-ink": "#242725",
     "--site-accent": "#55605b",
+    "--site-accent-rgb": "85, 96, 91",
+    "--site-tint-a": "#f4f6f3",
+    "--site-tint-b": "#d4dad6",
+    "--site-tint-c": "#edf0ed",
   },
   /* Papel "vinil": o quarto rosa das referências, não o rosa quente puro --
      uma página inteira em #FF2E9A não sustenta leitura. O tom quente fica
@@ -153,8 +167,59 @@ const PAPER_TOKENS: Record<PaperMode, Record<string, string>> = {
     "--site-paper": "#FFC7E0",
     "--site-ink": "#1A0710",
     "--site-accent": "#A3005A",
+    "--site-accent-rgb": "163, 0, 90",
+    "--site-tint-a": "#FFDCEC",
+    "--site-tint-b": "#F7AFD0",
+    "--site-tint-c": "#FFD2E6",
   },
 };
+
+const PAPER_STORAGE_KEY = "mary-paper-mode";
+const PAPER_EVENT = "mary:paper";
+
+function isPaperMode(val: string | null): val is PaperMode {
+  return val === "cream" || val === "cyanotype" || val === "vellum" || val === "vinyl";
+}
+
+export function applyPaperTokensToRoot(mode: PaperMode) {
+  if (typeof document === "undefined") return;
+  const root = document.documentElement;
+  root.dataset.paper = mode;
+  Object.entries(PAPER_TOKENS[mode]).forEach(([name, value]) => {
+    root.style.setProperty(name, value);
+  });
+}
+
+export function readStoredPaper(): PaperMode {
+  if (typeof window === "undefined") return "cream";
+  try {
+    const val = sessionStorage.getItem(PAPER_STORAGE_KEY);
+    return isPaperMode(val) ? val : "cream";
+  } catch {
+    return "cream";
+  }
+}
+
+export function writeStoredPaper(mode: PaperMode) {
+  if (typeof window === "undefined") return;
+  try {
+    sessionStorage.setItem(PAPER_STORAGE_KEY, mode);
+  } catch {
+    // Ignore storage quota / privacy errors
+  }
+  applyPaperTokensToRoot(mode);
+  window.dispatchEvent(new Event(PAPER_EVENT));
+}
+
+export function subscribeStoredPaper(onChange: () => void) {
+  if (typeof window === "undefined") return () => undefined;
+  window.addEventListener(PAPER_EVENT, onChange);
+  window.addEventListener("storage", onChange);
+  return () => {
+    window.removeEventListener(PAPER_EVENT, onChange);
+    window.removeEventListener("storage", onChange);
+  };
+}
 
 const StudioContext = createContext<StudioContextValue>({
   studioActive: false,
@@ -166,6 +231,7 @@ const StudioContext = createContext<StudioContextValue>({
   moved: false,
   resetToken: 0,
   cyclePaper: () => undefined,
+  setPaperMode: () => undefined,
   toggleStampMode: () => undefined,
   addStamp: () => undefined,
   clearStamps: () => undefined,
@@ -226,7 +292,7 @@ function makeAudioHit(context: AudioContext, kind: StudioSound) {
 }
 
 export function CreativeStudioProvider({ children }: { children: React.ReactNode }) {
-  const [paper, setPaper] = useState<PaperMode>("cream");
+  const paper = useSyncExternalStore(subscribeStoredPaper, readStoredPaper, () => "cream" as PaperMode);
   const [stampMode, setStampMode] = useState(false);
   const [stamps, setStamps] = useState<Stamp[]>([]);
   const [stampIndex, setStampIndex] = useState(0);
@@ -247,11 +313,15 @@ export function CreativeStudioProvider({ children }: { children: React.ReactNode
     makeAudioHit(context, kind);
   }, []);
 
+  const setPaperMode = useCallback((next: PaperMode) => {
+    writeStoredPaper(next);
+    playSound("paper");
+  }, [playSound]);
+
   const cyclePaper = useCallback(() => {
-    setPaper((current) => {
-      const next = PAPER_ORDER[(PAPER_ORDER.indexOf(current) + 1) % PAPER_ORDER.length];
-      return next;
-    });
+    const current = readStoredPaper();
+    const next = PAPER_ORDER[(PAPER_ORDER.indexOf(current) + 1) % PAPER_ORDER.length];
+    writeStoredPaper(next);
     playSound("paper");
   }, [playSound]);
 
@@ -307,21 +377,13 @@ export function CreativeStudioProvider({ children }: { children: React.ReactNode
 
   useEffect(() => {
     // O HTML já nasce com os tokens de "cream". Reescrevê-los na primeira
-    // hidratação invalida os estilos da página inteira e posterga o LCP.
+    // hidratação se continuar "cream" invalida os estilos da página inteira e posterga o LCP.
     if (!paperEffectMounted.current) {
       paperEffectMounted.current = true;
-      return;
+      if (paper === "cream") return;
     }
 
-    const root = document.documentElement;
-    root.dataset.paper = paper;
-    Object.entries(PAPER_TOKENS[paper]).forEach(([name, value]) => {
-      root.style.setProperty(name, value);
-    });
-    return () => {
-      delete root.dataset.paper;
-      Object.keys(PAPER_TOKENS[paper]).forEach((name) => root.style.removeProperty(name));
-    };
+    applyPaperTokensToRoot(paper);
   }, [paper]);
 
   const value = useMemo<StudioContextValue>(() => ({
@@ -334,6 +396,7 @@ export function CreativeStudioProvider({ children }: { children: React.ReactNode
     moved,
     resetToken,
     cyclePaper,
+    setPaperMode,
     toggleStampMode,
     addStamp,
     clearStamps,
@@ -351,6 +414,7 @@ export function CreativeStudioProvider({ children }: { children: React.ReactNode
     playSound,
     resetTable,
     resetToken,
+    setPaperMode,
     soundEnabled,
     stampIndex,
     stampMode,
