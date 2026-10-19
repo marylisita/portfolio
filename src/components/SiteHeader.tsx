@@ -69,16 +69,60 @@ const styles = `
   /* A marca ML no cabeçalho. É também onde a tela de carregamento pousa a
      logo; enquanto ela toca, a marca fica escondida. */
   .sh__logo {
-    height: clamp(2.75rem, 4.4vw, 3.75rem);
+    height: clamp(3.2rem, 5vw, 4.15rem);
     width: auto;
     display: block;
     transform-origin: 50% 60%;
-    transition: transform .22s var(--ease-out, ease), height .3s var(--ease-out, ease);
+    transition: transform .25s var(--ease-out, ease), height .3s var(--ease-out, ease);
   }
   .sh-bar[data-floating="true"] .sh__logo {
-    height: clamp(1.95rem, 3.2vw, 2.5rem);
+    height: clamp(2.35rem, 3.6vw, 2.85rem);
   }
   html[data-intro="play"] .sh__logo { visibility: hidden; }
+
+  /* Detalhes extras da logo que florescem no hover */
+  .sh__extra-accents {
+    opacity: 0;
+    transition: opacity .32s ease;
+  }
+  .sh__mark:hover .sh__extra-accents,
+  .sh__mark:focus-visible .sh__extra-accents {
+    opacity: 1;
+  }
+
+  /* Nome em PF Pixelscript que surge suavemente ao lado da logo no hover */
+  .sh__wordmark {
+    font-family: var(--font-pixelscript), cursive;
+    font-weight: 400;
+    font-size: clamp(1.2rem, 1.9vw, 1.55rem);
+    line-height: 1;
+    letter-spacing: .01em;
+    color: var(--site-ink, #1C1B18);
+    text-transform: none;
+    white-space: nowrap;
+    max-width: 0;
+    opacity: 0;
+    transform: translateX(-10px);
+    overflow: hidden;
+    margin-left: 0;
+    pointer-events: none;
+    transition:
+      max-width .45s cubic-bezier(.16, 1, .3, 1),
+      opacity .35s ease,
+      transform .45s cubic-bezier(.16, 1, .3, 1),
+      margin-left .35s ease;
+  }
+  .sh-bar[data-floating="true"] .sh__wordmark {
+    font-size: clamp(1.05rem, 1.6vw, 1.35rem);
+  }
+  .sh__mark:hover .sh__wordmark,
+  .sh__mark:focus-visible .sh__wordmark {
+    max-width: 280px;
+    opacity: 1;
+    transform: translateX(0);
+    margin-left: .85rem;
+  }
+
   /* A explosão do hover: faíscas ASCII que saem da logo e caem em arco festivo */
   .sh__burst {
     position: absolute;
@@ -87,7 +131,7 @@ const styles = `
   }
   .sh__mark:hover .sh__logo,
   .sh__mark:focus-visible .sh__logo {
-    transform: rotate(-5deg) translateY(-2px) scale(1.08);
+    transform: rotate(-5deg) translateY(-2px) scale(1.06);
   }
   .sh__mark:focus-visible { outline: 2px dotted var(--site-ink, #1C1B18); outline-offset: 4px; }
   /* position: relative ancora o menu suspenso do celular, que e absoluto. */
@@ -209,7 +253,10 @@ const styles = `
        botao e volta a estourar a borda. O tamanho tambem cai um degrau, para
        o nome inteiro caber ao lado do botao numa tela de 360px. */
     .sh--l { min-width: 0; }
-    .sh__mark { font-size: clamp(.95rem, 4.6vw, 1.35rem); line-height: .98; }
+    .sh__mark { line-height: .98; }
+    .sh__wordmark { display: none; }
+    .sh__logo { height: clamp(2.35rem, 6.8vw, 2.95rem); }
+    .sh-bar[data-floating="true"] .sh__logo { height: clamp(1.95rem, 5.2vw, 2.35rem); }
   }
 `;
 
@@ -274,7 +321,10 @@ export default function SiteHeader() {
           onPointerEnter={onMarkPointerEnter}
           onFocus={onMarkFocus}
         >
-          <MonogramMark className="sh__logo" />
+          <MonogramMark className="sh__logo" hoverReveal={true} />
+          <span className="sh__wordmark" aria-hidden="true">
+            maria isabel lisita
+          </span>
           {/* Vazio de propósito: as faíscas entram aqui pelo DOM e saem
               sozinhas; o React não tem filhos para reconciliar neste nó. */}
           <span ref={burstRef} className="sh__burst" aria-hidden="true" />
