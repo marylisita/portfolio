@@ -30,27 +30,23 @@ const styles = `
     /* A faixa cobre a largura inteira: se ela capturasse ponteiro, engoliria
        cliques do conteudo que passa por baixo. So os filhos recebem. */
     pointer-events: none;
-    --sh-glass-bg: color-mix(in srgb, var(--site-paper, #ede7da) 55%, transparent);
-    --sh-glass-edge: color-mix(in srgb, var(--site-paper, #ede7da) 80%, transparent);
-    --sh-glass-shadow: 0 .5rem 1.5rem -.7rem color-mix(in srgb, var(--site-ink, #1C1B18) 20%, transparent);
-    --sh-glass-blur: blur(14px) saturate(1.6);
-    --sh-glass-fade: .32s var(--ease-out, ease);
+    --sh-regua-bg: var(--site-paper, #ede7da);
+    --sh-regua-edge: color-mix(in srgb, var(--site-ink, #1C1B18) 18%, transparent);
+    --sh-regua-shadow: 0 4px 14px -4px color-mix(in srgb, var(--site-ink, #1C1B18) 8%, transparent);
+    --sh-fade: .28s var(--ease-out, ease);
     transition:
-      background-color var(--sh-glass-fade),
-      border-color var(--sh-glass-fade),
-      box-shadow var(--sh-glass-fade),
-      -webkit-backdrop-filter var(--sh-glass-fade),
-      backdrop-filter var(--sh-glass-fade);
+      background-color var(--sh-fade),
+      border-color var(--sh-fade),
+      box-shadow var(--sh-fade);
   }
   .sh-bar > * { pointer-events: auto; }
-  /* No heroi a faixa e invisivel: o menu e so texto sobre o papel da abertura.
-     Passados os 240px ela materializa e o conteudo passa por tras, borrado. */
+  /* No herói a régua é invisível: o menu é só texto sobre o papel da abertura.
+     Ao rolar (passados os 240px), a Régua Editorial de papel sólido assenta no topo,
+     com linha de corte limpa (guilhotina de livro) sem blur nem vidro. */
   .sh-bar[data-floating="true"] {
-    background: var(--sh-glass-bg);
-    border-bottom-color: var(--sh-glass-edge);
-    box-shadow: var(--sh-glass-shadow);
-    -webkit-backdrop-filter: var(--sh-glass-blur);
-    backdrop-filter: var(--sh-glass-blur);
+    background: var(--sh-regua-bg);
+    border-bottom-color: var(--sh-regua-edge);
+    box-shadow: var(--sh-regua-shadow);
   }
   .sh {
     font-family: var(--font-body), sans-serif;
