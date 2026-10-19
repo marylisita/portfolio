@@ -6,6 +6,7 @@ import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
 import FloatingBackToTop from "@/components/FloatingBackToTop";
 import AdaptiveCursor from "@/components/AdaptiveCursor";
+import SiteIntro, { INTRO_SCRIPT } from "@/components/SiteIntro";
 import { PageTransitionProvider } from "@/components/Curtains";
 import { LanguageProvider } from "@/i18n/LanguageContext";
 import { SITE_NAME, SITE_TAGLINE_PT, SITE_URL } from "@/content/site";
@@ -193,6 +194,8 @@ export default function RootLayout({
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: performanceTierScript }} />
+        {/* depois do modo lite: decide, antes da pintura, se a tela de carregamento toca */}
+        <script dangerouslySetInnerHTML={{ __html: INTRO_SCRIPT }} />
         <link rel="preconnect" href="https://use.typekit.net" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://p.typekit.net" crossOrigin="anonymous" />
         <link
@@ -240,6 +243,7 @@ export default function RootLayout({
                 transição aplica transform durante a saída, o que quebraria o
                 position:fixed do canvas. Aqui ele também não some no fade da troca de página. */}
             <AdaptiveCursor />
+            <SiteIntro />
             <div
               aria-hidden="true"
               data-paper-grain="global"
