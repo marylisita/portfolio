@@ -176,6 +176,18 @@ const styles = `
       0 0 0 4px color-mix(in srgb, var(--paper) 74%, transparent),
       3px 3px 0 color-mix(in srgb, var(--ink) 14%, transparent);
   }
+  .sm__tag:active {
+    transform: scale(0.96);
+  }
+  @media (max-height: 720px) and (min-width: 721px) {
+    .sm__cluster {
+      bottom: 4.2rem;
+      gap: .28rem;
+    }
+    .sm__cluster .sm__tag {
+      padding: .46rem .65rem;
+    }
+  }
   .sm__cluster .sm__portal { display: none; }
   @media (max-width: 720px) {
     .sm__tag { font-size: var(--type-label); padding: .55rem .7rem; }

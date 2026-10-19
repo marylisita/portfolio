@@ -16,6 +16,7 @@ import { getProjectStory } from "@/content/projectStories";
 import { useT } from "@/i18n/LanguageContext";
 import HeroButton from "./HeroButton";
 import { useNavTucked } from "./useScrollDirection";
+import { markProjectVisited } from "@/lib/visitedProjects";
 import { useEffect, useRef, type CSSProperties } from "react";
 
 const PROJECT_GLOWS = [
@@ -171,6 +172,18 @@ const styles = `
     box-shadow:
       0 0 0 4px color-mix(in srgb, var(--paper) 74%, transparent),
       3px 3px 0 color-mix(in srgb, var(--ink) 14%, transparent);
+  }
+  .pj-tag:active {
+    transform: scale(0.96);
+  }
+  @media (max-height: 720px) and (min-width: 721px) {
+    .pj-cluster {
+      bottom: 4.2rem;
+      gap: .28rem;
+    }
+    .pj-tag {
+      padding: .46rem .65rem;
+    }
   }
   .sh,
   .pj-tag,
@@ -677,6 +690,10 @@ export default function ProjectShell({
   const ornamentSize = ornamentIndex === 7 || ornamentIndex === 8
     ? "clamp(2.5px, .36vw, 5.2px)"
     : "clamp(3px, .42vw, 6px)";
+
+  useEffect(() => {
+    if (pathname) markProjectVisited(pathname);
+  }, [pathname]);
 
   useEffect(() => {
     const shell = shellRef.current;

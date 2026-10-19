@@ -12,6 +12,7 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from "react";
 import { useT } from "@/i18n/LanguageContext";
+import { useVisitedProjects } from "@/lib/visitedProjects";
 import type { IndexItem } from "./EditorialIndex";
 
 type DragState = {
@@ -105,6 +106,9 @@ const styles = `
     border-color: var(--site-accent-hot, var(--acid));
     color: var(--ink);
     transform: translateY(-2px);
+  }
+  .sw__button:not(:disabled):active {
+    transform: scale(0.96);
   }
   .sw__button:focus-visible {
     outline: 2px solid var(--ink);
@@ -232,12 +236,25 @@ const styles = `
     border-top: 1px solid color-mix(in srgb, var(--ink) 32%, transparent);
   }
   .sw__num {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: .2rem;
     font-family: var(--font-subtitle), monospace;
     font-size: clamp(1.25rem, 2vw, 1.75rem);
     font-weight: var(--offbit-weight-active);
     line-height: 1;
     letter-spacing: var(--offbit-letter-spacing);
-    opacity: .62;
+    opacity: .72;
+  }
+  .sw__read {
+    font-family: var(--font-subtitle), monospace;
+    font-size: .68rem;
+    font-weight: var(--offbit-weight-active);
+    letter-spacing: .04em;
+    line-height: 1;
+    color: var(--acid);
+    white-space: nowrap;
   }
   .sw__copy {
     min-width: 0;
@@ -368,6 +385,7 @@ const styles = `
 
 export default function ScatteredWorks({ items }: { items: IndexItem[] }) {
   const { lang } = useT();
+  const visitedProjects = useVisitedProjects();
   const viewportRef = useRef<HTMLDivElement>(null);
   const controlsRafRef = useRef(0);
   const glideRafRef = useRef(0);
@@ -394,6 +412,7 @@ export default function ScatteredWorks({ items }: { items: IndexItem[] }) {
         next: "próximos trabalhos",
         open: "ver projeto",
         end: "fim da seleção",
+        read: "lido ✓",
       }
     : {
         region: "horizontal gallery of selected work",
@@ -402,6 +421,7 @@ export default function ScatteredWorks({ items }: { items: IndexItem[] }) {
         next: "next projects",
         open: "view project",
         end: "end of selection",
+        read: "read ✓",
       };
 
   const updateControls = useCallback(() => {
@@ -693,7 +713,12 @@ export default function ScatteredWorks({ items }: { items: IndexItem[] }) {
                     ) : null}
                   </span>
                   <span className="sw__caption">
-                    <span className="sw__num">{item.num}</span>
+                    <span className="sw__num">
+                      <span>{item.num}</span>
+                      {visitedProjects.has(item.href) ? (
+                        <span className="sw__read">[ {labels.read} ]</span>
+                      ) : null}
+                    </span>
                     <span className="sw__copy">
                       <span className="sw__title">{item.title}</span>
                       <span className="sw__tags">{item.tags}</span>

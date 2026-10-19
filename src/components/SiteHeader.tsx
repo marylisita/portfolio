@@ -352,6 +352,7 @@ export default function SiteHeader() {
     { href: isHome ? "/work" : "/", label: isHome ? t("nav_work").toLowerCase() : t("pj_home").toLowerCase() },
     { href: "/#about", label: t("rm_menu_about") },
     { href: "/#contact", label: t("rm_menu_contact") },
+    { href: "/Curriculo_Maria_Isabel_Lisita.pdf", label: pt ? "currículo ↗" : "resume ↗", external: true },
   ];
 
   return (
@@ -399,6 +400,13 @@ export default function SiteHeader() {
           <UnderlineButton href="/#contact">
             {t("rm_menu_contact")}
           </UnderlineButton>
+          <UnderlineButton
+            href="/Curriculo_Maria_Isabel_Lisita.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {pt ? "currículo" : "resume"}
+          </UnderlineButton>
         </nav>
         <LangToggle />
         <button
@@ -419,7 +427,13 @@ export default function SiteHeader() {
           aria-label={pt ? "Navegação móvel" : "Mobile navigation"}
         >
           {mobileLinks.map((link) => (
-            <Link key={link.href} href={link.href} onClick={() => setMobileMenuOpen(false)}>
+            <Link
+              key={link.href}
+              href={link.href}
+              target={link.external ? "_blank" : undefined}
+              rel={link.external ? "noopener noreferrer" : undefined}
+              onClick={() => setMobileMenuOpen(false)}
+            >
               [ {link.label} ]
             </Link>
           ))}

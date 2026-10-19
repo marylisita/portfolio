@@ -6,6 +6,7 @@ import { motion, useReducedMotion, AnimatePresence } from "framer-motion";
 import { CSSProperties, ReactNode, useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import AsciiDivider from "./AsciiDivider";
+import { useT } from "@/i18n/LanguageContext";
 
 export type CaseVariant =
   | "chinario"
@@ -272,9 +273,14 @@ const styles = `
     height: auto;
     transition: filter var(--duration-slow) var(--ease-default);
   }
+  .tc-figure:focus-visible {
+    outline: 2px solid var(--tc-accent);
+    outline-offset: 6px;
+  }
   .tc-figure__cap {
     display: flex;
     justify-content: space-between;
+    align-items: baseline;
     gap: 1rem;
     padding: .65rem 0 .55rem;
     border-bottom: 1px dashed color-mix(in srgb, currentColor 34%, transparent);
@@ -284,7 +290,56 @@ const styles = `
     line-height: 1.4;
     letter-spacing: var(--offbit-letter-spacing);
     text-transform: lowercase;
-    opacity: .66;
+    opacity: .76;
+    transition: border-color var(--duration-fast) var(--ease-out);
+  }
+  .tc-figure:hover .tc-figure__cap,
+  .tc-figure:focus-visible .tc-figure__cap {
+    opacity: 1;
+    border-bottom-color: color-mix(in srgb, var(--tc-accent) 55%, transparent);
+  }
+  .tc-figure__idx {
+    position: relative;
+    display: inline-grid;
+    align-items: center;
+    overflow: hidden;
+    flex: 0 0 auto;
+  }
+  .tc-figure__idx-default,
+  .tc-figure__idx-zoom {
+    grid-area: 1 / 1;
+    white-space: nowrap;
+    transition:
+      transform 280ms cubic-bezier(.16, 1, .3, 1),
+      opacity 220ms ease;
+  }
+  .tc-figure__idx-default {
+    opacity: .84;
+    transform: translateY(0);
+  }
+  .tc-figure__idx-zoom {
+    color: var(--tc-accent-text);
+    font-weight: var(--offbit-weight-active);
+    opacity: 0;
+    transform: translateY(105%);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .tc-figure:hover .tc-figure__idx-default {
+      opacity: 0;
+      transform: translateY(-105%);
+    }
+    .tc-figure:hover .tc-figure__idx-zoom {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .tc-figure:focus-visible .tc-figure__idx-default {
+    opacity: 0;
+    transform: translateY(-105%);
+  }
+  .tc-figure:focus-visible .tc-figure__idx-zoom {
+    opacity: 1;
+    transform: translateY(0);
   }
 
   .tc-panel {
@@ -497,10 +552,20 @@ const styles = `
   @media (prefers-reduced-motion: reduce) {
     .tc-figure,
     .tc-figure img,
+    .tc-figure__idx-default,
+    .tc-figure__idx-zoom,
     .tc-action { transition: none; }
     .tc-figure:hover,
     .tc-action:hover,
     .tc-action:focus-visible { translate: 0; rotate: 0deg; }
+    .tc-figure__idx-default,
+    .tc-figure__idx-zoom,
+    .tc-figure:hover .tc-figure__idx-default,
+    .tc-figure:hover .tc-figure__idx-zoom,
+    .tc-figure:focus-visible .tc-figure__idx-default,
+    .tc-figure:focus-visible .tc-figure__idx-zoom {
+      transform: none;
+    }
   }
 `;
 
@@ -589,8 +654,11 @@ export function CaseFigure({
   sizes?: string;
   className?: string;
 }) {
+  const { lang } = useT();
   const reducedMotion = useReducedMotion();
   const [isOpen, setIsOpen] = useState(false);
+  const zoomLabel = lang === "pt" ? "[ + ampliar ]" : "[ + zoom ]";
+  const defaultIndex = index ?? (lang === "pt" ? "imagem" : "image");
 
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
@@ -609,7 +677,16 @@ export function CaseFigure({
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-50px" }}
         transition={{ duration: reducedMotion ? 0 : .78, ease }}
+        tabIndex={0}
+        role="button"
+        aria-label={`${alt || defaultIndex} — ${lang === "pt" ? "ampliar imagem" : "zoom image"}`}
         onClick={() => setIsOpen(true)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setIsOpen(true);
+          }
+        }}
       >
       <PixelReveal
         src={src}
@@ -621,7 +698,10 @@ export function CaseFigure({
       />
         {caption || index ? (
           <figcaption className="tc-figure__cap">
-            <span>{index ?? "imagem"}</span>
+            <span className="tc-figure__idx">
+              <span className="tc-figure__idx-default">{defaultIndex}</span>
+              <span className="tc-figure__idx-zoom" aria-hidden="true">{zoomLabel}</span>
+            </span>
             {caption ? <span>{caption}</span> : null}
           </figcaption>
         ) : null}

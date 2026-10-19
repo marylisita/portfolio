@@ -46,6 +46,9 @@ const styles = `
     background: var(--ink);
     color: var(--paper);
   }
+  .btt:active {
+    transform: scale(0.96);
+  }
   .btt:focus-visible {
     outline: 2px dotted var(--ink);
     outline-offset: 3px;

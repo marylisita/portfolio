@@ -216,6 +216,8 @@ const rmStyles = `
     transform: none;
   }
   .rm-thread {
+    --thread-progress: 0;
+    --thread-pluck: 0px;
     position: absolute;
     z-index: 2;
     top: var(--hero-h, 94svh);
@@ -223,7 +225,7 @@ const rmStyles = `
     width: 4.1rem;
     height: calc(100% - var(--hero-h, 94svh) - 22rem);
     color: var(--ink);
-    opacity: .24;
+    opacity: .42;
     pointer-events: none;
     transition: opacity .55s ease;
   }
@@ -233,11 +235,21 @@ const rmStyles = `
     width: 100%;
     height: 100%;
     overflow: visible;
+    transform: translate3d(var(--thread-pluck, 0px), 0, 0);
+    transition: transform 240ms cubic-bezier(.34, 1.56, 0.64, 1);
   }
   .rm-thread__holes { opacity: .34; }
   .rm-thread__line {
-    opacity: .76;
+    opacity: .38;
     filter: drop-shadow(1px 0 0 color-mix(in srgb, var(--paper) 86%, transparent));
+  }
+  .rm-thread__sewn {
+    color: var(--acid);
+    opacity: .95;
+    stroke-dasharray: 1;
+    stroke-dashoffset: calc(1 - var(--thread-progress, 0));
+    filter: drop-shadow(1px 0 0 color-mix(in srgb, var(--paper) 86%, transparent));
+    transition: stroke-dashoffset 120ms linear;
   }
   /* Lombada Costurada na borda da página — encadernação em zine artesanal */
   .rm-spine {
@@ -265,6 +277,16 @@ const rmStyles = `
     font-size: .62rem;
     line-height: 1;
     box-shadow: 2px 2px 0 color-mix(in srgb, var(--ink) 8%, transparent);
+    transform: translate3d(calc(var(--thread-pluck, 0px) * .65), 0, 0) rotate(0deg) scale(0.92);
+    transition:
+      color 320ms var(--ease-out),
+      border-color 320ms var(--ease-out),
+      transform 460ms var(--ease-spring);
+  }
+  .rm-thread__knot[data-sewn="true"] {
+    color: var(--acid);
+    border-color: var(--acid);
+    transform: translate3d(calc(var(--thread-pluck, 0px) * .65), 0, 0) rotate(90deg) scale(1.06);
   }
   /* Marca de secao, parada. Ela girava e crescia em looping de 9s, e junto
      com a faixa do Marquee, o pulso do "disponivel" e o relogio davam quatro
@@ -281,6 +303,14 @@ const rmStyles = `
   }
   @media (prefers-reduced-motion: reduce) {
     .rm-status__dot { animation: none; }
+    .rm-thread svg,
+    .rm-thread__sewn,
+    .rm-thread__knot {
+      transition: none;
+    }
+    .rm-thread__knot[data-sewn="true"] {
+      transform: none;
+    }
   }
   @media (max-width: 860px) {
     .rm { --hero-art-lift: 0rem; }
@@ -292,7 +322,7 @@ const rmStyles = `
     .rm-thread {
       left: -.2rem;
       width: 1.9rem;
-      opacity: .15;
+      opacity: .22;
     }
     .rm-thread__knot { width: .78rem; height: .78rem; font-size: .45rem; }
     /* No celular a margem lateral é 1.25rem: a lombada em 1.8rem caía DENTRO
@@ -396,6 +426,7 @@ function HomeContent() {
   const [contactVisible, setContactVisible] = useState(false);
   const [headlineIndex, setHeadlineIndex] = useState(0);
   const headlineInitialized = useRef(false);
+  const threadRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (headlineInitialized.current) return;
@@ -429,10 +460,78 @@ function HomeContent() {
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    const thread = threadRef.current;
+    if (!thread) return;
+
+    const knots = Array.from(thread.querySelectorAll<HTMLElement>(".rm-thread__knot"));
+    const knotThresholds = [0.18, 0.62, 0.84];
+    const reduceMotion =
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+      document.documentElement.dataset.motion === "lite";
+
+    if (reduceMotion) {
+      thread.style.setProperty("--thread-progress", "1");
+      knots.forEach((knot) => {
+        knot.dataset.sewn = "true";
+      });
+      return;
+    }
+
+    let rafId = 0;
+    const syncThread = () => {
+      rafId = 0;
+      const rect = thread.getBoundingClientRect();
+      if (rect.height <= 0) return;
+      const needleY = window.innerHeight * 0.58;
+      const rawProgress = (needleY - rect.top) / rect.height;
+      const progress = Math.min(1, Math.max(0, rawProgress));
+      thread.style.setProperty("--thread-progress", progress.toFixed(3));
+      knots.forEach((knot, i) => {
+        const isSewn = progress >= (knotThresholds[i] ?? 0.5);
+        knot.dataset.sewn = isSewn ? "true" : "false";
+      });
+    };
+
+    const requestSync = () => {
+      if (!rafId) rafId = requestAnimationFrame(syncThread);
+    };
+
+    const onPointerMove = (event: PointerEvent) => {
+      if (event.pointerType === "touch") return;
+      const rect = thread.getBoundingClientRect();
+      if (event.clientY < rect.top || event.clientY > rect.bottom) {
+        thread.style.setProperty("--thread-pluck", "0px");
+        return;
+      }
+      const centerX = rect.left + rect.width * 0.5;
+      const dx = event.clientX - centerX;
+      const dist = Math.abs(dx);
+      if (dist < 140) {
+        const pull = (1 - dist / 140) * (dx >= 0 ? 4.2 : -4.2);
+        thread.style.setProperty("--thread-pluck", `${pull.toFixed(2)}px`);
+      } else {
+        thread.style.setProperty("--thread-pluck", "0px");
+      }
+    };
+
+    syncThread();
+    window.addEventListener("scroll", requestSync, { passive: true });
+    window.addEventListener("resize", requestSync, { passive: true });
+    window.addEventListener("pointermove", onPointerMove, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", requestSync);
+      window.removeEventListener("resize", requestSync);
+      window.removeEventListener("pointermove", onPointerMove);
+      cancelAnimationFrame(rafId);
+    };
+  }, []);
+
   // lista única de projetos (mesma fonte da página /work)
   const projects = useProjects();
   // O número é o do arquivo, não a posição na seleção. Antes a home
-  // renumerava de 01 a 07 e o mesmo projeto aparecia como "01" aqui e "13/13"
+  // renumerava de 01 a 07 e o mesmo projeto aparecia como "01" aqui e "12/12"
   // na própria página — dois nomes para a mesma coisa. Agora um número vale um
   // projeto no site inteiro.
   const featuredProjects = FEATURED_PROJECT_HREFS.flatMap((href) => {
@@ -447,20 +546,80 @@ function HomeContent() {
 
   const constellation = lang === "pt"
     ? [
-        { label: "identidade", detail: "sistemas visuais, marcas e direção de arte" },
-        { label: "web", detail: "interfaces responsivas, protótipos e experiências digitais" },
-        { label: "direção", detail: "conceito, linguagem visual e coerência entre meios" },
-        { label: "estratégia", detail: "pesquisa, arquitetura e decisões de comunicação" },
-        { label: "movimento", detail: "animação, ritmo, interação e imagem em transformação" },
-        { label: "tecnologia", detail: "código criativo, IA generativa e experimentação" },
+        {
+          label: "identidade",
+          detail: "sistemas visuais, marcas e direção de arte",
+          href: "/work?area=grafico",
+          refLabel: "ver nº 01 · nº 02 · nº 10",
+        },
+        {
+          label: "web",
+          detail: "interfaces responsivas, protótipos e experiências digitais",
+          href: "/work?area=digital",
+          refLabel: "ver nº 07 · nº 11 · nº 12",
+        },
+        {
+          label: "direção",
+          detail: "conceito, linguagem visual e coerência entre meios",
+          href: "/work?area=grafico",
+          refLabel: "ver nº 04 · nº 05 · nº 09",
+        },
+        {
+          label: "estratégia",
+          detail: "pesquisa, arquitetura e decisões de comunicação",
+          href: "/work?area=pesquisa",
+          refLabel: "ver nº 06 · nº 07 · nº 12",
+        },
+        {
+          label: "movimento",
+          detail: "animação, ritmo, interação e imagem em transformação",
+          href: "/work?area=arte",
+          refLabel: "ver nº 01 · nº 06 · nº 08",
+        },
+        {
+          label: "tecnologia",
+          detail: "código criativo, IA generativa e experimentação",
+          href: "/work?area=arte",
+          refLabel: "ver nº 03 · nº 08 · nº 11",
+        },
       ]
     : [
-        { label: "identity", detail: "visual systems, brands and art direction" },
-        { label: "web", detail: "responsive interfaces, prototypes and digital experiences" },
-        { label: "direction", detail: "concept, visual language and cross-media consistency" },
-        { label: "strategy", detail: "research, architecture and communication decisions" },
-        { label: "motion", detail: "animation, rhythm, interaction and images that change" },
-        { label: "technology", detail: "creative coding, generative AI and experimentation" },
+        {
+          label: "identity",
+          detail: "visual systems, brands and art direction",
+          href: "/work?area=grafico",
+          refLabel: "see nº 01 · nº 02 · nº 10",
+        },
+        {
+          label: "web",
+          detail: "responsive interfaces, prototypes and digital experiences",
+          href: "/work?area=digital",
+          refLabel: "see nº 07 · nº 11 · nº 12",
+        },
+        {
+          label: "direction",
+          detail: "concept, visual language and cross-media consistency",
+          href: "/work?area=grafico",
+          refLabel: "see nº 04 · nº 05 · nº 09",
+        },
+        {
+          label: "strategy",
+          detail: "research, architecture and communication decisions",
+          href: "/work?area=pesquisa",
+          refLabel: "see nº 06 · nº 07 · nº 12",
+        },
+        {
+          label: "motion",
+          detail: "animation, rhythm, interaction and images that change",
+          href: "/work?area=arte",
+          refLabel: "see nº 01 · nº 06 · nº 08",
+        },
+        {
+          label: "technology",
+          detail: "creative coding, generative AI and experimentation",
+          href: "/work?area=arte",
+          refLabel: "see nº 03 · nº 08 · nº 11",
+        },
       ];
   const heroLines = HERO_HEADLINES[lang][headlineIndex] ?? HERO_HEADLINES[lang][0];
 
@@ -473,7 +632,7 @@ function HomeContent() {
       <style>{rmStyles}</style>
       <div className="rm-spine" aria-hidden="true" />
 
-      <div className="rm-thread" aria-hidden="true">
+      <div className="rm-thread" ref={threadRef} aria-hidden="true">
         <svg viewBox="0 0 24 100" preserveAspectRatio="none">
           <path
             className="rm-thread__holes"
@@ -491,6 +650,15 @@ function HomeContent() {
             stroke="currentColor"
             strokeWidth=".85"
             strokeDasharray=".82 .62"
+            vectorEffect="non-scaling-stroke"
+          />
+          <path
+            className="rm-thread__sewn"
+            d="M12 0 C7 6 17 11 12 18 C7 25 17 31 12 39 C7 47 17 54 12 62 C7 70 17 76 12 84 C8 91 15 96 12 100"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.25"
+            pathLength={1}
             vectorEffect="non-scaling-stroke"
           />
         </svg>
@@ -540,7 +708,7 @@ function HomeContent() {
           <span className="rm-guide" aria-hidden="true" style={{ left: "51%", top: "3.4rem" }}>✳︎</span>
           <div className="rm-label">
             <span>{t("selected_work")}</span>
-            {/* sete escolhidos dentro de um arquivo de treze — o número do
+            {/* sete escolhidos dentro de um arquivo de doze — o número do
                 cartão é o do arquivo, e este par diz de onde ele vem */}
             <span>
               {featuredProjects.length.toString().padStart(2, "0")} /{" "}
