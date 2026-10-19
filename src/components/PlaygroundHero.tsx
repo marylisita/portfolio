@@ -162,7 +162,7 @@ const styles = `
     font-family: var(--font-pixelscript);
     font-weight: 400;
     font-size: clamp(2rem, min(7.5vw, 9.5vh), 6.5rem);
-    line-height: .98;
+    line-height: 1.08;
     /* tracking levemente negativo — testado que a Pixelscript aguenta -.015em
        sem quebrar as ligações do script (mais que isso começa a colar demais) */
     letter-spacing: -.015em;
@@ -171,7 +171,7 @@ const styles = `
     position: absolute;
     left: clamp(5.5rem, 5.1vw, 6.25rem);
     right: 5.5rem;
-    top: 52.5%;
+    top: 49.5%;
     z-index: 1;
     pointer-events: none;
   }
@@ -213,7 +213,7 @@ const styles = `
   .ph__sub--pocket {
     position: absolute;
     left: 45.6%;
-    top: 71.5%;
+    top: 76.5%;
     /* duas linhas editoriais fixas; a largura evita qualquer reflow acidental */
     width: max-content;
     max-width: 50vw;
@@ -225,7 +225,7 @@ const styles = `
        em 12,5px, menor que a piada logo acima. O desktop nao muda: la o valor
        ja vinha do 1.2vw. */
     font-size: clamp(.95rem, 1.2vw, 1.3rem);
-    line-height: 1.35;
+    line-height: 1.42;
     letter-spacing: .01em;
     z-index: 1;
     pointer-events: none;
@@ -236,14 +236,14 @@ const styles = `
   }
   .ph__title[data-compact="true"] {
     font-size: clamp(1.9rem, min(6.3vw, 8vh), 5.5rem);
-    line-height: 1.02;
+    line-height: 1.1;
   }
   /* Em notebooks, preserva a mesma composição por proporção. */
   @media (min-width: 721px) and (max-width: 1359px) {
-    .ph__title { top: 52.5%; }
+    .ph__title { top: 49.5%; }
     .ph__sub--pocket {
       left: 45.6%;
-      top: 71.5%;
+      top: 76.5%;
       max-width: 52vw;
     }
   }
