@@ -1,39 +1,36 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/content/site";
+import { CASE_SLUGS } from "@/content/caseMeta";
 
 /**
- * Lista completa das rotas de case. Não é derivada de `caseMeta` de propósito:
- * aquele módulo cobre só os cases cujo OG foi centralizado, enquanto
- * cyber-marinum, ondularis e touchdesigner-workshop têm metadata próprio.
- * O sitemap precisa das doze.
+ * Cada página entra duas vezes, em português e na versão /en, e as duas se
+ * apontam como alternativas de idioma. É assim que o Google entende que
+ * /work/juizo e /en/work/juizo são a mesma página em línguas diferentes, em
+ * vez de conteúdo duplicado.
  */
-const CASE_ROUTES = [
-  "chinario",
-  "cyber-marinum",
-  "ebat",
-  "genlab",
-  "graduation",
-  "isadora",
-  "juizo",
-  "magazine",
-  "ondularis",
-  "pilotis",
-  "touchdesigner-workshop",
-  "vegcoz",
-];
+type Entry = MetadataRoute.Sitemap[number];
+
+function pair(
+  ptPath: string,
+  changeFrequency: Entry["changeFrequency"],
+  priority: number,
+  lastModified: Date,
+): Entry[] {
+  const pt = `${SITE_URL}${ptPath === "/" ? "" : ptPath}`;
+  const en = `${SITE_URL}/en${ptPath === "/" ? "" : ptPath}`;
+  const alternates = { languages: { "pt-BR": pt, en } };
+  return [
+    { url: pt, lastModified, changeFrequency, priority, alternates },
+    { url: en, lastModified, changeFrequency, priority: Math.max(priority - 0.1, 0.1), alternates },
+  ];
+}
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const lastModified = new Date();
-
   return [
-    { url: SITE_URL, lastModified, changeFrequency: "monthly", priority: 1 },
-    { url: `${SITE_URL}/work`, lastModified, changeFrequency: "monthly", priority: 0.9 },
-    { url: `${SITE_URL}/colofao`, lastModified, changeFrequency: "yearly", priority: 0.5 },
-    ...CASE_ROUTES.map((slug) => ({
-      url: `${SITE_URL}/work/${slug}`,
-      lastModified,
-      changeFrequency: "yearly" as const,
-      priority: 0.7,
-    })),
+    ...pair("/", "monthly", 1, lastModified),
+    ...pair("/work", "monthly", 0.9, lastModified),
+    ...pair("/colofao", "yearly", 0.5, lastModified),
+    ...CASE_SLUGS.flatMap((slug) => pair(`/work/${slug}`, "yearly", 0.7, lastModified)),
   ];
 }

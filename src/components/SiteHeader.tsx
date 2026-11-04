@@ -6,7 +6,7 @@ import ScrambleText from "./ScrambleText";
 import { sparkBurst } from "./sparkBurst";
 import MonogramMark from "./MonogramMark";
 import UnderlineButton from "./UnderlineButton";
-import { useT } from "@/i18n/LanguageContext";
+import { useT, stripLocale } from "@/i18n/LanguageContext";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, type FocusEvent, type PointerEvent } from "react";
 
@@ -259,7 +259,7 @@ const styles = `
 export default function SiteHeader() {
   const { t, lang } = useT();
   const pt = lang !== "en";
-  const pathname = usePathname();
+  const pathname = stripLocale(usePathname());
   const isHome = pathname === "/" || pathname === "";
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   // O menu nao recolhe mais ao descer: pedido dela. O que resolvia a leitura

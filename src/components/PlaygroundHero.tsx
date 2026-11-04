@@ -474,6 +474,7 @@ export default function PlaygroundHero({
   scrollLabel: string;
   children?: React.ReactNode;
 }) {
+  const { lang } = useT();
   const bounds = useRef<HTMLElement>(null);
   const [isMobile, setIsMobile] = useState(false);
   const {
@@ -546,7 +547,9 @@ export default function PlaygroundHero({
       >
         {/* O título visível é a frase animada; o nome fica no H1 só para busca e
             leitor de tela, que dão mais peso ao H1 do que a qualquer outro texto. */}
-        <span className="sr-only">Maria Isabel Lisita, designer multidisciplinar no Rio de Janeiro. </span>
+        <span className="sr-only">{lang === "en"
+          ? "Maria Isabel Lisita, multidisciplinary designer in Rio de Janeiro. "
+          : "Maria Isabel Lisita, designer multidisciplinar no Rio de Janeiro. "}</span>
         {lines.map((l, i) => (
           <span className="ph__line" key={i}>
             <span

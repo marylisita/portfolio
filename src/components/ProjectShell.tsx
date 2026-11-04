@@ -13,7 +13,7 @@ import { ANJOS, ESFERA, ORNAMENTAL } from "./brailleEditorial";
 import { EDGE_RIGHT, FILLER_COLUMN, FILLER_GROUP } from "./foundBrailleArt";
 import { useProjects } from "./useProjects";
 import { getProjectStory } from "@/content/projectStories";
-import { useT } from "@/i18n/LanguageContext";
+import { useT, stripLocale } from "@/i18n/LanguageContext";
 import HeroButton from "./HeroButton";
 import { useNavTucked } from "./useScrollDirection";
 import { markProjectVisited } from "@/lib/visitedProjects";
@@ -649,7 +649,8 @@ export default function ProjectShell({
   cover?: false;
 }) {
   const { t, lang } = useT();
-  const pathname = usePathname();
+  /* Sem o prefixo /en: a versão em inglês usa os mesmos hrefs da lista. */
+  const pathname = stripLocale(usePathname());
   const projects = useProjects();
   const reduceMotion = useReducedMotion();
   const shellRef = useRef<HTMLDivElement>(null);

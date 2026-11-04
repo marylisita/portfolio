@@ -11,6 +11,7 @@ import SiteIntro, { INTRO_SCRIPT } from "@/components/SiteIntro";
 import { PageTransitionProvider } from "@/components/Curtains";
 import { LanguageProvider } from "@/i18n/LanguageContext";
 import { SITE_NAME, SITE_TAGLINE_PT, SITE_URL } from "@/content/site";
+import { languageAlternates } from "@/content/caseMeta";
 
 const aeonik = localFont({
   src: [
@@ -159,7 +160,7 @@ export const metadata: Metadata = {
     "portfólio",
     SITE_NAME,
   ],
-  alternates: { canonical: "/" },
+  alternates: languageAlternates("/", "pt"),
   openGraph: {
     type: "website",
     siteName: SITE_NAME,

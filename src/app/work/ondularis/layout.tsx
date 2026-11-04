@@ -1,23 +1,7 @@
 import type { Metadata } from "next";
+import { caseMetadata } from "@/content/caseMeta";
 
-export const metadata: Metadata = {
-  title: "Ondularis — Coletivo Endosymbiosis",
-  description:
-    "Exposição coletiva na intersecção entre arte, ciência e tecnologia. Um oceano artificial, instável e fabulado na Meta Gallery, Rio de Janeiro.",
-  openGraph: {
-    title: "Ondularis — Coletivo Endosymbiosis",
-    description:
-      "Esculturas tentaculares, resíduos industriais, atmosfera imersiva e projeções que reagem ao som.",
-    images: [
-      {
-        url: "/img/ondularis/capa.webp",
-        width: 1080,
-        height: 1350,
-        alt: "Cartaz da exposição Ondularis, do coletivo Endosymbiosis",
-      },
-    ],
-  },
-};
+export const metadata: Metadata = caseMetadata("ondularis");
 
 export default function OndularisLayout({
   children,
