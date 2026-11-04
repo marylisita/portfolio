@@ -178,12 +178,15 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
-  /* Google Search Console: o código de verificação vem da variável de ambiente
-     da Vercel, então dá para trocar sem mexer no código. Sem a variável, a tag
-     simplesmente não é gerada. */
-  ...(process.env.GOOGLE_SITE_VERIFICATION
-    ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } }
-    : {}),
+  /* Google Search Console (propriedade https://marylisita-portfolio.vercel.app/).
+     O código é público por natureza: vira <meta name="google-site-verification">.
+     Não remover, senão o Google perde a verificação. Se um dia trocar de conta,
+     dá para sobrescrever pela variável GOOGLE_SITE_VERIFICATION da Vercel. */
+  verification: {
+    google:
+      process.env.GOOGLE_SITE_VERIFICATION ??
+      "_GNYsx5dfiTx3E_ExhU2jdeCyWFbstF1ujbi7HACYrM",
+  },
   icons: {
     icon: [
       { url: "/icon.svg", type: "image/svg+xml" },
