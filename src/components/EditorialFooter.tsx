@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { trackClick, type TrackedClick } from "@/lib/track";
 import Image from "next/image";
 import AsciiDivider from "./AsciiDivider";
 import { useT } from "@/i18n/LanguageContext";
@@ -342,6 +343,7 @@ export default function EditorialFooter() {
 
   const handleMailClick = async (event: React.MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
+    trackClick("email-copiado", "rodape");
     const rect = event.currentTarget.getBoundingClientRect();
     const originX = event.clientX || rect.left + rect.width / 2;
     const originY = event.clientY || rect.top + rect.height / 2;
@@ -365,12 +367,12 @@ export default function EditorialFooter() {
     playSound("paper");
   };
 
-  const socials = [
-    { num: "01", name: "behance", href: "https://www.behance.net/marylisita" },
-    { num: "02", name: "linkedin", href: "https://www.linkedin.com/in/maria-lisita/" },
-    { num: "03", name: "whatsapp", href: "https://wa.me/5521936180477" },
-    { num: "04", name: t("footer_cv").toLowerCase(), href: "/Curriculo_Maria_Isabel_Lisita.pdf" },
-    { num: "05", name: "lattes", href: "/Curriculo_Lattes_Maria_Isabel_Lisita.pdf" },
+  const socials: { num: string; name: string; href: string; event: TrackedClick }[] = [
+    { num: "01", name: "behance", href: "https://www.behance.net/marylisita", event: "behance" },
+    { num: "02", name: "linkedin", href: "https://www.linkedin.com/in/maria-lisita/", event: "linkedin" },
+    { num: "03", name: "whatsapp", href: "https://wa.me/5521936180477", event: "whatsapp" },
+    { num: "04", name: t("footer_cv").toLowerCase(), href: "/Curriculo_Maria_Isabel_Lisita.pdf", event: "curriculo" },
+    { num: "05", name: "lattes", href: "/Curriculo_Lattes_Maria_Isabel_Lisita.pdf", event: "lattes" },
   ];
 
   const copiedLabel = lang === "pt" ? "copiado! ✦" : "copied! ✦";
@@ -421,6 +423,7 @@ export default function EditorialFooter() {
               target="_blank"
               rel="noopener noreferrer"
               onPointerEnter={() => playSound("hover")}
+              onClick={() => trackClick(s.event, "rodape")}
             >
               <span className="ef__num">{s.num}</span>
               <span className="ef__name">{s.name}</span>

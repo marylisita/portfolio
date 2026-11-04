@@ -7,6 +7,7 @@ import { sparkBurst } from "./sparkBurst";
 import MonogramMark from "./MonogramMark";
 import UnderlineButton from "./UnderlineButton";
 import { useT, stripLocale } from "@/i18n/LanguageContext";
+import { trackClick } from "@/lib/track";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, type FocusEvent, type PointerEvent } from "react";
 
@@ -353,6 +354,7 @@ export default function SiteHeader() {
             href="/Curriculo_Maria_Isabel_Lisita.pdf"
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackClick("curriculo", "menu")}
           >
             {pt ? "currículo" : "resume"}
           </UnderlineButton>
@@ -381,7 +383,10 @@ export default function SiteHeader() {
               href={link.href}
               target={link.external ? "_blank" : undefined}
               rel={link.external ? "noopener noreferrer" : undefined}
-              onClick={() => setMobileMenuOpen(false)}
+              onClick={() => {
+                if (link.external) trackClick("curriculo", "menu-mobile");
+                setMobileMenuOpen(false);
+              }}
             >
               [ {link.label} ]
             </Link>

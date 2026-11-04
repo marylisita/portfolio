@@ -345,6 +345,16 @@ export default function RootLayout({
         {/* Vercel Web Analytics: sem cookies (não precisa de banner LGPD) e lê
             utm_source/utm_campaign, para saber qual candidatura abriu o link. */}
         <Analytics />
+        {/* Umami Cloud: conta de onde veio cada visita (utm_source, utm_campaign)
+            e os cliques de src/lib/track.ts. Sem cookies. data-domains impede
+            que previews e o localhost entrem na conta. */}
+        <Script
+          id="umami"
+          src="https://cloud.umami.is/script.js"
+          data-website-id="5234de53-e578-41f6-a280-766ad280ed4b"
+          data-domains="marylisita-portfolio.vercel.app"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );
