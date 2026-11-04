@@ -189,7 +189,7 @@ const styles = `
     will-change: transform, filter;
     animation: ph-title-arrive .9s cubic-bezier(.16, 1, .3, 1) var(--line-delay, .15s) both;
   }
-  .ph__line:nth-child(2) .ph__line-inner { --line-delay: .26s; }
+  .ph__line:nth-child(2 of .ph__line) .ph__line-inner { --line-delay: .26s; }
   @keyframes ph-title-arrive {
     from { transform: translate3d(0, .3em, 0); filter: blur(.35px); }
     to { transform: translate3d(0, 0, 0); filter: blur(0); }
@@ -201,7 +201,7 @@ const styles = `
       animation-duration: .48s;
       --line-delay: .02s;
     }
-    .ph__line:nth-child(2) .ph__line-inner { --line-delay: .08s; }
+    .ph__line:nth-child(2 of .ph__line) .ph__line-inner { --line-delay: .08s; }
   }
   .ph__line--acid { color: var(--hero-highlight, var(--acid)); }
   .ph__sub {
@@ -544,6 +544,9 @@ export default function PlaygroundHero({
         data-compact={lines.join(" ").length > 48 ? "true" : "false"}
         suppressHydrationWarning
       >
+        {/* O título visível é a frase animada; o nome fica no H1 só para busca e
+            leitor de tela, que dão mais peso ao H1 do que a qualquer outro texto. */}
+        <span className="sr-only">Maria Isabel Lisita, designer multidisciplinar no Rio de Janeiro. </span>
         {lines.map((l, i) => (
           <span className="ph__line" key={i}>
             <span

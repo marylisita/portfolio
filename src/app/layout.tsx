@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Space_Mono, Instrument_Serif } from "next/font/google";
 import localFont from "next/font/local";
 import Script from "next/script";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
 import FloatingBackToTop from "@/components/FloatingBackToTop";
@@ -177,6 +178,12 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  /* Google Search Console: o código de verificação vem da variável de ambiente
+     da Vercel, então dá para trocar sem mexer no código. Sem a variável, a tag
+     simplesmente não é gerada. */
+  ...(process.env.GOOGLE_SITE_VERIFICATION
+    ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } }
+    : {}),
   icons: {
     icon: [
       { url: "/icon.svg", type: "image/svg+xml" },
@@ -186,6 +193,58 @@ export const metadata: Metadata = {
       { url: "/apple-icon.png", sizes: "180x180", type: "image/png" },
     ],
   },
+};
+
+/* Dados estruturados (schema.org): dizem ao Google que o site, o LinkedIn e o
+   Behance são da mesma pessoa. Ajuda a busca pelo nome a mostrar tudo junto.
+   Validar em https://validator.schema.org/ depois de cada mudança. */
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": `${SITE_URL}/#maria`,
+      name: SITE_NAME,
+      url: SITE_URL,
+      image: `${SITE_URL}/opengraph-image`,
+      jobTitle: "Designer multidisciplinar",
+      description: SITE_TAGLINE_PT,
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "Rio de Janeiro",
+        addressRegion: "RJ",
+        addressCountry: "BR",
+      },
+      affiliation: {
+        "@type": "CollegeOrUniversity",
+        name: "Universidade Federal do Rio de Janeiro",
+        alternateName: "UFRJ",
+        url: "https://ufrj.br",
+      },
+      knowsAbout: [
+        "Identidade visual",
+        "Direção de arte",
+        "Web design",
+        "UX/UI",
+        "Programação criativa",
+        "Arte generativa",
+        "TouchDesigner",
+        "Instalações interativas",
+      ],
+      sameAs: [
+        "https://www.linkedin.com/in/maria-lisita/",
+        "https://www.behance.net/marylisita",
+      ],
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${SITE_URL}/#site`,
+      url: SITE_URL,
+      name: SITE_NAME,
+      inLanguage: ["pt-BR", "en"],
+      author: { "@id": `${SITE_URL}/#maria` },
+    },
+  ],
 };
 
 export default function RootLayout({
@@ -232,6 +291,12 @@ export default function RootLayout({
         `}</style>
       </head>
       <body className="antialiased">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
+          }}
+        />
         <Script id="typekit-stylesheet" strategy="afterInteractive">
           {`
             const loadTypekit = () => {
@@ -273,6 +338,9 @@ export default function RootLayout({
             </PageTransitionProvider>
           </SmoothScroll>
         </LanguageProvider>
+        {/* Vercel Web Analytics: sem cookies (não precisa de banner LGPD) e lê
+            utm_source/utm_campaign, para saber qual candidatura abriu o link. */}
+        <Analytics />
       </body>
     </html>
   );
