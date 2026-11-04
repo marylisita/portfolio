@@ -10,7 +10,7 @@ export const SITE_URL = "https://marylisita-portfolio.vercel.app";
 export const SITE_NAME = "Maria Isabel Lisita";
 
 export const SITE_TAGLINE_PT =
-  "Designer multidisciplinar. Projetos em design gráfico, web design, UX/UI e programação criativa.";
+  "Designer multidisciplinar no Rio de Janeiro. Projetos em design gráfico, web design, UX/UI e programação criativa.";
 
 export const SITE_TAGLINE_EN =
-  "Multidisciplinary designer. Graphic design, web design, UX/UI and creative coding.";
+  "Multidisciplinary designer in Rio de Janeiro. Graphic design, web design, UX/UI, creative coding and interactive art.";
