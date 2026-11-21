@@ -158,5 +158,38 @@ export function useProjects(): IndexItem[] {
       // ~75px e nada nelas se le. O recorte foca a primeira tela.
       imgPocket: "/img/previews/juizo-pocket.webp",
     },
+    {
+      num: "13",
+      title: "metagallery",
+      tags: `${t("cat_client")} / social media / ${t("card_artdir_title").toLowerCase()}`,
+      href: "/work/metagallery",
+      accent: "#a63ee6",
+      impact: impact("/work/metagallery"),
+      blurb: blurb("/work/metagallery"),
+      ratio: 1350 / 1080,
+      img: "/img/social-media/metagallery/meta-hero.webp",
+    },
+    {
+      num: "14",
+      title: "metaverse agency",
+      tags: `${t("cat_client")} / social media / ${lang === "pt" ? "carrossel" : "carousel"}`,
+      href: "/work/metaverse-agency",
+      accent: "#19b8d4",
+      impact: impact("/work/metaverse-agency"),
+      blurb: blurb("/work/metaverse-agency"),
+      ratio: 867 / 691,
+      img: "/img/social-media/metaverse-agency/agency-tobias-01.webp",
+    },
+    {
+      num: "15",
+      title: "byron mendes",
+      tags: `${t("cat_client")} / social media / ${lang === "pt" ? "design editorial" : "editorial design"}`,
+      href: "/work/byron-mendes",
+      accent: "#7446e0",
+      impact: impact("/work/byron-mendes"),
+      blurb: blurb("/work/byron-mendes"),
+      ratio: 1350 / 1080,
+      img: "/img/social-media/byron-mendes/byron-bastidores.webp",
+    },
   ];
 }

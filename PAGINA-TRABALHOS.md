@@ -42,6 +42,23 @@ da home. O rodapé ganhou `--ink`/`--paper`/`--acid`, que não existiam aqui.
   (programação criativa sem código escrito) e usar a oficina como experimento
   da pesquisa do TCC/PIBIC, não a duração de quatro horas.
 
+## Social media (21 de novembro de 2026)
+
+Três cases novos: `metagallery` (nº 13), `metaverse-agency` (nº 14) e
+`byron-mendes` (nº 15). Entram só no recorte **design gráfico**, fora do núcleo
+e da home. Os três usam `src/components/SocialMediaCaseStudy.tsx` sobre o
+`ProjectShell` + `CaseStudyKit`; o conteúdo bilíngue vive em
+`src/content/socialMediaCases.ts`. O kit ganhou `CaseCarousel` (sequência
+publicada, setas `[ anterior ]` / `[ próxima ]`), `CaseStats` e `CaseNotes`.
+
+- Métricas são do **perfil**, janela de 30 dias, capturas de novembro de 2026.
+  Ficam na faixa escura, sempre com período, fonte e a ressalva de que não
+  provam causa. Não acrescentar número que não esteja nas capturas.
+- As telas da Metaverse Agency foram recortadas de capturas do carrossel
+  publicado. Trocar pelos exports originais assim que houver, mesmos nomes.
+- Links de Instagram recebidos não foram associados: o vínculo de cada um com
+  um case não foi confirmado.
+
 ## Estado atual de `/work`
 
 A página abre com os **9 projetos** do núcleo (não os 13 da fonte) e tem um

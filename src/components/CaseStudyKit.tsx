@@ -3,12 +3,13 @@
 import Image from "next/image";
 import PixelReveal from "./PixelReveal";
 import { motion, useReducedMotion, AnimatePresence } from "framer-motion";
-import { CSSProperties, ReactNode, useState, useEffect } from "react";
+import { CSSProperties, ReactNode, useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 import AsciiDivider from "./AsciiDivider";
 import { useT } from "@/i18n/LanguageContext";
 
 export type CaseVariant =
+  | "byron-mendes"
   | "chinario"
   | "ebat"
   | "genlab"
@@ -16,6 +17,8 @@ export type CaseVariant =
   | "isadora"
   | "juizo"
   | "magazine"
+  | "metagallery"
+  | "metaverse-agency"
   | "pilotis"
   | "vegcoz";
 
@@ -85,6 +88,30 @@ const styles = `
     --tc-accent-soft: rgba(0, 168, 173, .16);
     --tc-paper: rgba(237, 247, 241, .92);
     --tc-deep: #06373b;
+  }
+  /* Social media (nov/2026): as cores vêm das próprias peças publicadas.
+     O texto de destaque usa um tom mais escuro onde o acento puro não passa
+     de 4.5:1 sobre o papel creme. */
+  .tc--metagallery {
+    --tc-accent: #a63ee6;
+    --tc-accent-text: #8a26c9;
+    --tc-accent-soft: rgba(166, 62, 230, .15);
+    --tc-paper: rgba(248, 242, 248, .93);
+    --tc-deep: #1a0b24;
+  }
+  .tc--metaverse-agency {
+    --tc-accent: #19b8d4;
+    --tc-accent-text: #08707f;
+    --tc-accent-soft: rgba(25, 184, 212, .16);
+    --tc-paper: rgba(240, 245, 246, .93);
+    --tc-deep: #1d0f33;
+  }
+  .tc--byron-mendes {
+    --tc-accent: #7446e0;
+    --tc-accent-text: #5b2fc4;
+    --tc-accent-soft: rgba(116, 70, 224, .15);
+    --tc-paper: rgba(244, 241, 250, .93);
+    --tc-deep: #160c2c;
   }
   .tc--vegcoz {
     --tc-accent: #4f7f3a;
@@ -522,6 +549,164 @@ const styles = `
     text-wrap: pretty;
   }
 
+  /* Carrossel: a sequência publicada, lida da esquerda para a direita.
+     Rolagem nativa com snap (toque, trackpad, teclado) e setas entre
+     colchetes para quem usa mouse. Sem autoplay. */
+  .tc-carousel { position: relative; }
+  .tc-carousel__bar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    font-family: var(--font-subtitle), monospace;
+    font-weight: var(--offbit-weight);
+    font-size: var(--type-label);
+    letter-spacing: var(--offbit-letter-spacing);
+    text-transform: lowercase;
+  }
+  .tc-carousel__nav { display: flex; gap: .25rem; }
+  .tc-carousel__btn {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0 .6rem;
+    border: 0;
+    background: transparent;
+    color: var(--tc-ink);
+    font: inherit;
+    letter-spacing: inherit;
+    cursor: pointer;
+    transition: color var(--duration-fast) var(--ease-out), opacity var(--duration-fast) var(--ease-out);
+  }
+  .tc-carousel__btn:hover:not(:disabled) { color: var(--tc-accent-text); }
+  .tc-carousel__btn:focus-visible { outline: 2px solid var(--tc-accent); outline-offset: 2px; }
+  .tc-carousel__btn:disabled { opacity: .32; cursor: default; }
+  .tc-carousel__track {
+    display: flex;
+    gap: clamp(1rem, 2.4vw, 2rem);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 0;
+    padding: 4px 0 1rem;
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--tc-accent) 60%, transparent) transparent;
+  }
+  .tc-carousel__track:focus-visible { outline: 2px solid var(--tc-accent); outline-offset: 6px; }
+  .tc-carousel__slide {
+    flex: 0 0 clamp(15rem, 30.5%, 24rem);
+    min-width: 0;
+    scroll-snap-align: start;
+  }
+  .tc-carousel--wide .tc-carousel__slide { flex-basis: clamp(15rem, 37%, 26rem); }
+
+  /* Métricas: número grande na fonte de título, rótulo em OffBit, a variação
+     e a fonte sempre visíveis ao lado do número, nunca em nota escondida. */
+  .tc-stats__period {
+    margin: 0 0 1.25rem;
+    color: var(--tc-accent-text);
+    font-family: var(--font-subtitle), monospace;
+    font-weight: var(--offbit-weight);
+    font-size: var(--type-label);
+    letter-spacing: var(--offbit-letter-spacing);
+    text-transform: lowercase;
+  }
+  .tc-stats__period::before { content: "[ "; }
+  .tc-stats__period::after { content: " ]"; }
+  .tc-stats__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin: 0;
+    border-top: 1px dashed var(--tc-line);
+  }
+  .tc-stat {
+    display: flex;
+    flex-direction: column;
+    gap: .35rem;
+    padding: clamp(1.25rem, 3vw, 2rem) clamp(.75rem, 2vw, 1.5rem) clamp(1.25rem, 3vw, 2rem) 0;
+    border-bottom: 1px dashed var(--tc-line);
+  }
+  .tc-stat + .tc-stat {
+    padding-left: clamp(.75rem, 2vw, 1.5rem);
+    border-left: 1px dashed var(--tc-line);
+  }
+  .tc-stat__value {
+    order: -1;
+    margin: 0;
+    font-family: var(--font-head);
+    font-size: clamp(2.2rem, 4.6vw, 3.6rem);
+    line-height: .95;
+    letter-spacing: -.035em;
+    font-variant-numeric: tabular-nums;
+  }
+  .tc-stat__label {
+    margin: 0;
+    color: var(--tc-accent-text);
+    font-family: var(--font-subtitle), monospace;
+    font-weight: var(--offbit-weight);
+    font-size: var(--type-micro);
+    letter-spacing: var(--offbit-letter-spacing);
+    text-transform: lowercase;
+  }
+  .tc-stat__detail {
+    margin: 0;
+    color: var(--gray-600);
+    font-family: var(--font-body);
+    font-size: .92rem;
+    line-height: 1.45;
+  }
+  .tc-stats__highlight {
+    max-width: var(--measure-copy);
+    margin: clamp(1.5rem, 3vw, 2.25rem) 0 0;
+    font-family: var(--font-body);
+    font-size: clamp(1.04rem, 1.55vw, 1.2rem);
+    line-height: 1.6;
+    text-wrap: pretty;
+  }
+  .tc-stats__highlight strong { color: var(--tc-accent-text); }
+  .tc-stats__note {
+    max-width: var(--measure-copy);
+    margin: 1rem 0 0;
+    color: var(--gray-600);
+    font-family: var(--font-body);
+    font-size: .9rem;
+    line-height: 1.55;
+  }
+
+  /* Métricas dentro da faixa escura: linhas e textos claros, acento puro. */
+  .tc-section--ink .tc-stats__period,
+  .tc-section--ink .tc-stat__label,
+  .tc-section--ink .tc-stats__highlight strong {
+    /* Rótulo pequeno: o acento puro dos roxos fica perto de 3:1 no fundo
+       escuro; misturado ao branco passa de 4.5:1. */
+    color: color-mix(in srgb, var(--tc-accent) 62%, #ffffff);
+  }
+  .tc-section--ink .tc-stats__grid,
+  .tc-section--ink .tc-stat,
+  .tc-section--ink .tc-stat + .tc-stat {
+    border-color: color-mix(in srgb, #f7f3e9 26%, transparent);
+  }
+  .tc-section--ink .tc-stat__detail,
+  .tc-section--ink .tc-stats__note { color: color-mix(in srgb, #f7f3e9 72%, transparent); }
+
+  .tc-notes {
+    display: grid;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    margin-bottom: clamp(1.5rem, 4vw, 3rem);
+    list-style: none;
+    border-top: 1px dashed var(--tc-line);
+  }
+  .tc-notes li {
+    max-width: var(--measure-copy);
+    padding: 1rem 0;
+    border-bottom: 1px dashed var(--tc-line);
+    font-family: var(--font-body);
+    font-size: var(--type-body);
+    line-height: 1.55;
+  }
+
   @media (max-width: 780px) {
     .tc-heading,
     .tc-grid--two,
@@ -532,6 +717,10 @@ const styles = `
     }
     .tc-grid--offset > :nth-child(even) { margin-top: 0; }
     .tc-credits { grid-template-columns: 1fr; }
+    .tc-carousel__slide,
+    .tc-carousel--wide .tc-carousel__slide { flex-basis: 78%; }
+    .tc-stats__grid { grid-template-columns: 1fr; }
+    .tc-stat + .tc-stat { padding-left: 0; border-left: 0; }
     .tc-section.tc-section--ink {
       width: 100vw;
       padding-top: 5rem;
@@ -554,7 +743,8 @@ const styles = `
     .tc-figure img,
     .tc-figure__idx-default,
     .tc-figure__idx-zoom,
-    .tc-action { transition: none; }
+    .tc-action,
+    .tc-carousel__btn { transition: none; }
     .tc-figure:hover,
     .tc-action:hover,
     .tc-action:focus-visible { translate: 0; rotate: 0deg; }
@@ -848,5 +1038,177 @@ export function CaseImpact({
         </motion.div>
       </div>
     </CaseSection>
+  );
+}
+
+type CarouselItem = {
+  src: string;
+  width: number;
+  height: number;
+  alt: string;
+  caption?: string;
+};
+
+const pad2 = (n: number) => String(n).padStart(2, "0");
+
+/**
+ * Carrossel de redes sociais na ordem em que foi publicado. Cada tela é um
+ * `CaseFigure` (mesma legenda, mesmo zoom); a contagem `01 / 05` fica na
+ * legenda e no topo. Rolagem nativa com snap, setas com `aria-label` e
+ * `disabled` nas pontas, e rolagem instantânea com `prefers-reduced-motion`.
+ */
+export function CaseCarousel({
+  label,
+  items,
+  wide = false,
+}: {
+  label: string;
+  items: CarouselItem[];
+  wide?: boolean;
+}) {
+  const { lang } = useT();
+  const reducedMotion = useReducedMotion();
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [state, setState] = useState({ active: 0, atStart: true, atEnd: items.length <= 1 });
+  const total = pad2(items.length);
+
+  const measure = useCallback(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    const slides = Array.from(track.children) as HTMLElement[];
+    const max = track.scrollWidth - track.clientWidth;
+    const atStart = track.scrollLeft <= 2;
+    const atEnd = track.scrollLeft >= max - 2;
+    let active = 0;
+    if (atEnd && max > 2) {
+      active = slides.length - 1;
+    } else {
+      const origin = slides[0]?.offsetLeft ?? 0;
+      slides.forEach((slide, i) => {
+        if (slide.offsetLeft - origin <= track.scrollLeft + 4) active = i;
+      });
+    }
+    setState((prev) =>
+      prev.active === active && prev.atStart === atStart && prev.atEnd === atEnd
+        ? prev
+        : { active, atStart, atEnd },
+    );
+  }, []);
+
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    measure();
+    track.addEventListener("scroll", measure, { passive: true });
+    window.addEventListener("resize", measure, { passive: true });
+    return () => {
+      track.removeEventListener("scroll", measure);
+      window.removeEventListener("resize", measure);
+    };
+  }, [measure]);
+
+  const go = (direction: 1 | -1) => {
+    const track = trackRef.current;
+    if (!track) return;
+    const slides = Array.from(track.children) as HTMLElement[];
+    const target = slides[Math.min(slides.length - 1, Math.max(0, state.active + direction))];
+    if (!target) return;
+    track.scrollTo({
+      left: target.offsetLeft - (slides[0]?.offsetLeft ?? 0),
+      behavior: reducedMotion ? "auto" : "smooth",
+    });
+  };
+
+  const pt = lang === "pt";
+  return (
+    <div className={`tc-carousel${wide ? " tc-carousel--wide" : ""}`}>
+      <div className="tc-carousel__bar">
+        <div className="tc-carousel__nav">
+          <button
+            type="button"
+            className="tc-carousel__btn"
+            onClick={() => go(-1)}
+            disabled={state.atStart}
+            aria-label={pt ? "tela anterior do carrossel" : "previous slide"}
+          >
+            [ {pt ? "anterior" : "previous"} ]
+          </button>
+          <button
+            type="button"
+            className="tc-carousel__btn"
+            onClick={() => go(1)}
+            disabled={state.atEnd}
+            aria-label={pt ? "próxima tela do carrossel" : "next slide"}
+          >
+            [ {pt ? "próxima" : "next"} ]
+          </button>
+        </div>
+      </div>
+      <div
+        ref={trackRef}
+        className="tc-carousel__track"
+        role="region"
+        aria-roledescription={pt ? "carrossel" : "carousel"}
+        aria-label={label}
+        tabIndex={0}
+      >
+        {items.map((item, i) => (
+          <div
+            className="tc-carousel__slide"
+            key={item.src}
+            role="group"
+            aria-roledescription={pt ? "tela" : "slide"}
+            aria-label={`${pad2(i + 1)} / ${total}`}
+          >
+            <CaseFigure
+              {...item}
+              index={`${pad2(i + 1)} / ${total}`}
+              sizes="(max-width: 780px) 78vw, 380px"
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** Indicadores medidos, sempre com período e fonte no mesmo bloco. */
+export function CaseStats({
+  period,
+  items,
+  highlight,
+  note,
+}: {
+  period: string;
+  items: Array<{ value: string; label: string; detail?: string }>;
+  highlight?: ReactNode;
+  note?: ReactNode;
+}) {
+  return (
+    <div className="tc-stats">
+      <p className="tc-stats__period">{period}</p>
+      <dl className="tc-stats__grid">
+        {items.map((item) => (
+          <div className="tc-stat" key={item.label}>
+            <dt className="tc-stat__label">{item.label}</dt>
+            <dd className="tc-stat__value">{item.value}</dd>
+            {item.detail ? <dd className="tc-stat__detail">{item.detail}</dd> : null}
+          </div>
+        ))}
+      </dl>
+      {highlight ? <p className="tc-stats__highlight">{highlight}</p> : null}
+      {note ? <p className="tc-stats__note">{note}</p> : null}
+    </div>
+  );
+}
+
+/** Decisões do projeto em lista simples com régua tracejada (não é sequência, então sem número). */
+export function CaseNotes({ items }: { items: ReactNode[] }) {
+  return (
+    <ul className="tc-notes">
+      {items.map((item, i) => (
+        <li key={i}>{item}</li>
+      ))}
+    </ul>
   );
 }

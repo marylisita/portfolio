@@ -163,6 +163,54 @@ const stories: Record<string, LocalizedStory> = {
         "The finance apps I tried assume a fixed salary and a scolding tone — neither fits someone living on variable income.",
     },
   },
+  metagallery: {
+    pt: {
+      impact:
+        "Convite, cobertura da abertura, repercussão na imprensa e um carrossel sobre a obra Goro, todos no mesmo sistema visual da galeria.",
+      shortImpact: "inauguração num só sistema",
+      challenge:
+        "A galeria reabria em nova sede na Praça XV e precisava anunciar a mudança, cobrir a abertura e continuar falando das obras.",
+    },
+    en: {
+      impact:
+        "An invitation, opening coverage, press pickup and a carousel about the work Goro, all in the gallery's own visual system.",
+      shortImpact: "an opening in one system",
+      challenge:
+        "The gallery was reopening in a new space at Praça XV and needed to announce the move, cover the opening and keep talking about the works.",
+    },
+  },
+  "metaverse-agency": {
+    pt: {
+      impact:
+        "Um carrossel de cinco telas sobre a passagem do robô Tobias pela Rio Innovation Week, com uma frase curta sobre cada foto do evento.",
+      shortImpact: "um robô em cinco telas",
+      challenge:
+        "Contar a visita de um robô social a um evento de inovação num único post, a partir de fotos feitas no próprio evento.",
+    },
+    en: {
+      impact:
+        "A five-slide carousel about the robot Tobias at Rio Innovation Week, with one short line over each event photo.",
+      shortImpact: "a robot in five slides",
+      challenge:
+        "Telling a social robot's visit to an innovation event in a single post, built from photos taken at the event.",
+    },
+  },
+  "byron-mendes": {
+    pt: {
+      impact:
+        "Uma série editorial com etiquetas por tema (bastidores, encontros, do meu arquivo) sobre a mesma base de cor e tipografia.",
+      shortImpact: "três temas, uma série",
+      challenge:
+        "Bastidores de montagem, encontros com o público e projetos antigos precisavam caber no mesmo perfil profissional.",
+    },
+    en: {
+      impact:
+        "An editorial series with a tag per topic (behind the scenes, encounters, from my archive) on one shared base of color and type.",
+      shortImpact: "three topics, one series",
+      challenge:
+        "Behind-the-scenes setup, encounters with visitors and older projects all had to fit one professional profile.",
+    },
+  },
 };
 
 export function getProjectStory(pathname: string, lang: string): ProjectStory | undefined {
