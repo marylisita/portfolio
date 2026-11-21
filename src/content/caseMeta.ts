@@ -190,46 +190,18 @@ const CASES: Record<string, CaseMeta> = {
       alt: "Poster for the Video Mapping Workshop: an introduction to TouchDesigner",
     },
   },
-  metagallery: {
+  "social-media": {
     pt: {
-      title: "MetaGallery — social media",
+      title: "Social media — MetaGallery, Metaverse Agency e Byron Mendes",
       description:
-        "Social media e direção de arte para a inauguração da nova sede da MetaGallery na Praça XV: convite, cobertura, imprensa e carrossel editorial, com números do perfil em 30 dias.",
-      alt: "Arte de inauguração da MetaGallery com escultura dourada: Uma nova casa para a arte",
+        "Social media e direção de arte para três perfis: inauguração da MetaGallery, o robô Tobias na Rio Innovation Week e a série editorial de Byron Mendes, com números dos perfis em 30 dias.",
+      alt: "Três posts lado a lado: escultura dourada da MetaGallery, o robô Tobias e Byron Mendes diante de uma instalação",
     },
     en: {
-      title: "MetaGallery — social media",
+      title: "Social media — MetaGallery, Metaverse Agency and Byron Mendes",
       description:
-        "Social media and art direction for the opening of MetaGallery's new space at Praça XV: invitation, coverage, press and an editorial carousel, with 30-day profile numbers.",
-      alt: "MetaGallery opening artwork with a golden sculpture: A new home for art",
-    },
-  },
-  "metaverse-agency": {
-    pt: {
-      title: "Metaverse Agency — Tobias na Rio Innovation Week",
-      description:
-        "Carrossel de cinco telas sobre o robô social Tobias na Rio Innovation Week 2026, com números do perfil em 30 dias.",
-      alt: "Capa do carrossel com o robô Tobias na Rio Innovation Week",
-    },
-    en: {
-      title: "Metaverse Agency — Tobias at Rio Innovation Week",
-      description:
-        "A five-slide carousel about the social robot Tobias at Rio Innovation Week 2026, with 30-day profile numbers.",
-      alt: "Carousel cover featuring the robot Tobias at Rio Innovation Week",
-    },
-  },
-  "byron-mendes": {
-    pt: {
-      title: "Byron Mendes — social media",
-      description:
-        "Série editorial para o perfil de Byron Mendes: bastidores de exposição, encontros com o público e projetos do arquivo, com números do perfil em 30 dias.",
-      alt: "Post Antes de abrir as portas, com Byron Mendes diante de uma instalação visual",
-    },
-    en: {
-      title: "Byron Mendes — social media",
-      description:
-        "An editorial series for Byron Mendes's profile: exhibition setup, encounters with visitors and archive projects, with 30-day profile numbers.",
-      alt: "Post Before the doors open, with Byron Mendes in front of a visual installation",
+        "Social media and art direction for three profiles: MetaGallery's opening, the robot Tobias at Rio Innovation Week and Byron Mendes's editorial series, with 30-day profile numbers.",
+      alt: "Three posts side by side: MetaGallery's golden sculpture, the robot Tobias and Byron Mendes in front of an installation",
     },
   },
 };

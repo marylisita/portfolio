@@ -6,31 +6,34 @@ import {
   CaseCarousel,
   CaseCredits,
   CaseFigure,
-  CaseNotes,
   CaseSection,
   CaseStats,
 } from "@/components/CaseStudyKit";
-import { getSocialCase, type SocialSection } from "@/content/socialMediaCases";
+import { SOCIAL_CLIENTS, type SocialSection } from "@/content/socialMediaCases";
 import { useT } from "@/i18n/LanguageContext";
 
+const pad = (n: number) => String(n).padStart(2, "0");
+
 /**
- * Página dos cases de social media. Os três usam a mesma casca e o mesmo kit
- * dos outros cases (ProjectShell + CaseStudyKit); só os dados mudam, em
+ * /work/social-media: um projeto, três clientes. Cada cliente é um capítulo
+ * com a própria cor (wrapper `.tc--<cliente>` sobre o canvas roxo comum).
+ * As métricas dos três perfis ficam juntas numa única faixa escura, com
+ * período e fonte; os créditos fecham a página. Conteúdo em
  * `src/content/socialMediaCases.ts`.
  */
-export default function SocialMediaCaseStudy({ slug }: { slug: string }) {
+export default function SocialMediaCaseStudy() {
   const { t, lang } = useT();
   const pt = lang !== "en";
   const l = pt ? "pt" : "en";
-  const item = getSocialCase(slug);
-  if (!item) return null;
 
-  const [first, ...rest] = item.sections;
-  const next = item.sections.length + 1;
-  const pad = (n: number) => String(n).padStart(2, "0");
+  /* Numeração contínua dos capítulos, na ordem em que aparecem. */
+  const chapters = SOCIAL_CLIENTS.flatMap((client) =>
+    client.sections.map((section) => ({ client, section })),
+  );
+  const numbersAt = chapters.length + 1;
 
-  const renderImages = (section: SocialSection, sectionIndex: number) => {
-    const images = section.images.map((image) => ({
+  const images = (section: SocialSection, first: boolean) => {
+    const items = section.images.map((image) => ({
       src: image.src,
       width: image.width,
       height: image.height,
@@ -41,94 +44,106 @@ export default function SocialMediaCaseStudy({ slug }: { slug: string }) {
       return (
         <CaseCarousel
           label={`${pt ? "Carrossel" : "Carousel"}: ${section.title[l]}`}
-          items={images}
-          wide={images.length <= 3}
+          items={items}
+          wide={items.length <= 3}
         />
       );
     }
     return (
       <div className={`tc-grid ${section.layout === "grid-three" ? "tc-grid--three" : "tc-grid--two"}`}>
-        {images.map((image, i) => (
+        {items.map((image, i) => (
           <CaseFigure
             key={image.src}
             {...image}
             index={`${pt ? "imagem" : "image"} ${pad(i + 1)}`}
-            priority={sectionIndex === 0 && i === 0}
+            priority={first && i === 0}
           />
         ))}
       </div>
     );
   };
 
-  const section = (s: SocialSection, i: number) => (
-    <CaseSection key={s.label.pt} label={s.label[l]} title={s.title[l]} intro={s.intro[l]}>
-      {renderImages(s, i)}
-    </CaseSection>
+  const credits = SOCIAL_CLIENTS.flatMap((client) =>
+    client.credits.map((credit) => ({ label: credit.label[l], value: credit.value[l] })),
   );
 
   return (
     <ProjectShell
-      accent={item.accent}
+      accent="#7446e0"
       cover={false}
       title={
         <>
-          <strong style={{ color: item.accent, fontWeight: 700 }}>{item.titleStrong}</strong>{" "}
-          {item.titleRest[l]}
+          <strong style={{ color: "#7446e0", fontWeight: 700 }}>social media:</strong>{" "}
+          {pt ? "metagallery, metaverse agency e byron mendes" : "metagallery, metaverse agency and byron mendes"}
         </>
       }
-      desc={item.desc[l]}
+      desc={
+        pt
+          ? "Posts e carrosséis para três perfis em 2026: a inauguração da nova sede da MetaGallery, galeria de arte e tecnologia; o robô Tobias na Rio Innovation Week, para a Metaverse Agency; e uma série editorial para o perfil profissional de Byron Mendes."
+          : "Posts and carousels for three profiles in 2026: the opening of MetaGallery's new space, an art and technology gallery; the robot Tobias at Rio Innovation Week, for Metaverse Agency; and an editorial series for Byron Mendes's professional profile."
+      }
       meta={[
-        { label: t("ebat_meta_client"), value: item.client },
-        { label: t("ebat_meta_role"), value: item.role[l] },
-        { label: pt ? "formato" : "format", value: item.formats[l] },
+        { label: pt ? "clientes" : "clients", value: SOCIAL_CLIENTS.map((c) => c.client).join(", ") },
+        { label: t("ebat_meta_role"), value: pt ? "Social media e direção de arte" : "Social media & art direction" },
+        { label: pt ? "formato" : "format", value: pt ? "Posts e carrosséis (4:5)" : "Posts and carousels (4:5)" },
         { label: pt ? "ano" : "year", value: "2026" },
       ]}
     >
-      <CaseCanvas variant={item.variant}>
-        {section(first, 0)}
+      <CaseCanvas variant="social-media">
+        {chapters.map(({ client, section }, i) => (
+          <div className={`tc--${client.variant}`} key={section.images[0].src}>
+            <CaseSection
+              label={`${pad(i + 1)} / ${client.client.toLowerCase()}, ${section.label[l].replace(/^\d+\s*\/\s*/, "")}`}
+              title={section.title[l]}
+              intro={section.intro[l]}
+            >
+              {images(section, i === 0)}
+            </CaseSection>
+          </div>
+        ))}
 
-        {rest.map((s, i) => section(s, i + 1))}
-
-        {/* A pergunta e o resultado já abrem a página (ProjectShell lê
-            projectStories). A faixa escura fica com as métricas: é o
-            conteúdo que só estes cases têm. */}
         <CaseSection
           ink
-          label={pt ? `${pad(next)} / números do perfil` : `${pad(next)} / profile numbers`}
+          label={pt ? `${pad(numbersAt)} / números dos perfis` : `${pad(numbersAt)} / profile numbers`}
           title={pt ? "alcance & presença" : "reach & presence"}
           intro={
             pt
-              ? "O que o painel profissional do perfil mostrava em novembro de 2026, numa janela de 30 dias. São números do perfil inteiro, não de uma peça isolada."
-              : "What the profile's professional dashboard showed in November 2026, over a 30-day window. These are numbers for the whole profile, not for a single post."
+              ? "O que o painel profissional de cada perfil mostrava em novembro de 2026, numa janela de 30 dias. São números do perfil inteiro, não de uma peça isolada, e os três perfis têm tamanhos muito diferentes."
+              : "What each profile's professional dashboard showed in November 2026, over a 30-day window. These are numbers for the whole profile, not for a single post, and the three profiles differ a lot in size."
           }
         >
-          <CaseStats
-            period={pt ? "perfil, últimos 30 dias, captura de novembro de 2026" : "profile, last 30 days, captured november 2026"}
-            items={item.stats.map((stat) => ({
-              value: stat.value[l],
-              label: stat.label[l],
-              detail: stat.detail[l],
-            }))}
-            highlight={item.highlight[l]}
-            note={
-              pt
-                ? "Fonte: painel profissional e capturas das publicações enviadas pela cliente. A variação compara com o período anterior do próprio painel e não demonstra que as peças, sozinhas, causaram a mudança. Resultados de posts valem para a data da captura."
-                : "Source: the professional dashboard and post screenshots provided by the client. Changes compare against the dashboard's own previous period and do not show that these posts alone caused them. Post results reflect the date of capture."
-            }
-          />
+          {SOCIAL_CLIENTS.map((client, ci) => (
+            <div className={`tc--${client.variant} tc-stats-block`} key={client.id}>
+              <CaseStats
+                period={
+                  pt
+                    ? `${client.client.toLowerCase()}, últimos 30 dias`
+                    : `${client.client.toLowerCase()}, last 30 days`
+                }
+                items={client.stats.map((stat) => ({
+                  value: stat.value[l],
+                  label: stat.label[l],
+                  detail: stat.detail[l],
+                }))}
+                highlight={client.highlight[l]}
+                note={
+                  ci === SOCIAL_CLIENTS.length - 1
+                    ? pt
+                      ? "Fonte: painéis profissionais e capturas das publicações enviadas pelos clientes em novembro de 2026. A variação compara com o período anterior do próprio painel e não demonstra que as peças, sozinhas, causaram a mudança. Resultados de posts valem para a data da captura."
+                      : "Source: professional dashboards and post screenshots provided by the clients in November 2026. Changes compare against each dashboard's own previous period and do not show that these posts alone caused them. Post results reflect the date of capture."
+                    : undefined
+                }
+              />
+            </div>
+          ))}
         </CaseSection>
 
         <CaseSection
           compact
-          label={pt ? `${pad(next + 1)} / decisões` : `${pad(next + 1)} / decisions`}
-          title={pt ? "linguagem visual" : "visual language"}
+          label={pt ? `${pad(numbersAt + 1)} / créditos` : `${pad(numbersAt + 1)} / credits`}
+          title={pt ? "obra, evento e fotografia" : "artwork, event and photography"}
         >
-          <CaseNotes items={item.notes.map((note) => note[l])} />
-          {item.credits.length ? (
-            <CaseCredits
-              items={item.credits.map((credit) => ({ label: credit.label[l], value: credit.value[l] }))}
-            />
-          ) : null}
+          <CaseCredits items={credits} />
         </CaseSection>
       </CaseCanvas>
     </ProjectShell>

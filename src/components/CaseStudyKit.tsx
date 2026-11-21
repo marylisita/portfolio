@@ -20,6 +20,7 @@ export type CaseVariant =
   | "metagallery"
   | "metaverse-agency"
   | "pilotis"
+  | "social-media"
   | "vegcoz";
 
 const ease = [0.16, 1, 0.3, 1] as const;
@@ -106,6 +107,9 @@ const styles = `
     --tc-paper: rgba(240, 245, 246, .93);
     --tc-deep: #1d0f33;
   }
+  /* A página de social media usa o roxo comum aos três perfis; cada capítulo
+     troca para a cor do próprio cliente (wrapper .tc--<cliente>). */
+  .tc--social-media,
   .tc--byron-mendes {
     --tc-accent: #7446e0;
     --tc-accent-text: #5b2fc4;
@@ -671,6 +675,10 @@ const styles = `
     font-family: var(--font-body);
     font-size: .9rem;
     line-height: 1.55;
+  }
+
+  .tc-stats-block + .tc-stats-block {
+    margin-top: clamp(2.75rem, 6vw, 4.5rem);
   }
 
   /* Métricas dentro da faixa escura: linhas e textos claros, acento puro. */

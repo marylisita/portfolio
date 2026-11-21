@@ -1,7 +1,8 @@
 import type { CaseVariant } from "@/components/CaseStudyKit";
 
 /**
- * Cases de social media: MetaGallery, Metaverse Agency e Byron Mendes.
+ * Página /work/social-media: MetaGallery, Metaverse Agency e Byron Mendes,
+ * um capítulo por cliente.
  *
  * Fonte: pacote enviado pela Maria em novembro de 2026 (peças originais,
  * textos e capturas dos painéis profissionais dos perfis).
@@ -36,20 +37,14 @@ export type SocialSection = {
   images: SocialImage[];
 };
 
-export type SocialCase = {
-  slug: string;
+/** Um cliente = um capítulo da página /work/social-media. */
+export type SocialClient = {
+  id: string;
   variant: CaseVariant;
-  accent: string;
   client: string;
-  titleStrong: string;
-  titleRest: L;
-  desc: L;
-  role: L;
-  formats: L;
   sections: SocialSection[];
   stats: Array<{ value: L; label: L; detail: L }>;
   highlight: L;
-  notes: L[];
   credits: Array<{ label: L; value: L }>;
 };
 
@@ -58,22 +53,11 @@ const FEED = { width: 1080, height: 1350 };
 const GORO = { width: 1080, height: 1424 };
 const TOBIAS = { width: 691, height: 867 };
 
-const SOCIAL_ROLE: L = { pt: "Social media e direção de arte", en: "Social media & art direction" };
-
-export const SOCIAL_MEDIA_CASES: SocialCase[] = [
+export const SOCIAL_CLIENTS: SocialClient[] = [
   {
-    slug: "metagallery",
+    id: "metagallery",
     variant: "metagallery",
-    accent: "#a63ee6",
     client: "MetaGallery",
-    titleStrong: "metagallery:",
-    titleRest: { pt: "uma nova casa para a arte", en: "a new home for art" },
-    desc: {
-      pt: "Comunicação digital de uma galeria de arte e tecnologia: inauguração da nova sede na Praça XV, cobertura da abertura, repercussão na imprensa e conteúdo editorial sobre as obras.",
-      en: "Digital communication for an art and technology gallery: the opening of its new space at Praça XV, event coverage, press pickup and editorial content about the works.",
-    },
-    role: SOCIAL_ROLE,
-    formats: { pt: "Posts e carrossel (4:5)", en: "Feed posts and carousel (4:5)" },
     sections: [
       {
         label: { pt: "01 / campanha de inauguração", en: "01 / opening campaign" },
@@ -182,33 +166,14 @@ export const SOCIAL_MEDIA_CASES: SocialCase[] = [
       pt: "Posts, no dia da captura: “Uma nova casa para a arte” com 855 visualizações, 38 curtidas, 3 comentários e 11 compartilhamentos; o anúncio do novo endereço com 540; o carrossel de Goro com 468.",
       en: "Posts, on the day of capture: “A new home for art” with 855 views, 38 likes, 3 comments and 11 shares; the new-address announcement with 540; the Goro carousel with 468.",
     },
-    notes: [
-      {
-        pt: "Convites, cobertura de evento e posts editoriais seguem o mesmo sistema visual.",
-        en: "Invitations, event coverage and editorial posts follow the same visual system.",
-      },
-      {
-        pt: "A hierarquia tipográfica foi pensada para leitura no celular.",
-        en: "The type hierarchy is set for reading on a phone.",
-      },
-    ],
     credits: [
       { label: { pt: "obra (goro)", en: "artwork (goro)" }, value: { pt: "Jonas Esteves", en: "Jonas Esteves" } },
     ],
   },
   {
-    slug: "metaverse-agency",
+    id: "metaverse-agency",
     variant: "metaverse-agency",
-    accent: "#19b8d4",
     client: "Metaverse Agency",
-    titleStrong: "metaverse agency:",
-    titleRest: { pt: "tobias na rio innovation week", en: "tobias at rio innovation week" },
-    desc: {
-      pt: "Um carrossel de cinco telas acompanha Tobias, um robô social, pela Rio Innovation Week 2026: fotografia do evento, uma frase por tela e uma hierarquia gráfica que conduz a leitura.",
-      en: "A five-slide carousel follows Tobias, a social robot, through Rio Innovation Week 2026: event photography, one line per slide and a type hierarchy that leads the reading.",
-    },
-    role: SOCIAL_ROLE,
-    formats: { pt: "Carrossel (4:5), 5 telas", en: "Carousel (4:5), 5 slides" },
     sections: [
       {
         label: { pt: "01 / carrossel", en: "01 / carousel" },
@@ -288,33 +253,14 @@ export const SOCIAL_MEDIA_CASES: SocialCase[] = [
       pt: "O carrossel “Tobias explorou o Rio Innovation Week” tinha 220 visualizações no dia da captura.",
       en: "The “Tobias explored Rio Innovation Week” carousel had 220 views on the day of capture.",
     },
-    notes: [
-      {
-        pt: "As cinco telas usam a mesma linguagem tipográfica.",
-        en: "All five slides share one typographic language.",
-      },
-      {
-        pt: "Texto e fotografia contam juntos a passagem de Tobias pelo evento.",
-        en: "Text and photography tell Tobias's visit to the event together.",
-      },
-    ],
     credits: [
       { label: { pt: "evento", en: "event" }, value: { pt: "Rio Innovation Week 2026", en: "Rio Innovation Week 2026" } },
     ],
   },
   {
-    slug: "byron-mendes",
+    id: "byron-mendes",
     variant: "byron-mendes",
-    accent: "#7446e0",
     client: "Byron Mendes",
-    titleStrong: "byron mendes:",
-    titleRest: { pt: "antes de abrir as portas", en: "before the doors open" },
-    desc: {
-      pt: "Uma linguagem editorial para o perfil profissional de Byron Mendes: bastidores de montagem, encontros com o público e projetos do arquivo, no mesmo sistema gráfico.",
-      en: "An editorial language for Byron Mendes's professional profile: behind-the-scenes setup, encounters with the audience and projects from the archive, in one graphic system.",
-    },
-    role: SOCIAL_ROLE,
-    formats: { pt: "Série de posts (4:5)", en: "Post series (4:5)" },
     sections: [
       {
         label: { pt: "01 / série editorial", en: "01 / editorial series" },
@@ -376,16 +322,6 @@ export const SOCIAL_MEDIA_CASES: SocialCase[] = [
       pt: "Posts, no dia da captura: “A arte também aproxima” com 219 visualizações; “Década dos Oceanos” com 119.",
       en: "Posts, on the day of capture: “Art also brings people closer” with 219 views; “Década dos Oceanos” with 119.",
     },
-    notes: [
-      {
-        pt: "Cor, tipografia e elementos gráficos se repetem em temas diferentes.",
-        en: "Color, type and graphic elements carry over across different topics.",
-      },
-      {
-        pt: "Bastidores, público e acervo dividem o mesmo sistema visual; a etiqueta no topo indica a série.",
-        en: "Behind the scenes, audience and archive share one visual system; the tag at the top names the series.",
-      },
-    ],
     credits: [
       {
         label: { pt: "foto (década dos oceanos)", en: "photo (década dos oceanos)" },
@@ -395,6 +331,3 @@ export const SOCIAL_MEDIA_CASES: SocialCase[] = [
   },
 ];
 
-export function getSocialCase(slug: string): SocialCase | undefined {
-  return SOCIAL_MEDIA_CASES.find((item) => item.slug === slug);
-}

@@ -44,20 +44,27 @@ da home. O rodapé ganhou `--ink`/`--paper`/`--acid`, que não existiam aqui.
 
 ## Social media (21 de novembro de 2026)
 
-Três cases novos: `metagallery` (nº 13), `metaverse-agency` (nº 14) e
-`byron-mendes` (nº 15). Entram só no recorte **design gráfico**, fora do núcleo
-e da home. Os três usam `src/components/SocialMediaCaseStudy.tsx` sobre o
-`ProjectShell` + `CaseStudyKit`; o conteúdo bilíngue vive em
-`src/content/socialMediaCases.ts`. O kit ganhou `CaseCarousel` (sequência
-publicada, setas `[ anterior ]` / `[ próxima ]`), `CaseStats` e `CaseNotes`.
+Um projeto só, `/work/social-media` (nº 13), com três clientes como capítulos:
+MetaGallery (campanha de inauguração + carrossel Goro), Metaverse Agency
+(carrossel Tobias) e Byron Mendes (série editorial). Decisão dela: uma página
+para todos os posts, não três cases. Entra só no recorte **design gráfico**,
+fora do núcleo e da home.
 
-- Métricas são do **perfil**, janela de 30 dias, capturas de novembro de 2026.
-  Ficam na faixa escura, sempre com período, fonte e a ressalva de que não
+- Página: `src/components/SocialMediaCaseStudy.tsx` sobre `ProjectShell` +
+  `CaseStudyKit`; conteúdo bilíngue em `src/content/socialMediaCases.ts`.
+  Cada capítulo usa a cor do cliente (`.tc--metagallery` etc.).
+- O kit ganhou `CaseCarousel` (ordem publicada, `[ anterior ]` / `[ próxima ]`),
+  `CaseStats` e `CaseNotes`.
+- Miniatura: `previews/social-media.webp`, as três capas escolhidas por ela,
+  inteiras, lado a lado. Post 4:5 cru como capa era cortado no meio pelos
+  cards de próximo projeto.
+- Métricas são do **perfil**, janela de 30 dias, capturas de novembro de 2026,
+  juntas numa única faixa escura com período, fonte e a ressalva de que não
   provam causa. Não acrescentar número que não esteja nas capturas.
 - As telas da Metaverse Agency foram recortadas de capturas do carrossel
   publicado. Trocar pelos exports originais assim que houver, mesmos nomes.
 - Links de Instagram recebidos não foram associados: o vínculo de cada um com
-  um case não foi confirmado.
+  uma peça não foi confirmado.
 
 ## Estado atual de `/work`
 

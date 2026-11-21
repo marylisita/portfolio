@@ -160,36 +160,14 @@ export function useProjects(): IndexItem[] {
     },
     {
       num: "13",
-      title: "metagallery",
+      title: "social media",
       tags: `${t("cat_client")} / social media / ${t("card_artdir_title").toLowerCase()}`,
-      href: "/work/metagallery",
-      accent: "#a63ee6",
-      impact: impact("/work/metagallery"),
-      blurb: blurb("/work/metagallery"),
-      ratio: 750 / 1200, // previews/metagallery.webp 1200x750: a peça escolhida + a seguinte, sem corte
-      img: "/img/previews/metagallery.webp",
-    },
-    {
-      num: "14",
-      title: "metaverse agency",
-      tags: `${t("cat_client")} / social media / ${lang === "pt" ? "carrossel" : "carousel"}`,
-      href: "/work/metaverse-agency",
-      accent: "#19b8d4",
-      impact: impact("/work/metaverse-agency"),
-      blurb: blurb("/work/metaverse-agency"),
-      ratio: 750 / 1200, // previews/metaverse-agency.webp 1200x750: a peça escolhida + a seguinte, sem corte
-      img: "/img/previews/metaverse-agency.webp",
-    },
-    {
-      num: "15",
-      title: "byron mendes",
-      tags: `${t("cat_client")} / social media / ${lang === "pt" ? "design editorial" : "editorial design"}`,
-      href: "/work/byron-mendes",
+      href: "/work/social-media",
       accent: "#7446e0",
-      impact: impact("/work/byron-mendes"),
-      blurb: blurb("/work/byron-mendes"),
-      ratio: 750 / 1200, // previews/byron-mendes.webp 1200x750: a peça escolhida + a seguinte, sem corte
-      img: "/img/previews/byron-mendes.webp",
+      impact: impact("/work/social-media"),
+      blurb: blurb("/work/social-media"),
+      ratio: 900 / 1200, // previews/social-media.webp 1200x900: as tres capas inteiras, lado a lado
+      img: "/img/previews/social-media.webp",
     },
   ];
 }
