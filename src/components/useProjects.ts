@@ -166,8 +166,8 @@ export function useProjects(): IndexItem[] {
       accent: "#a63ee6",
       impact: impact("/work/metagallery"),
       blurb: blurb("/work/metagallery"),
-      ratio: 1350 / 1080,
-      img: "/img/social-media/metagallery/meta-hero.webp",
+      ratio: 750 / 1200, // previews/metagallery.webp 1200x750: a peça escolhida + a seguinte, sem corte
+      img: "/img/previews/metagallery.webp",
     },
     {
       num: "14",
@@ -177,8 +177,8 @@ export function useProjects(): IndexItem[] {
       accent: "#19b8d4",
       impact: impact("/work/metaverse-agency"),
       blurb: blurb("/work/metaverse-agency"),
-      ratio: 867 / 691,
-      img: "/img/social-media/metaverse-agency/agency-tobias-01.webp",
+      ratio: 750 / 1200, // previews/metaverse-agency.webp 1200x750: a peça escolhida + a seguinte, sem corte
+      img: "/img/previews/metaverse-agency.webp",
     },
     {
       num: "15",
@@ -188,8 +188,8 @@ export function useProjects(): IndexItem[] {
       accent: "#7446e0",
       impact: impact("/work/byron-mendes"),
       blurb: blurb("/work/byron-mendes"),
-      ratio: 1350 / 1080,
-      img: "/img/social-media/byron-mendes/byron-bastidores.webp",
+      ratio: 750 / 1200, // previews/byron-mendes.webp 1200x750: a peça escolhida + a seguinte, sem corte
+      img: "/img/previews/byron-mendes.webp",
     },
   ];
 }
